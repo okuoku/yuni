@@ -9,6 +9,7 @@
     r7b-util
     (r7b-impl => scheme))
   (compat-racket
+    (racket-yuni => yuni)
     (racket-srfi => srfi)))
 
 (GenRacket
@@ -17,7 +18,6 @@
     yuni
     r7rs-bridge
     compat-racket
-    
     )) 
 
 (GenR7RS
