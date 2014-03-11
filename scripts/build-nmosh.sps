@@ -96,7 +96,10 @@
     ;; Duh! Racket has (scheme base)!!!
     (if (equal? sexp '(scheme base))
       '(scheme base0)
-      sexp))
+      ;; Oh, (scheme file)..
+      (if (equal? sexp '(scheme file))
+        '(scheme file0)
+        sexp)))
   (define outputpath (calc-libpath basepath name "mzscheme.sls"))
   (define aliaspath (and alias (calc-libpath 
                                  basepath (base0filter alias) "mzscheme.sls")))
