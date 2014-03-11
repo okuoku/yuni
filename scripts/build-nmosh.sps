@@ -67,6 +67,16 @@
                  "."
                  ext))
 
+(define (strip-rename lis)
+  (fold-left (lambda (cur e)
+               (match e
+                      (('rename renames ...)
+                       (append (map cadr renames) cur))
+                      (otherwise
+                        (cons otherwise cur)) ))
+             '()
+             lis))
+
 ;; GenRacket: R6RS library generator for Racket
 
 (define (libgen-racket-body libname exports imports libpath)
@@ -107,7 +117,8 @@
             (call-with-output-file-force
               aliaspath
               (lambda (p)
-                (define body (libgen-racket-alias name alias exports))
+                (define body (libgen-racket-alias name alias (strip-rename
+                                                               exports)))
                 (put-string p "#!r6rs\n")
                 (pp body p)))))))
 
