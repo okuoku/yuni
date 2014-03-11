@@ -73,14 +73,17 @@
   `(library ,libname
              (export ,@exports)
              (import ,@imports
-                     (only (racket include) include)
-                     (only (rnrs) syntax-rules _ ... begin))
-    (define-syntax %%-internal-paste
-      (syntax-rules ()
-        ((_ (library  (export ...) (import ...) body ...))
-         (begin body ...))))
+                     (prefix (only (racket include) include) %%internal:)
+                     (prefix (only (rnrs) syntax-rules _ ... begin)
+                             %%internal:))
+    (%%internal:define-syntax %%-internal-paste
+      (%%internal:syntax-rules ()
+        ((%%internal:_ (library  (export %%internal:...) 
+                                 (import %%internal:...) 
+                                 body %%internal:...))
+         (%%internal:begin body %%internal:...))))
     (%%-internal-paste
-      (include ,libpath))))
+      (%%internal:include ,libpath))))
 
 (define (libgen-racket-alias from to syms)
   `(library ,to
@@ -88,8 +91,14 @@
             (import ,from)))
 
 (define (libgen-racket name alias libcode libpath basepath)
+  (define (base0filter sexp)
+    ;; Duh! Racket has (scheme base)!!!
+    (if (equal? sexp '(scheme base))
+      '(scheme base0)
+      sexp))
   (define outputpath (calc-libpath basepath name "mzscheme.sls"))
-  (define aliaspath (and alias (calc-libpath basepath alias "mzscheme.sls")))
+  (define aliaspath (and alias (calc-libpath 
+                                 basepath (base0filter alias) "mzscheme.sls")))
   (match libcode
          (('library libname 
            ('export exports ...)
@@ -98,7 +107,9 @@
           (call-with-output-file-force
             outputpath
             (lambda (p)
-              (define body (libgen-racket-body name exports imports libpath))
+              (define body (libgen-racket-body name exports 
+                                               (map base0filter imports) 
+                                               libpath))
               (put-string p "#!r6rs\n")
               (pp body p)))
           (when alias
