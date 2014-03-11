@@ -73,17 +73,8 @@
   `(library ,libname
              (export ,@exports)
              (import ,@imports
-                     (prefix (only (racket include) include) %%internal:)
-                     (prefix (only (rnrs) syntax-rules _ ... begin)
-                             %%internal:))
-    (%%internal:define-syntax %%-internal-paste
-      (%%internal:syntax-rules ()
-        ((%%internal:_ (library  (export %%internal:...) 
-                                 (import %%internal:...) 
-                                 body %%internal:...))
-         (%%internal:begin body %%internal:...))))
-    (%%-internal-paste
-      (%%internal:include ,libpath))))
+                     (yuni-runtime racket))
+    (%%internal-paste ,libpath)))
 
 (define (libgen-racket-alias from to syms)
   `(library ,to

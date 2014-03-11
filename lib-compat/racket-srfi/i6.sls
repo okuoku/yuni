@@ -3,4 +3,8 @@
            open-input-string
            open-output-string
            get-output-string)
-         (import (racket base)))
+         (import (only (racket base) 
+                       open-input-string
+                       open-output-string
+                       get-output-string)))
+
