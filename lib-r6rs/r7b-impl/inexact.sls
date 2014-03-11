@@ -1,4 +1,3 @@
-#!r6rs
 (library (r7b-impl inexact)
          (export
 ;; from R7RS draft 7

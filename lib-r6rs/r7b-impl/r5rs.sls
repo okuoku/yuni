@@ -1,4 +1,3 @@
-#!r6rs
 (library (r7b-impl r5rs)
         (export 
 ;; From r7rs 9th draft

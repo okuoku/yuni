@@ -1,4 +1,3 @@
-#!r6rs
 (library (r7b-util time)
          (export current-jiffy current-second jiffies-per-second)
          (import (rnrs)

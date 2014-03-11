@@ -1,4 +1,3 @@
-#!r6rs
 (library (r7b-util buffer-port)
          (export
            %get-buffered-data

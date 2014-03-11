@@ -1,5 +1,4 @@
 ;; FAKE
-#!r6rs
 (library (r7b-util eval)
          (export interaction-environment
                  load

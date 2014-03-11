@@ -1,4 +1,3 @@
-#!r6rs
 (library (r7b-impl base)
          (export
 

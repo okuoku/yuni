@@ -1,4 +1,3 @@
-#!r6rs
 (library (r7b-util string-buffer)
          (export
            get-output-string
