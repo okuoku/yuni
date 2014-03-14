@@ -7,10 +7,11 @@ R7RS/R6RS Scheme portable library(Under construction)
 
 These are not implemented yet though.
 
+* Common application runner to make Scheme implementations as interchangable script engine
 * Common convenient syntaxes: async, let1, ...
 * Multithreading
 * Portable in-system debugger
-* FFI wrapper for dynamic/static bindings
+* pFFI: FFI wrapper for dynamic/static bindings
   * Unified C Interface Description(UCID) as common API description format
 * Provide 3rd-party tests 
 
@@ -20,13 +21,17 @@ YUNI IS NOT FOR PERFORMANCE BENCHMARKING. Making performance optimal library for
 
 * Performance (Portability over performance)
 
-## See also
-
-* doc/PortingNotes - for implementation specific features
-
 ## Licensing
 
 (TBD. Each source should include its own license terms. We will provide combined license document later for binary distributions.)
+
+Build
+-----
+
+Most implementation requires `lib-stub` which will contain library import stubs.
+To generate library import stub,
+
+ nmosh scripts/build-nmosh.sps
 
 Library rules
 -------------
@@ -52,3 +57,4 @@ TBD
 External libraries
 ------------------
 
+TBD

@@ -1,3 +1,4 @@
+;; Library directories which require import-stubs for R7RSs and Racket
 (*library-directories*
   "lib"
   "lib-r6rs"
@@ -5,6 +6,7 @@
 
 (*library-groups*
   (yuni yuni)
+  ;; R7RS-bridge: R7RS library for R6RS implementations
   (r7rs-bridge
     r7b-util
     (r7b-impl => scheme))
