@@ -10,6 +10,8 @@
   (r7rs-bridge
     r7b-util
     (r7b-impl => scheme))
+  (compat-chibi
+    (chibi-yuni => yuni))
   (compat-gauche
     (gauche-yuni => yuni))
   (compat-racket
@@ -30,4 +32,5 @@
     compat-gauche
     yuni) 
   (chibi
+    compat-chibi
     yuni)) 

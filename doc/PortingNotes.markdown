@@ -24,7 +24,9 @@ R6RS
 
 ## Racket
 
+```
  plt-r6rs.exe ++path lib-runtime/racket ++path lib-stub/racket PROGRAM.sps
+```
 
 Racket requires `#!r6rs` for each R6RS styled library so we have to generate import stub for each libraries. See R7RS section below.
 
@@ -39,9 +41,15 @@ R7RS
 
 ## Chibi scheme
 
+```
+ chibi-scheme -I lib-runtime/r7rs -I lib-stub/chibi PROGRAM.sps 
+```
+
 ## Gauche
 
+```
  gosh -r7 -I lib-runtime/r7rs -I lib-stub/gauche -A . PROGRAM.sps
+```
 
 ## picrin
 

@@ -82,10 +82,7 @@
                             (string-append cur "../"))
                           ""
                           (cdr libname)))
-  ;(string-append dots "../../" libpath)
-  
-  libpath
-  )
+  (string-append dots "../../" libpath))
 
 ;; GenRacket: R6RS library generator for Racket
 
@@ -136,11 +133,14 @@
                 (pp body p)))))))
 
 ;; GenR7RS: R7RS library generator 
-(define (libgen-r7rs-body libname exports imports libpath)
+(define (libgen-r7rs-body libname exports imports libpath flavor)
+  (define calclibpath (if (eq? flavor 'gauche)
+                        (lambda (_ x) x)
+                        calc-relative))
   `(define-library ,libname
              (export ,@exports)
              (import ,@imports (yuni-runtime r7rs))
-             (include ,(calc-relative libname libpath))))
+             (include ,(calclibpath libname libpath))))
 
 (define (libgen-r7rs-alias from to syms)
   `(define-library ,to
@@ -148,9 +148,10 @@
             (import ,from)))
 
 (define (libgen-r7rs name alias libcode libpath basepath flavor)
-  (define outputpath (calc-libpath basepath name "scm"))
+  (define LIBEXT (if (eq? flavor 'gauche) "scm" "sld"))
+  (define outputpath (calc-libpath basepath name LIBEXT))
   (define aliaspath (and alias (calc-libpath 
-                                 basepath alias "scm")))
+                                 basepath alias LIBEXT)))
   (define (may-strip-keywords lis)
     (define (keyword-symbol? sym)
       (let ((c (string-ref (symbol->string sym) 0)))
@@ -174,7 +175,8 @@
               (define body (libgen-r7rs-body name 
                                              (may-strip-keywords exports) 
                                              imports
-                                             libpath))
+                                             libpath
+                                             flavor))
               (pp body p)))
           (when alias
             (call-with-output-file-force
