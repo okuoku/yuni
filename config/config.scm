@@ -10,6 +10,8 @@
   (r7rs-bridge
     r7b-util
     (r7b-impl => scheme))
+  (compat-gauche
+    (gauche-yuni => yuni))
   (compat-racket
     (racket-yuni => yuni)
     (racket-srfi => srfi)))
@@ -25,6 +27,7 @@
 (GenR7RS
   ;; R7RS library generator
   (gauche
+    compat-gauche
     yuni) 
   (chibi
     yuni)) 

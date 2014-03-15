@@ -21,7 +21,7 @@
                   (match m
                          ((grp srcpath (name . alias) code)
                           (when (eq? grp group)
-                            (gen name alias code srcpath dirname)))))
+                            (gen name alias code srcpath dirname dirsym)))))
         *library-map*))
     (when (not (file-exists? STUBTOP))
       (create-directory STUBTOP))
@@ -77,6 +77,16 @@
              '()
              lis))
 
+(define (calc-relative libname libpath)
+  (define dots (fold-left (lambda (cur e)
+                            (string-append cur "../"))
+                          ""
+                          (cdr libname)))
+  ;(string-append dots "../../" libpath)
+  
+  libpath
+  )
+
 ;; GenRacket: R6RS library generator for Racket
 
 (define (libgen-racket-body libname exports imports libpath)
@@ -91,7 +101,7 @@
             (export ,@syms)
             (import ,from)))
 
-(define (libgen-racket name alias libcode libpath basepath)
+(define (libgen-racket name alias libcode libpath basepath flavor)
   (define (base0filter sexp)
     ;; Duh! Racket has (scheme base)!!!
     (if (equal? sexp '(scheme base))
@@ -126,6 +136,54 @@
                 (pp body p)))))))
 
 ;; GenR7RS: R7RS library generator 
+(define (libgen-r7rs-body libname exports imports libpath)
+  `(define-library ,libname
+             (export ,@exports)
+             (import ,@imports (yuni-runtime r7rs))
+             (include ,(calc-relative libname libpath))))
+
+(define (libgen-r7rs-alias from to syms)
+  `(define-library ,to
+            (export ,@syms)
+            (import ,from)))
+
+(define (libgen-r7rs name alias libcode libpath basepath flavor)
+  (define outputpath (calc-libpath basepath name "scm"))
+  (define aliaspath (and alias (calc-libpath 
+                                 basepath alias "scm")))
+  (define (may-strip-keywords lis)
+    (define (keyword-symbol? sym)
+      (let ((c (string-ref (symbol->string sym) 0)))
+        (char=? #\: c)))
+    (if (eq? flavor 'gauche)
+      (fold-left (lambda (cur e) 
+                   (if (keyword-symbol? e)
+                     cur
+                     (cons e cur)))
+                 '()
+                 lis)
+      lis))
+  (match libcode
+         (('library libname 
+           ('export exports ...)
+           ('import imports ...) 
+           body ...)
+          (call-with-output-file-force
+            outputpath
+            (lambda (p)
+              (define body (libgen-r7rs-body name 
+                                             (may-strip-keywords exports) 
+                                             imports
+                                             libpath))
+              (pp body p)))
+          (when alias
+            (call-with-output-file-force
+              aliaspath
+              (lambda (p)
+                (define body (libgen-r7rs-alias name alias 
+                                                (may-strip-keywords
+                                                  (strip-rename exports))))
+                (pp body p)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -232,4 +290,4 @@
 
 ;; Generate !
 (generate libraries libgen-racket GenRacket)
-; (generate libgen-r7rs GenR7RS)
+(generate libraries libgen-r7rs GenR7RS)
