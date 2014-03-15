@@ -1,13 +1,14 @@
 (library (yuni util invalid-form)
          (export define-invalid-form define-invalid-forms)
-         (import (rnrs))
+         (import (scheme base))
 
 (define-syntax define-invalid-form
   (syntax-rules () 
     ((_ sym)
      (define-syntax sym
-       (lambda (l)
-         (assertion-violation 'expander "invalid form" l))))))
+       (syntax-rules () 
+         ((_)
+          (syntax-error "Invalid form (for aux keyword)")))))))
 
 (define-syntax define-invalid-forms
   (syntax-rules ()

@@ -6,10 +6,10 @@
                  is-a?
                  typeof
                  make touch!)
-         (import (rnrs) 
+         (import (yuni scheme) 
                  (yuni miniobj)
                  (yuni miniobj minitype)
-                 (yuni util invalid-form))
+                 (yuni compat keywords))
 
 ; internal
 (define-syntax ref
@@ -25,7 +25,7 @@
 
 ; ~: generic, recursive ref/set syntax.
 (define-syntax ~
-  (syntax-rules (:=)
+  (syntax-rules/keywords () (:=)
     ((_ target slot := obj)
      (refset! target slot obj))
     ((_ target slot)
@@ -142,10 +142,9 @@
   (if (is-a? id type)
     'ok
     (begin ;; FIXME
-      (assertion-violation 'yuni-core
-                           "type violation"
-                           id-name
-                           type-name))))
+      (error "yuni: type violation"
+             id-name
+             type-name))))
 
 (define-syntax annotate-check
   (syntax-rules ()
@@ -283,6 +282,6 @@
     ((_ name spec)
      (define-composite name spec))))
 
-(define-invalid-form :=)
+(define-keywords :=)
 
 )

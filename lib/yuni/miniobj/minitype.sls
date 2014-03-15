@@ -10,7 +10,7 @@
                  minitype-typeof
                  make-minitype-refslot
                  make-minitype-setslot!)
-         (import (rnrs)
+         (import (yuni scheme)
                  (yuni compat simple-struct))
 
 (define (check? obj sym)
@@ -25,20 +25,19 @@
 
 (define (check-minitype obj)
   (or (minitype? obj)
-      (assertion-violation 'check-minitype "minitype needed" obj)))
+      (error "minitype needed" obj)))
 
 (define (check-minitype-obj obj)
   (or (minitype-obj? obj)
-      (assertion-violation 'check-minitype-obj "minitype-obj needed" obj)))
+      (error "minitype-obj needed" obj)))
 
 (define (check-minitype-obj-type obj minitype)
   (or (and (minitype-obj? obj)
            (minitype? minitype)
            (or (eq? (minitype-type (minitype-obj-type obj))
                     (minitype-type minitype))
-               (assertion-violation 'check-minitype-obj "type unmatched"
-                                    (list minitype obj))))
-      (assertion-violation 'check-minitype-obj "minitype-obj needed" obj)))
+               (error "type unmatched" (list minitype obj))))
+      (error "minitype-obj needed" obj)))
 (define (minitype-slot obj)
   (check-minitype obj)
   (simple-struct-ref obj 1))
@@ -73,7 +72,7 @@
     (eq? minitype
          (minitype-obj-type obj))))
 
-(define (minitype-typeof obj) ;; FIXME: should allow RnRS types(like lists, vectors, ...)..
+(define (minitype-typeof obj)
   (and
     (minitype-obj? obj)
     (minitype-obj-type obj)))
@@ -109,7 +108,7 @@
     (k obj)))
 
 (define (miniobj-minitype-typeof-error obj)
-  (assertion-violation 'miniobj-typeof "unsupported object" obj))
+  (error "unsupported object" obj))
 
 (define (miniobj-minitype-ref obj slot k)
   (if (minitype-obj? obj)
