@@ -31,7 +31,7 @@ Build
 Most implementation requires `lib-stub` which will contain library import stubs.
 To generate library import stub,
 
- nmosh scripts/build-nmosh.sps
+ nmosh --loadpath=lib-bootstrap:lib-r6rs scripts/build-nmosh.sps
 
 Library rules
 -------------

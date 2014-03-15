@@ -41,6 +41,8 @@ R7RS
 
 ## Gauche
 
+ gosh -r7 -I lib-runtime/r7rs -I lib-stub/gauche -A . PROGRAM.sps
+
 ## picrin
 
 Others
