@@ -60,6 +60,7 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
                  (r7b-util char-ready)
                  (r7b-util u8-ready)
                  (r7b-util port-open)
+                 (r7b-util features)
                  (for (r7b-util syntax-rules) run expand)
                  (for (r7b-util case) run expand)
                  )
@@ -266,9 +267,6 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
   (u8-list->bytevector (apply append (map bytevector->u8-list bvs))))
 (define (vector-append . lis)
   (list->vector (apply append (map vector->list lis))))
-
-(define (features) ;; FIXME: ???
-  '(r7rs ratios exact-complex full-unicode))
 
 (define file-error? i/o-error?)
 (define read-error? lexical-violation?)
