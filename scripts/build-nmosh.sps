@@ -196,6 +196,36 @@
                                                   (strip-rename exports))))
                 (pp body p)))))))
 
+;; GenR6RSCommon: R6RS library generator 
+(define (libgen-r6rs-common-alias from to syms)
+  `(library ,to
+            (export ,@syms)
+            (import ,from)))
+
+(define (libgen-r6rs-common name alias libcode libpath basepath flavor)
+  (define LIBEXT "sls")
+  (define outputpath (calc-libpath basepath name LIBEXT))
+  (define aliaspath (and alias (calc-libpath 
+                                 basepath alias LIBEXT)))
+  (define (may-strip-keywords lis)
+    ;; FIXME: Do we have to do this?
+    lis)
+
+  (match libcode
+         (('library libname 
+           ('export exports ...)
+           ('import imports ...) 
+           body ...)
+          ;; Only for alias library
+          (when alias
+            (call-with-output-file-force
+              aliaspath
+              (lambda (p)
+                (define body (libgen-r7rs-alias name alias 
+                                                (may-strip-keywords
+                                                  (strip-rename exports))))
+                (pp body p)))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
 ;;; Main
@@ -208,6 +238,7 @@
 (define *library-groups* '())
 (define GenRacket '())
 (define GenR7RS '())
+(define GenR6RSCommon '())
 (define libraries '())
 
 (define-syntax read-var
@@ -224,6 +255,7 @@
 (read-var *library-groups*)
 (read-var GenRacket)
 (read-var GenR7RS)
+(read-var GenR6RSCommon)
 
 ;; Collect libraries
 (define (collect-libraries dir)
@@ -303,3 +335,4 @@
 ;; Generate !
 (generate libraries libgen-racket GenRacket)
 (generate libraries libgen-r7rs GenR7RS)
+(generate libraries libgen-r6rs-common GenR6RSCommon)

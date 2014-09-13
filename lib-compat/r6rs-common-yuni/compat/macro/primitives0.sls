@@ -1,4 +1,4 @@
-(library (yuni compat macro primitives0)
+(library (r6rs-common-yuni compat macro primitives0)
          (export syntax-inject)
          (import (for (rnrs) run (meta -1)))
 

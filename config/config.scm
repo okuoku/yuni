@@ -16,13 +16,16 @@
     (gauche-yuni => yuni))
   (compat-racket
     (racket-yuni => yuni)
-    (racket-srfi => srfi)))
+    (racket-srfi => srfi))
+  (r6rs-common
+    (r6rs-common-yuni => yuni)))
 
 (GenRacket
   ;; Racket library generator
   (racket
     yuni
     r7rs-bridge
+    r6rs-common
     compat-racket
     )) 
 
@@ -34,3 +37,8 @@
   (chibi
     compat-chibi
     yuni)) 
+
+(GenR6RSCommon
+  ;; R6RS-common can import (yuni ...) libraries directly
+  (r6rs-common
+    r6rs-common))
