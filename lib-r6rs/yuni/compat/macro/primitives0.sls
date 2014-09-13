@@ -26,6 +26,11 @@
                 (with-syntax ((name (datum->syntax #'out 'total)))
                   #`(let-syntax ((b (lambda (y)
                                       (syntax-case y ()
+                                        ;; Definition
+                                        ((_ obj)
+                                         (datum->syntax #'out 
+                                                        (syntax->datum #'obj)))
+                                        ;; Binding
                                         ((_ binding obj)
                                          ;; Strip syntactic information
                                          (let ((bind (syntax->datum #'binding))
@@ -36,5 +41,4 @@
                                                 ,prog))))))))
                       (begin
                        (k b name param))))))))))))
-         
 )
