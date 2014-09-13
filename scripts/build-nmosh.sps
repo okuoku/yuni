@@ -21,7 +21,10 @@
                   (match m
                          ((grp srcpath (name . alias) code)
                           (when (eq? grp group)
-                            (gen name alias code srcpath dirname dirsym)))))
+                            (gen name alias code srcpath dirname dirsym)))
+                         (else
+                           (display (list "WARNING: ignored " (cadr m)))
+                           (newline))))
         *library-map*))
     (when (not (file-exists? STUBTOP))
       (create-directory STUBTOP))
@@ -35,7 +38,11 @@
   (define (realize sexp)
     (match sexp
            ((('library libname data ...))
-            (cons libname sexp))))
+            (cons libname sexp))
+           (else
+             (assertion-violation #f
+                                  "invalid library format"
+                                  sexp))))
   (cons pth
         (realize (file->sexp-list pth))))
 
@@ -73,7 +80,7 @@
                       (('rename renames ...)
                        (append (map cadr renames) cur))
                       (otherwise
-                        (cons otherwise cur)) ))
+                        (cons otherwise cur))))
              '()
              lis))
 
@@ -130,7 +137,9 @@
                 (define body (libgen-racket-alias name alias (strip-rename
                                                                exports)))
                 (put-string p "#!r6rs\n")
-                (pp body p)))))))
+                (pp body p)))))
+         (else
+           (assertion-violation #f "Invalid library format" libcode)) ))
 
 ;; GenR7RS: R7RS library generator 
 (define (libgen-r7rs-body libname exports imports libpath flavor)
@@ -222,7 +231,8 @@
   (define (library? pth)
     (let ((e (path-extension pth)))
       ;; FIXME: Do we need more?
-      (or (string=? e "sls"))))
+      (and e
+           (or (string=? e "sls")))))
   ;; Recursively collect files on the dir
   (directory-walk dir (lambda (file) 
                         (when (library? file) 
