@@ -28,10 +28,10 @@
          (syntax-rules ()
            ((_ k varname . body)
             (k (lambda (varname) . body)))))
-       (define-syntax name
-         (syntax-inject
-           (sym)
-           ^body))
+       (define-inject-syntax 
+         name
+         (sym)
+         ^body)
        ...))))
 
 (define-^*
