@@ -1,5 +1,5 @@
 (define-module yuni-runtime.gauche.macro-primitives
-               (use gauche)
+               ;(use gauche)
                (export define-inject-syntax))
 
 (select-module yuni-runtime.gauche.macro-primitives)
@@ -12,23 +12,19 @@
                        (error "Invalid object as part of identifier" s))))
              lis))
 
-(define-macro (expand-syms k b syms param)
-  (define sym-value (conv syms))
-  (list k b sym-value param))
-
-(define-syntax define-inject-syntax
-  (syntax-rules ()
-    ((_ nam syms k)
-     (begin
-       (define sym-value (conv 'syms))
-       (define-macro b
-         (case-lambda
-           ((form)
-            form)
-           ((bind prog)
-            `(letrec ((,sym-value ,bind)) ,prog))))
-       (define-syntax nam
-         (syntax-rules ()
-           ((_ param)
-            (expand-syms k b syms param))))))))
+(define-macro (define-inject-syntax name syms k)
+  (let ((sym-value-value (string->symbol (apply string-append (conv syms))))
+        (expand-syms (gensym))
+        (sym-value (gensym))
+        (b (gensym)))
+    `(begin
+       (define ,sym-value ',sym-value-value)
+       (define-macro ,b
+         (lambda x
+           (case (length x)
+             ((1) (car x))
+             ((2) `(letrec ((,,sym-value ,(car x))) ,(cadr x)))
+             (else (error "INVALID K ON DEFINE-INJECT-SYNTAX")))))
+       (define-macro (,name param)
+         (list ,k ,b ,sym-value param)))))
 

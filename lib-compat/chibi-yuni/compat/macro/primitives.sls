@@ -1,6 +1,6 @@
 (library (chibi-yuni compat macro primitives)
          (export define-inject-syntax)
-         (import (chibi) (chibi match) )
+         (import (chibi) (chibi match))
 
 (define-syntax define-inject-syntax
   (syntax-rules ()
