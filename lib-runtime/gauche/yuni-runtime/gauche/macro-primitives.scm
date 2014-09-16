@@ -1,5 +1,4 @@
 (define-module yuni-runtime.gauche.macro-primitives
-               ;(use gauche)
                (export define-inject-syntax))
 
 (select-module yuni-runtime.gauche.macro-primitives)
@@ -8,6 +7,7 @@
         (map (lambda (s)
                (cond ((symbol? s) (symbol->string s))
                      ((string? s) s)
+                     ((identifier? s) (symbol->string (identifier->symbol s)))
                      (else
                        (error "Invalid object as part of identifier" s))))
              lis))
@@ -23,8 +23,8 @@
          (lambda x
            (case (length x)
              ((1) (car x))
-             ((2) `(letrec ((,,sym-value ,(car x))) ,(cadr x)))
+             ((2) `(let ((,,sym-value ,(car x))) ,(cadr x)))
              (else (error "INVALID K ON DEFINE-INJECT-SYNTAX")))))
        (define-macro (,name param)
-         (list ,k ,b ,sym-value param)))))
+         (list ',k ',b ,sym-value param)))))
 
