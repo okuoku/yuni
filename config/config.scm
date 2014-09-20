@@ -19,6 +19,8 @@
   (compat-racket
     (racket-yuni => yuni)
     (racket-srfi => srfi))
+  (compat-picrin
+    (picrin-yuni => yuni))
   (r7rs-common
     (r7rs-common-yuni => yuni))
   (r6rs-common
@@ -42,12 +44,19 @@
   (chibi
     r7rs-common
     compat-chibi
-    yuni)) 
+    yuni)
+  (picrin
+    r7rs-common
+    compat-picrin
+    yuni)
+  ) 
 
 (GenR6RSCommon
-  ;; R6RS-common can import (yuni ...) libraries directly
+  ;; R6RS-common assumes target can import R6RS-light libraries directly
+  ;; Thus, it just renames the libraries
   (r6rs-common
     r6rs-common)
+  ;; Guile can import R6RS-light but no R7RS
   (guile
     compat-guile
     r7rs-bridge
