@@ -146,19 +146,32 @@
   (define calclibpath (if (eq? flavor 'gauche)
                         (lambda (_ x) x)
                         calc-relative))
-  `(define-library ,libname
-             (export ,@exports)
-             (import ,@imports (yuni-runtime r7rs))
-             (include ,(calclibpath libname libpath))))
+  (if (eq? flavor 'picrin)
+    ;; Picrin requires reversed export...
+    `(define-library ,libname
+                     (import ,@imports (yuni-runtime picrin))
+                     (include ,(calclibpath libname libpath))
+                     (export ,@exports))
+    ;; Generic R7RS
+    `(define-library ,libname
+                     (export ,@exports)
+                     (import ,@imports (yuni-runtime r7rs))
+                     (include ,(calclibpath libname libpath)))   ))
 
-(define (libgen-r7rs-alias from to syms)
-  `(define-library ,to
-            (export ,@syms)
-            (import ,from)))
+(define (libgen-r7rs-alias from to syms flavor)
+  (if (eq? flavor 'picrin)
+    ;; Picrin
+    `(define-library ,to
+                     (import ,from)
+                     (export ,@syms)) 
+    ;; Generic R7RS
+    `(define-library ,to
+                     (export ,@syms)
+                     (import ,from))))
 
 (define (libgen-r7rs name alias libcode libpath basepath flavor)
   (define LIBEXT (case flavor 
-                   ((gauche) "scm")
+                   ((gauche picrin) "scm")
                    ((sagittarius) "sls") 
                    (else "sld")))
   (define outputpath (calc-libpath basepath name LIBEXT))
@@ -197,7 +210,8 @@
               (lambda (p)
                 (define body (libgen-r7rs-alias name alias 
                                                 (may-strip-keywords
-                                                  (strip-rename exports))))
+                                                  (strip-rename exports))
+                                                flavor))
                 (pp body p)))))))
 
 ;; GenR6RSCommon: R6RS library generator 
