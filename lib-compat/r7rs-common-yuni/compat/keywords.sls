@@ -1,4 +1,4 @@
-(library (chibi-yuni compat keywords)
+(library (r7rs-common-yuni compat keywords)
          (export define-keywords
                  syntax-rules/keywords)
          (import (yuni scheme)

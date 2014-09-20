@@ -17,6 +17,8 @@
   (compat-racket
     (racket-yuni => yuni)
     (racket-srfi => srfi))
+  (r7rs-common
+    (r7rs-common-yuni => yuni))
   (r6rs-common
     (r6rs-common-yuni => yuni)))
 
@@ -32,9 +34,11 @@
 (GenR7RS
   ;; R7RS library generator
   (gauche
+    r7rs-common
     compat-gauche
     yuni) 
   (chibi
+    r7rs-common
     compat-chibi
     yuni)) 
 

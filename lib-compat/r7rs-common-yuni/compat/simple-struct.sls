@@ -1,4 +1,4 @@
-(library (chibi-yuni compat simple-struct)
+(library (r7rs-common-yuni compat simple-struct)
          (export
            make-simple-struct
            simple-struct-name
