@@ -6,7 +6,7 @@ In Yuni, every library written in:
 * `.sls` extension
 * R6RS style library definition(R6RS-light)
 
-Obviously, we need some adaptation layer to support various Scheme implementatons. This file describes how do Yuni libraries adopts those implementations.
+Obviously, we need some adaptation layer to support various Scheme implementatons. This file describes how Yuni libraries adopt those implementations.
 
 See ../HACKING.markdown for generic library usage and standard commandline to develop the library itself.
 
@@ -55,11 +55,6 @@ R6RS/R7RS Hybrid
 
 Since Yuni uses R7RS-small as Scheme base library, R6RS/R7RS hybrid implementations will be supported as first-class.
 
-Several R6RS implements meta-level for library imports. So we need a proxy library to equalise levels.
-
-* (r6rs-common-yuni compat macro primitives)
- * Low-level macro primitives
-
 ## Nmosh
 
 Yuni uses Nmosh as its own reference implementation.
@@ -68,6 +63,13 @@ Yuni uses Nmosh as its own reference implementation.
 
 R6RS
 ----
+
+Yuni includes R7RS-small library implementation for R6RS (r7b, r7rs-bridge). Following pure-R6RS implementation will be supported through with it.
+
+Several R6RS implements meta-level for library imports. So we need a proxy library to equalise meta-levels.
+
+* (r6rs-common-yuni compat macro primitives)
+ * Low-level macro primitives
 
 ## Racket
 
@@ -84,6 +86,8 @@ Racket requires `#!r6rs` for each R6RS styled library so we have to generate imp
 R7RS
 ----
 
+R7RS uses `define-library` form which is different and extended from R6RS' `library` form. To support R7RS implementations, "import stub" will be generated under `lib-stub` directory.
+
 ## Chibi scheme
 
 * Supported.
@@ -93,6 +97,8 @@ R7RS
 * Broken. Gauche cannot define any macro-defining-macro inside macro. J: http://d.hatena.ne.jp/mjt/20140914/p3
 
 ## picrin
+
+* Not yet. There is no way to specify library path.
 
 ## Foment
 
