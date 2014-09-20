@@ -45,4 +45,8 @@
 (GenR6RSCommon
   ;; R6RS-common can import (yuni ...) libraries directly
   (r6rs-common
-    r6rs-common))
+    r6rs-common)
+  (guile
+    r7rs-bridge
+    r6rs-common)
+  )
