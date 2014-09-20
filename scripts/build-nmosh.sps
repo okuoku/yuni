@@ -221,7 +221,7 @@
             (call-with-output-file-force
               aliaspath
               (lambda (p)
-                (define body (libgen-r7rs-alias name alias 
+                (define body (libgen-r6rs-common-alias name alias 
                                                 (may-strip-keywords
                                                   (strip-rename exports))))
                 (pp body p)))))))
