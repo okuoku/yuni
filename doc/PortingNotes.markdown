@@ -73,14 +73,13 @@ R6RS
 
 Racket requires `#!r6rs` for each R6RS styled library so we have to generate import stub for each libraries. See R7RS section below.
 
-* Supported.
 * SRFI-0 is not implemented at all on (racket-srfi i0)
 
 ## Guile
 
-## IronScheme
+* SRFI-0 is not implemented at all on (guile-srfi i0)
 
-## Vicare
+## IronScheme
 
 R7RS
 ----
