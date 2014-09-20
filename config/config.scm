@@ -14,6 +14,8 @@
     (chibi-yuni => yuni))
   (compat-gauche
     (gauche-yuni => yuni))
+  (compat-guile
+    (guile-srfi => srfi))
   (compat-racket
     (racket-yuni => yuni)
     (racket-srfi => srfi))
@@ -47,6 +49,7 @@
   (r6rs-common
     r6rs-common)
   (guile
+    compat-guile
     r7rs-bridge
     r6rs-common)
   )
