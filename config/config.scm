@@ -1,4 +1,4 @@
-;; Library directories which require import-stubs for R7RSs and Racket
+;; Library directories
 (*library-directories*
   "lib"
   "lib-r6rs"
@@ -16,6 +16,8 @@
     (gauche-yuni => yuni))
   (compat-guile
     (guile-srfi => srfi))
+  (compat-sagittarius
+    (sagittarius-yuni => yuni))
   (compat-racket
     (racket-yuni => yuni)
     (racket-srfi => srfi))
@@ -49,6 +51,11 @@
     r7rs-common
     compat-picrin
     yuni)
+  ;; Sagittarius requires keyword syntax shim.
+  (sagittarius
+    yuni
+    r6rs-common
+    compat-sagittarius)
   ) 
 
 (GenR6RSCommon

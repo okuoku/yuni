@@ -157,7 +157,10 @@
             (import ,from)))
 
 (define (libgen-r7rs name alias libcode libpath basepath flavor)
-  (define LIBEXT (if (eq? flavor 'gauche) "scm" "sld"))
+  (define LIBEXT (case flavor 
+                   ((gauche) "scm")
+                   ((sagittarius) "sls") 
+                   (else "sld")))
   (define outputpath (calc-libpath basepath name LIBEXT))
   (define aliaspath (and alias (calc-libpath 
                                  basepath alias LIBEXT)))
@@ -165,7 +168,8 @@
     (define (keyword-symbol? sym)
       (let ((c (string-ref (symbol->string sym) 0)))
         (char=? #\: c)))
-    (if (eq? flavor 'gauche)
+    (if (or (eq? flavor 'gauche)
+            (eq? flavor 'sagittarius))
       (fold-left (lambda (cur e) 
                    (if (keyword-symbol? e)
                      cur

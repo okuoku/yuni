@@ -21,14 +21,14 @@ Yuni libraries are splitted into several directories.
 * (Part of distribution)
  * `lib` - R6RS-lite. Main library directory.
  * `lib-compat` - R6RS-lite. Implementation specific libraries.
- * `lib-r6rs` - R6RS. R7RS base libraries for R6RS. Renamed as `(scheme \*)`.
+ * `lib-r6rs` - R6RS. R7RS base libraries for R6RS. Renamed as `(scheme *)`.
  * `lib-runtime` - Implementation specific format libraries. 
 * (Built with run/buildstub.sh)
  * `lib-stub` - Implementation specific format. 
 * (Part of yuni library development environment)
  * `lib-bootstrap` - Minimal proxy library to run run/buildstub.sh with nmosh
 
-`run/\*.sh` describes which directories have to be used with each implementations.
+`run/*.sh` describes which directories have to be used with each implementations.
 
 Renaming
 --------

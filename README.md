@@ -28,10 +28,10 @@ YUNI IS NOT FOR PERFORMANCE BENCHMARKING. Making performance optimal library for
 Build
 -----
 
-Most implementation requires `lib-stub` which will contain library import stubs.
+Every implementation requires `lib-stub` which will contain library import stubs.
 To generate library import stub,
 
- nmosh --loadpath=lib-bootstrap:lib-r6rs scripts/build-nmosh.sps
+ run/buildstub.sh
 
 Library rules
 -------------

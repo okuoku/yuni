@@ -92,14 +92,14 @@
   (define slotno (scan-slot minitype-slot))
   (check-minitype minitype)
   (lambda (obj)
-    (check-minitype-obj obj minitype)
+    (check-minitype-obj-type obj minitype)
     (vector-ref (minitype-obj-slot obj) slotno)))
 
 (define (make-minitype-setslot! minitype slot)
   (define slotno (scan-slot minitype-slot))
   (check-minitype minitype)
   (lambda (obj value)
-    (check-minitype-obj obj minitype)
+    (check-minitype-obj-type obj minitype)
     (vector-set! (minitype-obj-slot obj) slotno value)))
 
 (define (miniobj-minitype-typeof obj k)
