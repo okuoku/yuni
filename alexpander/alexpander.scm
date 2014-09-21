@@ -1905,6 +1905,7 @@
       (set-cdr! mstore loc-n)
       outputs)))
 
+#|
 (define repl-mstore (null-mstore))
 
 ;; alexpander-repl: a read-expand-print loop.
@@ -1974,8 +1975,10 @@
 	   ((begin x . y)
 	    ((lambda (ignore) (begin . y)) x))))))
   (expand-program (cons startup (expand-program forms))))
+|#
 
 
+#|
 ;; Rest of file is a junkyard of thoughts.
 
 '
@@ -2221,6 +2224,7 @@
 	   (var) ... (set! ready? #t)))
        (let () . body)))))
 
+|#
 
 ;; Nested unquote-splicing:
 ;;
