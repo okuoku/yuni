@@ -6,4 +6,7 @@
   (syntax-rules ()
     ((_ libname (export ...) (import ...) body ...)
      (begin body ...)))))
-                (export library))
+                (export library
+                        ;; picrin's include seems like a library procedure
+                        include
+                        ))

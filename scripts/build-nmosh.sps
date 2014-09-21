@@ -143,7 +143,8 @@
 
 ;; GenR7RS: R7RS library generator 
 (define (libgen-r7rs-body libname exports imports libpath flavor)
-  (define calclibpath (if (eq? flavor 'gauche)
+  (define calclibpath (if (or (eq? flavor 'gauche)
+                              (eq? flavor 'picrin))
                         (lambda (_ x) x)
                         calc-relative))
   (if (eq? flavor 'picrin)
