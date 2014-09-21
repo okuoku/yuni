@@ -23,6 +23,8 @@
   (compat-racket
     (racket-yuni => yuni)
     (racket-srfi => srfi))
+  (compat-chez
+    (chez-srfi => srfi))
   (compat-picrin
     (picrin-yuni => yuni))
   (r7rs-common
@@ -72,6 +74,10 @@
   ;; Guile can import R6RS-light but no R7RS
   (guile
     compat-guile
+    r7rs-bridge
+    r6rs-common)
+  (chez
+    compat-chez
     r7rs-bridge
     r6rs-common)
   )
