@@ -10,6 +10,8 @@
   (r7rs-bridge
     r7b-util
     (r7b-impl => scheme))
+  (compat-chicken
+    (chicken-yuni => yuni))
   (compat-chibi
     (chibi-yuni => yuni))
   (compat-gauche
@@ -50,6 +52,10 @@
   (picrin
     r7rs-common
     compat-picrin
+    yuni)
+  (chicken
+    r7rs-common
+    compat-chicken
     yuni)
   ;; Sagittarius requires keyword syntax shim.
   (sagittarius

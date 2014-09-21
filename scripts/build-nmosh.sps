@@ -144,6 +144,7 @@
 ;; GenR7RS: R7RS library generator 
 (define (libgen-r7rs-body libname exports imports libpath flavor)
   (define calclibpath (if (or (eq? flavor 'gauche)
+                              (eq? flavor 'chicken)
                               (eq? flavor 'picrin))
                         (lambda (_ x) x)
                         calc-relative))
@@ -172,7 +173,7 @@
 
 (define (libgen-r7rs name alias libcode libpath basepath flavor)
   (define LIBEXT (case flavor 
-                   ((gauche picrin) "scm")
+                   ((gauche picrin chicken) "scm")
                    ((sagittarius) "sls") 
                    (else "sld")))
   (define outputpath (calc-libpath basepath name LIBEXT))
