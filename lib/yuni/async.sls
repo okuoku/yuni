@@ -10,7 +10,8 @@
            seq
            ;; procedure
            apply/async)
-         (import (yuni scheme))
+         (import (yuni scheme)
+                 (yuni base shorten))
          (begin
 ;;
 

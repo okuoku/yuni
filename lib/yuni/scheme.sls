@@ -61,8 +61,6 @@ command-line exit get-environment-variable get-environment-variables
 read
 display write write-simple
 
-;; yuni libraries
-^
            )
          (import
            (scheme base)
@@ -73,6 +71,5 @@ display write write-simple
            (scheme lazy)
            (scheme process-context)
            (scheme read)
-           (scheme write)
-           (yuni base shorten))
+           (scheme write))
 )
