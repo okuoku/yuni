@@ -11,8 +11,7 @@ These are not implemented yet though.
 * Common convenient syntaxes: async, let1, ...
 * Multithreading
 * Portable in-system debugger
-* pFFI: FFI wrapper for dynamic/static bindings
-  * Unified C Interface Description(UCID) as common API description format
+* yuniFFI: FFI wrapper for dynamic/static bindings
 * Provide 3rd-party tests 
 
 ## Non-goals
@@ -29,32 +28,7 @@ Build
 -----
 
 Every implementation requires `lib-stub` which will contain library import stubs.
-To generate library import stub,
+To generate library import stub, install nmosh from http://storage.osdev.info/pub/mosh/mosh-current.tar.gz and run:
 
- run/buildstub.sh
+ `run/buildstub.sh`
 
-Library rules
--------------
-
-## Using base implementation
-
-When you import something(syntax and procedure) from base implementation, it should be located on: 
-
-* (yuni scheme)
-* (yuni compat ...)
-
-Do not import (rnrs) or (scheme base) directly in any other libraries.
-
-## Importing other FOSS Scheme libraries
-
-(TBD. In-a-nutshell, avoid LGPL/GPL/CDDL here. Standard SRFI license is fine in most cases.)
-
-Library configuration
----------------------
-
-TBD
-
-External libraries
-------------------
-
-TBD
