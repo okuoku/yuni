@@ -23,18 +23,6 @@
                     (k (here 'syntax-inject-entry)))
                `(,k ,sym ,orig-k ,nam)))))))
 
-(define (strip sexp)
-  (cond ((pair? sexp)
-         (cons (strip (car sexp))
-               (strip (cdr sexp))))
-        ((vector? sexp)
-         (vector-map strip sexp))
-        #| ;; FIXME: Every identifiers are symbol in Chicken
-        ((identifier? sexp)
-         (identifier->symbol sexp))
-        |#
-        (else sexp)))
-
 (define-syntax syntax-inject-entry
   (syntax-rules ()
     ((_ sym k name)
@@ -43,12 +31,11 @@
          (er-macro-transformer 
            (lambda (y here _2)
              (match y
-                    ((_ obj)
-                     (strip obj))
+                    ((_ obj) obj)
                     ((_ bind prog)
                      `(,(here 'letrec)
                         ((sym ,bind))
-                        ,(strip prog))))))) 
+                        ,prog)))))) 
        (define-syntax name
          (syntax-rules ()
            ((_ param)
