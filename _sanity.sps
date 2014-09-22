@@ -1,6 +1,6 @@
-(import (scheme base) 
-        (scheme write)
-        (yuni async) (yuni core) (yuni base shorten))
+(import (yuni scheme)
+        (yuni async) (yuni core) (yuni base shorten)
+        (yuni base match))
 
 (define test-counter 0)
 (define success-counter 0)
@@ -35,5 +35,6 @@
 
 (check-equal 10 ((^a (+ 1 a)) 9))
 (check-equal 10 ((^ (form) (+ 2 form)) 8))
+(check-equal 10 (match '(1 10 11) ((a b c) b)))
 
 (check-finish)
