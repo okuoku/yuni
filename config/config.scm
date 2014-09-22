@@ -62,9 +62,8 @@
   ;; Sagittarius requires keyword syntax shim.
   (sagittarius
     yuni
-    r6rs-common
-    compat-sagittarius)
-  ) 
+    r7rs-common
+    compat-sagittarius)) 
 
 (GenR6RSCommon
   ;; R6RS-common assumes target can import R6RS-light libraries directly
