@@ -179,19 +179,25 @@
   (define outputpath (calc-libpath basepath name LIBEXT))
   (define aliaspath (and alias (calc-libpath 
                                  basepath alias LIBEXT)))
-  (define (may-strip-keywords lis)
+  (define (may-strip-specials lis)
     (define (keyword-symbol? sym)
       (let ((c (string-ref (symbol->string sym) 0)))
         (char=? #\: c)))
-    (if (or (eq? flavor 'gauche)
-            (eq? flavor 'sagittarius))
-      (fold-left (lambda (cur e) 
-                   (if (keyword-symbol? e)
-                     cur
-                     (cons e cur)))
-                 '()
-                 lis)
-      lis))
+    (define (standard-aux-keyword? sym)
+      (case sym
+        ((_ ... => else unquote unquote-splicing) #t)
+        (else #f)))
+
+    (define (strip-target? e)
+      (case flavor
+        ((gauche sagittarius) (keyword-symbol? e))
+        ((chicken) (standard-aux-keyword? e))
+        (else #f)))
+
+    (fold-left (lambda (cur e) (if (strip-target? e) cur (cons e cur)))
+               '()
+               lis))
+
   (match libcode
          (('library libname 
            ('export exports ...)
@@ -201,7 +207,7 @@
             outputpath
             (lambda (p)
               (define body (libgen-r7rs-body name 
-                                             (may-strip-keywords exports) 
+                                             (may-strip-specials exports) 
                                              imports
                                              libpath
                                              flavor))
@@ -211,7 +217,7 @@
               aliaspath
               (lambda (p)
                 (define body (libgen-r7rs-alias name alias 
-                                                (may-strip-keywords
+                                                (may-strip-specials
                                                   (strip-rename exports))
                                                 flavor))
                 (pp body p)))))))
