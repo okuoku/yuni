@@ -27,6 +27,8 @@
     (chez-srfi => srfi))
   (compat-picrin
     (picrin-yuni => yuni))
+  (compat-ironscheme
+    (ironscheme-srfi => srfi))
   (r7rs-common
     (r7rs-common-yuni => yuni))
   (r6rs-common
@@ -71,6 +73,10 @@
   ;; Thus, it just renames the libraries
   (r6rs-common
     r6rs-common)
+  (ironscheme
+    compat-ironscheme
+    r6rs-common
+    r7rs-bridge)
   ;; Guile can import R6RS-light but no R7RS
   (guile
     compat-guile
