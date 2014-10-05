@@ -1,4 +1,4 @@
-(library (ironscheme-srfi i23)
+(library (ironscheme-r7b i23)
          (export error)
          (import (except (rnrs) error)
                  (rename (rnrs) (error error:r6)))

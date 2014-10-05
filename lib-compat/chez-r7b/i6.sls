@@ -1,4 +1,4 @@
-(library (chez-srfi i6)
+(library (chez-r7b i6)
          (export
            open-input-string
            open-output-string

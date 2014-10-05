@@ -1,3 +1,3 @@
-(library (ironscheme-srfi i39)
+(library (ironscheme-r7b i39)
          (export make-parameter parameterize)
          (import (srfi :39)))

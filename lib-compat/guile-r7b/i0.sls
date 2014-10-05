@@ -1,4 +1,4 @@
-(library (guile-srfi i0)
+(library (guile-r7b i0)
          (export cond-expand)
          (import (rnrs)) 
 ;; FIXME: Implement it!

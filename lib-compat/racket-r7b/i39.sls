@@ -1,3 +1,3 @@
-(library (racket-srfi i39)
+(library (racket-r7b i39)
          (export make-parameter parameterize)
          (import (srfi :39)))

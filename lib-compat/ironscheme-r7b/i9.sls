@@ -1,3 +1,3 @@
-(library (ironscheme-srfi i9)
+(library (ironscheme-r7b i9)
          (export define-record-type)
          (import (srfi :9)))

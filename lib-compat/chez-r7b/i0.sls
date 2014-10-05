@@ -1,4 +1,4 @@
-(library (chez-srfi i0)
+(library (chez-r7b i0)
          (export cond-expand)
          (import (rnrs)) 
 ;; FIXME: Implement it!

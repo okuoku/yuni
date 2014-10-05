@@ -1,4 +1,4 @@
-(library (chez-srfi i9)
+(library (chez-r7b i9)
          (export define-record-type)
          (import (except (rnrs) define-record-type)
                  (rename (rnrs) (define-record-type define-record-type:r6)))

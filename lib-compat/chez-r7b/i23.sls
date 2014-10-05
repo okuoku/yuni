@@ -1,4 +1,4 @@
-(library (chez-srfi i23)
+(library (chez-r7b i23)
          (export error)
          (import (except (rnrs) error)
                  (rename (rnrs) (error error:r6)))

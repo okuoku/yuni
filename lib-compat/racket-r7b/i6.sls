@@ -1,4 +1,4 @@
-(library (racket-srfi i6)
+(library (racket-r7b i6)
          (export
            open-output-string
            open-input-string

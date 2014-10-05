@@ -1,4 +1,4 @@
-(library (chez-srfi i98)
+(library (chez-r7b i98)
          (export get-environment-variable
                  get-environment-variables)
          (import (rename (chezscheme) (getenv get-environment-variable)))

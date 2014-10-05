@@ -1,3 +1,3 @@
-(library (guile-srfi i39)
+(library (guile-r7b i39)
          (export make-parameter parameterize)
          (import (srfi :39)))

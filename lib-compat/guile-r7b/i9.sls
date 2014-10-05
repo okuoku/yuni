@@ -1,3 +1,3 @@
-(library (guile-srfi i9)
+(library (guile-r7b i9)
          (export define-record-type)
          (import (srfi :9)))

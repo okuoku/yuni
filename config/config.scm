@@ -17,18 +17,18 @@
   (compat-gauche
     (gauche-yuni => yuni))
   (compat-guile
-    (guile-srfi => r7b-compat))
+    (guile-r7b => r7b-compat))
   (compat-sagittarius
     (sagittarius-yuni => yuni))
   (compat-racket
     (racket-yuni => yuni)
-    (racket-srfi => r7b-compat))
+    (racket-r7b => r7b-compat))
   (compat-chez
-    (chez-srfi => r7b-compat))
+    (chez-r7b => r7b-compat))
   (compat-picrin
     (picrin-yuni => yuni))
   (compat-ironscheme
-    (ironscheme-srfi => r7b-compat))
+    (ironscheme-r7b => r7b-compat))
   (r7rs-common
     (r7rs-common-yuni => yuni))
   (r6rs-common

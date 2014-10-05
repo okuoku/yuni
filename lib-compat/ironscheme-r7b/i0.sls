@@ -1,4 +1,4 @@
-(library (ironscheme-srfi i0)
+(library (ironscheme-r7b i0)
          (export cond-expand)
          (import (rnrs)) 
 ;; FIXME: Implement it!

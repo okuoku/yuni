@@ -1,4 +1,4 @@
-(library (chez-srfi i19)
+(library (chez-r7b i19)
          (export 
            time-monotonic
            time-tai

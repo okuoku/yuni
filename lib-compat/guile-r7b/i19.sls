@@ -1,4 +1,4 @@
-(library (guile-srfi i19)
+(library (guile-r7b i19)
          (export 
            time-monotonic
            time-tai

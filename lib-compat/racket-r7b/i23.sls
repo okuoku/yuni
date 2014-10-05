@@ -1,3 +1,3 @@
-(library (racket-srfi i23)
+(library (racket-r7b i23)
          (export error)
          (import (only (racket base) error)))

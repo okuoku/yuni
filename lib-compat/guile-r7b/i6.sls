@@ -1,4 +1,4 @@
-(library (guile-srfi i6)
+(library (guile-r7b i6)
          (export
            open-input-string
            open-output-string
