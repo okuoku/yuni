@@ -1,4 +1,9 @@
 (import (yuni scheme)
+        (scheme time)
+        (scheme complex)
+        (scheme inexact)
+        (scheme write)
+        (scheme lazy)
         (yuni async) (yuni core) (yuni base shorten)
         (yuni base match))
 
