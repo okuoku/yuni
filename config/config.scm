@@ -5,32 +5,37 @@
   "lib-compat")
 
 (*library-groups*
+  ;; Yuni
   (yuni yuni yunisrfi)
-  ;; R7RS-bridge: R7RS library for R6RS implementations
-  (r7rs-bridge
-    r7b-util
-    (r7b-impl => scheme))
+  ;; R7RS
   (compat-chicken
-    (chicken-yuni => yuni))
+    (chicken-yuni => yuni)) 
   (compat-chibi
     (chibi-yuni => yuni))
   (compat-gauche
     (gauche-yuni => yuni))
-  (compat-guile
-    (guile-r7b => r7b-compat))
   (compat-sagittarius
     (sagittarius-yuni => yuni))
+  (compat-picrin
+    (picrin-yuni => yuni))
+  (r7rs-common
+    (r7rs-common-yuni => yuni))
+  ;; R6RS
+  ;;; R7RS-bridge: R7RS library for R6RS implementations
+  (r7rs-bridge ;; Some R6RS might not need this tough
+    r7b-util
+    (r7b-impl => scheme))
+  (compat-guile
+    (guile-r7b => r7b-compat))
   (compat-racket
     (racket-yuni => yuni)
     (racket-r7b => r7b-compat))
   (compat-chez
     (chez-r7b => r7b-compat))
-  (compat-picrin
-    (picrin-yuni => yuni))
   (compat-ironscheme
     (ironscheme-r7b => r7b-compat))
-  (r7rs-common
-    (r7rs-common-yuni => yuni))
+  (compat-nmosh
+    (nmosh-r7b => r7b-compat))
   (r6rs-common
     (r6rs-common-yuni => yuni)))
 
@@ -84,6 +89,11 @@
     r6rs-common)
   (chez
     compat-chez
+    r7rs-bridge
+    r6rs-common)
+  ;; Of course, we should do some dog-food
+  (nmosh
+    compat-nmosh
     r7rs-bridge
     r6rs-common)
   )
