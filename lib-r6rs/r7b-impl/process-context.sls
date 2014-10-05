@@ -4,4 +4,4 @@
 command-line emergency-exit exit 
 get-environment-variable get-environment-variables
 )
-         (import (rnrs) (srfi i98) (r7b-util emergency-exit)))
+         (import (rnrs) (r7b-compat i98) (r7b-util emergency-exit)))

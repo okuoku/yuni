@@ -1,7 +1,7 @@
 (library (r7b-util time)
          (export current-jiffy current-second jiffies-per-second)
          (import (rnrs)
-                 (srfi i19))
+                 (r7b-compat i19))
 
 (define scale 1000000000.0)
 
