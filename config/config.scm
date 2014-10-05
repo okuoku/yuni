@@ -5,7 +5,7 @@
   "lib-compat")
 
 (*library-groups*
-  (yuni yuni)
+  (yuni yuni yunisrfi)
   ;; R7RS-bridge: R7RS library for R6RS implementations
   (r7rs-bridge
     r7b-util
@@ -36,6 +36,7 @@
   ;; Racket library generator
   (racket
     yuni
+    yunisrfi
     r7rs-bridge
     r6rs-common
     compat-racket
