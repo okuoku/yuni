@@ -1,9 +1,7 @@
-#!r6rs
-(library (r7b-util bytevector-buffer)
+(library (nmosh-r7b i6bv)
          (export
            get-output-bytevector
-           open-output-bytevector
-           )
+           open-output-bytevector)
          (import (rnrs) 
                  (primitives sys-get-bytevector
                              sys-open-bytevector-output-port))

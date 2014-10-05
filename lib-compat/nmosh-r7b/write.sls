@@ -1,0 +1,7 @@
+(library (nmosh-r7b write)
+         (export display write write-shared write-simple)
+         (import  (rename (rnrs) 
+                          (write write-simple))
+                  (rename (mosh)
+                          (write/ss write)
+                          (write/ss write-shared))))
