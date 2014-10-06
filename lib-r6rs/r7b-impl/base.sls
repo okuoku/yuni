@@ -63,6 +63,7 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
                  (r7b-compat i23)
                  (r7b-compat i9)
                  (r7b-compat i39)
+                 (for (r7b-compat define-values) run expand)
                  )
 
 ;; R7RS-bridge format doesn't allow (begin (import ...) ...)
@@ -124,68 +125,6 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
         (bytevector-u8-set! to (+ at cur) val)
         (itr (+ cur 1)))))
   (itr 0))
-
-
-(define-syntax define-values0
-  (lambda (x)
-    (syntax-case x ()
-      ((_ (val ...) (name ...) (tmp ...) #f body)
-       #'(begin
-           (define name 'UNDEFINED)
-           ...
-           (define bogus
-             (begin
-               (call-with-values (lambda () body)
-                                 (lambda (tmp ...)
-                                   (set! name tmp)
-                                   ...
-                                   ))))
-           (define val name)
-           ...))   
-      ((_ (val ... . tail) (name ...) (tmp ... tmp-tail) name-tail body)
-       #'(begin
-           (define name 'UNDEFINED)
-           ...
-           (define name-tail 'UNDEFINED)
-           (define bogus
-             (begin
-               (call-with-values (lambda () body)
-                                 (lambda (tmp ... . tmp-tail)
-                                   (set! name tmp)
-                                   ...
-                                   (set! name-tail tmp-tail)
-                                   ))))
-           (define val name)
-           ...
-           (define tail name-tail))))))
-
-(define-syntax define-values ;; FIXME: INEFFICIENT!
-  (lambda (x)
-    (syntax-case x ()
-      ((_ () body)
-       #'(define bogus body))
-      ((_ (val ...) body)
-       (with-syntax (((name ...) (generate-temporaries #'(val ...)))
-                     ((tmp ...) (generate-temporaries #'(val ...))))
-         #'(define-values0 (val ...) 
-                           (name ...) 
-                           (tmp ...) 
-                           #f
-                           body)))
-      ((_ (val ... . tail) body)
-       (with-syntax (((name ...) (generate-temporaries #'(val ...)))
-                     ((name-tail) (generate-temporaries #'(tail)))
-                     ((tmp ...) (generate-temporaries #'(val ...)))
-                     ((tmp-tail) (generate-temporaries #'(tail))))
-         #'(define-values0 (val ... . tail) 
-                           (name ...)
-                           (tmp ... tmp-tail)
-                           tmp-tail
-                           body)))
-      ((_ v body)
-       ;; Short cut
-       #'(define v (call-with-values (lambda () body)
-                                     (lambda p p)))))))
 
 (define (exact-integer? i) (and (integer? i) (exact? i)))
 
