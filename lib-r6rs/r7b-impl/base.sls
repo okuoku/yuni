@@ -189,8 +189,6 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
 
 (define (exact-integer? i) (and (integer? i) (exact? i)))
 
-(define (list-copy l) (map (lambda (e) e) l))
-
 (define (list-set! l k obj) 
   (define (itr cur count)
     (if (= count k) 
