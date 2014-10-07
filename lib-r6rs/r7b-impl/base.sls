@@ -37,7 +37,8 @@ vector-append vector-copy vector-copy! vector-fill! vector-for-each
 vector-length vector-map vector-ref vector-set! vector? when
 with-exception-handler write-bytevector write-char write-string write-u8 zero?
    )
-         (import (except (rnrs)
+         (import (rename
+                   (except (rnrs)
                          case
                          syntax-rules
                          error
@@ -45,8 +46,7 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
                          ;; SRFI-1
                          map for-each member assoc
 
-                         vector-map
-                         )
+                         vector-map))
                  (rnrs mutable-pairs)
                  (rnrs mutable-strings)
                  (rnrs r5rs)
@@ -109,23 +109,6 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
 
 (define (open-input-bytevector bv) (open-bytevector-input-port bv))
 
-(define (bytevector-copy-partial bv start end)
-  (let ((ret (make-bytevector (- end start))))
-    (define (itr cur)
-      (unless (= (+ start cur) end)
-        (bytevector-u8-set! ret cur (bytevector-u8-ref bv (+ start cur)))
-        (itr (+ cur 1))))
-    (itr 0)
-    ret))
-
-(define (bytevector-copy-partial! from start end to at)
-  (define (itr cur)
-    (unless (= (+ start cur) end)
-      (let ((val (bytevector-u8-ref from (+ start cur))))
-        (bytevector-u8-set! to (+ at cur) val)
-        (itr (+ cur 1)))))
-  (itr 0))
-
 (define (exact-integer? i) (and (integer? i) (exact? i)))
 
 (define (list-set! l k obj) 
@@ -183,13 +166,6 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
     ((bv port)
      (put-bytevector port bv))
     ((bv) (write-bytevector bv (current-output-port))))) 
-
-(define write-partial-bytevector
-  (case-lambda
-    ((bv start end) (write-partial-bytevector bv start end 
-                                              (current-output-port)))
-    ((bv start end port)
-     (put-bytevector port bv start (- end start)))))
 
 (define (string->vector str) (list->vector (string->list str)))
 (define (vector->string vec) (list->string (vector->list vec)))
