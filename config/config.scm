@@ -18,6 +18,8 @@
     (sagittarius-yuni => yuni))
   (compat-picrin
     (picrin-yuni => yuni))
+  (compat-kawa
+    (kawa-yuni => yuni))
   (r7rs-common
     (r7rs-common-yuni => yuni))
   ;; R6RS
@@ -67,6 +69,10 @@
     r7rs-common
     compat-chicken
     yuni)
+  (kawa
+    yuni
+    r7rs-common
+    compat-kawa)
   ;; Sagittarius requires keyword syntax shim.
   (sagittarius
     yuni
