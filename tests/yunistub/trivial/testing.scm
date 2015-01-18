@@ -70,7 +70,10 @@
                 (members ENUM2_VAL_1
                          ENUM2_VAL_2))
 
-    (flag-group flgs (members FLG_1 FLG_2)))
+    (flag-group flgs (members FLG_1 FLG_2))
+
+    ;; FIXME: No local arrays??
+    )
 
   (layouts
     (aggregate someblob_t
@@ -158,11 +161,12 @@
 
   (exports
     ;; Constant 
-    (int CONST_1) ;; 1234
+    (int CONST_1 macro) ;; 1234
     (int MINUS_CONST_1) ;; -1234
     (float REAL_1) ;; 0.5
     (altint CONST_2) ;; 1234
     (altfloat REAL_2) ;; 0.5
+    (int UNDEFINED macro) ;; undefined
     
     ;; Test vectors
     (int size_of_someblob_t)
