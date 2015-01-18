@@ -162,7 +162,7 @@
 (define (read-prologue! db objs)
   ;; FIXME: Do we still need symbols* ??
   (define out (make-prologue objs))
-  out)
+  (database-prologue-set! db out))
 
 (define (read-stubir0! db ir)
   (match ir

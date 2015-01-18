@@ -9,6 +9,8 @@
     (cpp-define FOR_REFERENCE)
     (cpp-define "MUST_BE_DEFINED")
     (cpp-import-predefine __FILE__)
+    ;; FIXME: Support else-if??
+    ;; FIXME: Support undef??
     (cpp-if "__LINE__"
             (cpp-define "MUST_BE_DEFINED2"))
     (cpp-if "__LINE__"
