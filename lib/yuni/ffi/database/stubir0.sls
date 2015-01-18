@@ -72,9 +72,9 @@
   (define (attr-ret func ret e)
     (match e
            ('forward-0
-            (procedure-add-stub-type! func 'forward-0))
+            (function-add-stub-type! func 'forward-0))
            ('forward-1
-            (procedure-add-stub-type! func 'forward-1))
+            (function-add-stub-type! func 'forward-1))
            (else (attr func ret e))))
 
   (define (arg func e)
@@ -82,15 +82,15 @@
            ((type-spec name . attr*)
             (let ((a (make-argument type-spec name)))
              (for-each (lambda (e) (attr func a e)) attr*)
-             (procedure-add-argument! func a)))))
+             (function-add-argument! func a)))))
   (define (one e)
     (match e
            ((return-type-spec name args* . attr*)
             (let* ((rettype (make-argument return-type-spec name))
-                   (func (make-procedure rettype name)))
+                   (func (make-function rettype name)))
               (for-each (lambda (e) (arg func e)) args*)
               (for-each (lambda (e) (attr-ret func rettype e)) attr*)
-              (functions-add-procedure! functions func)))))
+              (functions-add-entry! functions func)))))
 
   (for-each one objs)
   (database-functions-set! db functions))

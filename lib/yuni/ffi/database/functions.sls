@@ -1,14 +1,14 @@
 (library (yuni ffi database functions)
          (export
            make-functions
-           functions-procedures
-           functions-add-procedure!
+           functions-entries
+           functions-add-entry!
            
-           make-procedure
-           procedure-add-argument!
-           procedure-arguments
-           procedure-stub-types
-           procedure-add-stub-type!
+           make-function
+           function-add-argument!
+           function-arguments
+           function-stub-types
+           function-add-stub-type!
            
            make-argument
            argument-type
@@ -48,32 +48,32 @@
   (make functions
         (procedures* '())))
 
-(define* (functions-procedures (functions))
+(define* (functions-entries (functions))
   (~ functions 'procedures*))
 
-(define* (functions-add-procedure! (functions) (procedure))
-  (define s (functions-procedures functions))
+(define* (functions-add-entry! (functions) (procedure))
+  (define s (functions-entries functions))
   (~ functions 'procedures* := (cons procedure s)))
 
-(define (make-procedure return-type name)
+(define (make-function return-type name)
   (make procedure
         (name name)
         (args* (list return-type))
         (stub-types* '())))
 
-(define* (procedure-add-argument! (procedure) (argslot))
+(define* (function-add-argument! (procedure) (argslot))
   ;; NB: We must keep order. Use APPEND.
-  (define s (procedure-arguments procedure))
+  (define s (function-arguments procedure))
   (~ procedure 'args* := (append s (list argslot))))
 
-(define* (procedure-arguments (procedure))
+(define* (function-arguments (procedure))
   (~ procedure 'args*))
 
-(define* (procedure-stub-types (procedure))
+(define* (function-stub-types (procedure))
   (~ procedure 'stub-types*))
 
-(define* (procedure-add-stub-type! (procedure) sym)
-  (define s (procedure-stub-types procedure))
+(define* (function-add-stub-type! (procedure) sym)
+  (define s (function-stub-types procedure))
   (~ procedure 'stub-types* := (cons sym s)))
 
 
