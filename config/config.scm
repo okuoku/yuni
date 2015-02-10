@@ -37,6 +37,7 @@
   (compat-ironscheme
     (ironscheme-r7b => r7b-compat))
   (compat-nmosh
+    (nmosh-yuni => yuni)
     (nmosh-r7b => r7b-compat))
   (r6rs-common
     (r6rs-common-yuni => yuni)))
