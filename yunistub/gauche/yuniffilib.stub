@@ -9,8 +9,10 @@
 ;; The following entry is a dummy one.
 ;; Replace it for your definitions.
 
-(define-cproc test-yuniffi () ::<const-cstring>
-  (result "yuniffi is working"))
+(define-cproc yuniffi-nccc-call (func in in-offset in-len
+                                      out out-offset out-len) 
+              yuniffi_nccc_call)
+(define-cproc yuniffi-nccc-bootstrap () yuniffi_nccc_bootstrap)
 
 
 ;; Local variables:

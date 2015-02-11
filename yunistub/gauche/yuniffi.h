@@ -11,12 +11,11 @@
 
 SCM_DECL_BEGIN
 
-/*
- * The following entry is a dummy one.
- * Replace it for your declarations.
- */
+extern ScmObj yuniffi_nccc_call(ScmObj func,
+                                ScmObj in, ScmObj in_offset, ScmObj in_len,
+                                ScmObj out, ScmObj out_offset, ScmObj out_len);
 
-extern ScmObj test_yuniffi(void);
+extern ScmObj yuniffi_nccc_bootstrap(void);
 
 /* Epilogue */
 SCM_DECL_END

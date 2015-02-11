@@ -1,19 +1,8 @@
-;;;
-;;; yuniffi
-;;;
-
 (define-module yuniffi
-  (export test-yuniffi ;; dummy
-          )
-  )
+  (export yuniffi-nccc-call
+          yuniffi-nccc-bootstrap))
 (select-module yuniffi)
 
-;; Loads extension
 (dynamic-load "yuniffi")
-
-;;
-;; Put your Scheme definitions here
-;;
-
 
 
