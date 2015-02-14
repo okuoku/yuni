@@ -43,7 +43,7 @@ test_someunion_u_1(union someunion_u* in){
 }
 
 int
-test_someunion_u1a(union someunion_u* in){
+test_someunion_u_1a(union someunion_u* in){
     return 1;
 }
 
@@ -67,7 +67,7 @@ test_somestruct_1f(struct somestruct_s* in){
 }
 
 void*
-test_get_somestruct_1f_test(struct somestruct_s* in){
+test_get_somestruct_1f_test(void){
     return NULL;
 }
 

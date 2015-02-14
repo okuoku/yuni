@@ -40,7 +40,8 @@
 
     ;; Type export tests
     (integer someint_t)
-    (integer someenum_e c-enum)
+    (integer someenum_t)
+    (integer someenum2_e c-enum)
     (blob somestruct_s c-struct)
     (blob someunion_u c-union)
     (blob someblob_t)
@@ -68,7 +69,7 @@
     (enum-group someenum_t
                 (members ENUM_VAL_1
                          ENUM_VAL_2))
-    (enum-group someenum2_e c-enum
+    (enum-group someenum2_e
                 (members ENUM2_VAL_1
                          ENUM2_VAL_2))
 
@@ -151,12 +152,6 @@
     ;(voidptr test_get_backward2_stub ((voidptr ctxtest)) forward-0)
     ;(voidptr test_get_backward2_ctx ((voidptr ctxtest)) forward-0)
     ;(int test_backword2_stub ((voidptr ctx context)) backward-2)
-
-    ;; Test: errno
-    ;; FIXME: Not yet
-    
-    ;; Test: GetLastError
-    ;; FIXME: Not yet
 
     ;; Test: out(1234)
     (int test_outint ((intptr thevalue out)) forward-0))

@@ -3,7 +3,7 @@
 #endif
 
 #ifndef NULL
-#error Where's my stdio.h ??
+#error Where is my stdio.h ??
 #endif
 
 /* Actual testinterface */
@@ -99,6 +99,11 @@ extern int size_of_someblob_t;
 extern int size_of_someunion_u;
 extern int size_of_somestruct_s;
 extern int size_of_someopaque_t;
+
+typedef long someint_t;
+
+#define FLG_1 1
+#define FLG_2 2
 
 #ifdef __cplusplus
 /* { */
