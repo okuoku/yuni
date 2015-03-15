@@ -1,7 +1,7 @@
 (library (r6rs-common-yuni compat keywords0)
          (export define-keywords
                  syntax-rules/keywords)
-         (import (yuni scheme)
+         (import (for (yuni scheme) run (meta -1))
                  (yuni util invalid-form))
 
          

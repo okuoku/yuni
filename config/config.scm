@@ -39,6 +39,8 @@
   (compat-nmosh
     (nmosh-yuni => yuni)
     (nmosh-r7b => r7b-compat))
+  (compat-larceny
+    (larceny-yuni => yuni))
   (r6rs-common
     (r6rs-common-yuni => yuni)))
 
@@ -84,6 +86,10 @@
   ;; R6RS-common assumes target can import R6RS-light libraries directly
   ;; Thus, it just renames the libraries
   (r6rs-common
+    r6rs-common)
+  ;; Larceny has R7RS libraries
+  (larceny
+    compat-larceny
     r6rs-common)
   (ironscheme
     compat-ironscheme
