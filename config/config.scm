@@ -28,6 +28,7 @@
     r7b-util
     (r7b-impl => scheme))
   (compat-guile
+    (guile-yuni => yuni)
     (guile-r7b => r7b-compat))
   (compat-racket
     (racket-yuni => yuni)
