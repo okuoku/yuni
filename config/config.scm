@@ -42,6 +42,9 @@
     (nmosh-r7b => r7b-compat))
   (compat-larceny
     (larceny-yuni => yuni))
+  (compat-vicare
+    (vicare-r7b => r7b-compat)
+    (vicare-yuni => yuni))
   (r6rs-common
     (r6rs-common-yuni => yuni)))
 
@@ -103,6 +106,10 @@
     r6rs-common)
   (chez
     compat-chez
+    r7rs-bridge
+    r6rs-common)
+  (vicare
+    compat-vicare
     r7rs-bridge
     r6rs-common)
   ;; Of course, we should do some dog-food
