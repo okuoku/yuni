@@ -7,9 +7,8 @@
                  make-minitype
                  make-minitype-obj
                  minitype-predicate
-                 minitype-typeof
-                 make-minitype-refslot
-                 make-minitype-setslot!)
+                 minitype-typeof)
+
          (import (yuni scheme)
                  (yuni compat simple-struct))
 
@@ -87,20 +86,6 @@
       #f))
   (let ((slots (minitype-slot minitype)))
     (number 0 slots)))
-
-(define (make-minitype-refslot minitype slot)
-  (define slotno (scan-slot minitype-slot))
-  (check-minitype minitype)
-  (lambda (obj)
-    (check-minitype-obj-type obj minitype)
-    (vector-ref (minitype-obj-slot obj) slotno)))
-
-(define (make-minitype-setslot! minitype slot)
-  (define slotno (scan-slot minitype-slot))
-  (check-minitype minitype)
-  (lambda (obj value)
-    (check-minitype-obj-type obj minitype)
-    (vector-set! (minitype-obj-slot obj) slotno value)))
 
 (define (miniobj-minitype-typeof obj k)
   (if (minitype-obj? obj)
