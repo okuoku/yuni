@@ -8,15 +8,14 @@
 (define (yuniffi-nccc-call func
                            in in-offset in-size
                            out out-offset out-size)
-  (display "FIXME: Sagittarius do not support bytevector offset protocol!\n")
-  (func in in-size out out-size)
-  )
+  (func (address in  (* 8  in-offset)) in-size 
+        (address out (* 8 out-offset)) out-size))
 
 (define (yuniffi-module-load path)
   (open-shared-library path))
          
 (define (yuniffi-module-lookup handle str)
-  (define sym (string->symbol str))
-  (c-function handle void sym (void* int void* int)))
-         
+  (define ptr (lookup-shared-library handle str))
+  (pointer->c-function ptr 'void str '(void* int void* int)))
+
 )
