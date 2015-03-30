@@ -4,6 +4,7 @@
         (scheme inexact)
         (scheme write)
         (scheme lazy)
+        (yuni testing testeval)
         (yuni async) (yuni core) (yuni base shorten)
         (yuni base match))
 
@@ -41,5 +42,12 @@
 (check-equal 10 ((^a (+ 1 a)) 9))
 (check-equal 10 ((^ (form) (+ 2 form)) 8))
 (check-equal 10 (match '(1 10 11) ((a b c) b)))
+
+(let-values (((ex f?) (testeval 111 '((yuni scheme) (scheme time)))))
+            (check-equal ex 111)
+            (check-equal #t (not (failure? f?))))
+
+(let-values (((ex f?) (testeval 222 '((NEVERLAND)))))
+            (check-equal #t (failure? f?)))
 
 (check-finish)

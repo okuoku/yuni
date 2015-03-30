@@ -5,13 +5,11 @@
                  environment
                  eval
                  null-environment scheme-report-environment)
-         (import (rnrs))
+         (import (rnrs) (rnrs eval))
 
-(define interaction-environment 0)
-(define load 0)
-(define environment 0)
-(define eval 0)
-(define null-environment 0)
-(define scheme-report-environment 0)
+(define interaction-environment "FIXME yuni: interaction environment UNIMPLEMENTED")
+(define load "FIXME yuni: load UNIMPLEMENTED")
+(define null-environment "FIXME yuni: null-environment UNIMPLEMENTED")
+(define scheme-report-environment "FIXME yuni: scheme-report-environment UNIMPLEMENTED")
 
 )
