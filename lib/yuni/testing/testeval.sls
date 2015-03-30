@@ -21,6 +21,12 @@
    (get-output-string p)))
 
 (define (testeval form lib*) ;; => result failure?
+  (define (libname lib)
+    (if (pair? lib)
+      (case (car lib)
+        ((rename except only)
+         (libname (cadr lib)))
+        (else lib))))
   (define (assert-for-library lib) ;; => failure? / #f
     (guard (c (#t 
                ;; FIXME: Generate library error object here.
@@ -30,7 +36,7 @@
              #f)))
   (define (assert-for-libraries libs*) ;; => failure? / #f for success
     (and (pair? libs*)
-         (or (assert-for-library (car libs*))
+         (or (assert-for-library (libname (car libs*)))
              (assert-for-libraries (cdr libs*)))))
   ;; First, query for every libraries
   (let ((libresult (assert-for-libraries lib*)))

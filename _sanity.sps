@@ -47,6 +47,18 @@
             (check-equal ex 111)
             (check-equal #t (not (failure? f?))))
 
+(let-values (((ex f?) (testeval 111 '((only (yuni scheme) define)))))
+            (check-equal ex 111)
+            (check-equal #t (not (failure? f?))))
+
+(let-values (((ex f?) (testeval 111 '((except (yuni scheme) define)))))
+            (check-equal ex 111)
+            (check-equal #t (not (failure? f?))))
+
+(let-values (((ex f?) (testeval 'cons2 '((rename (yuni scheme) (cons cons2))))))
+            (check-equal #t (procedure? ex))
+            (check-equal #t (not (failure? f?))))
+
 (let-values (((ex f?) (testeval 222 '((NEVERLAND)))))
             (check-equal #t (failure? f?)))
 
