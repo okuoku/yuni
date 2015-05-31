@@ -98,6 +98,11 @@
 (define (read-layouts! db objs)
   (define layouts (make-layouts))
   (define (agr aggregate e)
+    ;; FIXME: aggregate may be a procedure... wrong API.
+    (define (finish x)
+      (cond
+        ((procedure? aggregate) (aggregate x))
+        (else (aggregate-add-entry! aggregate x))))
     (define (one entry e)
       (match e
              ('array
@@ -106,9 +111,15 @@
                (let ((c (gen-constraint-entry e)))
                 (aggregate-entry-add-constraint! entry c)))) )
     (match e
+           (('aggregate name . sub*)
+            (let* ((lis '())
+                   (proc (lambda (ent) (set! lis (cons ent lis)))))
+              (for-each (lambda (e) (agr proc e)) sub*)
+              (finish (make-aggregate-entry/subaggregate name lis))))
            ((type name . attr*)
             (let ((ent (make-aggregate-entry type name)))
-             (for-each (lambda (e) (one ent e)) attr*)))))
+             (for-each (lambda (e) (one ent e)) attr*)
+             (finish ent)))))
   (define (one e)
     (match e
            (('aggregate name . entries*)
