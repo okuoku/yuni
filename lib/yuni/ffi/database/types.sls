@@ -129,8 +129,8 @@
     (integer char)
     (unsigned-integer unsigned-char)
 
-    (float float)
-    (float double)
+    (real float)
+    (real double)
 
     (void void)))
 

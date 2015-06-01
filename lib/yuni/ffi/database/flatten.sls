@@ -40,6 +40,23 @@
 ;;             if ::= (ifdef "C MACRO symbol")
 ;;
 
+(define (basetype->ctype? sym)
+  (case sym
+    ((integer) 'signed)
+    ((unsigned-integer) 'unsigned)
+    ((real) 'real)
+    ((blob) 'blob)
+    ((pointer) 'pointer)
+    ((array-pointer) 'pointer)
+    ((enum-group) 'unsigned)
+    ((flag-group) 'unsigned)
+    ((void) 'signed) ;; FIXME: Huh?
+    (else #f)))
+
+(define (basetype->ctype sym)
+  (or (basetype->ctype? sym)
+      (error "Invalid basetype" sym)))
+
 (define (database->flatten/constants db)
   (define (maybe-null p m) (or (and (not (null? m)) (p m) '())))
   (define libinfo (database-libinfo db))
@@ -49,12 +66,25 @@
   (define exports (maybe-null exports-entries (database-exports db)))
 
   ;;; Type resolver
+  (define type-ht (make-eq-hashtable))
   (define (cache-types!)
+    (define types-stdc (append (types-entries (gen-types-stdc))
+                               (types-entries (gen-types-stdint))))
+    (define (add-cache! sym basetype)
+      (hashtable-set! type-ht sym (basetype->ctype basetype)))
     ;; Scan for types and cache type => c-type map
-    'do-nothing)
+    ;; Import c standard type sets
+    (for-each (lambda (e) (add-cache! (type-name e) (type-basetype e)))
+              types-stdc)
+    ;; FIXME: Allow different type sets here?
+    ;; Import defined types
+    (for-each (lambda (e) (add-cache! (type-name e) (type-basetype e)))
+              types))
+
   (define (resolve-type sym)
     ;; Resolve type to c-type(signed / unsigned / real / blob)
-    sym)
+    (or (hashtable-ref type-ht sym #f)
+        (error "No matching type found" sym)))
 
   ;;; Flatten DB templates
   ;;;; aggregates
