@@ -58,7 +58,7 @@
       (error "Invalid basetype" sym)))
 
 (define (database->flatten/constants db)
-  (define (maybe-null p m) (or (and (not (null? m)) (p m) '())))
+  (define (maybe-null p m) (or (and (not (null? m)) (p m)) '()))
   (define libinfo (database-libinfo db))
   (define types (types-entries (database-types db)))
   (define layouts (database-layouts db))

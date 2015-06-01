@@ -41,7 +41,7 @@
 
 (define (read-exports! db objs)
   (define exports (make-exports))
-  (define (attr export e)
+  (define (do-attr export e)
     (match e
            ('macro
             (export-macro?-set! export #t))))
@@ -50,8 +50,9 @@
     (match e
            ((type name . attr)
             (let ((export (make-export type name)))
-             (for-each (lambda (e) (attr export e)) attr)
+             (for-each (lambda (e) (do-attr export e)) attr)
              (exports-add-entry! exports export)))))
+  (for-each one objs)
   (database-exports-set! db exports))
 
 (define (read-functions! db objs)

@@ -83,6 +83,33 @@
     (or (hashtable-ref cclass-ht str #f)
         (error "Unknown parent for cclass" str)))
 
+  (define (proc-ifdef thunk e)
+    (define (do-attr attr)
+      (cond
+        ((pair? attr)
+         (let ((cur (car attr))
+               (next (lambda () (do-attr (cdr attr)))))
+
+           (match cur
+                  (('ifdef macro)
+                   (p "#ifdef " macro)
+                   (next)
+                   (p "#endif /* " macro " */"))
+                  (else
+                    ;; Do nothing special
+                    (next)))))
+        (else (thunk))))
+    (match e
+           (('constant label ctype value sizeof . attr)
+            (do-attr attr)
+            )
+           (('layout label ctype cclass sizeof . attr)
+            (do-attr attr)
+            )
+           (('aggregate-entry label ctype parent cref 
+             sizeof offset . attr)
+            (do-attr attr))))
+
   (define (entry-macro e)
     ;; Emit EXPORT_xxx(k) macro. Attributes are ignored on here.
     (match e
@@ -121,12 +148,15 @@
         (let ((a (car cur))
               (d (cdr cur)))
           (let ((label (cadr a)))
-           (p "    "
-              "YUNIFFI_EXPORTFUNC_ENTRY("
-              idx
-              ","
-              (export-macro-name label)
-              ")"))
+            (proc-ifdef
+              (lambda ()
+                (p "    "
+                   "YUNIFFI_EXPORTFUNC_ENTRY("
+                   idx
+                   ","
+                   (export-macro-name label)
+                   ")"))
+              a))
           (itr (+ 1 idx) d))))
     (itr 1 entry))
   (match flat
