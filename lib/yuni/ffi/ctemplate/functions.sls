@@ -118,7 +118,7 @@
     (define (functypedef funcname ret args)
       (define (rettype)
         (match ret
-               ((ctype false cterm . bogus)
+               (((ctype false cterm . bogus))
                 cterm)
                (else "void")))
       (define (genargs)
@@ -192,8 +192,17 @@
                     (else
                       (put-in!))))))
 
-        (for-each proc args)
+        (for-each proc (if call-in0? 
+                         ;; Drop in0
+                         (cdr args) 
+                         ;; Use whole argument
+                         args))
         (reverse ret))
+      (define (callcast)
+        (match ret
+               (((ctype name cterm . bogus))
+                cterm
+                )))
 
       (define-values (in* out*)
                      (split-args ret args))
@@ -210,7 +219,8 @@
         (void-call?
           (apply pt callname "(" `(,@(callargs) ");") ))
         (else
-          (apply pt "out0 = " callname "(" `(,@(callargs) ");") )))
+          (apply pt "out0 = "
+                 "(" (callcast) ")"callname "(" `(,@(callargs) ");") )))
       (p)
       ;; Construct output part
       (pt "/* output */")
