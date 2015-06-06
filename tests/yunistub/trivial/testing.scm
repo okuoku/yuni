@@ -101,7 +101,7 @@
     ;; Test: constcharptr
     (("const char*") test_constcharptr () (=> voidptr) forward-0)
     (int test_constcharptr_check ((int in)) forward-0)
-    (("const" voidptr) test_constvoidptr () forward-0)
+    (("const void*") test_constvoidptr () (=> voidptr) forward-0)
     (int test_constvoidptr_check ((voidptr in)) forward-0)
 
     ;; Test: intvec
@@ -114,10 +114,11 @@
     (int test_someblob_t_2 ((someblobvec in)) forward-0)
     ;; Test: someunion_u (1234)
     (int test_someunion_u_1 ((someunionptr in)) forward-0)
-    (int test_someunion_u_1a ((("union" "someunion_u*") in (=> someunion)))
+    (int test_someunion_u_1a ((("union" "someunion_u*") in (=> someunionptr)))
          forward-0)
     ;; Test: someunion_u write (1234)
-    (int test_someunion_u_2 ((someunionptr out)) forward-0)
+    ;; FIXME: We don't support struct-out param for now
+    ;; (int test_someunion_u_2 ((someunionptr out)) forward-0)
 
     ;; Test: somestruct_s
     ;;         fnum: 0.5

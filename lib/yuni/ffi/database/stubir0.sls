@@ -59,6 +59,7 @@
   (define functions (make-functions))
 
   (define (attr func arg e)
+    ;; FIXME: May receive arg == #f for return-type
     (match e
            ('in
             (argument-input?-set! arg #t))
@@ -76,6 +77,10 @@
             (function-add-stub-type! func 'forward-0))
            ('forward-1
             (function-add-stub-type! func 'forward-1))
+           ('backward-1
+            (function-add-stub-type! func 'backward-1))
+           ('backward-2
+            (function-add-stub-type! func 'backward-2))
            (else (attr func ret e))))
 
   (define (arg func e)
@@ -87,7 +92,10 @@
   (define (one e)
     (match e
            ((return-type-spec name args* . attr*)
-            (let* ((rettype (make-argument return-type-spec name))
+            (let* ((rettype 
+                     (if (eq? 'void return-type-spec)
+                       #f
+                       (make-argument return-type-spec #f)))
                    (func (make-function rettype name)))
               (for-each (lambda (e) (arg func e)) args*)
               (for-each (lambda (e) (attr-ret func rettype e)) attr*)

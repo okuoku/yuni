@@ -1,5 +1,6 @@
 (library (yuni ffi database flatten)
          (export
+           database->flatten/functions
            database->flatten/constants
            ;; database-merge-flatten/constants
            )
@@ -12,12 +13,14 @@
                  (yuni ffi database types)
                  (yuni ffi database layouts)
                  (yuni ffi database exports)
+                 (yuni ffi database functions)
                  
                  ;; FIXME: R6RS libs
                  (only (rnrs) 
                        ;; SRFI-1
                        filter
                        ;; Hashtable
+                       hashtable-keys
                        make-eq-hashtable
                        hashtable-set!
                        hashtable-ref))
@@ -25,6 +28,19 @@
 ;; 
 ;; Flatten: convert database into s-exp(lists)
 ;;
+;; Functions DB::
+;;    ("db name" (<entry> ...))
+;;    
+;;  entry ::=
+;;      ("label" (<arg-c-return> ...) (<arg> ...) . attr)
+;;
+;;    arg ::=
+;;      (<type> "label" "c type string" . attr)
+;;      ### label may be non-string;
+;;      ###  #f = return-value
+;;      ###  symbol = special-use (forward-1 funcptr)
+;;
+;;    type ::= signed | unsigned | real | blob | pointer
 ;;
 ;; Constants DB::
 ;;    ("db name" (<entry> ...))
@@ -40,32 +56,8 @@
 ;;             if ::= (ifdef "C MACRO symbol")
 ;;
 
-(define (basetype->ctype? sym)
-  (case sym
-    ((integer) 'signed)
-    ((unsigned-integer) 'unsigned)
-    ((real) 'real)
-    ((blob) 'blob)
-    ((pointer) 'pointer)
-    ((array-pointer) 'pointer)
-    ((enum-group) 'unsigned)
-    ((flag-group) 'unsigned)
-    ((void) 'signed) ;; FIXME: Huh?
-    (else #f)))
-
-(define (basetype->ctype sym)
-  (or (basetype->ctype? sym)
-      (error "Invalid basetype" sym)))
-
-(define (database->flatten/constants db)
-  (define (maybe-null p m) (or (and (not (null? m)) (p m)) '()))
-  (define libinfo (database-libinfo db))
-  (define types (types-entries (database-types db)))
-  (define layouts (database-layouts db))
-  (define aggregates (layouts-aggregates layouts))
-  (define exports (maybe-null exports-entries (database-exports db)))
-
-  ;;; Type resolver
+;;; Type resolver
+(define (make-resolve-type types)
   (define type-ht (make-eq-hashtable))
   (define (cache-types!)
     (define types-stdc (append (types-entries (gen-types-stdc))
@@ -85,6 +77,136 @@
     ;; Resolve type to c-type(signed / unsigned / real / blob)
     (or (hashtable-ref type-ht sym #f)
         (error "No matching type found" sym)))
+  (cache-types!)
+  resolve-type)
+
+(define (make-resolve-cterms types)
+  (define type-ht (make-eq-hashtable))
+  (define (cache! sym x)
+    (hashtable-set! type-ht sym x))
+
+  (define (type-cterm type) ;; Return type itself if we cannot resolve cterm
+    (or (type-c-name type)
+        ;; Use typename itself if it was not a pointer-base and c-whatever
+        (and (not (type-pointer-base type))
+             ;; We allow c-enum later though
+             (not (type-c-enum? type))
+             (not (type-c-struct? type))
+             (not (type-c-union? type))
+             ;; Use the name of the type then
+             (symbol->string (type-name type)))
+        (and (type-c-enum? type)
+             (string-append "enum " (symbol->string (type-name type))))
+        (and (type-c-union? type)
+             (string-append "union " (symbol->string (type-name type))))
+        (and (type-c-struct? type)
+             (string-append "struct " (symbol->string (type-name type))))
+
+        ;; Fallback. Use type itself
+        type))
+
+  (define (resolve-pointer-base!)
+    (define (notyet) (filter (lambda (e) (not (string? 
+                                                (hashtable-ref type-ht e)))) 
+                             (vector->list (hashtable-keys type-ht))))
+    (define (proc name)
+      (let ((t (hashtable-ref type-ht name #f)))
+       (let* ((base (type-pointer-base t))
+              (x (hashtable-ref type-ht base #f)))
+         (when (string? x)
+           (cache! name (string-append x "*"))))))
+    (let* ((cur (notyet))
+           (curlen (length cur)))
+      (unless (null? cur)
+        (for-each proc cur)
+        (let* ((nex (notyet))
+               (nexlen (length nex)))
+          (when (= curlen nexlen)
+            (error "We cannot resolve cterms for" nex))
+          (resolve-pointer-base!)))))
+  (define (cache-types!)
+    (define types-stdc (append (types-entries (gen-types-stdc))
+                               (types-entries (gen-types-stdint))))
+    ;; Scan for types and cache type => c-type map
+    ;; Import c standard type sets
+    (for-each (lambda (e) (cache! (type-name e) (type-cterm e)))
+              types-stdc)
+    ;; FIXME: Allow different type sets here?
+    ;; Import defined types
+    (for-each (lambda (e) (cache! (type-name e) (type-cterm e)))
+              types))
+
+  (define (resolve-cterms sym)
+    ;; Resolve type to c-terms (string)
+    (or (hashtable-ref type-ht sym #f)
+        (error "No matching cterms found" sym)))
+  (cache-types!)
+  (resolve-pointer-base!)
+  resolve-cterms)
+
+
+(define (basetype->ctype? sym)
+  (case sym
+    ((integer) 'signed)
+    ((unsigned-integer) 'unsigned)
+    ((real) 'real)
+    ((blob) 'blob)
+    ((pointer) 'pointer)
+    ((array-pointer) 'pointer)
+    ((enum-group) 'unsigned)
+    ((flag-group) 'unsigned)
+    ((void) 'void)
+    (else #f)))
+
+(define (basetype->ctype sym)
+  (or (basetype->ctype? sym)
+      (error "Invalid basetype" sym)))
+
+(define (database->flatten/functions db)
+  (define (maybe-null p m) (or (and (not (null? m)) (p m)) '()))
+  (define libinfo (database-libinfo db))
+  (define types (types-entries (database-types db)))
+  (define functions (maybe-null functions-entries (database-functions db)))
+  (define resolve-type (make-resolve-type types))
+  (define resolve-cterms (make-resolve-cterms types))
+
+  ;;; Flatten DB template
+  ;;;; Function
+  (define (gen-func f)
+    (define ret (function-return-argument f))
+    (define arguments (function-arguments f))
+    (define name (symbol->string (function-name f)))
+    (define stub-types (function-stub-types f))
+    (define (argone arg)
+      (define argtype (argument-type arg))
+      (define argtypesym (or argtype
+                             (argument-c-type arg)))
+      (define argnamesym (argument-name arg))
+      (define argname (and argnamesym (symbol->string argnamesym)))
+      `(,(resolve-type argtypesym)
+         ,argname
+         ,(resolve-cterms argtypesym)
+         ,@(cond
+             ((argument-input? arg) '(in))
+             ((argument-output? arg) '(out))
+             (else '()))))
+    `(,name ,(if ret (list (argone ret)) '())
+            ,(map argone arguments)
+            ,@stub-types))
+
+  (let ((myname (symbol->string (libinfo-c-name libinfo)))
+        (func* (map gen-func functions)))
+    (list myname func*)))
+
+
+(define (database->flatten/constants db)
+  (define (maybe-null p m) (or (and (not (null? m)) (p m)) '()))
+  (define libinfo (database-libinfo db))
+  (define types (types-entries (database-types db)))
+  (define layouts (database-layouts db))
+  (define aggregates (layouts-aggregates layouts))
+  (define exports (maybe-null exports-entries (database-exports db)))
+  (define resolve-type (make-resolve-type types))
 
   ;;; Flatten DB templates
   ;;;; aggregates
@@ -164,8 +286,6 @@
     (append (gen-constants/exports)
             (gen-constants/enums)))
 
-  ;; Create type cache
-  (cache-types!)
   ;; Construct return value
   (let ((myname (symbol->string (libinfo-c-name libinfo)))
         (constants (gen-constants))

@@ -5,12 +5,15 @@
            functions-add-entry!
            
            make-function
+           function-name
+           function-return-argument
            function-add-argument!
            function-arguments
            function-stub-types
            function-add-stub-type!
            
            make-argument
+           argument-name
            argument-type
            argument-c-type
            argument-type-set!
@@ -31,6 +34,7 @@
 
 (define* procedure
   (name
+    retarg
     args* ;; (argslot ...)
     stub-types*
     ))
@@ -58,7 +62,8 @@
 (define (make-function return-type name)
   (make procedure
         (name name)
-        (args* (list return-type))
+        (retarg return-type)
+        (args* '())
         (stub-types* '())))
 
 (define* (function-add-argument! (procedure) (argslot))
@@ -76,6 +81,11 @@
   (define s (function-stub-types procedure))
   (~ procedure 'stub-types* := (cons sym s)))
 
+(define* (function-name (procedure))
+  (~ procedure 'name))
+
+(define* (function-return-argument (procedure))
+  (~ procedure 'retarg))
 
 (define (make-argument c-type name)
   (make argslot
@@ -85,6 +95,9 @@
         (c-type c-type)
         (type #f)
         (constraints* '())))
+
+(define* (argument-name (argslot))
+  (~ argslot 'name))
 
 (define* (argument-type-set! (argslot) sym)
   (~ argslot 'type := sym))
