@@ -52,6 +52,8 @@
       (let ((f (car rest))
             (next (cdr rest)))
         (match f
+               ((funcname ret args)
+                (itr (cons (list funcname ret args 'forward-0) cur) next))
                ((funcname ret args stubtype)
                 (itr (cons f cur) next))
                ((funcname ret args stubtype . nexttype)
