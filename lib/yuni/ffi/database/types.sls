@@ -121,13 +121,13 @@
 
 (define stdclib*
   '((integer int)
-    (unsigned-integer unsigned-int)
+    (unsigned-integer unsigned-int "unsigned int")
     (integer long)
-    (unsigned-integer unsigned-long)
+    (unsigned-integer unsigned-long "unsigned long")
     (integer short)
-    (unsigned-integer unsigned-short)
+    (unsigned-integer unsigned-short "unsigned short")
     (integer char)
-    (unsigned-integer unsigned-char)
+    (unsigned-integer unsigned-char "unsigned char")
 
     (real float)
     (real double)
@@ -144,6 +144,8 @@
     (integer int64_t)
     (unsigned-integer uint64_t)
     ;; FIXME: intmax_t ... here.
+    (unsigned-integer size_t)
+    (integer ssize_t)
     ))
 
 (define (gen-stdlib lis)
@@ -154,6 +156,12 @@
             (let ((e (make-type type name)))
              (type-imported?-set! e #t)
              (type-internal?-set! e #t)
+             (types-add-entry! out e)))
+           ((type name cname)
+            (let ((e (make-type type name)))
+             (type-imported?-set! e #t)
+             (type-internal?-set! e #t)
+             (type-c-name-set! e cname)
              (types-add-entry! out e)))))
   (for-each one lis)
   out)
