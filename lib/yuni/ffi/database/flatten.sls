@@ -153,7 +153,7 @@
     ((blob) 'blob)
     ((pointer) 'pointer)
     ((array-pointer) 'pointer)
-    ((enum-group) 'unsigned)
+    ((enum-group) 'signed)
     ((flag-group) 'unsigned)
     ((void) 'void)
     (else #f)))
@@ -239,9 +239,15 @@
     out)
 
   ;;;; layouts
+  (define (type-group? t)
+    (let ((b (type-basetype t)))
+     (case b
+       ((enum-group flag-group) #t)
+       (else #f))))
   (define (gen-layouts)
     (define external-types
-      (filter (lambda (t) (not (type-internal? t)))
+      (filter (lambda (t) (not (or (type-internal? t)
+                                   (type-group? t))))
               types))
     (define (gen-entry type)
       (define (gen-instance-type)
@@ -264,12 +270,9 @@
         `(constant ,name ,(resolve-type type) #f #f
                    ,@(if macro? `((ifdef ,name)) '()))))
     (map gen exports))
-  (define (gen-constants/enums)
-    (define enum-groups 
-      (filter (lambda (e) 
-                (eq? 'enum-group 
-                     (type-basetype e)))
-              types))
+  (define (gen-constants/enum+flags)
+    (define groups 
+      (filter type-group?  types))
     (apply 
       append 
       (map (lambda (e)
@@ -279,12 +282,12 @@
                                unsigned
                                #f #f)) 
                   (type-members e))) 
-           enum-groups)))
+           groups)))
 
 
   (define (gen-constants)
     (append (gen-constants/exports)
-            (gen-constants/enums)))
+            (gen-constants/enum+flags)))
 
   ;; Construct return value
   (let ((myname (symbol->string (libinfo-c-name libinfo)))
