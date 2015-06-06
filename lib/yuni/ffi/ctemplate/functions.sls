@@ -163,7 +163,7 @@
       (define (output idx e)
         (match e
                ((ctype name cterm . bogus)
-                (pt (yuniword-ref-macro-name ctype)
+                (pt (yuniword-set-macro-name ctype)
                     "(out," idx ",out" idx ");" ))))
       (define (callargs)
         (define in-idx (if call-in0? 1 0))
