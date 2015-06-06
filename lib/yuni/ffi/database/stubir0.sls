@@ -179,6 +179,24 @@
   (for-each one objs)
   (database-types-set! db types))
 
+(define (read-config! db objs)
+  (define stub-c #f)
+  (define stub-cxx #f)
+  (define (stub e)
+    (match e
+           ((lang filename)
+            (case lang
+              ((c) (set! stub-c filename))
+              ((cxx) (set! stub-cxx filename))
+              (else
+                (error "unknown language in config" e))))))
+  (define (one e)
+    (match e
+           (('stubs lang ...)
+            (for-each stub lang))))
+  (for-each one objs)
+  (database-config-set! db (make-config stub-c stub-cxx)))
+
 (define (read-prologue! db objs)
   ;; FIXME: Do we still need symbols* ??
   (define out (make-prologue objs))
@@ -190,7 +208,7 @@
          (((top . objs) . rest)
           (define (next) (read-stubir0! db rest))
           (case top
-            ((config) 'do-nothing (next))
+            ((config) (read-config! db objs) (next))
             ((prologue) (read-prologue! db objs) (next))
             ((types) (read-types! db objs) (next))
             ((layouts) (read-layouts! db objs) (next))
