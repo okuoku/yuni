@@ -95,10 +95,6 @@
   (define flat (expand-stubtypes (database->flatten/functions db)))
   (define (p . obj) (apply put-obj port (append obj (list "\n"))))
   (define (pt . obj) (apply p "    " obj))
-  
-  (define (header)
-    (p "#include <yuniffi/stub/_begin_bridge.h>")
-    (p ""))
   (define (export-begin name)
     (p "YUNIFFI_C_BEGIN")
     (p "")
@@ -106,9 +102,7 @@
   (define (export-end name)
     (p "YUNIFFI_EXPORTFUNC_END(" (export-func-name name) ")")
     (p "")
-    (p "YUNIFFI_C_END")
-    (p "")
-    (p "#include <yuniffi/stub/_end.h>"))
+    (p "YUNIFFI_C_END"))
 
   (define (funcdef e)
     (define (funcbegin stubtype name)
@@ -270,8 +264,9 @@
     (when (pair? func*)
       (entryone 1 (car func*) (cdr func*))))
   (match flat
+         ((name)
+          'do-nothing)
          ((name (func ...))
-          (header)
           (for-each funcdef func)
           (for-each entry-macro func)
           (export-begin name)

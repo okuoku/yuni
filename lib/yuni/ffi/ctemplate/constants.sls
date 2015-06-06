@@ -128,15 +128,11 @@
                         (resolve-cclass parent) cref parent label))
             (p "" ))))
 
-  (define (header)
-    (p "#include <yuniffi/stub/_top.h>")
-    (p ""))
   (define (footer name)
     (p "YUNIFFI_EXPORTFUNC_END(" (export-func-name name) ")")
     (p "")
     (p "YUNIFFI_C_END"))
   (define (body-start name)
-    (p "")
     (p "#include <yuniffi/stub/_begin_constants.h>")
     (p "")
     (p "YUNIFFI_C_BEGIN")
@@ -167,10 +163,11 @@
         ))
     (itr 1 entry))
   (match flat
+         ((name)
+          'do-nothing)
          ((name (entry ...))
           ;; Cache cclass for aggregate-entry
           (for-each cache-cclass! entry)
-          (header)
           (for-each entry-macro entry)
           (body-start name)
           (body entry)
