@@ -144,10 +144,11 @@
     (p "YUNIFFI_EXPORTFUNC_BEGIN(" (export-func-name name) ")"))
   (define (body entry)
     (define (itr idx cur)
-      (when (pair? cur)
-        (let ((a (car cur))
-              (d (cdr cur)))
-          (let ((label (cadr a)))
+      (cond
+        ((pair? cur)
+         (let ((a (car cur))
+               (d (cdr cur)))
+           (let ((label (cadr a)))
             (proc-ifdef
               (lambda ()
                 (p "    "
@@ -157,7 +158,13 @@
                    (export-macro-name label)
                    ")"))
               a))
-          (itr (+ 1 idx) d))))
+           (itr (+ 1 idx) d)))
+        (else
+          (p "    "
+             "YUNIFFI_EXPORTFUNC_ENTRY_TERM("
+             idx
+             ")")) 
+        ))
     (itr 1 entry))
   (match flat
          ((name (entry ...))

@@ -83,6 +83,18 @@
         YUNIWORD_SET_UINT(out,7,0);\
         break;
 
+#define YUNIFFI_EXPORTFUNC_ENTRY_TERM(sel)\
+        case sel:\
+        YUNIWORD_SET_UINT(out,0,YUNIFFI_SYMBOL_TERMINATE);\
+        YUNIWORD_SET_PTR(out,1,0);\
+        YUNIWORD_SET_PTR(out,2,0);\
+        YUNIWORD_SET_PTR(out,3,0);\
+        YUNIWORD_SET_PTR(out,4,0);\
+        YUNIWORD_SET_PTR(out,5,0);\
+        YUNIWORD_SET_PTR(out,5,0);\
+        YUNIWORD_SET_PTR(out,7,0);\
+        break;
+
 #define YUNIFFI_EXPORTFUNC_END(name) \
     }\
     YUNIFFI_FUNC_END(name)
@@ -145,6 +157,10 @@
       INVALID, INVALID)
 
 #define YUNIFFI_EXPORTPROC(k,sym) YUNIFFI_EXPORTCLASS_CONST_PTR(k,#sym,sym)
+#define YUNIFFI_EXPORTPROC_F0(k,sym) YUNIFFI_EXPORTCLASS_CONST_PTR(k,#sym,sym)
+#define YUNIFFI_EXPORTPROC_F1(k,sym) YUNIFFI_EXPORTCLASS_CONST_PTR(k,#sym,sym)
+#define YUNIFFI_EXPORTPROC_B1(k,sym) YUNIFFI_EXPORTCLASS_CONST_PTR(k,#sym,sym)
+#define YUNIFFI_EXPORTPROC_B2(k,sym) YUNIFFI_EXPORTCLASS_CONST_PTR(k,#sym,sym)
 
 #define YUNIFFI_RAWEXPORT_R0(r0,r1,r2,r3,r4,r5,r6,r7) r0
 #define YUNIFFI_RAWEXPORT_R1(r0,r1,r2,r3,r4,r5,r6,r7) r1
