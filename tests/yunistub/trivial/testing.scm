@@ -138,7 +138,7 @@
     (int test_somestruct_2 ((somestructptr out)) forward-0)
 
     ;; Test: forward-1
-    (voidptr test_get_somesturct_1f_test () forward-0)
+    (voidptr test_get_somestruct_1f_test () forward-0)
     (int test_somesturct_1f ((somestructptr in)) forward-1)
 
     ;; Test: varargs
@@ -155,7 +155,7 @@
     ;(int test_backword2_stub ((voidptr ctx context)) backward-2)
 
     ;; Test: out(1234)
-    (int test_outint ((intptr thevalue out)) forward-0))
+    (int test_outint ((int thevalue out)) forward-0))
 
   (exports
     ;; Constant 
