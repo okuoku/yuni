@@ -2,8 +2,11 @@
          (export
            yuniffi-nccc-call
            yuniffi-module-load
-           yuniffi-module-lookup)
+           yuniffi-module-lookup
+           yuniffi-module-path)
          (import (yuni scheme)
+                 ;; FIXME: Undocumented?
+                 (only (chibi) current-module-path)
                  ;; FIXME: Rename this?
                  (yuniffi-runtime))
 
@@ -19,5 +22,7 @@
 (define (yuniffi-module-lookup handle str)
   ;; FIXME: testing
   (yuniffi_nccc_bootstrap))
+
+(define (yuniffi-module-path) (current-module-path))
          
 )
