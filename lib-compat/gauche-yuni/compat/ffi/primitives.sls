@@ -2,8 +2,10 @@
          (export
            yuniffi-nccc-call
            yuniffi-module-load
-           yuniffi-module-lookup)
+           yuniffi-module-lookup
+           yuniffi-module-path)
          (import (yuni scheme)
+                 (yuni-runtime gauche loadpath)
                  (rename (yuniffi)
                          (yuniffi-nccc-call yuniffi-nccc-call/raw)
                          ) ;; see yuni/yunistub/gauche
@@ -19,5 +21,7 @@
 (define (yuniffi-module-lookup handle str)
   ;; FIXME: testing
   (yuniffi-nccc-bootstrap))
+
+(define (yuniffi-module-path) (loadpath))
          
 )
