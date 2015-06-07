@@ -1,11 +1,18 @@
 (library (racket-yuni compat ffi primitives)
          (export yuniffi-nccc-call
                  yuniffi-module-load
-                 yuniffi-module-lookup)
+                 yuniffi-module-lookup
+                 yuniffi-module-path)
          (import (yuni scheme)
                  ;; Some of definitions are placed in runtime
                  ;; because we need to use keywords and other Racket specific
                  ;; notations.
+                 (rename
+                   (only (racket base) 
+                         map
+                         path->string
+                         current-library-collection-paths)
+                   (map map:racket))
                  (yuni-runtime racket-ffi)
                  (ffi unsafe))
 
@@ -28,5 +35,8 @@
   (get-ffi-obj str handle nccc-func
                ;; Failure thunk
                (lambda () #f)))
+
+(define (yuniffi-module-path) (map:racket path->string
+                                   (current-library-collection-paths)))
          
 )
