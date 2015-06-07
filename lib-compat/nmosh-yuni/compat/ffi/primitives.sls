@@ -2,6 +2,7 @@
          (export yuniffi-nccc-call
                  yuniffi-module-load
                  yuniffi-module-lookup
+                 yuniffi-module-path
                  )
          (import (yuni scheme)
                  (only (mosh ffi)
@@ -10,6 +11,8 @@
                        shared-library-error  ;; (%ffi-error)
                        open-shared-library   ;; (%ffi-open path)
                        )
+                 ;; FIXME: HACK
+                 (primitives prefix-list)
                  (nmosh global-flags))
 
 ;; 
@@ -41,5 +44,7 @@
 
 (define (yuniffi-module-lookup handle str)
   (lookup-shared-library handle (string->symbol str)))
+
+(define (yuniffi-module-path) prefix-list)
 
 )
