@@ -1,26 +1,15 @@
-cmake_minimum_required(VERSION 2.8)
-project(yunistub-trivial)
+# Prefer CXX version
 
-include_directories(${CMAKE_CURRENT_LIST_DIR}/../../../yunistub/include)
+include_directories(${CMAKE_CURRENT_LIST_DIR})
 
-add_library(checkhand_c MODULE
-    testhand.c
-    dummy.cpp
+add_library(yunistub_testing_trivial MODULE
+    ${YUNISTUB_STUBSOURCE_PREFIX}/testing/trivial/testing.stub.cpp
     testfunc.c
     testing.h
     testinterface.h)
 
-add_library(checkhand_cxx MODULE
-    testhand.cpp
-    dummy.cpp
+add_library(yunistub_testing_trivial_plainc MODULE
+    ${YUNISTUB_STUBSOURCE_PREFIX}/testing/trivial/testing.stub.c
     testfunc.c
     testing.h
     testinterface.h)
-
-add_library(check MODULE
-    dummy.cpp
-    testfunc.c
-    testing.h
-    testinterface.h)
-
-

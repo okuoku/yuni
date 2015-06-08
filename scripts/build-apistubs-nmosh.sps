@@ -43,18 +43,23 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define STUBTOP "lib-stub/apistubs")
-(define APITOP "apidata")
+(define APITOP* '("apidata" "tests/yunistub"))
 (define apidefs '())
 
 (define (output-path libname basename)
   (calc-filepath STUBTOP libname basename))
 
+(define (stubir0? pth)
+  (define fil (car (file->sexp-list pth)))
+  (and (pair? fil)
+       (eq? 'stubir0 (car fil))))
+
 (define (procfile file)
   (define db (stubir0->database (car (file->sexp-list file))))
   (define config (database-config db))
   (define libinfo (database-libinfo db))
-  (define c (config-stub-c config))
-  (define cxx (config-stub-cxx config))
+  (define c (and config (config-stub-c config)))
+  (define cxx (and config (config-stub-cxx config)))
   (define (proc outfile)
     (call-with-output-file-force
       (output-path (libinfo-scheme-name libinfo) outfile)
@@ -68,13 +73,14 @@
   (define (apidef? pth)
     (let ((e (path-extension pth)))
       (and e
-           (or (string=? e "scm")))))
+           (or (string=? e "scm"))
+           (stubir0? pth))))
   ;; Recursively collect files on the dir
   (directory-walk dir (lambda (file)
                         (when (apidef? file)
                           (set! files (cons file files)))))
   (set! apidefs (append apidefs files)))
 
-(collect-apidefs! APITOP)
+(for-each collect-apidefs! APITOP*)
 
 (for-each procfile apidefs)
