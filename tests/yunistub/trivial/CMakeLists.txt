@@ -13,3 +13,5 @@ add_library(yunistub_testing_trivial_plainc MODULE
     testfunc.c
     testing.h
     testinterface.h)
+
+yuni_install_native_targets(yunistub_testing_trivial)

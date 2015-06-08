@@ -10,4 +10,5 @@ if(SDL2_FOUND)
         )
     target_link_libraries(yunistub_SDL2 
         ${SDL2_LIBRARY})
+    yuni_install_native_targets(yunistub_SDL2)
 endif()
