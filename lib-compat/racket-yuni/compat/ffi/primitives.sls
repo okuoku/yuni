@@ -10,9 +10,12 @@
                  (rename
                    (only (racket base) 
                          map
+                         list->vector
                          path->string
                          current-library-collection-paths)
-                   (map map:racket))
+                   (map map:racket)
+                   (list->vector list->vector:racket)
+                   )
                  (yuni-runtime racket-ffi)
                  (ffi unsafe))
 
@@ -36,7 +39,10 @@
                ;; Failure thunk
                (lambda () #f)))
 
-(define (yuniffi-module-path) (map:racket path->string
-                                   (current-library-collection-paths)))
+(define (yuniffi-module-path) 
+  (vector->list
+    (list->vector:racket 
+      (map:racket path->string
+                  (current-library-collection-paths)))))
          
 )
