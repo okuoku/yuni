@@ -6,6 +6,8 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
 # CMake modules
 include(YuniDetectPlatform) 
+include(YuniDetectScheme)
+include(YuniDetectScheme)
 
 yuni_detect_platform(_PLATFORM) # => WIN32 / WIN64 / CYG32 / CYG64 / UNKNOWN
 
@@ -33,4 +35,12 @@ endmacro()
 # Options
 
 # Components (include testing)
+
 add_subdirectory(apidata)
+add_subdirectory(yunistub)
+
+# Status
+message(STATUS "Gauche:       ${YUNI_GOSH}")
+message(STATUS "chibi-scheme: ${YUNI_CHIBI_SCHEME}")
+message(STATUS "   chibi-ffi: ${YUNI_CHIBI_FFI}")
+message(STATUS "         lib: ${YUNI_CHIBI_LIB}")
