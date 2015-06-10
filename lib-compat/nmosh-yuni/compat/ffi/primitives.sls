@@ -1,10 +1,9 @@
 (library (nmosh-yuni compat ffi primitives)
          (export yuniffi-nccc-call
                  yuniffi-module-load
-                 yuniffi-module-lookup
-                 yuniffi-module-path
-                 )
+                 yuniffi-module-lookup)
          (import (yuni scheme)
+                 (yuni ffi runtime simpleloader)
                  (only (mosh ffi)
                        lookup-shared-library ;; (%ffi-lookup handle sym)
                        close-shared-library  ;; (%ffi-close handle)
@@ -38,13 +37,15 @@
     xin in-offset in-size
     xout out-offset out-size))
 
-(define (yuniffi-module-load path) ;; => handle/#f
-  (guard (c ((#t #f)))
+(define (module-load path) ;; => handle/#f
+  (guard (c (#t #f))
          (open-shared-library path)))
+
+(define (module-path) prefix-list)
+
+(define yuniffi-module-load (make-simpleloader module-path module-load))
 
 (define (yuniffi-module-lookup handle str)
   (lookup-shared-library handle (string->symbol str)))
-
-(define (yuniffi-module-path) prefix-list)
 
 )
