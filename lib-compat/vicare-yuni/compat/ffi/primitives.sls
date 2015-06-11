@@ -7,6 +7,9 @@
                        bytevector->memory
                        pointer-add
                        )
+                 (only (vicare libraries)
+                       library-source-search-path)
+                 (yuni ffi runtime simpleloader)
                  (vicare ffi))
 ;; Guile style bytevector->pointer
 (define (bytevector->pointer bv offs)
@@ -24,8 +27,10 @@
 (define nccc-callout-maker
   (make-c-callout-maker 'void '(pointer signed-int pointer signed-int)))
 
-(define (yuniffi-module-load path)
-  (dlopen path))
+(define (module-load path) (dlopen path))
+(define (module-path) (library-source-search-path))
+
+(define yuniffi-module-load (make-simpleloader module-path module-load))
          
 (define (yuniffi-module-lookup handle str)
   (nccc-callout-maker (dlsym handle str)))

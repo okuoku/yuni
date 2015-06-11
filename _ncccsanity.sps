@@ -4,3 +4,4 @@
 (define mod (yuniffi-module-load "yunistub_test_primitives"))
 
 (write mod)(newline)
+(flush-output-port (current-output-port))
