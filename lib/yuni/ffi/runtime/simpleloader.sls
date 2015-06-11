@@ -13,7 +13,8 @@
     (and (pair? cur)
          (let ((a (car cur))
                (d (cdr cur)))
-           (or (proc (string-append base (car a) str "." (cdr a)))
+           ;; FIXME: Use path-append to support UNC paths on Win32
+           (or (proc (string-append base "/" (car a) str "." (cdr a)))
                (itr d)))))
   (itr prefix+suffix*))
 
