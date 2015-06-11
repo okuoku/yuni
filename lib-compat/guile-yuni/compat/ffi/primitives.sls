@@ -4,8 +4,10 @@
                  yuniffi-module-lookup)
          (import (yuni scheme)
                  (only (guile)
+                       %load-path
                        dynamic-link
                        dynamic-func)
+                 (yuni ffi runtime simpleloader)
                  (system foreign))
          
 (define (yuniffi-nccc-call func
@@ -15,8 +17,12 @@
         (outp (bytevector->pointer out (* 8 out-offset))))
     (func inp in-size outp out-size)))
 
-(define (yuniffi-module-load path)
+(define (module-path) %load-path)
+
+(define (module-load path)
   (dynamic-link path))
+
+(define yuniffi-module-load (make-simpleloader module-path module-load))
          
 (define (yuniffi-module-lookup handle str)
   (define p (dynamic-func str handle))
