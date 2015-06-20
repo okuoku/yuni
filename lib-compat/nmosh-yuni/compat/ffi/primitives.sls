@@ -35,8 +35,7 @@
                        pointer-set-c-int32! pointer-set-c-uint32!
                        pointer-set-c-int64! pointer-set-c-uint64!
                        )
-                 ;; FIXME: HACK
-                 (primitives prefix-list bytevector-pointer)
+                 (yuni-nmosh primitives)
                  (nmosh global-flags))
 
 ;; 

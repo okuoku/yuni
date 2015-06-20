@@ -3,8 +3,7 @@
            get-output-bytevector
            open-output-bytevector)
          (import (rnrs) 
-                 (primitives sys-get-bytevector
-                             sys-open-bytevector-output-port))
+                 (yuni-nmosh primitives))
 
 (define get-output-bytevector sys-get-bytevector)
 (define (open-output-bytevector) (sys-open-bytevector-output-port))
