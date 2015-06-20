@@ -91,7 +91,7 @@
         YUNIWORD_SET_PTR(out,3,0);\
         YUNIWORD_SET_PTR(out,4,0);\
         YUNIWORD_SET_PTR(out,5,0);\
-        YUNIWORD_SET_PTR(out,5,0);\
+        YUNIWORD_SET_PTR(out,6,0);\
         YUNIWORD_SET_PTR(out,7,0);\
         break;
 

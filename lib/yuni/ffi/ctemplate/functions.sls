@@ -3,6 +3,7 @@
            put-c-functions)
          (import (yuni scheme)
                  (yuni base match)
+                 (yuni ffi abi abiv0)
                  (yuni ffi ctemplate util)
                  (yuni ffi database flatten))
 
@@ -10,7 +11,8 @@
 
 ;;; Part of ABI
 (define (export-func-name name)
-  (string-append name "_export_bridgestubs"))
+  (string-append name
+                 yuniffi-abiv0-export-suffix/bridgestubs))
 
 ;;; C names (not part of ABI)
 (define (local-func-name stubtype name)

@@ -40,7 +40,7 @@
                                    (if (= o end)
                                      (step3-output bv)
                                      (begin
-                                       (bytevector-u8-set! bv cur 0)
+                                       (bytevector-u8-set! bv cur (r8 ptr cur))
                                        (step2-capture (+ 1 cur) end bv))))))
                  (step3-output (lambda (bv) (utf8->string bv))))
          (step1-search-zero off))))))
