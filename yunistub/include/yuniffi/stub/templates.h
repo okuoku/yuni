@@ -15,6 +15,8 @@
 
 #if defined(_WIN32)
 #define YUNIFFI_STUB_EXPORT __declspec(dllexport)
+#else
+#define YUNIFFI_STUB_EXPORT
 #endif
 
 /* Object metadata template */
@@ -59,6 +61,7 @@
 
     /* FIXME: Add error check... */
 #define YUNIFFI_EXPORTFUNC_BEGIN(name) \
+    YUNIFFI_STUB_EXPORT \
     YUNIFFI_FUNC_BEGIN(name,in,in_size,out,out_size) \
     const int zero = (int)YUNIWORD_REF_UINT(in,0);\
     const int selector = (int)YUNIWORD_REF_UINT(in,1);\

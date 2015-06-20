@@ -54,6 +54,7 @@
   (racket
     yuni
     yunisrfi
+    yuni-r6rs
     r7rs-bridge
     r6rs-common
     compat-racket
