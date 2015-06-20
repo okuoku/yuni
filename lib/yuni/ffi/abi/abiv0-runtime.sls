@@ -5,6 +5,7 @@
            yuniffi-abiv0-get-table)
          (import (yuni scheme)
                  (yuni ffi abi abiv0)
+                 (yuni compat bitwise primitives)
                  (yuni compat ffi primitives))
 
 ;; 

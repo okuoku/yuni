@@ -4,14 +4,6 @@
                  yuniffi-module-load
                  yuniffi-module-lookup
 
-                 ;; Memory OPs (bytevectors)
-                 bv-read/s8 bv-read/u8 bv-read/s16 bv-read/u16
-                 bv-read/s32 bv-read/u32 bv-read/s64 bv-read/u64
-                 bv-read/asciiz
-                 bv-write/s8!  bv-write/u8!  bv-write/s16!  bv-write/u16!
-                 bv-write/s32! bv-write/u32!  bv-write/s64!  bv-write/u64!
-                 bv-write/asciiz!
-
                  ;; Memory OPs (pointers)
                  ptr? integer->ptr
                  ptr-read/s8 ptr-read/u8 ptr-read/s16 ptr-read/u16
@@ -25,7 +17,7 @@
                  (yuni ffi runtime simplepatcher)
                  (yuni ffi runtime simpleloader)
                  (yuni ffi runtime simplestrings)
-                 (yuni-r6rs ffi memory)
+                 (yuni compat bitwise primitives)
                  (only (mosh ffi)
                        lookup-shared-library ;; (%ffi-lookup handle sym)
                        close-shared-library  ;; (%ffi-close handle)
