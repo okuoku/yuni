@@ -7,6 +7,7 @@
 (*library-groups*
   ;; Yuni
   (yuni yuni yunisrfi)
+  (yuni-r6rs yuni-r6rs)
   ;; R7RS
   (compat-chicken
     (chicken-yuni => yuni)) 
@@ -84,6 +85,7 @@
   (sagittarius
     yuni
     r7rs-common
+    yuni-r6rs
     compat-sagittarius)) 
 
 (GenR6RSCommon
@@ -93,27 +95,33 @@
     r6rs-common)
   ;; Larceny has R7RS libraries
   (larceny
+    yuni-r6rs
     compat-larceny
     r6rs-common)
   (ironscheme
+    yuni-r6rs
     compat-ironscheme
     r6rs-common
     r7rs-bridge)
   ;; Guile can import R6RS-light but no R7RS
   (guile
+    yuni-r6rs
     compat-guile
     r7rs-bridge
     r6rs-common)
   (chez
+    yuni-r6rs
     compat-chez
     r7rs-bridge
     r6rs-common)
   (vicare
+    yuni-r6rs
     compat-vicare
     r7rs-bridge
     r6rs-common)
   ;; Of course, we should do some dog-food
   (nmosh
+    yuni-r6rs
     compat-nmosh
     r7rs-bridge
     r6rs-common)
