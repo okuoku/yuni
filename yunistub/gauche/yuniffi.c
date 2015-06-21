@@ -74,7 +74,7 @@ end:
 
 ScmObj
 yuniffi_nccc_bootstrap(void){
-    uint64_t ptr = (uint64_t)(uintptr_t)test0_print_and_fill;
+    uint64_t ptr = (uint64_t)(uintptr_t)yuniffi_bootstrap0;
     return Scm_MakeU8VectorFromArray(sizeof(uint64_t), (void*)&ptr);
 }
 

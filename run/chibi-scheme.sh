@@ -1,2 +1,3 @@
 #!/bin/sh
-exec chibi-scheme -I lib-stub/chibi -I lib-runtime/r7rs -I lib-runtime/chibi $*
+. run/_ostype.sh
+exec chibi-scheme -I$YUNIMOD -I lib-stub/chibi -I lib-runtime/r7rs -I lib-runtime/chibi $*
