@@ -36,7 +36,7 @@
     (integer Sint8)
     (unsigned-integer Uint8)
     (integer Sint16)
-    (unsigned-integer Sint16)
+    (unsigned-integer Uint16)
     (integer Sint32)
     (unsigned-integer Uint32)
     (integer Sint64)

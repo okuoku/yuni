@@ -1,13 +1,15 @@
 ;; Library directories
 (*library-directories*
+  "lib-stub/gen"
   "lib"
   "lib-r6rs"
   "lib-compat")
 
 (*library-groups*
   ;; Yuni
-  (yuni yuni yunisrfi)
+  (yuni yuni yunisrfi yuniffi)
   (yuni-r6rs yuni-r6rs)
+  ;; FIXME: Hack. We don't have any convention for generated libraries yet.
   ;; R7RS
   (compat-chicken
     (chicken-yuni => yuni)) 

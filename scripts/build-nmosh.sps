@@ -291,12 +291,13 @@
       ;; FIXME: Do we need more?
       (and e
            (or (string=? e "sls")))))
-  ;; Recursively collect files on the dir
-  (directory-walk dir (lambda (file) 
-                        (when (library? file) 
-                          (set! files (cons file files)))))
-  (set! libraries (append libraries
-                          (map read-library files))))
+  (when (file-exists? dir)
+    ;; Recursively collect files on the dir
+    (directory-walk dir (lambda (file) 
+                          (when (library? file) 
+                            (set! files (cons file files)))))
+    (set! libraries (append libraries
+                            (map read-library files)))))
 
 (for-each (lambda (dir)
             (collect-libraries dir))

@@ -8,6 +8,8 @@
            bv-read/u32
            bv-read/s64
            bv-read/u64
+           bv-read/f32
+           bv-read/f64
            bv-read/asciiz
            bv-write/s8!
            bv-write/u8!
@@ -17,6 +19,8 @@
            bv-write/u32!
            bv-write/s64!
            bv-write/u64!
+           bv-write/f32!
+           bv-write/f64!
            bv-write/asciiz!
            )
          (import 
@@ -32,6 +36,8 @@
 (define (bv-read/u32 bv off) (bytevector-u32-native-ref bv off))
 (define (bv-read/s64 bv off) (bytevector-s64-native-ref bv off))
 (define (bv-read/u64 bv off) (bytevector-u64-native-ref bv off))
+(define (bv-read/f32 bv off) (bytevector-ieee-single-native-ref bv off))
+(define (bv-read/f64 bv off) (bytevector-ieee-double-native-ref bv off))
 
 (define (bv-read/asciiz bv off bufsiz)
   (define (step2-split s)
@@ -50,6 +56,10 @@
 (define (bv-write/u32! bv off o) (bytevector-u32-native-set! bv off o))
 (define (bv-write/s64! bv off o) (bytevector-s64-native-set! bv off o))
 (define (bv-write/u64! bv off o) (bytevector-u64-native-set! bv off o))
+(define (bv-write/f32! bv off o) (bytevector-ieee-single-native-set!
+                                   bv off o))
+(define (bv-write/f64! bv off o) (bytevector-ieee-double-native-set!
+                                   bv off o))
 
 (define (bv-write/asciiz! bv off bufsiz str)
   (define gen (string->utf8 str))

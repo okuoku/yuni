@@ -49,11 +49,12 @@
 ;;      (constant        "label" <type> value sizeof <if> ...)
 ;;      (layout          "label" <type> <c-instance-type> sizeof <if> ...)
 ;;      (aggregate-entry "label" <type> "parent label" "C ref name"
-;;                       sizeof offset <if> ...)
+;;                       sizeof offset path <if> ...)
 ;;
 ;;           type ::= signed | unsigned | real | blob | pointer
 ;;c-instance-type ::= value | c-struct | c-enum | c-union
 ;;             if ::= (ifdef "C MACRO symbol")
+;;           path ::= (sym ...)
 ;;
 
 ;;; Type resolver
@@ -213,27 +214,30 @@
   (define (gen-aggregates)
     (define out '())
     (define (push! e) (set! out (cons e out)))
-    (define (out-entry top-name cur-name ref-name a)
+    (define (out-entry top-name cur-name ref-name path a)
       (cond
         ((aggregate-entry-has-subaggregate? a)
-         (let ((myname (symbol->string (aggregate-entry-name a)))
-               (entries (aggregate-entry-subaggregate-entries a)))
+         (let* ((nam (aggregate-entry-name a))
+                (myname (symbol->string nam))
+                (entries (aggregate-entry-subaggregate-entries a)))
            (let ((cur (string-append cur-name "/" myname))
                  (ref (string-append ref-name myname ".")))
-             (for-each (lambda (e) (out-entry top-name cur ref e))
+             (for-each (lambda (e) (out-entry top-name cur ref (cons nam path) 
+                                              e))
                        entries))))
         (else
           (let* ((type (resolve-type (aggregate-entry-type a)))
-                 (myname (symbol->string (aggregate-entry-name a)))
-                 (name (string-append
-                         ref-name
-                         myname))
+                 (nam (aggregate-entry-name a))
+                 (myname (symbol->string nam))
+                 (name (string-append ref-name myname))
                  (cur (string-append cur-name "/" myname)))
-            (push! `(aggregate-entry ,cur ,type ,top-name ,name #f #f))))))
+            (push! `(aggregate-entry ,cur ,type ,top-name ,name #f #f
+                                     ,(reverse (cons nam path))))))))
     (for-each (lambda (e)
-                (let ((top-name (symbol->string (aggregate-name e))))
+                (let* ((nam (aggregate-name e))
+                       (top-name (symbol->string nam)))
                  (for-each (lambda (a)
-                             (out-entry top-name top-name "" a))
+                             (out-entry top-name top-name "" (list nam) a))
                            (aggregate-entries e))))
               aggregates)
     out)
@@ -279,7 +283,9 @@
              (map (lambda (m)
                     ;; FIXME: Add ifdef ?
                     `(constant ,(symbol->string m)
-                               unsigned
+                               ,(if (eq? 'enum-group (type-basetype e))
+                                  'signed
+                                  'unsigned)
                                #f #f)) 
                   (type-members e))) 
            groups)))

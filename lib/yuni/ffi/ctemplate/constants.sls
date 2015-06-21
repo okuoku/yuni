@@ -109,7 +109,7 @@
             (do-attr attr)
             )
            (('aggregate-entry label ctype parent cref 
-             sizeof offset . attr)
+             sizeof offset path . attr)
             (do-attr attr))))
 
   (define (entry-macro e)
@@ -124,7 +124,7 @@
             (p "    " (export-macro-layout cclass label))
             (p ""))
            (('aggregate-entry label ctype parent cref 
-             sizeof offset . _)
+             sizeof offset path . _)
             (p "#define " (export-macro-name label) "(k)\\")
             (p "    " (export-macro-aggregate 
                         (resolve-cclass parent) cref parent label))

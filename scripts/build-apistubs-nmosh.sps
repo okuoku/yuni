@@ -5,6 +5,7 @@
         (yuni util files)
         (yuni ffi database stubir0)
         (yuni ffi ctemplate root)
+        (yuni ffi scmtemplate root)
         (yuni ffi database root)
         (yuni ffi database config)
         (yuni ffi database libinfo)
@@ -43,11 +44,18 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define STUBTOP "lib-stub/apistubs")
+(define STUBTOP/SCM "lib-stub/gen")
 (define APITOP* '("apidata" "tests/yunistub"))
 (define apidefs '())
 
 (define (output-path libname basename)
   (calc-filepath STUBTOP libname basename))
+
+(define (output-path/scm libname)
+  (define r (reverse libname))
+  (define basename (string-append (symbol->string (car r)) ".sls"))
+  (define rest (reverse (cdr r)))
+  (calc-filepath STUBTOP/SCM rest basename))
 
 (define (stubir0? pth)
   (define fil (car (file->sexp-list pth)))
@@ -64,8 +72,14 @@
     (call-with-output-file-force
       (output-path (libinfo-scheme-name libinfo) outfile)
       (lambda (p) (put-c-stubsource p db))))
+  ;; emit C apistubs
   (when c (proc c))
-  (when cxx (proc cxx)))
+  (when cxx (proc cxx))
+  ;; emit scm stub
+  (when (or c cxx) 
+    (call-with-output-file-force
+      (output-path/scm (get-scm-libname/constants db))
+      (lambda (p) (put-scm-stubsource/constants p db)))))
 
 ; Collect libraries
 (define (collect-apidefs! dir)
