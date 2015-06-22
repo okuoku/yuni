@@ -1,9 +1,11 @@
 (library (yuni ffi runtime yunistub-abiv0)
          (export
            define-library-state
+           ;; For -constants library
            define-constant
-           define-layout
-           define-aggregate-entry
+           define-layout-constant
+           define-aggregate-entry-constant
+           define-bridgestub-constant
            )
          (import (yuni scheme)
                  (yuni base match)
@@ -47,6 +49,30 @@
           (register-entries! libstate 
                              (yuniffi-abiv0-get-table funcs)))))
     (library-state-set-initialized! libstate #t)))
+
+(define (realize-aggregate-entry-constant libstate dbname)
+  (define ht (library-state-ht libstate))
+  (let ((obj (hashtable-ref ht dbname #f)))
+   (and obj
+        (match obj
+               ((flags value size offset)
+                (cons size offset))))))
+
+(define (realize-layout-constant libstate dbname)
+  (define ht (library-state-ht libstate))
+  (let ((obj (hashtable-ref ht dbname #f)))
+   (and obj
+        (match obj
+               ((flags value size offset)
+                size)))))
+
+(define (realize-bridgestub-constant libstate dbname)
+  (define ht (library-state-ht libstate))
+  (let ((obj (hashtable-ref ht dbname #f)))
+   (and obj
+        (match obj
+               ((flags value size offset)
+                (integer->ptr value))))))
 
 (define (realize-constant libstate typesym dbname)
   (define ht (library-state-ht libstate))
@@ -93,13 +119,30 @@
          (ensure-library-initialized libstate)
          (realize-constant libstate 'type dbname))))))
 
-(define-syntax define-aggregate-entry ;; STUB
+(define-syntax define-aggregate-entry-constant
   (syntax-rules ()
     ((_ name libstate dbname)
-     (define name '()))))
+     (define name 
+       (begin 
+         (ensure-library-initialized libstate)
+         (realize-aggregate-entry-constant libstate dbname))))))
 
-(define-syntax define-layout ;; STUB
+(define-syntax define-layout-constant
   (syntax-rules ()
     ((_ name libstate dbname)
-     (define name '()) ))) 
+     (define name 
+       (begin
+         (ensure-library-initialized libstate)
+         (realize-layout-constant libstate dbname))))))
+
+(define-syntax define-bridgestub-constant
+  (syntax-rules ()
+    ((_ name libstate (stubtype dbname) ...)
+     (define name
+       (begin
+         (ensure-library-initialized libstate)
+         (list 
+           (cons 'stubtype (realize-bridgestub-constant libstate dbname))
+           ...))))))
+
 )
