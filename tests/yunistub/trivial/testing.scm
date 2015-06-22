@@ -1,6 +1,6 @@
 (stubir0
   testing_trivial
-  (yunistub testing trivial)
+  (testing trivial)
   (config
     (stubs (c   "testing.stub.c")
            (cxx "testing.stub.cpp")))

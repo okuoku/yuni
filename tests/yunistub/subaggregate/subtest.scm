@@ -1,6 +1,6 @@
 (stubir0
   unnamed
-  (yunistub testing unnamed)
+  (testing unnamed)
   (config
     (stubs (c "unnamed.stub.c")))
   (prologue)

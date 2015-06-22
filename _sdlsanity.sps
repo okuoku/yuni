@@ -1,6 +1,6 @@
 (import (yuni scheme)
-        (yuniffi yunistub testing trivial-constants)
-        (yuniffi yunistub graphics SDL2-constants))
+        (yuniffi testing trivial-constants)
+        (yuniffi graphics SDL2-constants))
 
 (define-syntax disp
   (syntax-rules ()
