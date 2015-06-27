@@ -5,7 +5,7 @@
 (define-syntax define-miniobj-typeof
   (syntax-rules ()
     ((_ name ref0 ref1 ... refnext term)
-     (define-miniobj-ref name ref0 ref1 ... (lambda (obj) (refnext obj term))))
+     (define-miniobj-typeof name ref0 ref1 ... (lambda (obj) (refnext obj term))))
     ((_ name ref0 term)
      (define (name obj) (ref0 obj term)))))
 
