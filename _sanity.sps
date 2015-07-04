@@ -10,6 +10,7 @@
         ; (yuni base shorten)
         (yuni base match)
         (yuni core)
+        (yuni base dispatch)
         (yuni miniobj minidispatch))
 
 (define test-counter 0)
@@ -66,6 +67,8 @@
 (let-values (((ex f?) (testeval 222 '((NEVERLAND)))))
             (check-equal #t (failure? f?)))
 
+;; (yuni core)
+
 (define* testtype (entry-a entry-b))
 (define* testtype2 (entry-a entry-b))
 
@@ -106,5 +109,31 @@
   (check-equal "hoge" testme))
 
 (check-equal #t (is-a? obj0 testclass))
+
+;; (yuni base dispatch)
+
+(define dispatch0 (dispatch-lambda
+                    (('pass1 x)
+                     (check-equal x 1)
+                     "OKAY")
+                    (('pass1alt x)
+                     (check-equal x 2)
+                     "OKAYalt")
+                    (('pass2-2 x y)
+                     (check-equal x 2)
+                     (check-equal y 2)
+                     "OKAY")
+                    (('passnone)
+                     "OKAY")
+                    ((pass str)
+                     (check-equal #t (string? pass))
+                     (check-equal #t (string? str))
+                     "OKAY")))
+
+(check-equal "OKAY" (dispatch0 'pass1 1))
+(check-equal "OKAYalt" (dispatch0 'pass1alt 2))
+(check-equal "OKAY" (dispatch0 'pass2-2 2 2))
+(check-equal "OKAY" (dispatch0 'passnone))
+(check-equal "OKAY" (dispatch0 "str" "str"))
 
 (check-finish)
