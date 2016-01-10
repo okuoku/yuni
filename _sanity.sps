@@ -217,7 +217,7 @@
   (check "`(hoge ,@fuga)")
   (check "a b c")
   (check "#\\a")
-  (check "#\\linefeed")
+  ;(check "#\\linefeed")
   (check "#;(hoge) fuga")
   (check "#| hoge |# fuga")
   (check ";; fuga\nhoge")

@@ -8,7 +8,7 @@
          (import (yuni scheme))
          
 (define-record-type <yuni-simple-struct>
-  (%make-simple-struct0)
+  (%make-simple-struct0 name object)
   simple-struct?
   (name simple-struct-name)
   (object %simple-struct-obj))
