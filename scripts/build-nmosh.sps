@@ -363,3 +363,15 @@
 (generate libraries libgen-racket GenRacket)
 (generate libraries libgen-r7rs GenR7RS)
 (generate libraries libgen-r6rs-common GenR6RSCommon)
+
+;; Generate library list for _sanity.sps
+
+(call-with-output-file-force
+  "_testing_liblist.txt"
+  (lambda (p)
+    (for-each (lambda (e) (let ((pth (car e))
+                                (libname (cadr e)))
+                            (when (eq? 'yuni (car libname))
+                              (display pth p)
+                              (newline p))))
+              libraries)))

@@ -11,6 +11,7 @@
         (yuni base match)
         (yuni core)
         (yuni base dispatch)
+        (yuni miniread reader)
         (yuni miniobj minidispatch))
 
 (define test-counter 0)
@@ -135,5 +136,113 @@
 (check-equal "OKAY" (dispatch0 'pass2-2 2 2))
 (check-equal "OKAY" (dispatch0 'passnone))
 (check-equal "OKAY" (dispatch0 "str" "str"))
+
+;; (yuni miniread reader) and base reader
+
+(define (equal-check-deep sexp0 sexp1)
+  (define (comp ctx s0 s1)
+    (cond
+      ((pair? s0)
+       (if (pair? s1)
+         (and (comp (cons s0 ctx) (car s0) (car s1))
+              (comp (cons s0 ctx) (cdr s0) (cdr s0)))
+         (error "pair-unmatch!" s0 s1)))
+      (else
+        (let ((e (equal? s0 s1)))
+         #|
+         (when e
+           (write (list 'MATCH: ctx s0 s1))(newline))
+         |#
+         (unless e
+           (error "datum-unmatch!" ctx (list s0 s1)))
+         e))))
+  (check-equal #t (comp '() sexp0 sexp1)))
+
+(define (port->sexp p)
+  (define (itr cur)
+    (let ((r (read p)))
+     (if (eof-object? r)
+       (reverse cur)
+       (itr (cons r cur))) )) 
+  (itr '()))
+
+(define (file->sexp pth)
+  (define p (open-input-file pth))
+  (let ((obj (port->sexp p)))
+   (close-port p)
+   obj)) 
+
+(define (textfile->bytevector pth)
+  (define p (open-input-file pth))
+  (define (itr cur)
+    (let ((l (read-line p)))
+     (if (eof-object? l)
+       (string->utf8 cur)
+       (itr (if (string=? "" cur) 
+              l
+              (string-append cur "\n" l))))))
+  (itr ""))
+
+(define (verify-file pth)
+  (let ((x (file->sexp pth))
+        (y (utf8-read (textfile->bytevector pth))))
+    (equal-check-deep x y)))
+
+(define yuni-compat-libs
+  (begin
+    (unless (file-exists? "_testing_liblist.txt")
+      (error "_testing_liblist.txt was not found. Generate it with run/buildstub.sh first."))
+    (let ((p (open-input-file "_testing_liblist.txt")))
+     (define (itr cur)
+       (let ((l (read-line p)))
+        (if (eof-object? l) 
+          cur
+          (itr (cons l cur)))))
+     (itr '()))))
+
+(define test-files (append yuni-compat-libs '("_sanity.sps" "_ncccsanity.sps")))
+
+(define (miniread-tests)
+  (define (checkobj str obj)
+    (define bv (string->utf8 str))
+    (define obj1 (utf8-read bv))
+    (check-equal obj1 obj))
+  (define (check str)
+    (define p (open-input-string str))
+    (define obj0 (port->sexp p))
+    (checkobj str obj0))
+  (check "#| # |# hoge")
+  ;(check "\"hoge \\n hoge\"") ;; FIXME: WHY??
+  (check "`(hoge ,fuga)")
+  (check "`(hoge ,@fuga)")
+  (check "a b c")
+  (check "#\\a")
+  (check "#\\linefeed")
+  (check "#;(hoge) fuga")
+  (check "#| hoge |# fuga")
+  (check ";; fuga\nhoge")
+  (check "(100 () (1 2 3) 100)")
+  (check "'abc")
+  (check ",abc")
+  (check ",()")
+  (check ",(,abc)")
+  (check ",(,@abc)")
+  (check "100\n")
+  (check "")
+  (check "100")
+  (check "(100 100)")
+  (check "(\"ABC\")")
+  (check "(100 \"ABC\")")
+  (check "#(100 100)")
+  (check "#()")
+
+  (checkobj "#vu8(1 2 3 4)" (list (bytevector 1 2 3 4)))
+  (checkobj "#u8(1 2 3 4)" (list (bytevector 1 2 3 4)))
+  (checkobj "#u8()" (list (bytevector)))
+  (checkobj "#vu8(0)" (list (bytevector 0)))
+  )
+
+(for-each verify-file test-files)
+(miniread-tests)
 
 (check-finish)
