@@ -10,8 +10,7 @@
            seq
            ;; procedure
            apply/async)
-         (import (yuni scheme)
-                 (yuni base shorten))
+         (import (yuni scheme))
          (begin
 ;;
 
@@ -135,7 +134,7 @@
         (next))
       (let* ((par (vector-ref input count))
              (idx count)
-             (cb (^ x 
+             (cb (lambda x 
                     (vector-set! v idx x)
                     (job-finish)
                     (if (last-job?)
