@@ -40,7 +40,7 @@
     ;; Create a hashtable
     (let ((dll (yuniffi-module-load (library-state-dllname libstate)))
           (cname (library-state-cname libstate)))
-      (display (list 'CNAME: cname 'DLL: dll))(newline)
+      ;(display (list 'CNAME: cname 'DLL: dll))(newline)
       (when dll
         (let ((const (yuniffi-abiv0-lookup/constants dll cname))
               (funcs (yuniffi-abiv0-lookup/bridgestubs dll cname)))

@@ -1,5 +1,6 @@
 (library (yuni ffi scmtemplate root)
          (export
+           append-libname ;; for layouts
            get-scm-libname
            get-scm-libname/constants
            ;get-scm-libname/bridgestubs
