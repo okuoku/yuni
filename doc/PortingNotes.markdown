@@ -40,7 +40,7 @@ Library renaming rules are described at `config/config.scm`.
 Syntax
 ------
 
-Libraries in `lib` and `lib-compath` have to be written in R6RS-lite format; intersection of R6RS and R7RS lexical syntax. That mean;
+Libraries in `lib` and `lib-compat` have to be written in R6RS-lite format; intersection of R6RS and R7RS lexical syntax. That mean;
 
 * Do not use #vu8() or #u8(). These are not compatible between R6RS / R7RS.
 * Do not use |(vertical bar) for symbol. Ditto.
@@ -75,6 +75,8 @@ Several R6RS implements meta-level for library imports. So we need a proxy libra
 
 Racket requires `#!r6rs` for each R6RS styled library so we have to generate import stub for each libraries. See R7RS section below.
 
+For "Minimal" installation of Racket, Yuni will require `r6rs-lib` and `srfi-lib` packages. 
+
 * SRFI-0 is not implemented at all on (racket-srfi i0)
 
 ## Guile
@@ -86,7 +88,7 @@ Racket requires `#!r6rs` for each R6RS styled library so we have to generate imp
 R7RS
 ----
 
-R7RS uses `define-library` form which is different and extended from R6RS' `library` form. To support R7RS implementations, "import stub" will be generated under `lib-stub` directory.
+R7RS uses `define-library` form which is different and extended from R6RS' `library` form. To support R7RS implementations, "import stub"s will be generated under `lib-stub` directory.
 
 ## Chibi scheme
 
@@ -94,7 +96,7 @@ R7RS uses `define-library` form which is different and extended from R6RS' `libr
 
 ## Gauche
 
-* Broken. Gauche cannot define any macro-defining-macro inside macro. J: http://d.hatena.ne.jp/mjt/20140914/p3
+* Supported.
 
 ## picrin
 
