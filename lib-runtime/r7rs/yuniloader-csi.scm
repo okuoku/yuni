@@ -8,7 +8,7 @@
         (scheme file)
         (scheme process-context))
 
-;; Currently, only for picrin
+;; Currently, only for chicken interpreter(csi)
 
 (define ERRPORT current-error-port)
 (define (PCK . obj)
@@ -114,14 +114,20 @@
 
   (load filename))
 
-(define ARG (cdr (command-line)))
+(define ARG (car (cddddr (command-line))))
 
 ;(write (list 'ARG: ARG))(newline)
 
+(run ARG)
+
+#|
 (with-exception-handler
   (lambda (e) (PCK 'EXCEPTION: 
                    (error-object-message e) 
                    (error-object-irritants e))
     (exit -1))
-  (lambda () (run (cadr ARG))))
+  (lambda () 
+    (PCK 'ARG: ARG)
+    (run ARG)))
 
+|#
