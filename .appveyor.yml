@@ -1,0 +1,10 @@
+version: 0.PRE.{build}
+branches:
+  only:
+  - master
+skip_tags: true
+build_script:
+- cmd: >-
+    cd integration/buildhost-win
+    cmake .
+
