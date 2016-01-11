@@ -6,5 +6,5 @@ rsrc_uri(YUNI_NMOSH_RELEASE_URI
     "http://storage.osdev.info/pub/mosh/mosh-current.tar.gz")
 
 rsrc_uri(GMP_RELEASE_URI
-    "https://gmplib.org/download/gmp/gmp-6.1.0.tar.bz2")
+    "http://storage.osdev.info/pub/proj/yuni/gmp-6.1.0.tar.bz2")
 
