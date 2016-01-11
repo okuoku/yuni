@@ -1,15 +1,16 @@
 (library (r7rs-common-yuni compat keywords)
          (export define-keywords
-                 syntax-rules/keywords)
+                 define-syntax-rules/keywords)
          (import (yuni scheme)
                  (yuni util invalid-form))
 
          
-(define-syntax syntax-rules/keywords
+(define-syntax define-syntax-rules/keywords
   (syntax-rules ()
-    ((_ (symlit ...) (keylit ...) clauses ...)
-     (syntax-rules (symlit ... keylit ...)
-       clauses ...)))) 
+    ((_ nam (symlit ...) (keylit ...) clauses ...)
+     (define-syntax nam
+       (syntax-rules (symlit ... keylit ...)
+         clauses ...))))) 
 
 (define-syntax define-keywords
   (syntax-rules ()

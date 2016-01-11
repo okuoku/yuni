@@ -1,14 +1,15 @@
 (library (sagittarius-yuni compat keywords0)
          (export define-keywords
-                 syntax-rules/keywords)
+                 define-syntax-rules/keywords)
          (import (yuni scheme))
          
 ;; Same as (gauche-yuni compat keywords)
-(define-syntax syntax-rules/keywords
+(define-syntax define-syntax-rules/keywords
   (syntax-rules ()
-    ((_ symlit* keylit* clauses ...)
-     (syntax-rules symlit*
-       clauses ...))))
+    ((_ nam symlit* keylit* clauses ...)
+     (define-syntax nam 
+       (syntax-rules symlit*
+         clauses ...)))))
 
 (define-syntax define-keywords
   (syntax-rules ()

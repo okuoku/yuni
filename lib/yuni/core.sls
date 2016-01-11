@@ -24,14 +24,15 @@
      (miniobj-set! target slot value))))
 
 ; ~: generic, recursive ref/set syntax.
-(define-syntax ~
-  (syntax-rules/keywords () (:=)
-    ((_ target slot := obj)
-     (refset! target slot obj))
-    ((_ target slot)
-     (ref target slot))
-    ((_ target slot next-slot ...)
-     (~ (ref target slot) next-slot ...))))
+
+(define-syntax-rules/keywords 
+  ~ () (:=)
+  ((_ target slot := obj)
+   (refset! target slot obj))
+  ((_ target slot)
+   (ref target slot))
+  ((_ target slot next-slot ...)
+   (~ (ref target slot) next-slot ...)))
 
 ; define-composite
 (define-syntax define-composite

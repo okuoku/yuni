@@ -98,6 +98,10 @@ R7RS uses `define-library` form which is different and extended from R6RS' `libr
 
 * Supported.
 
+## Chicken scheme
+
+* Not yet.
+
 ## picrin
 
 * Not yet. There is no way to specify library path.
@@ -108,8 +112,6 @@ R7RS uses `define-library` form which is different and extended from R6RS' `libr
 
 Others
 ------
-
-## Chicken scheme
 
 ## Gambit
 
