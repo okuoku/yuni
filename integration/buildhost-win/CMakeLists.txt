@@ -22,6 +22,7 @@ download_and_extract(
 build_and_install_cmake_project(
     "${CMAKE_CURRENT_BINARY_DIR}/nmosh-current/mosh-0.2.7"
     "${CMAKE_CURRENT_BINARY_DIR}/stage-bootstrap"
+    -G "Visual Studio 14 2015 Win64"
     -DMOSH_PREFIXLESS=OFF
     -DMOSH_MP_BACKEND=MINI_GMP
     -DMOSH_MP_MINI_GMP_DIR=${CMAKE_CURRENT_BINARY_DIR}/gmp-current/gmp-6.1.0
