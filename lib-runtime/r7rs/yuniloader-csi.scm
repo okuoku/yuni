@@ -112,9 +112,11 @@
                (PCK 'LOADING: filename)
                (load filename)) files))
 
-  (load filename))
+  ;(load filename) ;; Done automagically in csi frontend
+  ;(PCK 'LIBS: (map cdr (reverse loaded-libraries)))
+  )
 
-(define ARG (car (cddddr (command-line))))
+(define ARG (cadr (cddddr (command-line))))
 
 ;(write (list 'ARG: ARG))(newline)
 

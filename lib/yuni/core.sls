@@ -24,7 +24,6 @@
      (miniobj-set! target slot value))))
 
 ; ~: generic, recursive ref/set syntax.
-
 (define-syntax-rules/keywords 
   ~ () (:=)
   ((_ target slot := obj)
@@ -266,20 +265,25 @@
 
 (define-syntax lambda*1
   (syntax-rules ()
+    ((_ sym (spec0 ...) body ...)
+     (lambda*1-itr sym () () (spec0 ...) () body ...))
+    #| Issue #26
     ((_ sym (spec0 ... . last) body ...)
-     (lambda*1-itr sym () () (spec0 ...) last body ...))))
+     (lambda*1-itr sym () () (spec0 ...) last body ...))
+    |#
+    ))
 
 ;; Yuni core syntax entry point
 (define-syntax lambda*
   (syntax-rules ()
-    ((_ (spec0 ... . last) body ...)
-     (lambda*1 'lambda (spec0 ... . last) body ...))))
+    ((_ spec body ...)
+     (lambda*1 'lambda spec body ...))))
 
 ;; Yuni core syntax entry point
 (define-syntax define*
   (syntax-rules ()
-    ((_ (name spec0 ... . last) body ...)
-     (define name (lambda*1 'name (spec0 ... . last) body ...)))
+    ((_ (name . spec) body ...)
+     (define name (lambda*1 'name spec body ...)))
     ((_ name spec)
      (define-composite name spec))))
 
