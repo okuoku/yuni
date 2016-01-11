@@ -4,7 +4,5 @@ branches:
   - master
 skip_tags: true
 build_script:
-- cmd: >-
-    cd integration/buildhost-win
-    cmake .
+    - cmd: cmake %APPVEYOR_BUILD_FOLDER%/integration/buildhost-win
 
