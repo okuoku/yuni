@@ -10,6 +10,9 @@ include(YuniRsrcBuild)
 include(YuniRsrcSchemeHosts)
 
 set(_dest ${CMAKE_CURRENT_BINARY_DIR})
+set(_build ${CMAKE_CURRENT_BINARY_DIR}/integ)
+
+file(MAKE_DIRECTORY "${_build}")
 
 download_and_extract(
     ${YUNI_NMOSH_RELEASE_URI}
@@ -22,6 +25,7 @@ download_and_extract(
 build_and_install_cmake_project(
     "${CMAKE_CURRENT_BINARY_DIR}/nmosh-current/mosh-0.2.7"
     "${CMAKE_CURRENT_BINARY_DIR}/stage-bootstrap"
+    "${_build}/bootstrapnmosh"
     -G "Visual Studio 14 2015 Win64"
     -DMOSH_PREFIXLESS=OFF
     -DMOSH_MP_BACKEND=MINI_GMP
@@ -34,3 +38,17 @@ set(YUNI_BOOTSTRAP_ROOT ${CMAKE_CURRENT_LIST_DIR}/../..)
 
 include(../yuni_tree_bootstrap.cmake)
 
+build_and_install_cmake_project(
+    "${CMAKE_CURRENT_LIST_DIR}/../.."
+    "${CMAKE_CURRENT_LIST_DIR}/../.."
+    "${_build}/yunilibs"
+    -G "Visual Studio 14 2015 Win64"
+    )
+
+build_and_test_cmake_project(
+    "${CMAKE_CURRENT_LIST_DIR}/../../tests/ctest"
+    "${_build}/testctest"
+    -G "Visual Studio 14 2015 Win64"
+    "-DYUNI_TESTING_NMOSH_WIN64=${YUNI_BOOTSTRAP_NMOSH}"
+    "-DYUNI_TESTING_ROOT=${YUNI_BOOTSTRAP_ROOT}"
+    )
