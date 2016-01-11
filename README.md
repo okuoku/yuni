@@ -1,24 +1,37 @@
 yuni
 ----
 
-R7RS/R6RS Scheme portable library(Under construction)
+R7RS/R6RS Scheme portability library
 
-## (ultimate) Goals
+[![Build status](https://ci.appveyor.com/api/projects/status/0mtb3ldlwk2qwvck/branch/master?svg=true)](https://ci.appveyor.com/project/okuoku/yuni/branch/master)
 
-These are not implemented yet though.
+`yuni` is a collection of R6RS/R7RS compatible libraries. It's under development; still USELESS for most people.
 
-* Common application runner to make Scheme implementations as interchangable script engine
-* Common convenient syntaxes: async, let1, ...
-* Multithreading
-* Portable in-system debugger
-* yuniFFI: FFI wrapper for dynamic/static bindings
-* Provide 3rd-party tests 
+## Libraries
 
-## Non-goals
+ * `(yuni scheme)` - R7RS base library, also available on R6RS.
+ * `(yuni core)` - Basic structure and typing
+ * `(yuni ffi *)` - Static binding FFI (under construction)
 
-YUNI IS NOT FOR PERFORMANCE BENCHMARKING. Making performance optimal library for each Scheme implementation is obviously not our goal. 
+## Supported Implementations
 
-* Performance (Portability over performance)
+See [PortingNotes](https://github.com/okuoku/yuni/blob/master/doc/PortingNotes.markdown) for details. 
+
+Fully supported implementation with FFI compatibility layer:
+
+ * [nmosh](https://github.com/okuoku/mosh)
+ * [chibi-scheme](http://synthcode.com/wiki/chibi-scheme)
+ * [Racket](https://racket-lang.org/) with `srfi-lib` and `r6rs-lib` packages
+ * [Sagittarius](https://bitbucket.org/ktakashi/sagittarius-scheme/wiki/Home)
+ * [Gauche](http://practical-scheme.net/gauche/) 0.9.4 or later
+ * [Guile](http://www.gnu.org/software/guile/) 2.0 or later
+
+Bootstrapped, but no FFI yet:
+
+ * [Chicken](http://www.call-cc.org/) interpreter with `r7rs` egg
+ * [Vicare](http://marcomaggi.github.io/vicare.html)
+ * [Larceny](http://larcenists.org/)
+ * [IronScheme](http://ironscheme.codeplex.com/)
 
 ## Licensing
 
@@ -27,8 +40,9 @@ YUNI IS NOT FOR PERFORMANCE BENCHMARKING. Making performance optimal library for
 Build
 -----
 
+TBD: Building FFI bindings
+
 Every implementation requires `lib-stub` which will contain library import stubs.
 To generate library import stub, install nmosh from http://storage.osdev.info/pub/mosh/mosh-current.tar.gz and run:
 
  `run/buildstub.sh`
-
