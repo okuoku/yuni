@@ -267,10 +267,10 @@
   (syntax-rules ()
     ((_ sym (spec0 ...) body ...)
      (lambda*1-itr sym () () (spec0 ...) () body ...))
-    #| Issue #26
-    ((_ sym (spec0 ... . last) body ...)
-     (lambda*1-itr sym () () (spec0 ...) last body ...))
-    |#
+;    #| Issue #26
+;    ((_ sym (spec0 ... . last) body ...)
+;     (lambda*1-itr sym () () (spec0 ...) last body ...))
+;    |#
     ))
 
 ;; Yuni core syntax entry point

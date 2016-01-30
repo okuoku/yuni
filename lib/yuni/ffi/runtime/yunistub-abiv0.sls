@@ -94,19 +94,19 @@
                    (let ((bv (make-bytevector 8)))
                     (bv-write/u64! bv 0 value)
                     (bv-read/f64 bv 0)) 
-                   #| ;; FIXME: Support real size formatting...
-                   (case size
-                     ((4) 
-                      (let ((bv (make-bytevector 4)))
-                       (bv-write/u32! bv 0 value)
-                       (bv-read/f32 bv 0)))
-                     ((8) 
-                      (let ((bv (make-bytevector 8)))
-                       (bv-write/u64! bv 0 value)
-                       (bv-read/f64 bv 0)))
-                     (else
-                       (error "Unknown real format" size)))
-                   |#
+;                   #| ;; FIXME: Support real size formatting...
+;                   (case size
+;                     ((4) 
+;                      (let ((bv (make-bytevector 4)))
+;                       (bv-write/u32! bv 0 value)
+;                       (bv-read/f32 bv 0)))
+;                     ((8) 
+;                      (let ((bv (make-bytevector 8)))
+;                       (bv-write/u64! bv 0 value)
+;                       (bv-read/f64 bv 0)))
+;                     (else
+;                       (error "Unknown real format" size)))
+;                   |#
                    )
                   (else
                     (error "Unsupported type" typesym))))))))
