@@ -82,11 +82,11 @@ set(YUNIIMPL_VICARE_LIBS
 ##
 set(YUNIIMPL_NMOSH_LIBS
     lib-runtime/nmosh
+    lib-stub/nmosh
     lib-r6rs
     lib-stub/r6rs-common
     lib
     lib-compat
     lib-compat/yuni-srfi
-    lib-stub/nmosh
     lib-stub/gen)
 

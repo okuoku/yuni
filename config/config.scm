@@ -42,7 +42,8 @@
     (ironscheme-r7b => r7b-compat))
   (compat-nmosh
     (nmosh-yuni => yuni)
-    (nmosh-r7b => r7b-compat))
+    (nmosh-r7b => r7b-compat)
+    (nmosh-r7b-util => r7b-util))
   (compat-larceny
     (larceny-yuni => yuni))
   (compat-vicare

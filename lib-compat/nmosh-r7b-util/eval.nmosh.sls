@@ -1,5 +1,5 @@
 #!r6rs
-(library (r7b-util eval)
+(library (nmosh-r7b-util eval)
          (export interaction-environment
                  load
                  environment ;; R6RS

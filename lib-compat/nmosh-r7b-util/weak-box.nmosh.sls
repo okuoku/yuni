@@ -1,4 +1,4 @@
-(library (r7b-util weak-box)
+(library (nmosh-r7b-util weak-box)
          (export make-weak-box
                  weak-box-ref
                  weak-box-set!)
