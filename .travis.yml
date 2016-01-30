@@ -1,0 +1,20 @@
+sudo: required
+
+services:
+    - docker
+
+language: c
+
+env:
+    matrix:
+        - DOCKER_IMG=okuoku/yunibase:testing
+        - DOCKER_IMG=okuoku/yunibase:testing-fedora
+
+matrix:
+    allow_failures:
+        env: DOCKER_IMG=okuoku/yunibase:testing-fedora
+
+script:
+    - docker pull $DOCKER_IMG
+    - cmake -DIMAGE=$DOCKER_IMG -P integration/buildhost-docker-linux/test-on-docker.cmake
+
