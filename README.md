@@ -3,21 +3,22 @@ yuni
 
 R7RS/R6RS Scheme portability library
 
+[![Build Status](https://travis-ci.org/okuoku/yuni.svg?branch=master)](https://travis-ci.org/okuoku/yuni)
 [![Build status](https://ci.appveyor.com/api/projects/status/0mtb3ldlwk2qwvck/branch/master?svg=true)](https://ci.appveyor.com/project/okuoku/yuni/branch/master)
 
 `yuni` is a collection of R6RS/R7RS compatible libraries. It's under development; still USELESS for most people.
 
 ## Libraries
 
- * `(yuni scheme)` - R7RS base library, also available on R6RS.
+ * `(yuni scheme)` - R7RS base library, also available on R6RS. See also: [r7b-Issues][]
  * `(yuni core)` - Basic structure and typing
  * `(yuni ffi *)` - Static binding FFI (under construction)
 
-## Supported Implementations
+## Implementations
 
-See [PortingNotes](https://github.com/okuoku/yuni/blob/master/doc/PortingNotes.markdown) for details. 
+See also: [PortingNotes][] and [Blocker-Issues][]
 
-Fully supported implementation with FFI compatibility layer:
+Implementations with FFI compatibility layer:
 
  * [nmosh](https://github.com/okuoku/mosh)
  * [chibi-scheme](http://synthcode.com/wiki/chibi-scheme)
@@ -46,3 +47,7 @@ Every implementation requires `lib-stub` which will contain library import stubs
 To generate library import stub, install nmosh from http://storage.osdev.info/pub/mosh/mosh-current.tar.gz and run:
 
  `run/buildstub.sh`
+
+[Blocker-Issues]: https://github.com/okuoku/yuni/issues?q=is%3Aissue+is%3Aopen+label%3AExtern-Blocker
+[r7b-Issues]: https://github.com/okuoku/yuni/issues?q=is%3Aissue+is%3Aopen+label%3ALib-R7RSBridge
+[PortingNotes]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes.markdown
