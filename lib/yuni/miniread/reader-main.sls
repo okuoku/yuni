@@ -1,6 +1,6 @@
 ;; FIXME: Take account hold-lineno hold-column!!
 ;; FIXME: Clean start/prev ASAP to lower GC load
-(library (yuni miniread main)
+(library (yuni miniread reader-main)
          (export
            make-miniread
            make-tkn

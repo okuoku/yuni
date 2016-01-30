@@ -32,7 +32,8 @@
                 (display "    ")
                 (write x)
                 (newline))
-              (reverse failed-forms))))
+              (reverse failed-forms)))
+  (flush-output-port (current-output-port)))
 
 (define-syntax check-equal
   (syntax-rules ()

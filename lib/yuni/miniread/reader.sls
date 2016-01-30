@@ -2,7 +2,7 @@
          (export
            utf8-read)
          (import (yuni scheme)
-                 (yuni miniread main))
+                 (yuni miniread reader-main))
 
 ;; TEMP
 
