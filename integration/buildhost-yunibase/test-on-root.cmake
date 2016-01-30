@@ -51,7 +51,9 @@ execute_step("Setup"
 message(STATUS "Test...")
 
 execute_process(COMMAND
-    ${CMAKE_CTEST_COMMAND} .
+    ${CMAKE_CTEST_COMMAND} 
+    --output-on-failure
+    .
     RESULT_VARIABLE rr
     WORKING_DIRECTORY ${_buildroot})
 
