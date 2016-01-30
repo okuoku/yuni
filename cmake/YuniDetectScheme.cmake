@@ -8,18 +8,8 @@ message(STATUS "System: ${CMAKE_HOST_SYSTEM_NAME}")
 message(STATUS "Processor: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 
 # Gauche
-
-if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL CYGWIN)
-    if(${CMAKE_HOST_SYSTEM_PROCESSOR} STREQUAL x86_64)
-        # Cygwin64
-    else()
-        # Cygwin32
-        find_program(YUNI_GOSH NAMES gosh)
-    endif()
-else()
-    find_program(YUNI_GOSH NAMES gosh)
-endif()
-
+find_program(YUNI_GOSH NAMES gosh)
+find_program(YUNI_GAUCHE_PACKAGE NAMES gauche-package)
 
 # chibi-scheme
 find_program(YUNI_CHIBI_SCHEME NAMES chibi-scheme)
