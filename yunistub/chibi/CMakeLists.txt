@@ -3,9 +3,16 @@
 include_directories(${CMAKE_CURRENT_LIST_DIR}
     ${CMAKE_CURRENT_LIST_DIR}/../include)
 
+find_path(chibi_incdir "chibi/eval.h")
+
 if(YUNI_CHIBI_FFI)
     set(stub ${CMAKE_CURRENT_BINARY_DIR}/yuniffi.stub.c)
     set(stubfile "${CMAKE_CURRENT_LIST_DIR}/yuniffi.stub.scm")
+    if(chibi_incdir)
+        include_directories(${chibi_incdir})
+    else()
+        message(FATAL_ERROR "chibi-scheme header was not found..")
+    endif()
 
     # Generate stub source
     add_custom_command(OUTPUT ${stub}

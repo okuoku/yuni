@@ -1,3 +1,4 @@
+include(YuniDetectPlatform)
 
 # Generate Nmosh/Sagittarius/Gauche styled loadpath list
 macro(gen_loadpath0 var first)
@@ -18,7 +19,7 @@ macro(gen_loadpath var)
     set(${var} "--loadpath=${_tmp}")
 endmacro()
 
-macro(gen_platformpath var plt)
+macro(gen_platformpath var plt) # FIXME: Merge with toplevel CMakeLists.txt
     if(${plt} STREQUAL "WIN64")
         set(${var} lib-stub/yunistub-win64)
     elseif(${plt} STREQUAL "WIN32")
@@ -32,8 +33,48 @@ macro(gen_platformpath var plt)
     endif()
 endmacro()
 
+macro(gen_libopts var opt)
+    set(${var})
+    foreach(e ${ARGN})
+        list(APPEND ${var} "${opt}${e}")
+    endforeach()
+endmacro()
+
+macro(gen_impl_commandline var type runtimeprefix)
+    set(${var})
+    if("${type}" STREQUAL NMOSH)
+        gen_loadpath(${var} ${ARGN})
+    else()
+        if("${type}" STREQUAL GUILE)
+            gen_libopts(${var} "-L;" ${ARGN})
+            set(${var} -l ${runtimeprefix}/lib-runtime/guile/guile-load.scm
+                ${${var}})
+        elseif("${type}" STREQUAL GAUCHE)
+            gen_libopts(${var} "-I;" ${ARGN})
+            set(${var} -r7 ${${var}} -A ${runtimeprefix})
+        elseif("${type}" STREQUAL SAGITTARIUS)
+            gen_libopts(${var} "--loadpath=" ${ARGN})
+        elseif("${type}" STREQUAL CHIBI_SCHEME)
+            gen_libopts(${var} "-I;" ${ARGN})
+        elseif("${type}" STREQUAL RACKET)
+            gen_libopts(${var} "++path;" ${ARGN})
+            set(${var} -I scheme/init -l- r6rs/run.rkt ${${var}})
+        elseif("${type}" STREQUAL VICARE)
+            gen_libopts(${var} "--source-path;" ${ARGN})
+        elseif("${type}" STREQUAL CHICKEN)
+            set(${var} -b -require-extension r7rs 
+                ${runtimeprefix}/lib-runtime/r7rs/yuniloader-csi.scm)
+        else()
+            message(FATAL_ERROR "Unknown scheme type ${type}")
+        endif()
+    endif()
+endmacro()
+
+
 ##
 ## NMOSH
+## 
+#   NMosh has run_* macros to bootstrap the tree.
 ##
 
 macro(run_nmosh_bootstrap nmosh script root result)
