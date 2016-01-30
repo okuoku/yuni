@@ -16,6 +16,8 @@ set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 cmake_minimum_required(VERSION 2.8)
 project(yuni)
 
+enable_testing()
+
 set(YUNI_WITH_YUNIBASE "" CACHE PATH "Yunibase directory.")
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
@@ -83,7 +85,7 @@ if(YUNI_WITH_YUNIBASE)
     emit_yunibase_runners()
 endif()
 
-# Setup scheme implementation paths
+# Setup scheme implementation paths for vanilla interpreters
 include(YuniDetectScheme)
 
 # Options
@@ -91,6 +93,9 @@ include(YuniDetectScheme)
 # Components (include testing)
 add_subdirectory(apidata)
 add_subdirectory(yunistub) # Currently this one includes test stubs
+if(YUNI_WITH_YUNIBASE)
+    add_subdirectory(tests/yunibase tests-yunibase)
+endif()
 
 # Status
 if(YUNI_WITH_YUNIBASE)

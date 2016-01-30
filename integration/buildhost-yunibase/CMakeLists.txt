@@ -1,5 +1,6 @@
 # Prelude for bootstrappin' on standard yunibuild docker images
 cmake_minimum_required(VERSION 2.8)
+enable_testing()
 
 if(NOT YUNI_WITH_YUNIBASE)
     set(YUNI_WITH_YUNIBASE /build CACHE "" PATH FORCE)
