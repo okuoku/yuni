@@ -54,6 +54,10 @@ function(emit_yunified_runner_sh varname flav impl cmd)
     set(_libs ${YUNI_PLATFORM_LIBDIR} ${_yunilibs})
     gen_impl_commandline(_args ${varname} ${YUNI_BASEDIR} ${_libs})
     gen_string_args(_argsstr ${_args})
+    if(${varname} STREQUAL VICARE)
+        # WAR: Add --library-path ${libpath}/vicare-scheme
+        set(_argsstr "--library-path ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/lib/vicare-scheme ${_argsstr}")
+    endif()
     emit_tmpl_runner_sh(${YUNIBASE_YUNIFIED_PATH}/${cmd}
         ${_ldpathname}
         ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/lib
