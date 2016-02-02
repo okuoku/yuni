@@ -1,5 +1,10 @@
 if(YUNI_GOSH AND YUNI_GAUCHE_PACKAGE)
-    set(output_name ${CMAKE_CURRENT_BINARY_DIR}/yuniffi.so)
+    if(CYGWIN OR WIN32)
+        set(module_sufx "dll")
+    else()
+        set(module_sufx "so")
+    endif()
+    set(output_name ${CMAKE_CURRENT_BINARY_DIR}/yuniffi.${module_sufx})
     set(callgenstub ${CMAKE_CURRENT_BINARY_DIR}/call-genstub.scm)
     set(srcs
         ${CMAKE_CURRENT_LIST_DIR}/yuniffi.c)
