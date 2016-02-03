@@ -71,9 +71,6 @@ if(YUNI_WITH_YUNIBASE)
         set(YUNIBASE_VANILLA_PATH ${CMAKE_CURRENT_BINARY_DIR}/vanilla)
     endif()
 
-    # Add VANILLA path for find_program
-    set(CMAKE_PROGRAM_PATH ${YUNIBASE_VANILLA_PATH} ${CMAKE_PROGRAM_PATH})
-
     # FIXME: Add current paths for linked-libraries
     set(CMAKE_LIBRARY_PATH
         ${YUNI_WITH_YUNIBASE}/current/chibi-scheme/lib
@@ -81,6 +78,13 @@ if(YUNI_WITH_YUNIBASE)
     set(CMAKE_INCLUDE_PATH
         ${YUNI_WITH_YUNIBASE}/current/chibi-scheme/include
         ${CMAKE_INCLUDE_PATH})
+    set(CMAKE_PROGRAM_PATH
+        ${YUNI_WITH_YUNIBASE}/current/chibi-scheme/bin
+        ${CMAKE_PROGRAM_PATH})
+
+    # Add VANILLA path for find_program
+    set(CMAKE_PROGRAM_PATH ${YUNIBASE_VANILLA_PATH} ${CMAKE_PROGRAM_PATH})
+
     include(YuniBaseGenRunners)
     emit_yunibase_runners()
 endif()
