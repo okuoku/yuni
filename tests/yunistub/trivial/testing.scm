@@ -159,7 +159,7 @@
 
   (exports
     ;; Constant 
-    (int CONST_1 macro) ;; 1234
+    (int CONST_1 macro) ;; undefined since CONST_1 is actually a C value
     (int MINUS_CONST_1) ;; -1234
     (float REAL_1) ;; 0.5
     (altint CONST_2) ;; 1234
