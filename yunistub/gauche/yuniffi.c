@@ -22,8 +22,8 @@ yuniffi_nccc_call(ScmObj func,
 
     /* Parameter check */
 
-    if(!SCM_U8VECTORP(func)){
-        Scm_Error("func: must be a u8vector", func);
+    if(!YUNIPTR_P(func)){
+        Scm_Error("func: must be a pointer", func);
         goto end;
     }
 
@@ -54,9 +54,7 @@ yuniffi_nccc_call(ScmObj func,
     }
 
     callee = (yuniffi_nccc_func_t)
-        (uintptr_t)
-        (uint64_t)
-        (*(uint64_t*)SCM_U8VECTOR_ELEMENTS(func));
+        YUNIPTR_UNBOX(func);
     inoffs = SCM_INT_VALUE(in_offset);
     inlen = SCM_INT_VALUE(in_count);
     outoffs = SCM_INT_VALUE(out_offset);
@@ -73,17 +71,192 @@ end:
 }
 
 ScmObj
-yuniffi_nccc_bootstrap(void){
-    uint64_t ptr = (uint64_t)(uintptr_t)yuniffi_bootstrap0;
-    return Scm_MakeU8VectorFromArray(sizeof(uint64_t), (void*)&ptr);
+yuniffi_pointer_fromint(ScmObj offset){
+    if(!SCM_INTP(offset)){
+        Scm_Error("offset: must be a fixnum", offset);
+        return SCM_UNDEFINED;
+    }
+    return YUNIPTR_BOX((void*)(uintptr_t)SCM_INT_VALUE(offset));
 }
 
-/* ... left as-is */
+static uint64_t
+pointer_fetch_unsigned(void* ptr, ssize_t offset, int width){
+    uint64_t r;
+    void* p;
+    p = ptr + offset;
+
+    switch(width){
+        case 1:
+            r = *(uint8_t *)p;
+            break;
+        case 2:
+            r = *(uint16_t *)p;
+            break;
+        case 4:
+            r = *(uint32_t *)p;
+            break;
+        case 8:
+            r = *(uint64_t *)p;
+            break;
+        default:
+            Scm_Panic("Unexpected.");
+    }
+
+    return r;
+}
+
+static int64_t
+pointer_fetch_signed(void* ptr, ssize_t offset, int width){
+    int64_t r;
+    void* p;
+    p = ptr + offset;
+
+    switch(width){
+        case 1:
+            r = *(int8_t *)p;
+            break;
+        case 2:
+            r = *(int16_t *)p;
+            break;
+        case 4:
+            r = *(int32_t *)p;
+            break;
+        case 8:
+            r = *(int64_t *)p;
+            break;
+        default:
+            Scm_Panic("Unexpected.");
+    }
+
+    return r;
+}
+
+static void
+pointer_store(void* ptr, ssize_t offset, int width, uint64_t data){
+    void* p;
+    p = ptr + offset;
+
+    switch(width){
+        case 1:
+            *(uint8_t *)p = data;
+            break;
+        case 2:
+            *(uint16_t *)p = data;
+            break;
+        case 4:
+            *(uint32_t *)p = data;
+            break;
+        case 8:
+            *(uint64_t *)p = data;
+            break;
+        default:
+            Scm_Panic("Unexpected.");
+    }
+}
+
+ScmObj
+yuniffi_pointer_fetch_signed(ScmObj ptr, ScmObj offset, ScmObj width){
+    void* p;
+    ssize_t offs;
+    int w;
+    int64_t r;
+    if(!YUNIPTR_P(ptr)){
+        Scm_Error("ptr: must be a pointer", ptr);
+        return SCM_UNDEFINED;
+    }
+    if(!SCM_INTEGERP(offset)){
+        Scm_Error("offset: must be a number", offset);
+        return SCM_UNDEFINED;
+    }
+    if(!SCM_INTP(width)){
+        Scm_Error("width: must be a fixnum", width);
+        return SCM_UNDEFINED;
+    }
+
+    p = YUNIPTR_UNBOX(ptr);
+    offs = Scm_GetInteger64Clamp(offset, SCM_CLAMP_ERROR, NULL);
+    w = SCM_INT_VALUE(width);
+
+    r = pointer_fetch_signed(p, offs, w);
+
+    return Scm_MakeInteger64(r);
+}
+
+ScmObj
+yuniffi_pointer_fetch_unsigned(ScmObj ptr, ScmObj offset, ScmObj width){
+    void* p;
+    ssize_t offs;
+    int w;
+    uint64_t r;
+    if(!YUNIPTR_P(ptr)){
+        Scm_Error("ptr: must be a pointer", ptr);
+        return SCM_UNDEFINED;
+    }
+    if(!SCM_INTEGERP(offset)){
+        Scm_Error("offset: must be a number", offset);
+        return SCM_UNDEFINED;
+    }
+    if(!SCM_INTP(width)){
+        Scm_Error("width: must be a fixnum", width);
+        return SCM_UNDEFINED;
+    }
+
+    p = YUNIPTR_UNBOX(ptr);
+    offs = Scm_GetInteger64Clamp(offset, SCM_CLAMP_ERROR, NULL);
+    w = SCM_INT_VALUE(width);
+
+    r = pointer_fetch_unsigned(p, offs, w);
+
+    return Scm_MakeIntegerU64(r);
+}
+
+ScmObj
+yuniffi_pointer_store(ScmObj ptr, ScmObj offset, ScmObj width, ScmObj data){
+    void* p;
+    ssize_t offs;
+    int w;
+    int64_t d0s;
+    uint64_t d;
+    if(!YUNIPTR_P(ptr)){
+        Scm_Error("ptr: must be a pointer", ptr);
+        return SCM_UNDEFINED;
+    }
+    if(!SCM_INTEGERP(offset)){
+        Scm_Error("offset: must be a number", offset);
+        return SCM_UNDEFINED;
+    }
+    if(!SCM_INTP(width)){
+        Scm_Error("width: must be a fixnum", width);
+        return SCM_UNDEFINED;
+    }
+
+    p = YUNIPTR_UNBOX(ptr);
+    offs = Scm_GetInteger64Clamp(offset, SCM_CLAMP_ERROR, NULL);
+    w = SCM_INT_VALUE(width);
+    //d0s = Scm_GetInteger64Clamp(data, SCM_CLAMP_BOTH, NULL);
+    /* FIXME: Where's Scm_GetInteger64UClamp? */
+    d = Scm_GetInteger64Clamp(data, SCM_CLAMP_ERROR, NULL);
+
+    pointer_store(p, offs, w, d);
+
+    return SCM_UNDEFINED;
+}
 
 
-/*
- * Module initialization function.
- */
+ScmObj
+yuniffi_nccc_bootstrap(void){
+    uint64_t ptr = (uint64_t)(uintptr_t)yuniffi_bootstrap0;
+    return YUNIPTR_BOX((void*)ptr);
+}
+
+ScmClass *YuniPtrCls;
+
+static void
+yuniptr_print(ScmObj obj, ScmPort *out, ScmWriteContext *ctx){
+    void* me = YUNIPTR_UNBOX(obj);
+    Scm_Printf(out, "#<yuniptr \"%p\">", me);
+}
+
 extern void Scm_Init_yuniffilib(ScmModule*);
 
 void Scm_Init_yuniffi(void)
@@ -98,4 +271,12 @@ void Scm_Init_yuniffi(void)
 
     /* Register stub-generated procedures */
     Scm_Init_yuniffilib(mod);
+
+    /* (Yuniffi specific begin) */
+
+    /* Register yuniffi pointer class */
+    YuniPtrCls = Scm_MakeForeignPointerClass(mod, "<yuniptr>",
+                                            yuniptr_print,
+                                            NULL,
+                                            0);
 }
