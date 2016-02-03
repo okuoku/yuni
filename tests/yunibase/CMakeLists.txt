@@ -27,6 +27,8 @@ check_impl(NMOSH nmosh)
 
 set(impls
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS CSI VICARE NMOSH)
+set(ffi_impls # Exclude CSI VICARE NMOSH
+    CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS)
 
 function(test_with_impl prefix fil)
     if(YUNITEST_${prefix})
@@ -42,5 +44,12 @@ function(test_with_all fil)
     endforeach()
 endfunction()
 
+function(test_with_allffi fil)
+    foreach(e ${ffi_impls})
+        test_with_impl(${e} ${fil})
+    endforeach()
+endfunction()
+
 # Sanity
 test_with_all(_sanity.sps)
+test_with_allffi(_ncccsanity.sps)
