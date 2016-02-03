@@ -8,7 +8,7 @@
            bv-write/s32! bv-write/u32!  bv-write/s64!  bv-write/u64!
            bv-write/f32! bv-write/f64!
            bv-write/asciiz!)
-         (import (yuni scheme) (gauche uvector))
+         (import (yuni scheme) (gauche base) (gauche uvector))
          
 
 ;; FIXME: Think more efficient primitive
