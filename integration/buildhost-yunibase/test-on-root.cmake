@@ -6,18 +6,8 @@ set(_myproject /yuniroot/yuni/integration/buildhost-yunibase)
 set(_buildroot /yuniroot/build)
 set(_mypath ${CMAKE_CURRENT_LIST_DIR})
 
-file(MAKE_DIRECTORY ${_myroot})
-file(MAKE_DIRECTORY ${_buildroot})
 
 get_filename_component(_mysrc ${_mypath}/../.. ABSOLUTE)
-
-message(STATUS "Copying tree ${_mysrc} => ${_myroot}")
-
-file(COPY ${_mysrc}
-    DESTINATION ${_myroot}
-    PATTERN ".git" EXCLUDE)
-
-message(STATUS "Configure (${_myproject})...")
 
 function(execute_step str)
     execute_process(COMMAND ${ARGN}
@@ -30,6 +20,24 @@ function(execute_step str)
         message(FATAL_ERROR "Fail: [${str}] (${rr})")
     endif()
 endfunction()
+
+if(EXISTS ${_myroot})
+    message(STATUS "Removing previous tree ${_myroot}")
+    execute_step("Remove tree"
+        ${CMAKE_COMMAND} -E remove_directory
+        ${_myroot})
+endif()
+
+file(MAKE_DIRECTORY ${_myroot})
+file(MAKE_DIRECTORY ${_buildroot})
+
+message(STATUS "Copying tree ${_mysrc} => ${_myroot}")
+
+file(COPY ${_mysrc}
+    DESTINATION ${_myroot}
+    PATTERN ".git" EXCLUDE)
+
+message(STATUS "Configure (${_myproject})...")
 
 
 execute_step("Configure"
