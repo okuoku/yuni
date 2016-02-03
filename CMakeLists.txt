@@ -62,6 +62,10 @@ macro(yuni_install_native_files)
     install(FILES ${ARGN}
         DESTINATION ${YUNI_PLATFORM_LIBDIR})
 endmacro()
+macro(yuni_install_native_programs)
+    install(PROGRAMS ${ARGN}
+        DESTINATION ${YUNI_PLATFORM_LIBDIR})
+endmacro()
 
 if(YUNI_WITH_YUNIBASE)
     if(NOT YUNIBASE_YUNIFIED_PATH)

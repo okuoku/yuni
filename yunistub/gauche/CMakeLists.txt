@@ -33,5 +33,7 @@ if(YUNI_GOSH AND YUNI_GAUCHE_PACKAGE)
         yuniffilib.c
         IMPLICIT_DEPENDS ${srcs})
     add_custom_target(gauche-yuniffi ALL DEPENDS ${output_name})
-    yuni_install_native_files(${output_name})
+    yuni_install_native_programs(${output_name})
+    yuni_install_native_files(
+        ${CMAKE_CURRENT_LIST_DIR}/yuniffi.scm)
 endif()
