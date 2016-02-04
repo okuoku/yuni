@@ -89,6 +89,7 @@
   (sagittarius
     yuni
     r7rs-common
+    r6rs-common
     yuni-r6rs
     compat-sagittarius)) 
 

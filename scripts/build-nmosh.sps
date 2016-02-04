@@ -179,10 +179,10 @@
   (define outputpath (calc-libpath basepath name LIBEXT))
   (define aliaspath (and alias (calc-libpath 
                                  basepath alias LIBEXT)))
+  (define (keyword-symbol? sym)
+    (let ((c (string-ref (symbol->string sym) 0)))
+     (char=? #\: c)))
   (define (may-strip-specials lis)
-    (define (keyword-symbol? sym)
-      (let ((c (string-ref (symbol->string sym) 0)))
-        (char=? #\: c)))
     (define (standard-aux-keyword? sym)
       (case sym
         ((_ ... => else unquote unquote-splicing) #t)
@@ -198,20 +198,34 @@
                '()
                lis))
 
+  (define (require-filtered-library? exports)
+    (case flavor
+      ((sagittarius)
+       ;; The implementation R6RS-lite capable.
+       ;; Alias only, if it had no keyword symbol 
+       (let ((have-keyword-symbols? (fold-left (lambda (cur e)
+                                                 (or cur (keyword-symbol? e)))
+                                               #f
+                                               exports)))
+         have-keyword-symbols?))
+      (else
+        #t)))
+
   (match libcode
          (('library libname 
            ('export exports ...)
            ('import imports ...) 
            body ...)
-          (call-with-output-file-force
-            outputpath
-            (lambda (p)
-              (define body (libgen-r7rs-body name 
-                                             (may-strip-specials exports) 
-                                             imports
-                                             libpath
-                                             flavor))
-              (pp body p)))
+          (when (require-filtered-library? exports)
+            (call-with-output-file-force
+              outputpath
+              (lambda (p)
+                (define body (libgen-r7rs-body name 
+                                               (may-strip-specials exports) 
+                                               imports
+                                               libpath
+                                               flavor))
+                (pp body p))))
           (when alias
             (call-with-output-file-force
               aliaspath
