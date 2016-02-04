@@ -53,7 +53,7 @@
     (r6rs-common-yuni => yuni)))
 
 (GenRacket
-  ;; Racket library generator
+  ;; Racket-styled library generator
   (racket
     yuni
     yunisrfi
@@ -61,7 +61,14 @@
     r7rs-bridge
     r6rs-common
     compat-racket
-    )) 
+    )
+  (guile
+    yuni
+    yunisrfi
+    yuni-r6rs
+    compat-guile
+    r7rs-bridge
+    r6rs-common)) 
 
 (GenR7RS
   ;; R7RS library generator
@@ -96,8 +103,6 @@
 (GenR6RSCommon
   ;; R6RS-common assumes target can import R6RS-light libraries directly
   ;; Thus, it just renames the libraries
-  (r6rs-common
-    r6rs-common)
   ;; Larceny has R7RS libraries
   (larceny
     yuni-r6rs
@@ -109,11 +114,6 @@
     r6rs-common
     r7rs-bridge)
   ;; Guile can import R6RS-light but no R7RS
-  (guile
-    yuni-r6rs
-    compat-guile
-    r7rs-bridge
-    r6rs-common)
   (chez
     yuni-r6rs
     compat-chez

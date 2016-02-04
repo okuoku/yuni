@@ -1,12 +1,14 @@
 ##
 ## GUILE
-##    guile -l lib-runtime/guile/guile-load.scm -L $YUNIMOD -L lib-r6rs
-##          -L lib-stub/guile -L lib-stub/r6rs-common -L lib-stub/gen
+##    guile -l lib-runtime/guile/guile-load.scm -L lib-runtime/guile 
+##          -L $YUNIMOD -L lib-stub/guile -L lib-r6rs
+##          -L lib-stub/r6rs-common -L lib-stub/gen
 ##          -L lib -L lib-compat -L lib-compat/yuni-srfi
 ##
 set(YUNIIMPL_GUILE_LIBS
-    lib-r6rs
+    lib-runtime/guile
     lib-stub/guile
+    lib-r6rs
     lib-stub/r6rs-common
     lib-stub/gen
     lib

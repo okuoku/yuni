@@ -93,11 +93,11 @@
 
 ;; GenRacket: R6RS library generator for Racket
 
-(define (libgen-racket-body libname exports imports libpath)
+(define (libgen-racket-body libname exports imports libpath flavor)
   `(library ,libname
              (export ,@exports)
              (import ,@imports
-                     (yuni-runtime racket))
+                     (yuni-runtime ,flavor))
     (%%internal-paste ,libpath)))
 
 (define (libgen-racket-alias from to syms)
@@ -106,7 +106,7 @@
             (import ,from)))
 
 (define (libgen-racket name alias libcode libpath basepath flavor)
-  (define (base0filter sexp)
+  (define (base0filter/racket sexp)
     ;; Duh! Racket has (scheme base)!!!
     (if (equal? sexp '(scheme base))
       '(scheme base0)
@@ -114,32 +114,53 @@
       (if (equal? sexp '(scheme file))
         '(scheme file0)
         sexp)))
-  (define outputpath (calc-libpath basepath name "mzscheme.sls"))
+  (define (base0filter sexp) (if (eq? flavor 'racket)
+                               (base0filter/racket sexp)
+                               sexp))
+  (define LIBEXT (case flavor 
+                   ((racket) "mzscheme.sls") 
+                   ((guile) "guile.sls")
+                   (else 'Huh?)))
+  (define (may-strip-specials lis)
+    (define (standard-aux-keyword? sym)
+      (case sym
+        ((_ ... => else unquote unquote-splicing) #t)
+        (else #f)))
+    (fold-left (lambda (cur e) 
+                 (if (and (eq? flavor 'guile) (standard-aux-keyword? e)) 
+                   cur 
+                   (cons e cur)))
+               '()
+               lis))
+  (define outputpath (calc-libpath basepath name LIBEXT))
   (define aliaspath (and alias (calc-libpath 
-                                 basepath (base0filter alias) "mzscheme.sls")))
+                                 basepath (base0filter alias) LIBEXT)))
   (match libcode
          (('library libname 
            ('export exports ...)
            ('import imports ...) 
            body ...)
-          (call-with-output-file-force
-            outputpath
-            (lambda (p)
-              (define body (libgen-racket-body name exports 
-                                               (map base0filter imports) 
-                                               libpath))
-              (put-string p "#!r6rs\n")
-              (pp body p)))
-          (when alias
-            (call-with-output-file-force
-              aliaspath
-              (lambda (p)
-                (define body (libgen-racket-alias name alias (strip-rename
-                                                               exports)))
-                (put-string p "#!r6rs\n")
-                (pp body p)))))
+          (let ((ex (may-strip-specials exports)))
+           (when (or (eq? flavor 'racket)
+                     (not (= (length exports) (length ex)))) 
+             (call-with-output-file-force
+               outputpath
+               (lambda (p)
+                 (define body (libgen-racket-body name ex
+                                                  (map base0filter imports) 
+                                                  libpath flavor))
+                 (put-string p "#!r6rs\n")
+                 (pp body p))))
+           (when alias
+             (call-with-output-file-force
+               aliaspath
+               (lambda (p)
+                 (define body (libgen-racket-alias name alias 
+                                                   (strip-rename ex)))
+                 (put-string p "#!r6rs\n")
+                 (pp body p))))))
          (else
-           (assertion-violation #f "Invalid library format" libcode)) ))
+           (assertion-violation #f "Invalid library format" libcode))))
 
 ;; GenR7RS: R7RS library generator 
 (define (libgen-r7rs-body libname exports imports libpath flavor)

@@ -74,6 +74,6 @@
          
 (define (yuniffi-module-lookup handle str)
   (define p (dynamic-func str handle))
-  (pointer->procedure void p `(* ,int * ,int)))
+  (pointer->procedure void p (list '* int '* int)))
          
 )
