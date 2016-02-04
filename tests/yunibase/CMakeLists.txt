@@ -18,7 +18,7 @@ endmacro()
 
 check_impl(CHIBI_SCHEME chibi-scheme)
 check_impl(GOSH gosh)
-#check_impl(GUILE guile)
+check_impl(GUILE guile)
 check_impl(RACKET racket)
 check_impl(SAGITTARIUS sagittarius)
 check_impl(CSI csi)
