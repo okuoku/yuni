@@ -1,7 +1,0 @@
-(define-library (yunife alexpander)
-                (import (scheme base)
-                        (scheme cxr)
-                        (scheme write)
-                        (scheme read))
-                (include "../../alexpander/alexpander.scm")
-                (export null-mstore expand-top-level-forms!))
