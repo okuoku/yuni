@@ -79,7 +79,7 @@ endmacro()
 
 macro(run_nmosh_bootstrap nmosh script root result)
     gen_loadpath(__loadpath_bootstrap
-        lib-bootstrap
+        scripts/lib-bootstrap
         lib
         lib-compat)
     execute_process(
