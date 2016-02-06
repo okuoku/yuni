@@ -25,25 +25,29 @@ Yuni libraries are splitted into several directories.
  * `lib-runtime` - Implementation specific format libraries. 
 * (Built with run/buildstub.sh)
  * `lib-stub` - Implementation specific format. 
-* (Part of yuni library development environment)
- * `lib-bootstrap` - Minimal proxy library to run run/buildstub.sh with nmosh
 
 `run/*.sh` describes which directories have to be used with each implementations.
 
-Renaming
---------
-
-Every library except under `lib` will be renamed before its use to provide consistent library namings. 
-
-Library renaming rules are described at `config/config.scm`.
+Every library directories except `lib-runtime` should be added to `*library-directories*` variable of `config/config.scm`. `lib-runtime` will be ignored from the build system.
 
 Syntax
 ------
 
-Libraries in `lib` and `lib-compat` have to be written in R6RS-lite format; intersection of R6RS and R7RS lexical syntax. That mean;
+Libraries in `lib` and `lib-compat` have to be written in R6RS-lite format; intersection of R6RS and R7RS lexical syntax. That mean you have to avoid;
 
-* Do not use #vu8() or #u8(). These are not compatible between R6RS / R7RS.
-* Do not use |(vertical bar) for symbol. Ditto.
+* use of #vu8() or #u8(). These are not compatible between R6RS / R7RS.
+* |(vertical bar) for symbol. Ditto.
+* Square brackets `[` and `]`. These are not allowed in R7RS.
+
+R6RS-lite is designed to be loaded directly on R6RS implementations such as NMosh or Sagittarius. 
+
+Renaming
+--------
+
+Every libraries except under `lib` will be renamed before its use to provide consistent library namings. 
+
+Library renaming rules are described at `config/config.scm`.
+
 
 SCHEME
 ======
@@ -55,7 +59,7 @@ R6RS/R7RS Hybrid
 
 Since Yuni uses R7RS-small as Scheme base library, R6RS/R7RS hybrid implementations will be supported as first-class.
 
-## Nmosh
+## NMosh
 
 Yuni uses Nmosh as its own reference implementation.
 
@@ -90,7 +94,7 @@ R7RS
 
 R7RS uses `define-library` form which is different and extended from R6RS' `library` form. To support R7RS implementations, "import stub"s will be generated under `lib-stub` directory.
 
-## Chibi scheme
+## Chibi-scheme
 
 * Supported.
 
@@ -98,9 +102,9 @@ R7RS uses `define-library` form which is different and extended from R6RS' `libr
 
 * Supported.
 
-## Chicken scheme
+## Chicken
 
-* Not yet.
+* Supported.
 
 ## picrin
 
