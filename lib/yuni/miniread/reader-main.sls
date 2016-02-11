@@ -151,7 +151,6 @@
       (~ mr 'hold := b)
       (~ mr 'hold-index := index)
       (~ mr 'hold-stream := stream))
-    (define (cls) (ssplit-byte-class b))
     (define (set-prev-here type)
       (~ mr 'prev-type := type)
       (~ mr 'prev-stream := stream)
