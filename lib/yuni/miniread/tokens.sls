@@ -28,30 +28,28 @@
 
 (define-syntax %dispatch0
   (syntax-rules (=>)
-    ((_ byte others (sym => clause ...) ...)
+    ((_ byte (sym => clause ...) ...)
      (let ((cls (ssplit-byte-class byte)))
       (case cls
         ((sym)
          (%expand-clause clause ...))
         ...
         (else
-          (others cls)))))))
+          (values 'OTHERS #f)))))))
 
 (define-syntax %dispatch
   (syntax-rules (=>)
-    ((_ prev-sym byte others (from to => clause ...) ...)
+    ((_ prev-sym byte (from to => clause ...) ...)
      (let ((cls (ssplit-byte-class byte)))
       (cond
         ((and (eq? prev-sym 'from) (eq? cls 'to))
          (%expand-clause clause ...))
         ...
-        (else (others cls)))))))
+        (else (values 'OTHERS #f)))))))
          
 ;; Normal context
 (define (ssplit-parse-byte0 byte)
-  (define (others cls)
-    (values 'OTHERS #f))
-  (%dispatch0 byte others
+  (%dispatch0 byte
     ;; Paren
     (PAREN_L => LIST_BEGIN_PAREN)
     (PAREN_R => LIST_END_PAREN)
@@ -72,9 +70,7 @@
     ))
 
 (define (ssplit-parse-byte1 byte prev-sym)
-  (define (others cls)
-    (values 'OTHERS #f))
-  (%dispatch prev-sym byte others
+  (%dispatch prev-sym byte 
     (SHARP QUOTE => NEXT_SYNTAX_QUOTE)
     (SHARP BQUOTE => NEXT_SYNTAX_QUASIQUOTE)
     (SHARP COMMA => NEXT_SYNTAX_UNQUOTE #t) ;; splicing
@@ -89,57 +85,43 @@
     (SHARP LARGE-F => FALSE)))
 
 (define (ssplit-parse-byte2 byte prev-sym)
-  (define (others cls) (values 'OTHERS #f))
-
-  (%dispatch prev-sym byte others
+  (%dispatch prev-sym byte
     (NEXT_SYNTAX_UNQUOTE AT => NEXT_SYNTAX_UNQUOTE_SPLICING)))
 
 ;; String context
 (define (ssplit-instring-parse-byte0 byte)
-  (define (others cls)
-    (values 'OTHERS #f))
-  (%dispatch0 byte others
+  (%dispatch0 byte
     (BACKSLASH => BACKSLASH #t)
     (DQUOTE => DQUOTE)
     (CR => CR #t) ;; CR LF
     (LF => LF)))
 
 (define (ssplit-instring-parse-byte1 byte prev-sym)
-  (define (others cls)
-    (values 'OTHERS #f))
-  (%dispatch prev-sym byte others
+  (%dispatch prev-sym byte
     (CR LF => CRLF)
     (BACKSLASH DQUOTE => ESCAPE_DQUOTE)))
 
 ;; Line comment context
 (define (ssplit-incomment-parse-byte0 byte)
-  (define (others cls)
-    (values 'OTHERS #f))
-  (%dispatch0 byte others
+  (%dispatch0 byte
     (CR => CR #t) ;; CR LF
     (LF => LF)
     (SEMICOLON => SEMICOLON)))
 
 (define (ssplit-incomment-parse-byte1 byte prev-sym)
-  (define (others cls)
-    (values 'OTHERS #f))
-  (%dispatch prev-sym byte others
+  (%dispatch prev-sym byte
     (CR LF => CRLF)))
 
 ;; Block comment context
 (define (ssplit-inblockcomment-parse-byte0 byte)
-  (define (others cls)
-    (values 'OTHERS #f))
-  (%dispatch0 byte others
+  (%dispatch0 byte
     (PIPE => PIPE #t) ;; Block comment end
     (SHARP => SHARP #t) ;; Block comment begin
     (CR => CR #t) ;; CR LF
     (LF => LF)))
 
 (define (ssplit-inblockcomment-parse-byte1 byte prev-sym)
-  (define (others cls)
-    (values 'OTHERS #f))
-  (%dispatch prev-sym byte others
+  (%dispatch prev-sym byte 
     (PIPE SHARP => BLOCK_COMMENT_END)
     (SHARP PIPE => BLOCK_COMMENT_BEGIN)
     (CR LF => CRLF)))
