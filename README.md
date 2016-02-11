@@ -26,11 +26,11 @@ Implementations with FFI compatibility layer:
  * [Sagittarius](https://bitbucket.org/ktakashi/sagittarius-scheme/wiki/Home)
  * [Gauche](http://practical-scheme.net/gauche/) 0.9.4 or later
  * [Guile](http://www.gnu.org/software/guile/) 2.0 or later
+ * [Vicare](http://marcomaggi.github.io/vicare.html)
 
 Bootstrapped, but no FFI yet:
 
  * [Chicken](http://www.call-cc.org/) interpreter with `r7rs` egg
- * [Vicare](http://marcomaggi.github.io/vicare.html)
  * [Larceny](http://larcenists.org/)
  * [IronScheme](http://ironscheme.codeplex.com/)
 
