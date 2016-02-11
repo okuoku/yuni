@@ -11,7 +11,7 @@
 (define-syntax %bcdef
   (syntax-rules ()
     ((_ (char sym) ...)
-     (let ((sym (if (char? char) (char->integer char) char))
+     (let ((sym char)
            ...)
        (lambda (b)
          (cond 
@@ -33,34 +33,33 @@
 (define ssplit-byte-class
   (%bcdef
     ;; Whitespaces
-    (#\space SPACE)
+    (#x20 SPACE)
     (9 TAB)
     (13 CR)
     (10 LF)
 
     ;; Delimiters
-    (#\( PAREN_L)
-    (#\) PAREN_R)
-    (#\[ SQ_L)
-    (#\] SQ_R)
-    (#\; SEMICOLON)
-    (#\# SHARP)
-    (#\" DQUOTE)
+    (#x28 PAREN_L)
+    (#x29 PAREN_R)
+    (#x5B SQ_L)
+    (#x5D SQ_R)
+    (#x3b SEMICOLON)
+    (#x23 SHARP)
+    (#x22 DQUOTE)
 
     ;; Other special characters
-    (#\\ BACKSLASH)
-    (#\' QUOTE)
-    (#\@ AT)
-    (#\, COMMA)
-    (#\| PIPE)
+    (#x5c BACKSLASH)
+    (#x27 QUOTE)
+    (#x40 AT)
+    (#x2c COMMA)
+    (#x7c PIPE)
     ;(#\. DOT) ;; FIMXE: Not needed??
-    (#\` BQUOTE)
+    (#x60 BQUOTE)
 
     ;; Ordinal alphabets
-    (#\t SMALL-T)
-    (#\f SMALL-F)
-    (#\t LARGE-T)
-    (#\f LARGE-F)
-
+    (#x74 SMALL-T)
+    (#x66 SMALL-F)
+    (#x54 LARGE-T)
+    (#x46 LARGE-F)
     ))
 )
