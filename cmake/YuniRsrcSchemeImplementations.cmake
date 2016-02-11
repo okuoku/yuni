@@ -66,14 +66,16 @@ set(YUNIIMPL_RACKET_LIBS
 ## VICARE
 ##    vicare --source-path $YUNIMOD --source-path lib-r6rs
 ##           --source-path lib-stub/vicare --source-path lib-stub/r6rs-common
-##           --source-path lib-compat --source-path lib
+##           --source-path lib-compat --source-path lib 
+##           --source-path lib-stub/gen
 ##
 set(YUNIIMPL_VICARE_LIBS
     lib-r6rs
     lib-stub/vicare
     lib-stub/r6rs-common
     lib-compat
-    lib)
+    lib
+    lib-stub/gen)
 
 ##
 ## CHICKEN
