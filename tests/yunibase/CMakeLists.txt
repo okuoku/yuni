@@ -27,8 +27,8 @@ check_impl(NMOSH nmosh)
 
 set(impls
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS CSI VICARE NMOSH)
-set(ffi_impls # Exclude CSI VICARE NMOSH
-    CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS)
+set(ffi_impls # Exclude CSI NMOSH
+    CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS VICARE)
 
 function(test_with_impl prefix fil)
     if(YUNITEST_${prefix})
