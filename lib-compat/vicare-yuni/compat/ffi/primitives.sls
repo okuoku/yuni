@@ -45,20 +45,13 @@
  
 (define-read-asciiz ptr-read/asciiz ptr-read/u8)
 (define-write-asciiz ptr-write/asciiz! ptr-write/u8!)                           
-
-
-;; Guile style bytevector->pointer
-(define (bytevector->pointer bv offs)
-  ;; FIXME: Do we have to use bytevector->guarded-memory ??
-  (call-with-values (lambda () (bytevector->memory bv))
-                    (lambda (ptr _) (pointer-add ptr offs))))
          
 (define (yuniffi-nccc-call func
                            in in-offset in-size
                            out out-offset out-size)
-  (let ((inp (bytevector->pointer in (* 8 in-offset)))
-        (outp (bytevector->pointer out (* 8 out-offset))))
-    (func inp in-size outp out-size)))
+  (unless (and (= 0 in-offset) (= 0 out-offset))
+    (error "Not implemented"))
+  (func in in-size out out-size))
 
 (define nccc-callout-maker
   (make-c-callout-maker 'void '(pointer signed-int pointer signed-int)))
