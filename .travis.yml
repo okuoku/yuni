@@ -9,6 +9,7 @@ env:
     matrix:
         - DOCKER_IMG=okuoku/yunibase:testing
         - DOCKER_IMG=okuoku/yunibase:testing-fedora
+        - DOCKER_IMG=okuoku/yunibase:testing-java
 
 matrix:
     allow_failures:
