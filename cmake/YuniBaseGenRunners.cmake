@@ -1,6 +1,7 @@
 # Generate yunibase implementations runners
 #
 # INPUTs:
+#   YUNI_BASEDIR = repository top
 #   YUNI_WITH_YUNIBASE = basepath for yunibase build
 #   YUNIBASE_VANILLA_PATH = Output for "vanilla" runner
 #   YUNIBASE_YUNIFIED_PATH = Output for "yunified" runner (for post-bootstrap)
@@ -47,6 +48,18 @@ macro(gen_yunilibpaths var)
         list(APPEND ${var} "${YUNI_BASEDIR}/${e}")
     endforeach()
 endmacro()
+
+function(emit_yunified_kawa_runner_sh)
+    file(MAKE_DIRECTORY ${YUNIBASE_YUNIFIED_PATH})
+    set(_root ${YUNI_BASEDIR})
+    emit_tmpl_runner_sh(
+        ${YUNIBASE_YUNIFIED_PATH}/kawa-yuni
+        NONE # No LD path override
+        ""
+        ${YUNI_WITH_YUNIBASE}/current/kawa # Dummy path
+        java
+        "-classpath ${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar -Dkawa.import.path=\"${_root}/lib-stub/kawa/*.sld\" kawa.repl --r7rs ${_root}/lib-runtime/kawa/yuniloader.scm --")
+endfunction()
 
 function(emit_yunified_runner_sh varname flav impl cmd)
     file(MAKE_DIRECTORY ${YUNIBASE_YUNIFIED_PATH})
@@ -98,6 +111,10 @@ macro(yunibase_check_implementations)
     # nmosh
     if(EXISTS ${YUNI_WITH_YUNIBASE}/stable/nmosh/bin/nmosh)
         set(YUNIBASE_HAVE_NMOSH_STABLE 1)
+    endif()
+    # kawa
+    if(EXISTS ${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar)
+        set(YUNIBASE_HAVE_KAWA_CURRENT 1)
     endif()
 endmacro()
 
@@ -157,6 +174,9 @@ function(emit_yunibase_runners)
         endif()
         if(YUNIBASE_HAVE_NMOSH_STABLE)
             emit_yunified_runner_sh(NMOSH stable nmosh nmosh)
+        endif()
+        if(YUNIBASE_HAVE_KAWA_CURRENT)
+            emit_yunified_kawa_runner_sh()
         endif()
     endif()
 endfunction()

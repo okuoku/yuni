@@ -98,3 +98,7 @@ set(YUNIIMPL_NMOSH_LIBS
     lib-compat/yuni-srfi
     lib-stub/gen)
 
+##
+## KAWA
+##
+# Nothing to do for kawa - single import directory

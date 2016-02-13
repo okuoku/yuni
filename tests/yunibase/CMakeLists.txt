@@ -24,10 +24,11 @@ check_impl(SAGITTARIUS sagittarius)
 check_impl(CSI csi)
 check_impl(VICARE vicare)
 check_impl(NMOSH nmosh)
+check_impl(KAWA kawa-yuni)
 
 set(impls
-    CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS CSI VICARE NMOSH)
-set(ffi_impls # Exclude CSI NMOSH
+    CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS CSI VICARE NMOSH KAWA)
+set(ffi_impls # Exclude CSI NMOSH KAWA
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS VICARE)
 
 function(test_with_impl prefix fil)
