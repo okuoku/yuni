@@ -28,8 +28,15 @@ check_impl(KAWA kawa-yuni)
 
 set(impls
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS CSI VICARE NMOSH KAWA)
+
 set(ffi_impls # Exclude CSI NMOSH KAWA
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS VICARE)
+
+# Issue #37
+if(${CMAKE_SYSTEM_NAME} MATCHES FreeBSD)
+    # Crashes on dlopen()
+    list(REMOVE_ITEM ffi_impls CHIBI_SCHEME)
+endif()
 
 function(test_with_impl prefix fil)
     if(YUNITEST_${prefix})
