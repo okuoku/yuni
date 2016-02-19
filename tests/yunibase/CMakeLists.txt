@@ -38,6 +38,12 @@ if(${CMAKE_SYSTEM_NAME} MATCHES FreeBSD)
     list(REMOVE_ITEM ffi_impls CHIBI_SCHEME)
 endif()
 
+# Issue #38
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86" AND NOT WIN32)
+    # 32bit.
+    list(REMOVE_ITEM ffi_impls SAGITTARIUS GOSH RACKET)
+endif()
+
 function(test_with_impl prefix fil)
     if(YUNITEST_${prefix})
         add_test(NAME "${prefix}-${fil}"
