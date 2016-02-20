@@ -102,3 +102,15 @@ set(YUNIIMPL_NMOSH_LIBS
 ## KAWA
 ##
 # Nothing to do for kawa - single import directory
+
+##
+## LARCENY
+##     larceny -r7r6 -path ./lib-stub/larceny:./lib:./lib-compat 
+
+set(YUNIIMPL_LARCENY_LIBS
+    lib-stub/larceny
+    lib-stub/gen
+    lib
+    lib-r6rs
+    lib-compat)
+
