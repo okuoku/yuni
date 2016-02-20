@@ -212,7 +212,27 @@
     (define p (open-input-string str))
     (define obj0 (port->sexp p))
     (checkobj str obj0))
+  (define-syntax check2
+    (syntax-rules ()
+      ((_ obj ...)
+       (let* ((p (open-output-string))
+              (gen (lambda (e) (write e p) (display " " p))))
+         (for-each gen '(obj ...))
+        (let* ((str (get-output-string p))
+               (bv (string->utf8 str))
+               (obj1 (utf8-read bv)))
+          ;(write (list 'str: str))(newline)
+          ;(write (list 'obj: '(obj ...)))(newline)
+          ;(write (list 'obj1: obj1 ))(newline)
+          (check-equal obj1 '(obj ...)))))))
   (check "#| # |# hoge")
+  (check2 a)
+  (check2 a b c d)
+  (check2 #\a "hoge")
+  (check2 "\"")
+  (check2 "hoge" "hoge")
+  (check2 "hoge" fuga "hoge")
+  (check2 ("hoge\"" fuga "\"hoge")) ;; FIXME: Same as the case just below
   ;(check "\"hoge \\n hoge\"") ;; FIXME: WHY??
   (check "`(hoge ,fuga)")
   (check "`(hoge ,@fuga)")
@@ -243,7 +263,7 @@
   (checkobj "#vu8(0)" (list (bytevector 0)))
   )
 
-(for-each verify-file test-files)
 (miniread-tests)
+(for-each verify-file test-files)
 
 (check-finish)

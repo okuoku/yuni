@@ -314,9 +314,7 @@
           (end-here 'STRING))
          (else 'do-nothing)))
       ((STRING1)
-       (case type
-         ((ESCAPE_DQUOTE) 'do-nothing)
-         (else (set-state! 'STRING0))))
+       (set-state! 'STRING0))
 
       ((LINECOMMENT0)
        (case type
