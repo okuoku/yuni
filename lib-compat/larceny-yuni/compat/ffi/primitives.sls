@@ -80,16 +80,15 @@
                            in in-offset in-size 
                            out out-offset out-size)
   ;; NB: We assume 'in' and 'out' are automagically GC-protected.
-  ;; NB: It seems there is no public function for ffi/handle->address
   ;; Ref:
   ;;   larceny/lib/Ffi/memory.sch
   ;;   larceny/src/Rts/Sys/syscall.c
   ;;   larceny/include/Sys/macros.h
-  (define in-addr (+ (* sizeof:pointer (+ 1 in-offset)) ;; 1 = Skip header
-                     (ffi/handle->address in)))
-  (define out-addr (+ (* sizeof:pointer (+ 1 out-offset)) ;; 1 = Skip header
-                      (ffi/handle->address out)))
-  (func in-addr in-size out-addr out-size))
+  (unless (= in-offset 0)
+    (error "in-offset"))
+  (unless (= out-offset 0)
+    (error "out-offset"))
+  (func in in-size out out-size))
 
 (define (module-load path)
   ;; FIXME: No way to detect error..?
@@ -101,7 +100,7 @@
 (define (yuniffi-module-lookup handle str) ;; => procedure
   ;; FIXME: Wow, no pointer type! Seriously?
   ;;    NB: We cannot use boxed type because we have to offset pointer values
-  (foreign-procedure str '(int int int int) 'void))
+  (foreign-procedure str '(boxed int boxed int) 'void))
 
 (define (module-path) (current-require-path))
 (define yuniffi-module-load (make-simpleloader module-path module-load))
