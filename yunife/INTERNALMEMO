@@ -1,0 +1,113 @@
+IDENTIFIERS AND ENVIRONMENTS
+============================
+
+ (yuni minife core)
+
+  (make-minife build-id initial-ident)
+
+ (yuni minife expander)
+
+  (expand-forms! forms ENVFRAME-GLOBAL)
+
+ (yuni minife interfacelib)
+
+  (interfacelib) => ((r7c-expander-interface) . ENVFRAME)
+  (id-$define/primitive? ID)
+  (id-$define-aux-syntax? ID)
+  (id-$bind-variable? ID)
+  (id-$bind-definition? ID)
+  (id-$extend-env? ID)
+  (id-$inject? ID)
+  (id-$inject/splice? ID)
+  (id-$inject/multi? ID)
+  (id-$inject/form? ID)
+  (id-$alias? ID)
+  (id-$quote? ID)
+  (id-define-syntax? ID)
+  (id-syntax-rules? ID)
+  (id-syntax-error? ID)
+
+ (yuni minife environments)
+
+  (envframe-decl-binding! envframe sym ID)
+  (envframe-def-binding! envframe sym ID)
+  (envframe-add-binding! envframe sym ID)
+  (envframe-only-binding! envframe . sym)
+  (envframe-except-binding! envframe . sym)
+  (envframe-prefix-binding! envframe prefix)
+  (envframe-rename-binding! envframe . (from to))
+  (envframe-lookup envframe sym) => ID | #f
+  (envframe-lookup-decl envframe sym) => ID | #f
+  (envframe-lookup-def envframe sym) => ID | #f
+  (envframe-import! envframe envframe) ;; Merge envframe, remove dupes
+  (envframe-new) => envframe
+
+  (env-lookup env sym) => ID
+  (env-current-frame env) => envframe
+  (env-current-add-unknown! env pair)
+  (env-up/merge! env) ;; Merge unknowns
+  (env-new-envframe! env)
+  (env-new) => env
+
+  ENVFRAME
+   (((sym . ID) ...) . #f)
+
+  ENV
+   (((ENVFRAME . (unknown-ref ...)) ...) . #f)
+
+ (yuni minife identifiers)
+
+  (id? obj) => bool
+  (id-new-variable sym) => ID
+  (id-new-macro sym) => ID
+
+  (id-new-library-variable sym global lib) => ID
+  (id-new-library-macro sym global lib) => ID
+  (id-new-primitive sym global lib) => ID
+  (id-new-aux-syntax sym lib) => ID
+
+  (id-set-global-name! id name)
+  (id-set-gensym-ident! id ident)
+  (id-set-library! id lib)
+
+  (id-source-name ID) => sym
+  (id-global-name ID) => sym
+  (id-gensym-ident ID) => integer
+  (id-library ID) => libname | #t | #f
+  (id-variable? ID)
+  (id-macro? ID)
+  (id-aux-syntax? ID)
+  (id-primitive? ID)
+
+  ID
+   source-name
+   global-name  ;; global name symbol
+   gensym-ident ;; number
+   library      ;; #t for current program, #f for primitive, otherwise libname
+   type         ;; variable | macro | aux-syntax
+   primitive?
+   
+
+   
+
+
+
+
+SYNRULES
+========
+
+;; Macrodef
+
+* Pattern formats
+ - "non-symbols"         (EQV . "non-symbols")
+ - 'literals'            (LIT . literal)
+ - _                     (ANY)
+ - pattern               pattern-number
+ - ()                    (NULL)
+ - (p0 p1 p2)            (LIST   3 p0 p1 p2)
+ - (p0 p1 p2 . p)        (DLIST  3 p0 p1 p2 p)
+ - (p0 . p1)             (PAIR p0 p1)
+ - (p0 p1 ... p2 p3)     (MLIST  1 2 p1 ((p0) . (p2 p3)))
+ - (p0 p1 ... p2 p3 . p) (MDLIST 1 2 p1 ((p0) . (p2 p3 p)))
+ - #(p0 p1 p2)           (VEC    3 p0 p1 p2)
+ - #(p0 p1 ... p2 p3)    (MVEC   1 2 p1 ((p0) . (p2 p3)))

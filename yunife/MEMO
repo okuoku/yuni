@@ -1,0 +1,444 @@
+Notes for port-er/language implementors.
+
+Expander interface
+==================
+
+Every non-standard R5RS/R6RS/R7RS syntax/procedures are start with $.
+
+xxx: No actual library file for this library. Embedded in the expander.
+
+ (r7c-expander-interace)
+
+  - ($define/primitive <ID> <LIB>)  - Host scheme library primitives
+  - ($define/primitive <ID>)                        - Core primitive
+  - ($define-aux-syntax <ID>)
+  - ($bind-variable <ID>)      - bind a variable and emit its symbol
+  - ($bind-definition <ID>)    - bind a variable and emit its symbol
+  - ($extend-env (ID ...) body ...)
+  - ($extend-env (ID ... . ID) body ...)      - Shorthand for lambda
+  - ($extend-env ID body ...)                 - Shorthand for lambda
+  - ($inject <SYM> ...)                  - Inject a core scheme form
+  - ($inject/splice <SYM> ...)- Inject a core scheme form (splicing)
+  - ($inject/multi <SYM> ...)    - Inject a core scheme form (multi)
+  - ($inject/form ...)     - Inject part of core scheme form (multi)
+  - ($quote body)                    - Inject datum as syntax->datum
+  - ($alias <ID1> <ID2>)                    - Add ID1 as ID2's alias
+  - define-syntax
+  - syntax-rules
+  - syntax-error
+
+FIXME: $alias is only for let-syntax
+
+xxx: $extend-env is a splicing macro:
+
+  ($extend-env (a b c) a b c) => a b c
+  ($extend-env (a b c) (a b c)) => (a b c)
+
+xxx: $define/primitive is only for variables/procedures
+
+xxx: $inject does not splice
+
+  ($inject sym a b c) => (sym a b c)
+
+(define-syntax define
+  (syntax-rules ()
+    ((_ nam obj)
+     ($inject define
+              ($bind-definition nam)
+              ($extend-env nam obj)))))
+
+(define-syntax let
+  (syntax-rules ()
+    ((_ ((var frm) ...) body ...)
+     ($inject let
+              ((($bind-variable var) frm) ...)
+              ($extend-env (var ...)
+                           body ...)))))
+
+(define-syntax letrec
+  (syntax-rules ()
+    ((_ ((var frm) ...) body ...)
+     ($inject letrec
+              ($extend-env (var ...)
+                           ((var frm) ...)
+                           body ...)))))
+
+(define-syntax lambda
+  (syntax-rules ()
+    ((_ frm body ...)
+     ($inject lambda
+              ($extend-env frm body ...)))))
+
+(define-syntax case
+  (syntax-rules (else)
+    ((_ ((syms ...) body ...) ... (else else-body ...))
+     ($inject case
+              (($quote syms ...) body ...)
+              ...
+              (else else-body ...)))
+
+    ((_ ((syms ...) body ...) ...)
+     ($inject case
+              (($quote syms ...) body ...)
+              ...))))
+
+(define-syntax when
+  (syntax-rules ()
+    ((_ arg body ...)
+     ($inject when arg body ...))))
+
+(define-syntax begin
+  (syntax-rules ()
+    ((_ body ...)
+     ($inject/splice begin body ...))))
+
+System syntaxes
+===============
+
+These are provided by the system. Cannot be replaced but you can reference
+them in your program/library.
+
+You MUST re-export (r7c-system auxsyntax) to implement std aux syntaxes.
+
+ (r7c-system core)
+  - define-syntax
+  - syntax-rules
+  - syntax-error
+  - quote
+  - set!
+  - begin
+
+ (r7c-system auxsyntax) - Binds every aux syntaxes for R7RS base
+
+  - _
+  - ...
+  - =>
+  - unquote
+  - unquote-splicing
+  - else
+
+ (r7c-system definecore)
+
+  - $define/core
+
+ (r7c-system synrules)
+
+  - syntax-rules
+  - _
+  - ...
+
+ (r7c-system let-syntax) - Depends on (r7c syntax letcore)
+
+  - let-syntax
+  - letrec-syntax
+
+ (r7c-system expander)
+  - $define/primitive
+  - $bind-scope
+  - $bind-variable
+  - $extend-env
+  - $inject
+  - $quote
+  - $alias
+
+
+
+Runtime procedures
+==================
+
+Mandatory runtime procedures. No fallbacks provided and these have to be
+ported for each implementations.
+
+HEAP
+----
+
+ (r7c heap core)
+
+  - eq?
+
+ (r7c heap unspecified) - optional, used in r7c-report libraries
+
+  - ($unspecified) - Returns unspecified value, (if #f #f).
+
+ (r7c heap undefined) - optional, used in r7c-report libraries
+
+  - ($undefined) - Returns undefined value (letrec)
+
+ (r7c heap eqv)
+
+  - eqv?
+
+ (r7c heap equal)
+
+  - equal?
+
+ (r7c heap pair)
+
+  - pair?
+  - null?
+  - cons
+  - car
+  - cdr
+  - caar
+  - cadr
+  - cdar
+  - cddr
+  - set-car!
+  - set-cdr!
+
+ (r7c heap vector)
+
+  - list->vector
+  - vector->list
+
+ (r7c heap list)
+
+  - list
+  - append
+
+ (r7c heap fixnum)
+
+  - $fx>=
+  - $fx=
+
+ (r7c heap listloop)
+
+  - memv
+  - $fx-length
+
+ (r7c heap boolean)
+
+  - not
+
+
+CONTROL FLOW
+------------
+
+ (r7c core values)
+
+  - values
+  - call-with-values
+
+ (r7c core callcc)
+
+  - call/cc
+  - call-with-current-continuation
+
+
+ (r7c core dynamic-wind)
+
+  - dynamic-wind
+
+ (r7c core exception)
+
+  - with-exception-handler
+  - raise
+  - raise-continuable
+
+ (r7c core apply)
+
+  - apply
+
+ (r7c core error)
+
+  - error
+
+
+
+Runtime syntaxes
+================
+
+Required runtime syntaxes. 
+
+ (r7c syntax if) => (r7c-basic syntax if)
+
+  - if
+
+ (r7c syntax definecore) => (r7c-basic syntax definecore)
+
+  - $define/core
+
+ (r7c syntax letcore) => (r7c-basic syntax letcore)
+
+  - $let/core
+
+ (r7c syntax lambda) => (r7c-basic syntax lambda)
+
+  - lambda
+
+ (r7c syntax define) => (r7c-basic syntax define)
+
+  - define
+
+ (r7c syntax quasiquote) => (r7c-basic syntax quasiquote)
+
+  - quasiquote
+  - unquote
+  - unquote-splicing
+
+ (r7c syntax and) => (r7c-report conditional and)
+
+  - and
+
+ (r7c syntax case) => (r7c-report conditional case)
+
+  - case
+  - else
+  - =>
+
+ (r7c syntax cond) => (r7c-report conditional cond)
+
+  - cond
+  - else
+  - =>
+
+ (r7c syntax or) => (r7c-report conditional or)
+
+  - or
+
+ (r7c syntax unless) => (r7c-report conditional unless)
+
+  - unless
+
+ (r7c syntax when) => (r7c-report conditional when)
+
+  - when
+
+ (r7c syntax define-values) => (r7c-report binding-construct define-values)
+
+  - define-values
+
+ (r7c syntax let-values) => (r7c-report binding-construct let-values)
+
+  - let-values
+  - let*-values
+
+ (r7c syntax let) => (r7c-report binding-construct let)
+
+  - let
+  - let*
+
+ (r7c syntax letrec) => (r7c-report binding-construct letrec)
+
+  - letrec
+  - letrec*
+
+ (r7c syntax case-lambda) => (r7c-report misc case-lambda)
+
+  - case-lambda
+
+ (r7c syntax do) => (r7c-report misc do)
+
+  - do
+
+ (r7c syntax guard) => (r7c-report misc guard)
+
+  - guard
+  - else
+  - =>
+
+Standard libraries
+==================
+
+ (r7c std lazy) => (r7c-report misc lazy)
+
+  - delay-force
+  - make-promise
+  - delay
+  - force
+  - promise?
+
+ (r7c std parameterize) => (r7c-report misc parameterize)
+
+  - parameterize
+  - make-parameter
+
+
+(fallback) Sample Implementations
+=================================
+
+Deliv. syntax impelemtations extracted from the R7RS report.
+You can pick them up to implement (r7c syntax *) or (r7c std *).
+
+ (r7c-report conditional and)
+
+  - and
+
+ (r7c-report conditional case)
+
+  - case
+  - else
+  - =>
+
+ (r7c-report conditional cond)
+
+  - cond
+  - else
+  - =>
+
+ (r7c-report conditional or)
+
+  - or
+
+ (r7c-report conditional unless)
+
+  - unless
+
+ (r7c-report conditional when)
+
+  - when
+
+ (r7c-report binding-construct define-values)
+
+  - define-values
+
+ (r7c-report binding-construct let-values)
+
+  - let-values
+  - let*values
+
+ (r7c-report binding-construct let)
+
+  - let
+  - let*
+
+ (r7c-report binding-construct letrec)
+
+  - letrec
+  - letrec*
+
+ (r7c-report misc case-lambda)
+
+  - case-lambda
+
+ (r7c-report misc do)
+
+  - do
+
+ (r7c-report misc guard)
+
+  - guard 
+  - else
+  - =>
+
+ (r7c-report misc lazy)
+
+  - delay-force
+  - make-promise
+  - delay
+  - force
+  - promise?
+
+ (r7c-report misc parameterize)
+
+  - parameterize
+  - make-parameter
+
+
+
+Not needed for yuni:
+
+  - include
+  - include-ci
+  - cond-expand
+  

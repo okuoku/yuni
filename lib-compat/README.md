@@ -1,5 +1,5 @@
 lib-compat
 ==========
 
-This directory includes implementation specific yuni librarys which will provide actual compatibility layer.
+This directory includes implementation specific yuni libraries which will provide actual compatibility layer.
 

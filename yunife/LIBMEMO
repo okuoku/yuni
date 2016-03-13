@@ -1,0 +1,74 @@
+LIBRARIES
+=========
+ 
+ (yuni minife libmgr)
+
+  (make-libmgr . handlers) => mgr -- handlers will have priority
+  (libmgr-lookup mgr name) => envframe
+
+ (yuni minife libenvframe)
+
+  (envframe-xform-import-set envframe op args) => envframe
+  (envframe-xform-export-spec envframe args) => envframe
+
+ (yuni minife libfilehandler)
+
+  (make-libfilehandler import-dirs extensions) => handler
+
+ (yuni minife libprimitivehandler)
+
+  (make-libprimitivehandler) => handler
+
+ # PROTOCOL: libhandler
+  (handler 'lookup lib) => envframe | #f
+
+ (yuni minife libparse)
+
+  (libparse-libname sexp) => sexp | #f
+  (libparse-import-sets sexp) => sexp
+  (libparse-export-specs sexp) => sexp | #f
+  (libparse-body sexp) => sexp
+  (libparse-library? sexp) => bool
+
+ (yuni minife libfilepath)
+
+  (make-libfilepath import-dirs extensions) => mgr
+  (library-name->path mgr name) => string | #f
+
+
+Library syntax
+==============
+
+R6RS-light: R6RS library format without R6RS runtime syntax/procedures.
+
+ (library LIBNAME EXPORTS IMPORTS body ...)
+
+ EXPORTS ::= (export EXPORT-SPEC ...)
+ IMPORTS ::= (import IMPORT-SET ...)
+ EXPORT-SPEC ::= sym
+                 (rename A B)
+ IMPORT-SET  ::= lib
+                 (only IMPORT-SET sym ...)
+                 (except IMPORT-SET sym ...)
+                 (prefix IMPORT-SET sym ...)
+                 (rename IMPORT-SET (A B) ...)
+
+
+
+Library cache
+=============
+
+;; Sequence of:
+<IDENT> <LIBNAME> <BUILD> <COND+INC> <IMPORTS> <EXPORTS> (<CODE> ...)
+<MACROS> <DEBUG> ...
+
+ IDENT ::= "yunife-cache-v0"
+ LIBNAME ::= (<LIBNAMECOMPONENT> ...)
+ BUILD ::= "BUILD-ID"
+ COND+INC ::= ()
+ IMPORTS ::= ((<LIBNAME> . "BUILD-ID") ...)
+ EXPORTS ::= #((<INTNAME> . <EXPORTNAME>) ...)
+ MACROS ::= #((<EXPORTNAME> . <MACRODEF>) ...)
+ MACRODEF ::= (syntax-rules <LIT> <ELIP> <RULES> ...)
+
+
