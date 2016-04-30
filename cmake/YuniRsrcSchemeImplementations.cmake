@@ -114,3 +114,17 @@ set(YUNIIMPL_LARCENY_LIBS
     lib-r6rs
     lib-compat)
 
+##
+## Chez Scheme
+##     scheme-script.exe --libdirs lib-r6rs;lib-stub/chez;
+##                       lib-stub/r6rs-common;lib-compat;
+##                       lib;lib-compat/yuni-srfi
+
+set(YUNIIMPL_CHEZ_SCHEME_LIBS
+    lib-stub/chez
+    lib-stub/r6rs-common
+    lib-r6rs
+    lib-compat
+    lib
+    lib-compat/yuni-srfi
+    lib-stub/gen)

@@ -34,6 +34,7 @@ Bootstrapped, but no FFI yet:
  * [Chicken](http://www.call-cc.org/) interpreter with `r7rs` egg
  * [IronScheme](http://ironscheme.codeplex.com/)
  * [Kawa](http://www.gnu.org/software/kawa/)
+ * [ChezScheme](https://github.com/cisco/ChezScheme)
 
 ## Licensing
 

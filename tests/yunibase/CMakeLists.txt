@@ -26,12 +26,15 @@ check_impl(VICARE vicare)
 check_impl(NMOSH nmosh)
 check_impl(KAWA kawa-yuni)
 check_impl(LARCENY larceny)
+check_impl(PETITE_CHEZ_SCHEME petite-chez-scheme)
+check_impl(CHEZ_SCHEME chez-scheme)
 
 set(impls
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS CSI VICARE NMOSH KAWA
+    PETITE_CHEZ_SCHEME CHEZ_SCHEME
     LARCENY)
 
-set(ffi_impls # Exclude CSI NMOSH KAWA
+set(ffi_impls # Exclude CSI NMOSH KAWA CHEZ_SCHEME
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS VICARE
     LARCENY)
 

@@ -13,9 +13,10 @@ include(YuniRsrcSchemeRunners)
 # Output run/*.sh
 function(emit_tmpl_runner_sh outpath ldpathname ldpath addpath execpath args)
     # args = a string for additional args
+    # FIXME: SCHEMEHEAPDIRS is ChezScheme specific
     file(WRITE 
         "${outpath}"
-        "#!/bin/sh\nexport PATH=${addpath}:\$PATH\nexport ${ldpathname}=${ldpath}:\$${ldpathname}\nexec ${execpath} ${args} \$*\n")
+        "#!/bin/sh\nexport SCHEMEHEAPDIRS=${ldpath}/csv%v/%m\nexport PATH=${addpath}:\$PATH\nexport ${ldpathname}=${ldpath}:\$${ldpathname}\nexec ${execpath} ${args} \$*\n")
     execute_process(
         COMMAND chmod +x ${outpath}
         )
@@ -24,15 +25,19 @@ endfunction()
 # FIXME: Change this for MacOS Mach-O
 set(_ldpathname LD_LIBRARY_PATH)
 
-function(emit_vanilla_runner_sh flav impl cmd)
+function(emit_vanilla_runner_sh0 flav impl cmd cmdname)
     # flav = stable | current
     file(MAKE_DIRECTORY ${YUNIBASE_VANILLA_PATH})
-    emit_tmpl_runner_sh(${YUNIBASE_VANILLA_PATH}/${cmd}
+    emit_tmpl_runner_sh(${YUNIBASE_VANILLA_PATH}/${cmdname}
         ${_ldpathname}
         ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/lib
         ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin
         ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin/${cmd}
         "")
+endfunction()
+
+function(emit_vanilla_runner_sh flav impl cmd)
+    emit_vanilla_runner_sh0(${flav} ${impl} ${cmd} ${cmd})
 endfunction()
 
 macro(gen_string_args var)
@@ -61,7 +66,7 @@ function(emit_yunified_kawa_runner_sh)
         "-classpath ${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar -Dkawa.import.path=\"${_root}/lib-stub/kawa/*.sld\" kawa.repl --r7rs ${_root}/lib-runtime/kawa/yuniloader.scm --")
 endfunction()
 
-function(emit_yunified_runner_sh varname flav impl cmd)
+function(emit_yunified_runner_sh0 varname flav impl cmd cmdname)
     file(MAKE_DIRECTORY ${YUNIBASE_YUNIFIED_PATH})
     gen_yunilibpaths(_yunilibs ${YUNIIMPL_${varname}_LIBS})
     set(_libs ${YUNI_PLATFORM_LIBDIR} ${_yunilibs})
@@ -71,12 +76,16 @@ function(emit_yunified_runner_sh varname flav impl cmd)
         # WAR: Add --library-path ${libpath}/vicare-scheme
         set(_argsstr "--library-path ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/lib/vicare-scheme ${_argsstr}")
     endif()
-    emit_tmpl_runner_sh(${YUNIBASE_YUNIFIED_PATH}/${cmd}
+    emit_tmpl_runner_sh(${YUNIBASE_YUNIFIED_PATH}/${cmdname}
         ${_ldpathname}
         ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/lib
         ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin
         ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin/${cmd}
         "${_argsstr}")
+endfunction()
+
+function(emit_yunified_runner_sh varname flav impl cmd)
+    emit_yunified_runner_sh0(${varname} ${flav} ${impl} ${cmd} ${cmd})
 endfunction()
 
 macro(yunibase_check_implementations)
@@ -120,6 +129,10 @@ macro(yunibase_check_implementations)
     if(EXISTS ${YUNI_WITH_YUNIBASE}/current/larceny/bin/larceny)
         set(YUNIBASE_HAVE_LARCENY_CURRENT 1)
     endif()
+    # Chez Scheme
+    if(EXISTS ${YUNI_WITH_YUNIBASE}/current/chez/bin/scheme)
+        set(YUNIBASE_HAVE_CHEZ_SCHEME_CURRENT 1)
+    endif()
 endmacro()
 
 # Emit actual runners
@@ -156,6 +169,10 @@ function(emit_yunibase_runners)
         if(YUNIBASE_HAVE_LARCENY_CURRENT)
             emit_vanilla_runner_sh(current larceny larceny)
         endif()
+        if(YUNIBASE_HAVE_CHEZ_SCHEME_CURRENT)
+            emit_vanilla_runner_sh0(current chez scheme chez-scheme)
+            emit_vanilla_runner_sh0(current chez petite petite-chez-scheme)
+        endif()
     endif()
     if(YUNI_WITH_YUNIBASE AND YUNIBASE_YUNIFIED_PATH)
         if(YUNIBASE_HAVE_CHIBI_SCHEME_CURRENT)
@@ -187,6 +204,12 @@ function(emit_yunibase_runners)
         endif()
         if(YUNIBASE_HAVE_LARCENY_CURRENT)
             emit_yunified_runner_sh(LARCENY current larceny larceny)
+        endif()
+        if(YUNIBASE_HAVE_CHEZ_SCHEME_CURRENT)
+            emit_yunified_runner_sh0(CHEZ_SCHEME current 
+                chez scheme chez-scheme)
+            emit_yunified_runner_sh0(CHEZ_SCHEME current 
+                chez petite petite-chez-scheme)
         endif()
     endif()
 endfunction()
