@@ -49,6 +49,8 @@
   (compat-vicare
     (vicare-r7b => r7b-compat)
     (vicare-yuni => yuni))
+  (compat-rapid-gambit
+    (rapid-gambit-yuni => yuni))
   (r6rs-common
     (r6rs-common-yuni => yuni)))
 
@@ -62,6 +64,7 @@
     r6rs-common
     compat-racket
     )
+  ;; Guile can import R6RS-light but no R7RS
   (guile
     yuni
     yunisrfi
@@ -98,7 +101,12 @@
     r7rs-common
     r6rs-common
     yuni-r6rs
-    compat-sagittarius)) 
+    compat-sagittarius)
+  ;; experimental
+  (rapid-gambit
+    yuni
+    r7rs-common
+    compat-rapid-gambit)) 
 
 (GenR6RSCommon
   ;; R6RS-common assumes target can import R6RS-light libraries directly
@@ -113,7 +121,6 @@
     compat-ironscheme
     r6rs-common
     r7rs-bridge)
-  ;; Guile can import R6RS-light but no R7RS
   (chez
     yuni-r6rs
     compat-chez
