@@ -10,6 +10,13 @@ Obviously, we need some adaptation layer to support various Scheme implementaton
 
 See ../HACKING.markdown for generic library usage and standard commandline to develop the library itself.
 
+SIBR(Scheme Implementation Behaviour Report)
+============================================
+
+Yuni has repository for scheme implementation behaviour and its workaround implemented in Yuni.
+
+See `doc/sibr` for list.
+
 FILES
 =====
 
@@ -39,7 +46,10 @@ Libraries in `lib` and `lib-compat` have to be written in R6RS-lite format; inte
 * |(vertical bar) for symbol. Ditto.
 * Square brackets `[` and `]`. These are not allowed in R7RS.
 
-R6RS-lite is designed to be loaded directly on R6RS implementations such as NMosh or Sagittarius. 
+R6RS-lite is designed to be:
+
+* loaded directly on R6RS/R7RS hybrid implementations such as NMosh or Sagittarius.
+* parsed directly on R6RS and R7RS implementation's native reader. ie. no external reader required.
 
 Renaming
 --------
@@ -61,9 +71,13 @@ Since Yuni uses R7RS-small as Scheme base library, R6RS/R7RS hybrid implementati
 
 ## NMosh
 
-Yuni uses Nmosh as its own reference implementation.
+Yuni uses Nmosh as its own reference implementation. NMosh uses yuni as part of its R7RS compatibility layer.
 
 ## Sagittarius
+
+Yuni mostly uses R7RS side of Sagittarius.
+
+Sagittarius' keyword syntax conflicts some of yuni library. SIBR0009.
 
 R6RS
 ----
@@ -75,6 +89,8 @@ Several R6RS implements meta-level for library imports. So we need a proxy libra
 * (r6rs-common-yuni compat macro primitives)
  * Low-level macro primitives
 
+Yuni's R7RS compatibility is not perfect on some aspects. For example, it does not allow `_` as literal in `syntax-rules` unlike R7RS. SIBR0003.
+
 ## Racket
 
 Racket requires `#!r6rs` for each R6RS styled library so we have to generate import stub for each libraries. See R7RS section below.
@@ -82,6 +98,7 @@ Racket requires `#!r6rs` for each R6RS styled library so we have to generate imp
 For "Minimal" installation of Racket, Yuni will require `r6rs-lib` and `srfi-lib` packages. 
 
 * SRFI-0 is not implemented at all on (racket-srfi i0)
+* Some library names of R7RS such as `(scheme base)` are not implemented because of name conflict.
 
 ## Guile
 
@@ -112,10 +129,13 @@ R7RS uses `define-library` form which is different and extended from R6RS' `libr
 
 ## Foment
 
-* No un-hygienic macro yet.
+* No FFI/extension modules yet.
 
 Others
 ------
 
 ## Gambit
 
+Yuni uses [Rapid-gambit](https://github.com/okuoku/rapid-gambit) as R7RS compatibility layer/expander. Rapid-gambit expander is port of [Rapid-scheme](https://www.rapid-scheme.org).
+
+Alternatively, Gambit comes with psyntax to implement R5RS `syntax-rules`. 

@@ -35,6 +35,7 @@ Bootstrapped, but no FFI yet:
  * [IronScheme](http://ironscheme.codeplex.com/)
  * [Kawa](http://www.gnu.org/software/kawa/)
  * [ChezScheme](https://github.com/cisco/ChezScheme)
+ * [Gambit](http://gambitscheme.org/) with Rapid-scheme frontend
 
 ## Licensing
 
@@ -43,7 +44,7 @@ Bootstrapped, but no FFI yet:
 Build
 -----
 
-TBD: Building FFI bindings
+TBD: Document CMake buildsystem here.
 
 Every implementation requires `lib-stub` which will contain library import stubs.
 To generate library import stub, install nmosh from http://storage.osdev.info/pub/mosh/mosh-current.tar.gz and run:
