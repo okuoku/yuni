@@ -1,6 +1,12 @@
 (library (yuni base match)
          (export match ... _)
          (import (yuni scheme))
+
+;; #44
+(define ___ 0)
+(define ? 0)
+(define $ 0)
+(define get! 0)
          
 ;;;; match.scm -- portable hygienic pattern matcher
 ;;
