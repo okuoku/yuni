@@ -12,33 +12,33 @@
          (((r6-fields ...) 
            ;; Construct immutable or mutable fields depends on clause length
            (map (lambda (c) (if (= 2 (length c))
-                              ;; FIXME: Omit R6RS syntax
-                              #`(immutable . #,c)
-                              #`(mutable . #,c)))
-                #'((fieldname fieldparam ...) ...)))
+                              (quasisyntax (immutable . (unsyntax c)))
+                              (quasisyntax (mutable . (unsyntax c)))))
+                (syntax ((fieldname fieldparam ...) ...))))
           ((unreferenced ...)
            ;; Unreferenced names inside constructor formals
            (fold-left (lambda (cur e)
                         (if (not (find (lambda (h) (bound-identifier=? e h))
-                                       #'(formal ...)))
+                                       (syntax (formal ...))))
                           (cons e cur)
                           cur))
                       '()
-                      #'(fieldname ...))))
-         #'(define-record-type:r6 
-             (nam ctr pred)
-             ;; Constructor
-             (protocol (lambda (c)
-                         (lambda (formal ...)
-                           ;; Instantiate unreferenced vars with undefined value
-                           (define unreferenced)
-                           ...
-                           (c fieldname ...))))
+                      (syntax (fieldname ...)))))
+         (syntax (define-record-type:r6 
+                   (nam ctr pred)
+                   ;; Constructor
+                   (protocol (lambda (c)
+                               (lambda (formal ...)
+                                 ;; Instantiate unreferenced vars 
+                                 ;; with undefined value
+                                 (define unreferenced)
+                                 ...
+                                 (c fieldname ...))))
 
-             ;; Fields
-             (fields r6-fields ...)
+                   ;; Fields
+                   (fields r6-fields ...)
 
-             ;; FIXME: Is that true?
-             (sealed #t)))))))
+                   ;; FIXME: Is that true?
+                   (sealed #t))))))))
          
 )

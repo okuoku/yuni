@@ -1,4 +1,3 @@
-#!r6rs
 (library (nmosh-r7b-util eval)
          (export interaction-environment
                  load
