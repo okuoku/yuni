@@ -13,7 +13,8 @@ function(execute_step str)
     execute_process(COMMAND ${ARGN}
         RESULT_VARIABLE rr
         OUTPUT_VARIABLE out
-        ERROR_VARIABLE err)
+        ERROR_VARIABLE err
+        )
     if(rr)
         message(STATUS "Stdout:\n${out}\n\n")
         message(STATUS "Stderr:\n${err}\n\n")

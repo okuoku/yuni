@@ -46,6 +46,35 @@
       cur))
   (itr init lis))
 
+(define (filter1 proc lis)
+  (define (itr cur rest)
+    (if (pair? rest)
+      (let ((a (car rest))
+            (d (cdr rest)))
+        (if (proc a)
+          (itr (cons a cur) d)
+          (itr cur d)))
+      (reverse cur)))
+  (itr '() lis))
+
+(define (put-string port str)
+  (display str port))
+
+(define (open-file-input-port nam) ;; FIXME: Use R7RS name
+  (open-binary-input-file nam))
+
+(define (get-bytevector-all port)
+  (let ((p (open-output-bytevector)))
+   (let loop ()
+    (define bv (read-bytevector (* 1024 1024) port))
+    (if (eof-object? bv)
+      (get-output-bytevector p)
+      (loop)))))
+
+(define (get-line port) ;; FIXME: Use R7RS name
+  (read-line port))
+
+
 ;; from mosh-utils5.scm
 (define (run-win32-np?) (system-msdos-style-path?))
 (define CHR-ENVPATHSEP (if (run-win32-np?) #\; #\:))
@@ -156,7 +185,7 @@
 (define (simplify-path pth)
   (define (sweep l)
     (define (sweep/dot l)
-      (filter (lambda (e) (not (string=? e "."))) l))
+      (filter1 (lambda (e) (not (string=? e "."))) l))
     (define (sweep/dd cur a)
       (if (pair? a)
         (if (and (string=? (car a) "..")

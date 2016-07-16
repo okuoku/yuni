@@ -78,6 +78,34 @@ endmacro()
 
 
 ##
+## CHIBI_SCHEME
+## 
+#   Chibi-scheme has run_* macros to bootstrap the tree.
+##
+
+macro(run_chibi_scheme_bootstrap cmd script root result)
+    execute_process(
+        COMMAND "${cmd}"
+        "${script}"
+        WORKING_DIRECTORY "${root}"
+        RESULT_VARIABLE ${result})
+endmacro()
+
+macro(run_chibi_scheme cmd script root result)
+    gen_impl_commandline(__loadpath_full
+        CHIBI_SCHEME
+        ${root}
+        lib-stub/chibi
+        lib-runtime/r7rs
+        lib-runtime/chibi)
+    execute_process(
+        COMMAND "${cmd}"
+        ${__loadpath_full} "${script}"
+        WORKING_DIRECTORY "${root}"
+        RESULT_VARIABLE ${result})
+endmacro()
+
+##
 ## NMOSH
 ## 
 #   NMosh has run_* macros to bootstrap the tree.
