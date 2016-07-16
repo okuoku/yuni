@@ -14,16 +14,19 @@
                  (yuni ffi database layouts)
                  (yuni ffi database exports)
                  (yuni ffi database functions)
-                 
-                 ;; FIXME: R6RS libs
-                 (only (rnrs) 
-                       ;; SRFI-1
-                       filter
-                       ;; Hashtable
-                       hashtable-keys
-                       make-eq-hashtable
-                       hashtable-set!
-                       hashtable-ref))
+                 (yuni compat hashtables))
+;; TEMP
+
+(define (filter1 proc lis)
+  (define (itr cur rest)
+    (if (pair? rest)
+      (let ((a (car rest))
+            (d (cdr rest)))
+        (if (proc a)
+          (itr (cons a cur) d)
+          (itr cur d)))
+      (reverse cur)))
+  (itr '() lis))
 
 ;; 
 ;; Flatten: convert database into s-exp(lists)
@@ -107,7 +110,7 @@
         type))
 
   (define (resolve-pointer-base!)
-    (define (notyet) (filter (lambda (e) (not (string? 
+    (define (notyet) (filter1 (lambda (e) (not (string? 
                                                 (hashtable-ref type-ht e)))) 
                              (vector->list (hashtable-keys type-ht))))
     (define (proc name)
@@ -250,7 +253,7 @@
        (else #f))))
   (define (gen-layouts)
     (define external-types
-      (filter (lambda (t) (not (or (type-internal? t)
+      (filter1 (lambda (t) (not (or (type-internal? t)
                                    (type-group? t))))
               types))
     (define (gen-entry type)
@@ -276,7 +279,7 @@
     (map gen exports))
   (define (gen-constants/enum+flags)
     (define groups 
-      (filter type-group?  types))
+      (filter1 type-group?  types))
     (apply 
       append 
       (map (lambda (e)

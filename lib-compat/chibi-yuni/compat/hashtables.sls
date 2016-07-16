@@ -44,8 +44,12 @@
 (define hashtable? hash-table?)
 
 (define (hashtable-size h) (error "unimpl"))
-(define (hashtable-ref h obj val)
-  (hash-table-ref/default h obj val))
+(define hashtable-ref
+  (case-lambda
+    ((h obj val)
+     (hash-table-ref/default h obj val))
+    ((h obj)
+     (hash-table-ref h obj))))
 (define (hashtable-set! h obj1 obj2)
   (hash-table-set! h obj1 obj2))
 (define (hashtable-delete! h obj1)
@@ -54,7 +58,8 @@
 (define (hashtable-update! . _) (error "unimpl"))
 (define (hashtable-copy . _) (error "unimpl"))
 (define (hashtable-clear! . _) (error "unimpl"))
-(define (hashtable-keys . _) (error "unimpl"))
+(define (hashtable-keys h) 
+  (list->vector (hash-table-keys h)))
 (define (hashtable-entries . _) (error "unimpl"))
 (define (hashtable-equivalence-function . _) (error "unimpl"))
 (define (hashtable-hash-function . _) (error "unimpl"))

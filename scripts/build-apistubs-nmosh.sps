@@ -1,4 +1,4 @@
-;; API stub build script for nmosh
+;; API stub build script for yuni
 ;; Requires yuni. (run build-nmosh first, using run/buildstub.sh)
 
 (import (yuni scheme)
@@ -8,8 +8,17 @@
         (yuni ffi scmtemplate root)
         (yuni ffi database root)
         (yuni ffi database config)
-        (yuni ffi database libinfo)
-        (only (rnrs) fold-left))
+        (yuni ffi database libinfo))
+
+(define (fold-left1 proc init lis)
+  (define (itr cur rest)
+    (if (pair? rest)
+      (let ((a (car rest))
+            (d (cdr rest)))
+        (let ((c (proc cur a)))
+         (itr c d)))
+      cur))
+  (itr init lis))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
@@ -31,7 +40,7 @@
   (call-with-output-file file proc))
 
 (define (calc-filepath basepath sexp fname)
-  (path-append (fold-left (lambda (cur e)
+  (path-append (fold-left1 (lambda (cur e)
                             (path-append cur (symbol->string e)))
                           basepath
                           sexp)

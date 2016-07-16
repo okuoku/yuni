@@ -6,15 +6,7 @@
                  (yuni ffi abi abiv0)
                  (yuni ffi ctemplate util)
                  (yuni ffi database flatten)
-
-                 ;; FIXME: R6RS
-                 (only (rnrs)
-                       make-hashtable
-                       string-hash
-                       hashtable-ref
-                       hashtable-set!
-                       )
-                 ) 
+                 (yuni compat hashtables)) 
 
 ;; c-template: constants
 ;; 

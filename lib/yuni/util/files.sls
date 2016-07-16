@@ -32,7 +32,19 @@
            directory-walk
            ;; directory-fold
            )
-         (import (rnrs) (yuni compat file-ops))
+         (import (yuni scheme) 
+                 (yuni compat file-ops))
+
+;; TEMP
+(define (fold-left1 proc init lis)
+  (define (itr cur rest)
+    (if (pair? rest)
+      (let ((a (car rest))
+            (d (cdr rest)))
+        (let ((c (proc cur a)))
+         (itr c d)))
+      cur))
+  (itr init lis))
 
 ;; from mosh-utils5.scm
 (define (run-win32-np?) (system-msdos-style-path?))
@@ -128,7 +140,7 @@
   (strsep (pathfilter pth) #\/))
 
 (define (list->path l)
-  (fold-left path-append (car l) (cdr l)))
+  (fold-left1 path-append (car l) (cdr l)))
 
 (define (expand-loadpath lp)
   (strsep lp CHR-ENVPATHSEP))
