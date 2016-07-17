@@ -28,11 +28,12 @@ check_impl(KAWA kawa-yuni)
 check_impl(LARCENY larceny)
 check_impl(PETITE_CHEZ_SCHEME petite-chez-scheme)
 check_impl(CHEZ_SCHEME chez-scheme)
+check_impl(RAPID_GAMBIT rapid-gambit)
 
 set(impls
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS CSI VICARE NMOSH KAWA
     PETITE_CHEZ_SCHEME CHEZ_SCHEME
-    LARCENY)
+    LARCENY RAPID_GAMBIT)
 
 set(ffi_impls # Exclude CSI NMOSH KAWA CHEZ_SCHEME
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS VICARE

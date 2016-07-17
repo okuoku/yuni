@@ -128,3 +128,12 @@ set(YUNIIMPL_CHEZ_SCHEME_LIBS
     lib
     lib-compat/yuni-srfi
     lib-stub/gen)
+
+##
+## Rapid-gambit
+##    rapid-gambit -I lib-stub/rapid-gambit -I lib-runtime/r7rs
+##
+set(YUNIIMPL_RAPID_GAMBIT_LIBS
+    lib-stub/rapid-gambit
+    lib-runtime/r7rs)
+
