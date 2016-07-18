@@ -20,3 +20,20 @@ if(NOT YUNI_CHIBI_LIB)
     find_program(YUNI_CHIBI_LIB NAMES libchibi-scheme.dll)
 endif()
 
+# Chicken
+find_program(YUNI_CHICKEN
+    NAMES
+    chicken)
+find_program(YUNI_CHICKEN_CSC 
+    NAMES # FIXME: Can we avoid C# compilers?
+    chicken-csc
+    csc)
+find_program(YUNI_CHICKEN_CSI 
+    NAMES
+    chicken-csi
+    csi)
+
+# Gambit
+find_program(YUNI_GSC NAMES gsc
+    HINTS
+    /usr/local/Gambit/bin)

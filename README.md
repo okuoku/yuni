@@ -27,7 +27,6 @@ Implementations with FFI compatibility layer:
  * [Gauche](http://practical-scheme.net/gauche/) 0.9.4 or later
  * [Guile](http://www.gnu.org/software/guile/) 2.0 or later
  * [Vicare](http://marcomaggi.github.io/vicare.html)
- * [Larceny](http://larcenists.org/)
 
 Bootstrapped, but no FFI yet:
 
@@ -36,6 +35,7 @@ Bootstrapped, but no FFI yet:
  * [Kawa](http://www.gnu.org/software/kawa/)
  * [ChezScheme](https://github.com/cisco/ChezScheme)
  * [Gambit](http://gambitscheme.org/) with Rapid-scheme frontend
+ * [Larceny](http://larcenists.org/) - Lacks non-movable bytevectors #46
 
 ## Licensing
 
