@@ -31,7 +31,7 @@ if(YUNI_GOSH AND YUNI_GAUCHE_PACKAGE)
         DEPENDS
         ${srcs}
         yuniffilib.c
-        IMPLICIT_DEPENDS ${srcs})
+        IMPLICIT_DEPENDS C ${srcs})
     add_custom_target(gauche-yuniffi ALL DEPENDS ${output_name})
     yuni_install_native_programs(${output_name})
     yuni_install_native_files(
