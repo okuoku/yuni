@@ -62,7 +62,7 @@ macro(gen_impl_commandline var type runtimeprefix)
         elseif("${type}" STREQUAL VICARE)
             gen_libopts(${var} "--source-path;" ${ARGN})
         elseif("${type}" STREQUAL CHICKEN)
-            set(${var} -b -require-extension r7rs 
+            set(${var} -b -require-extension r7rs -s
                 ${runtimeprefix}/lib-runtime/r7rs/yuniloader-csi.scm)
         elseif("${type}" STREQUAL LARCENY)
             gen_loadpath0(_loadpath ${ARGN})

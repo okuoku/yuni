@@ -1,15 +1,4 @@
-(use r7rs)
-
-(import (scheme base) 
-        (scheme load)
-        (scheme read)
-        (scheme write)
-        (scheme cxr)
-        (scheme file)
-        (scheme process-context))
-
 ;; Currently, only for chicken interpreter(csi)
-
 (define ERRPORT current-error-port)
 (define (PCK . obj)
   (if #t  ;; %verbose
@@ -48,7 +37,7 @@
     (and (pair? nam)
          (let ((prefix (car nam)))
           (case prefix
-            ((scheme chicken matchable) #t)
+            ((scheme chicken matchable lolevel yuniffi-chicken) #t)
             ((srfi) (number? (cadr nam)))
             (else #f)))))
 
@@ -91,6 +80,10 @@
           (PCK 'PROC: import-clause)
           (for-each process-import-clause import-clause))))))
 
+  ;; First, try to load yuniffi stub
+  ;(load "lib-stub/yunistub-cygwin64/yuniffi-chicken.dll")
+  ;(provide 'yuniffi-chicken)
+
   (PCK 'RUN: filename)
 
   (unless (and (string? filename) (file-exists? filename))
@@ -112,24 +105,59 @@
                (PCK 'LOADING: filename)
                (load filename)) files))
 
-  ;(load filename) ;; Done automagically in csi frontend
   ;(PCK 'LIBS: (map cdr (reverse loaded-libraries)))
-  )
 
-(define ARG (cadr (cddddr (command-line))))
+  ;; Load R7RS program
+  ;; FIXME: WHY can't we use just a (load filename) ???
+  (call-with-input-file
+    filename
+    (lambda (p)
+      (define (port->list p)
+        (define (itr cur)
+          (let ((r (read p)))
+           (if (eof-object? r) 
+             (reverse cur)
+             (itr (cons r cur)))))
+        (itr '()))
+      (define (translate-imports lis)
+        (define (xclause cls)
+          ;(PCK 'CLAUSE: cls)
+          (cond ((pair? cls)
+                 (case (car cls)
+                   ((only except rename)
+                    (cons (car cls)
+                          (cons 
+                            (xclause (cadr cls))
+                            (cddr cls))))
+                   ((srfi)
+                    (error "SRFI??" cls))
+                   (else
+                     (let loop ((str "") (rest cls))
+                      (if (pair? rest)
+                        (let ((a (car rest))
+                              (d (cdr rest)))
+                          (loop
+                            (string-append
+                              str
+                              (if (string=? "" str) "" ".")
+                              (symbol->string a))
+                            d))
+                        (string->symbol str))))))
+                (else
+                  (error "Invalid clause: " cls))))
+        (cons 'import
+              (map xclause (cdr lis))))
+      (let ((prog (port->list p)))
+       (unless (pair? prog)
+         (error "run: Fatal"))
+       (let ((imports (translate-imports (car prog)))
+             (body (cdr prog)))
+         (PCK 'IMPORTS: imports)
+         (eval `(module YUNI-PROGRAM () ,imports ,@body)))))))
 
-;(write (list 'ARG: ARG))(newline)
+(define ARG (car (command-line-arguments)))
+
+(PCK 'CMD: (command-line-arguments))
 
 (run ARG)
 
-#|
-(with-exception-handler
-  (lambda (e) (PCK 'EXCEPTION: 
-                   (error-object-message e) 
-                   (error-object-irritants e))
-    (exit -1))
-  (lambda () 
-    (PCK 'ARG: ARG)
-    (run ARG)))
-
-|#
