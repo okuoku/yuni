@@ -23,8 +23,11 @@
         #t)))
   (let ((fn-dll (string-append STUBDIR "/yuniffi-chicken.dll"))
         (fn-so (string-append STUBDIR "/yuniffi-chicken.so")))
-    (or (tryload fn-so)
-        (tryload fn-dll))))
+    (let ((loaded? (or (tryload fn-so)
+                       (tryload fn-dll))))
+      (when loaded?
+        (PCK 'PREFIX: STUBDIR)
+        (%%yuniffi-module-prefix-set! STUBDIR)))))
 
 (define (run filename)
   (define import-dirs
@@ -50,7 +53,7 @@
     (and (pair? nam)
          (let ((prefix (car nam)))
           (case prefix
-            ((scheme chicken matchable lolevel yuniffi-chicken) #t)
+            ((scheme chicken matchable lolevel numbers yuniffi-chicken) #t)
             ((srfi) (number? (cadr nam)))
             (else #f)))))
 
