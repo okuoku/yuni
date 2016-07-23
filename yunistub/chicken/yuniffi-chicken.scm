@@ -41,6 +41,8 @@
     "uint64_t* in0;
      uint64_t* out0;
      yuniffi_nccc_func_t callee;
+     int x;
+     int y;
      
      callee = (yuniffi_nccc_func_t)func;
      in0 = (uint64_t*)in;
@@ -48,7 +50,7 @@
 
      if(0){
      //printf(\"in0 = %p\\n\", in0);
-     for(int x=0; x!= in_len; x++){
+     for(x=0; x!= in_len; x++){
              printf(\"in %02d: %lx\\n\",x+in_offset,in0[x+in_offset]);
      }
      }
@@ -57,7 +59,7 @@
 
      if(0){
      //printf(\"out0 = %p\\n\", out0);
-     for(int y=0; y!= out_len; y++){
+     for(y=0; y!= out_len; y++){
              printf(\"out%02d: %lx\\n\",y+out_offset,out0[y+out_offset]);
      }
      }
