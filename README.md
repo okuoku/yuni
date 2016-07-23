@@ -27,10 +27,10 @@ Implementations with FFI compatibility layer:
  * [Gauche](http://practical-scheme.net/gauche/) 0.9.4 or later
  * [Guile](http://www.gnu.org/software/guile/) 2.0 or later
  * [Vicare](http://marcomaggi.github.io/vicare.html)
+ * [Chicken](http://www.call-cc.org/) interpreter with `r7rs` egg
 
 Bootstrapped, but no FFI yet:
 
- * [Chicken](http://www.call-cc.org/) interpreter with `r7rs` egg
  * [IronScheme](http://ironscheme.codeplex.com/)
  * [Kawa](http://www.gnu.org/software/kawa/)
  * [ChezScheme](https://github.com/cisco/ChezScheme)
