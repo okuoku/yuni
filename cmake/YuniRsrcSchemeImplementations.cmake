@@ -79,7 +79,7 @@ set(YUNIIMPL_VICARE_LIBS
 
 ##
 ## CHICKEN
-##    csi -b -require-extension r7rs lib-runtime/r7rs/yuniloader-csi.scm
+##    (no longer uses libpath - single import directory)
 ##
 
 ## 

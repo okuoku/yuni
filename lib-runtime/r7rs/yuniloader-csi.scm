@@ -12,6 +12,19 @@
                     obj)
           (newline (ERRPORT)))))))
 
+(define (init-ffi-stub!)
+  (define (tryload fn)
+    (PCK 'LOAD-FFI-STUB fn)
+    (with-exception-handler
+      (lambda (x) #f)
+      (lambda () 
+        (load fn) 
+        (provide 'yuniffi-chicken)
+        #t)))
+  (let ((fn-dll (string-append STUBDIR "/yuniffi-chicken.dll"))
+        (fn-so (string-append STUBDIR "/yuniffi-chicken.so")))
+    (or (tryload fn-so)
+        (tryload fn-dll))))
 
 (define (run filename)
   (define import-dirs
@@ -80,9 +93,7 @@
           (PCK 'PROC: import-clause)
           (for-each process-import-clause import-clause))))))
 
-  ;; First, try to load yuniffi stub
-  ;(load "lib-stub/yunistub-cygwin64/yuniffi-chicken.dll")
-  ;(provide 'yuniffi-chicken)
+  (init-ffi-stub!)
 
   (PCK 'RUN: filename)
 
@@ -155,9 +166,14 @@
          (PCK 'IMPORTS: imports)
          (eval `(module YUNI-PROGRAM () ,imports ,@body)))))))
 
-(define ARG (car (command-line-arguments)))
+(define STUBDIRFLAG (car (command-line-arguments)))
+(define STUBDIR (cadr (command-line-arguments)))
+(define ARG (caddr (command-line-arguments)))
 
 (PCK 'CMD: (command-line-arguments))
+
+(unless (string=? STUBDIRFLAG "--yuniffi-stubdir")
+  (error "Invalid command-line" (command-line-arguments)))
 
 (run ARG)
 
