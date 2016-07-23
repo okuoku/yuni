@@ -14,13 +14,16 @@
 
 (define (init-ffi-stub!)
   (define (tryload fn)
-    (PCK 'LOAD-FFI-STUB fn)
+    (PCK 'TRY-FFI-STUB fn)
+    ;; FIXME: It seems we cannot catch exceptions on load..
+    ;; FIXME: Findout more precise method on this
     (with-exception-handler
       (lambda (x) #f)
       (lambda () 
-        (load fn) 
-        (provide 'yuniffi-chicken)
-        #t)))
+        (and (file-exists? fn)
+             (load fn) 
+             (provide 'yuniffi-chicken)
+             #t))))
   (let ((fn-dll (string-append STUBDIR "/yuniffi-chicken.dll"))
         (fn-so (string-append STUBDIR "/yuniffi-chicken.so")))
     (let ((loaded? (or (tryload fn-so)
