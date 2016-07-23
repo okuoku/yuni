@@ -29,12 +29,12 @@ Implementations with FFI compatibility layer:
  * [Vicare](http://marcomaggi.github.io/vicare.html)
  * [Chicken](http://www.call-cc.org/) interpreter with `r7rs` egg
  * [Gambit](http://gambitscheme.org/) with Rapid-scheme frontend
+ * [ChezScheme](https://github.com/cisco/ChezScheme)
 
 Bootstrapped, but no FFI yet:
 
  * [IronScheme](http://ironscheme.codeplex.com/)
  * [Kawa](http://www.gnu.org/software/kawa/)
- * [ChezScheme](https://github.com/cisco/ChezScheme)
  * [Larceny](http://larcenists.org/) - Lacks non-movable bytevectors #46
 
 ## Licensing
