@@ -28,13 +28,13 @@ Implementations with FFI compatibility layer:
  * [Guile](http://www.gnu.org/software/guile/) 2.0 or later
  * [Vicare](http://marcomaggi.github.io/vicare.html)
  * [Chicken](http://www.call-cc.org/) interpreter with `r7rs` egg
+ * [Gambit](http://gambitscheme.org/) with Rapid-scheme frontend
 
 Bootstrapped, but no FFI yet:
 
  * [IronScheme](http://ironscheme.codeplex.com/)
  * [Kawa](http://www.gnu.org/software/kawa/)
  * [ChezScheme](https://github.com/cisco/ChezScheme)
- * [Gambit](http://gambitscheme.org/) with Rapid-scheme frontend
  * [Larceny](http://larcenists.org/) - Lacks non-movable bytevectors #46
 
 ## Licensing
