@@ -35,9 +35,9 @@ set(impls
     PETITE_CHEZ_SCHEME CHEZ_SCHEME
     LARCENY RAPID_GAMBIT)
 
-set(ffi_impls # Exclude CSI NMOSH KAWA CHEZ_SCHEME
+set(ffi_impls # Exclude NMOSH KAWA
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS VICARE
-    LARCENY)
+    LARCENY CHEZ_SCHEME CSI RAPID_GAMBIT)
 
 # Issue #37
 if(${CMAKE_SYSTEM_NAME} MATCHES FreeBSD)
@@ -46,9 +46,11 @@ if(${CMAKE_SYSTEM_NAME} MATCHES FreeBSD)
 endif()
 
 # Issue #38
-if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86" AND NOT WIN32)
-    # 32bit.
-    list(REMOVE_ITEM ffi_impls SAGITTARIUS GOSH RACKET)
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86$")
+    if(NOT WIN32)
+        # 32bit linux.
+        list(REMOVE_ITEM ffi_impls SAGITTARIUS GOSH RACKET)
+    endif()
 endif()
 
 function(test_with_impl prefix fil)
