@@ -49,7 +49,7 @@ endif()
 if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86$")
     if(NOT WIN32)
         # 32bit linux.
-        list(REMOVE_ITEM ffi_impls SAGITTARIUS GOSH RACKET)
+        list(REMOVE_ITEM ffi_impls SAGITTARIUS GOSH RACKET CSI)
     endif()
 endif()
 
