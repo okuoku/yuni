@@ -145,10 +145,10 @@ cddddr cdddr
  string=? string-ci=?
  string<? string-ci<?
  string>? string-ci>?
- string<=? string<=?
- string>=? string>=?
- string-ci<=? string-ci<=?
- string-ci>=? string-ci>=?
+ string<=?
+ string>=?
+ string-ci<=?
+ string-ci>=?
  string-upcase
  string-downcase
  string-foldcase
