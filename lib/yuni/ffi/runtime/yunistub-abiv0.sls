@@ -72,7 +72,9 @@
    (and obj
         (match obj
                ((flags value size offset)
-                (integer->ptr value))))))
+                (let ((bv (make-bytevector 8)))
+                 (bv-write/u64! bv 0 value)
+                 (bv-read/w64ptr bv 0)))))))
 
 (define (realize-constant libstate typesym dbname)
   (define ht (library-state-ht libstate))
@@ -85,7 +87,9 @@
                   ((unsigned)
                    value)
                   ((pointer)
-                   (integer->ptr value))
+                   (let ((bv (make-bytevector 8)))
+                    (bv-write/u64! bv 0 value)
+                    (bv-read/w64ptr bv 0)))
                   ((signed)
                    (let ((bv (make-bytevector 8)))
                     (bv-write/u64! bv 0 value)

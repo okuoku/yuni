@@ -15,5 +15,9 @@
                         yuniffi_store_u16
                         yuniffi_store_s32
                         yuniffi_store_u32
+                        yuniffi_fetch_p64
+                        yuniffi_store_p64
+                        yuniffi_fetch_p64_bv
+                        yuniffi_store_p64_bv
                         )
                 (include-shared "chibi-yuniffi"))

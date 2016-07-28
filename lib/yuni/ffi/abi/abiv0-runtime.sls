@@ -36,7 +36,7 @@
 
   ;; Check for valid bit
   (let ((out0 (bv-read/u64 out 0))
-        (out1 (bv-read/u64 out (* 8 1)))
+        (out1p (bv-read/w64ptr out (* 8 1)))
         (out2 (bv-read/u64 out (* 8 2)))
         (out3 (bv-read/u64 out (* 8 3)))
         (out4 (bv-read/u64 out (* 8 4)))
@@ -45,7 +45,7 @@
         (list 
           (and
             (not (= out0 YUNIFFI_SYMBOL__TERMINATE))
-            (ptr-read/asciiz (integer->ptr out1) 0 (+ out2 1)))
+            (ptr-read/asciiz out1p 0 (+ out2 1)))
           out0
           out3
           out4

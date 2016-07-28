@@ -4,13 +4,17 @@
                  yuniffi-module-lookup
 
                  ;; Memory OPs (pointers)
-                 ptr? integer->ptr
+                 ptr?
+                 ptr-read/w64ptr
                  ptr-read/s8 ptr-read/u8 ptr-read/s16 ptr-read/u16
                  ptr-read/s32 ptr-read/u32 ptr-read/s64 ptr-read/u64
                  ptr-read/asciiz
                  ptr-write/s8! ptr-write/u8! ptr-write/s16! ptr-write/u16!
                  ptr-write/s32! ptr-write/u32! ptr-write/s64! ptr-write/u64!
                  ptr-write/asciiz!
+
+                 bv-read/w64ptr
+                 bv-write/w64ptr!
                  )
          (import (yuni scheme)
                  ;; Some of definitions are placed in runtime
@@ -39,9 +43,6 @@
                       ;; We exclude them here for now.
                       (not (bytevector? x))
                       (not (eq? #f x))))
-(define (integer->ptr x)
-  ;; Add an integer offset against NULL pointer
-  (ptr-add #f x))
 
 (define (ptr-read/s8 p off) (ptr-ref p _int8 off))
 (define (ptr-read/u8 p off) (ptr-ref p _uint8 off))
@@ -59,6 +60,17 @@
 (define (ptr-write/u32! p off v) (ptr-set! p _uint32 off v))
 (define (ptr-write/s64! p off v) (ptr-set! p _int64 off v))
 (define (ptr-write/u64! p off v) (ptr-set! p _uint64 off v))
+
+;; FIXME: Assumes little-endian
+;; defined in (yuni-runtime racket-ffi)
+(define (ptr-read/w64ptr p off)
+  (ptr-ref/cpointer p off))
+(define (ptr-write/w64ptr! p off v)
+  (ptr-set/cpointer! p off v))
+(define (bv-read/w64ptr bv off)
+  (ptr-ref/cpointer bv off))
+(define (bv-write/w64ptr! bv off v)
+  (ptr-set/cpointer! bv off v))
 
 (define-read-asciiz ptr-read/asciiz ptr-read/u8)
 (define-write-asciiz ptr-write/asciiz! ptr-write/u8!)

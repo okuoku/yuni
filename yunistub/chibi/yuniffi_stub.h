@@ -32,4 +32,10 @@ void yuniffi_store_u32(void* ptr, int offset, unsigned int value);
 void yuniffi_store_s64(void* ptr, int offset, sexp value);
 void yuniffi_store_u64(void* ptr, int offset, sexp value);
 
+/* 64bit pointer handling */
+void* yuniffi_fetch_p64(void* ptr, int offset);
+void* yuniffi_fetch_p64_bv(sexp bv, int offset);
+void yuniffi_store_p64(void* ptr, int offset, void* value);
+void yuniffi_store_p64_bv(sexp bv, int offset, void* value);
+
 #endif

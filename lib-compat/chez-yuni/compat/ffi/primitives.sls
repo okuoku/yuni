@@ -4,15 +4,22 @@
                  yuniffi-module-lookup
  
                  ;; Memory OPs (pointers)
-                 ptr? integer->ptr
+                 ptr?
+                 ptr-read/w64ptr
                  ptr-read/s8 ptr-read/u8 ptr-read/s16 ptr-read/u16
                  ptr-read/s32 ptr-read/u32 ptr-read/s64 ptr-read/u64
                  ptr-read/asciiz
                  ptr-write/s8! ptr-write/u8! ptr-write/s16! ptr-write/u16!
                  ptr-write/s32! ptr-write/u32! ptr-write/s64! ptr-write/u64!
                  ptr-write/asciiz!
+
+                 bv-read/w64ptr
+                 bv-write/w64ptr!
                  )
          (import (yuni scheme)
+                 (only (rnrs)
+                       bytevector-u64-native-ref
+                       bytevector-u64-native-set!)
                  (only (chezscheme)
                        library-directories
                        foreign-ref
@@ -23,7 +30,6 @@
                  (yuni ffi runtime simplestrings))
 ;; A bit different from nmosh
 (define (ptr? x) (integer? x))
-(define (integer->ptr x) x)
  
 (define (ptr-read/s8 x off) (foreign-ref 'integer-8 x off))
 (define (ptr-read/u8 x off) (foreign-ref 'unsigned-8 x off))
@@ -41,6 +47,15 @@
 (define (ptr-write/u32! x off v) (foreign-set! 'unsigned-32 x off v))
 (define (ptr-write/s64! x off v) (foreign-set! 'integer-64 x off v))
 (define (ptr-write/u64! x off v) (foreign-set! 'unsigned-64 x off v))
+
+(define (ptr-read/w64ptr x off)
+  (ptr-read/u64 x off))
+
+(define (bv-read/w64ptr x off)
+  (bytevector-u64-native-ref x off))
+
+(define (bv-write/w64ptr! x off v)
+  (bytevector-u64-native-set! x off v))
  
 (define-read-asciiz ptr-read/asciiz ptr-read/u8)
 (define-write-asciiz ptr-write/asciiz! ptr-write/u8!)                           

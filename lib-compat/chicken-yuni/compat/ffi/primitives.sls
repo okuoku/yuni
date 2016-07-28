@@ -4,13 +4,17 @@
            yuniffi-module-lookup
 
            ;; Memory OPs (pointers)
-           ptr? integer->ptr
+           ptr? 
+           ptr-read/w64ptr
            ptr-read/s8 ptr-read/u8 ptr-read/s16 ptr-read/u16
            ptr-read/s32 ptr-read/u32 ptr-read/s64 ptr-read/u64
            ptr-read/asciiz
            ptr-write/s8! ptr-write/u8! ptr-write/s16! ptr-write/u16!
            ptr-write/s32! ptr-write/u32! ptr-write/s64! ptr-write/u64!
            ptr-write/asciiz!
+
+           bv-read/w64ptr
+           bv-write/w64ptr!
 
            yuniffi-nccc-call)
 
@@ -27,7 +31,6 @@
   (%%yuniffi-nccc-call func in in-offset in-len out out-offset out-len))
 
 ;; Pointer handlers
-(define integer->ptr address->pointer)
 (define ptr? pointer?)
 
 (define-syntax defptr-ref
@@ -58,6 +61,15 @@
 (defptr-set! ptr-write/s32! pointer-s32-set!)
 (defptr-set! ptr-write/u32! pointer-u32-set!)
 
+(define (ptr-read/w64ptr p off)
+  (%%yuniffi-ptr64-ref/ptr p off))
+
+(define (bv-read/w64ptr bv off)
+  (%%yuniffi-ptr64-ref/bv bv off))
+
+(define (bv-write/w64ptr! bv off v)
+  (%%yuniffi-ptr64-set!/bv bv off v))
+
 (define-read-asciiz ptr-read/asciiz ptr-read/u8)
 (define-write-asciiz ptr-write/asciiz! ptr-write/u8!)
 
@@ -86,8 +98,10 @@
   (dlopen dlsym)
   (make-bootstraploader yuniffi-nccc-call
                         (lambda () %%yuniffi-nccc-bootstrap)
-                        ptr-write/asciiz!
-                        integer->ptr))
+                        ptr?
+                        bv-read/w64ptr
+                        bv-write/w64ptr!
+                        ptr-write/asciiz!))
 
 (define (%module-path) (list (%%yuniffi-module-prefix)))
 

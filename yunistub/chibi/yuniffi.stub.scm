@@ -22,3 +22,7 @@
 (define-c void yuniffi_store_s32 ((pointer void) int int))
 (define-c void yuniffi_store_u32 ((pointer void) int unsigned-int))
 
+(define-c (pointer void) yuniffi_fetch_p64 ((pointer void) int))
+(define-c void yuniffi_store_p64 ((pointer void) int (pointer void)))
+(define-c (pointer void) yuniffi_fetch_p64_bv (sexp int))
+(define-c void yuniffi_store_p64_bv (sexp int (pointer void)))

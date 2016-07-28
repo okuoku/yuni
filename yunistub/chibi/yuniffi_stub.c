@@ -51,7 +51,7 @@ sexp_to64(sexp val){
             }
             if(4 == sizeof(sexp_uint_t)){
                 if(sexp_bignum_length(val) > 1){
-                    mag = data[0] + (data[1] << 32);
+                    mag = data[0] + (((uint64_t)data[1]) << 32);
                 }else{
                     mag = data[0];
                 }
@@ -66,6 +66,7 @@ sexp_to64(sexp val){
     return 0; /* NOTREACHED */
 }
 
+/* FIXME: Unused? */
 void* 
 yuniffi_offset_ptr(void* ptr, sexp offset){
     void* ret;
@@ -151,3 +152,32 @@ yuniffi_store_u32(void* ptr, int offset, unsigned int value){
     *x = value;
 }
 
+void*
+yuniffi_fetch_p64(void* ptr, int offset){
+    void* in = ptr + offset;
+    uint64_t* in0;
+    in0 = (uint64_t *)in;
+    return (void*)(uintptr_t)(*in0);
+}
+
+void
+yuniffi_store_p64(void* ptr, int offset, void* value){
+    void* out = ptr + offset;
+    uint64_t* out0;
+    out0 = (uint64_t *)out;
+    *out0 = (uint64_t)(uintptr_t)value;
+}
+
+void*
+yuniffi_fetch_p64_bv(sexp bv, int offset){
+    void* in;
+    in = sexp_bytes_data(bv);
+    return yuniffi_fetch_p64(in, offset);
+}
+
+void
+yuniffi_store_p64_bv(sexp bv, int offset, void* value){
+    void* out;
+    out = sexp_bytes_data(bv);
+    yuniffi_store_p64(out, offset, value);
+}

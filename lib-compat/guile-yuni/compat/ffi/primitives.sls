@@ -4,13 +4,17 @@
                  yuniffi-module-lookup
 
                  ;; Memory OPs (pointers)
-                 ptr? integer->ptr
+                 ptr?
+                 ptr-read/w64ptr
                  ptr-read/s8 ptr-read/u8 ptr-read/s16 ptr-read/u16
                  ptr-read/s32 ptr-read/u32 ptr-read/s64 ptr-read/u64
                  ptr-read/asciiz
                  ptr-write/s8! ptr-write/u8! ptr-write/s16! ptr-write/u16!
                  ptr-write/s32! ptr-write/u32! ptr-write/s64! ptr-write/u64!
                  ptr-write/asciiz!
+
+                 bv-read/w64ptr
+                 bv-write/w64ptr!
                  )
          (import (yuni scheme)
                  (only (guile)
@@ -25,7 +29,6 @@
 ;; Guile requires bytevector to do byte-wise access. Whoa.
 
 (define (ptr? x) (pointer? x))
-(define (integer->ptr x) (make-pointer x))
 (define-syntax defreader
   (syntax-rules ()
     ((_ name bvr)
@@ -38,6 +41,8 @@
 (defreader ptr-read/u16 bv-read/u16)
 (defreader ptr-read/s32 bv-read/s32)
 (defreader ptr-read/u32 bv-read/u32)
+(defreader ptr-read/s64 bv-read/s64)
+(defreader ptr-read/u64 bv-read/u64)
 
 (define-syntax defwriter
   (syntax-rules ()
@@ -53,6 +58,17 @@
 (defwriter ptr-write/u32! bv-write/u32!)
 (defwriter ptr-write/s64! bv-write/s64!)
 (defwriter ptr-write/u64! bv-write/u64!)
+
+(define (ptr-read/w64ptr p off)
+  (let ((w (ptr-read/u64 p off)))
+   (make-pointer w)))
+(define (ptr-write/w64ptr! p off v)
+  (ptr-write/u64! p off (pointer-address v)))
+(define (bv-read/w64ptr bv off)
+  (let ((w (bv-read/u64 bv off)))
+   (make-pointer w)))
+(define (bv-write/w64ptr bv off v)
+  (bv-write/u64! bv off (pointer-address v)))
 
 (define-read-asciiz ptr-read/asciiz ptr-read/u8)
 (define-write-asciiz ptr-write/asciiz! ptr-write/u8!)

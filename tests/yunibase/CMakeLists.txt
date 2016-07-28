@@ -37,7 +37,8 @@ set(impls
 
 set(ffi_impls # Exclude NMOSH KAWA
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS VICARE
-    LARCENY CHEZ_SCHEME CSI RAPID_GAMBIT)
+    # LARCENY 
+    CHEZ_SCHEME CSI RAPID_GAMBIT)
 
 # Issue #37
 if(${CMAKE_SYSTEM_NAME} MATCHES FreeBSD)
@@ -49,7 +50,7 @@ endif()
 if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86$")
     if(NOT WIN32)
         # 32bit linux.
-        list(REMOVE_ITEM ffi_impls SAGITTARIUS GOSH RACKET CSI)
+        list(REMOVE_ITEM ffi_impls SAGITTARIUS)
     endif()
 endif()
 

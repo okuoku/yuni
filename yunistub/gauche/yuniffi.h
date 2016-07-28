@@ -31,6 +31,12 @@ extern ScmObj yuniffi_pointer_store(ScmObj ptr, ScmObj offset, ScmObj width,
                                     ScmObj data);
 extern ScmObj yuniffi_pointer_fromint(ScmObj offset);
 
+extern ScmObj yuniffi_pointer_fetch_p64(ScmObj ptr, ScmObj offset);
+extern ScmObj yuniffi_pointer_fetch_p64_bv(ScmObj bv, ScmObj offset);
+extern ScmObj yuniffi_pointer_store_p64(ScmObj ptr, ScmObj offset, ScmObj data);
+extern ScmObj yuniffi_pointer_store_p64_bv(ScmObj bv, ScmObj offset,
+                                           ScmObj data);
+
 /* Epilogue */
 SCM_DECL_END
 

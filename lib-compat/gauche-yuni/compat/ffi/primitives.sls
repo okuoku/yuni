@@ -6,13 +6,17 @@
            yuniffi-module-path
 
            ;; Memory OPs (pointers)
-           ptr? integer->ptr
+           ptr?
+           ptr-read/w64ptr
            ptr-read/s8 ptr-read/u8 ptr-read/s16 ptr-read/u16
            ptr-read/s32 ptr-read/u32 ptr-read/s64 ptr-read/u64
            ptr-read/asciiz
            ptr-write/s8! ptr-write/u8! ptr-write/s16! ptr-write/u16!
            ptr-write/s32! ptr-write/u32! ptr-write/s64! ptr-write/u64!
-           ptr-write/asciiz!)
+           ptr-write/asciiz!
+           
+           bv-read/w64ptr
+           bv-write/w64ptr!)
          (import (yuni scheme)
                  (yuni-runtime gauche loadpath)
                  (yuni ffi runtime bootstraploader)
@@ -63,6 +67,10 @@
 (define-read-asciiz ptr-read/asciiz ptr-read/u8)
 (define-write-asciiz ptr-write/asciiz! ptr-write/u8!)
 
+(define ptr-read/w64ptr yuniffi-pointer-fetch-p64)
+(define ptr-write/w64ptr! yuniffi-pointer-store-p64)
+(define bv-read/w64ptr yuniffi-pointer-fetch-p64/bv)
+(define bv-write/w64ptr! yuniffi-pointer-store-p64/bv)
          
 (define (yuniffi-nccc-call func
                            in in-offset in-size
@@ -72,9 +80,10 @@
 (define-values (dlopen dlsym)
                (make-bootstraploader yuniffi-nccc-call
                                      yuniffi-nccc-bootstrap
-                                     ptr-write/asciiz!
-                                     integer->ptr)) 
-
+                                     ptr?
+                                     bv-read/w64ptr
+                                     bv-write/w64ptr!
+                                     ptr-write/asciiz!))
 
 (define (yuniffi-module-lookup handle str) (dlsym handle str))
 

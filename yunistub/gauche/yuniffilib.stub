@@ -6,9 +6,6 @@
 #include \"yuniffi.h\"
 "
 
-;; The following entry is a dummy one.
-;; Replace it for your definitions.
-
 (define-cproc yuniffi-nccc-call (func in in-offset in-len
                                       out out-offset out-len) 
               yuniffi_nccc_call)
@@ -22,6 +19,15 @@
               yuniffi_pointer_store)
 (define-cproc yuniffi-pointer-fromint (offset)
               yuniffi_pointer_fromint)
+
+(define-cproc yuniffi-pointer-fetch-p64 (ptr offset)
+              yuniffi_pointer_fetch_p64)
+(define-cproc yuniffi-pointer-store-p64 (ptr offset data)
+              yuniffi_pointer_store_p64)
+(define-cproc yuniffi-pointer-fetch-p64/bv (bv offset)
+              yuniffi_pointer_fetch_p64_bv)
+(define-cproc yuniffi-pointer-store-p64/bv (bv offset data)
+              yuniffi_pointer_store_p64_bv)
 
 ;; Local variables:
 ;; mode: scheme

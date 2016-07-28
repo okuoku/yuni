@@ -211,6 +211,50 @@ yuniffi_pointer_fetch_unsigned(ScmObj ptr, ScmObj offset, ScmObj width){
 }
 
 ScmObj
+yuniffi_pointer_fetch_p64(ScmObj ptr, ScmObj offset){
+    void* p;
+    uint64_t* in;
+    ssize_t offs;
+    uint64_t r;
+    if(!YUNIPTR_P(ptr)){
+        Scm_Error("ptr: must be a pointer", ptr);
+        return SCM_UNDEFINED;
+    }
+    if(!SCM_INTEGERP(offset)){
+        Scm_Error("offset: must be a number", offset);
+        return SCM_UNDEFINED;
+    }
+
+    offs = Scm_GetInteger64Clamp(offset, SCM_CLAMP_ERROR, NULL);
+    p = YUNIPTR_UNBOX(ptr) + offs;
+    in = (uint64_t *)p;
+
+    return YUNIPTR_BOX((void*)(uintptr_t)*in);
+}
+
+ScmObj
+yuniffi_pointer_fetch_p64_bv(ScmObj bv, ScmObj offset){
+    void* p;
+    uint64_t* in;
+    ssize_t offs;
+    uint64_t r;
+    if(!SCM_U8VECTORP(bv)){
+        Scm_Error("bv: must be a u8vector", in);
+        return SCM_UNDEFINED;
+    }
+    if(!SCM_INTEGERP(offset)){
+        Scm_Error("offset: must be a number", offset);
+        return SCM_UNDEFINED;
+    }
+
+    offs = Scm_GetInteger64Clamp(offset, SCM_CLAMP_ERROR, NULL);
+    p = SCM_U8VECTOR_ELEMENTS(bv) + offs;
+    in = (uint64_t *)p;
+
+    return YUNIPTR_BOX((void*)(uintptr_t)*in);
+}
+
+ScmObj
 yuniffi_pointer_store(ScmObj ptr, ScmObj offset, ScmObj width, ScmObj data){
     void* p;
     ssize_t offs;
@@ -242,11 +286,63 @@ yuniffi_pointer_store(ScmObj ptr, ScmObj offset, ScmObj width, ScmObj data){
     return SCM_UNDEFINED;
 }
 
+ScmObj
+yuniffi_pointer_store_p64(ScmObj ptr, ScmObj offset, ScmObj data){
+    void* p;
+    ssize_t offs;
+    void* d;
+    if(!YUNIPTR_P(ptr)){
+        Scm_Error("ptr: must be a pointer", ptr);
+        return SCM_UNDEFINED;
+    }
+    if(!YUNIPTR_P(data)){
+        Scm_Error("data: must be a pointer", ptr);
+        return SCM_UNDEFINED;
+    }
+    if(!SCM_INTEGERP(offset)){
+        Scm_Error("offset: must be a number", offset);
+        return SCM_UNDEFINED;
+    }
+
+    offs = Scm_GetInteger64Clamp(offset, SCM_CLAMP_ERROR, NULL);
+    p = YUNIPTR_UNBOX(ptr) + offs;
+    d = YUNIPTR_UNBOX(data);
+    *((void**)p) = d;
+
+    return SCM_UNDEFINED;
+}
+
+ScmObj
+yuniffi_pointer_store_p64_bv(ScmObj bv, ScmObj offset, ScmObj data){
+    void* p;
+    ssize_t offs;
+    void* d;
+    if(!SCM_U8VECTORP(bv)){
+        Scm_Error("bv: must be a u8vector", bv);
+        return SCM_UNDEFINED;
+    }
+    if(!YUNIPTR_P(data)){
+        Scm_Error("data: must be a pointer", data);
+        return SCM_UNDEFINED;
+    }
+    if(!SCM_INTEGERP(offset)){
+        Scm_Error("offset: must be a number", offset);
+        return SCM_UNDEFINED;
+    }
+
+    offs = Scm_GetInteger64Clamp(offset, SCM_CLAMP_ERROR, NULL);
+    p = SCM_U8VECTOR_ELEMENTS(bv) + offs;
+    d = YUNIPTR_UNBOX(data);
+    *((void**)p) = d;
+
+    return SCM_UNDEFINED;
+}
+
 
 ScmObj
 yuniffi_nccc_bootstrap(void){
     uint64_t ptr = (uint64_t)(uintptr_t)yuniffi_bootstrap0;
-    return YUNIPTR_BOX((void*)ptr);
+    return YUNIPTR_BOX((void*)(uintptr_t)ptr);
 }
 
 ScmClass *YuniPtrCls;

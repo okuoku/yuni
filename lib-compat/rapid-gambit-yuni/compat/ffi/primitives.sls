@@ -5,19 +5,24 @@
            yuniffi-module-lookup
 
            ;; Memory OPs (pointers)
-           ptr? integer->ptr
+           ptr? 
+           ptr-read/w64ptr
+           ptr-write/w64ptr!
            ptr-read/s8 ptr-read/u8 ptr-read/s16 ptr-read/u16
            ptr-read/s32 ptr-read/u32 ptr-read/s64 ptr-read/u64
            ptr-read/asciiz
            ptr-write/s8! ptr-write/u8! ptr-write/s16! ptr-write/u16!
            ptr-write/s32! ptr-write/u32! ptr-write/s64! ptr-write/u64!
            ptr-write/asciiz!
+
+           bv-read/w64ptr
+           bv-write/w64ptr!
            )
          (import (yuni scheme)
                  (yuni ffi runtime bootstraploader)
                  (yuni ffi runtime simpleloader)
                  (yuni ffi runtime simplestrings)
-                 
+                 (yuni compat bitwise primitives)
                  (rapid primitive))
 
 (define-primitive libpath '%%rapid-gambit-libpath)
@@ -40,6 +45,15 @@
 (define-primitive ptr-write/u16! '%%yuniffi-store-u16)
 (define-primitive ptr-write/u32! '%%yuniffi-store-u32)
 (define-primitive ptr-write/u64! '%%yuniffi-store-u64)
+
+(define (ptr-read/w64ptr x off)
+  (ptr-read/u64 x off))
+(define (ptr-write/w64ptr! x off v)
+  (ptr-write/u64! x off v))
+(define (bv-read/w64ptr x off)
+  (bv-read/u64 x off))
+(define (bv-write/w64ptr! x off v)
+  (bv-write/u64! x off v))
 
 (define (search-ffi-module) ;; => path without .o1
   (let loop ((libs (libpath)))
@@ -66,7 +80,6 @@
 
 
 (define (ptr? x) (integer? x))
-(define (integer->ptr x) x)
 
 (define-read-asciiz ptr-read/asciiz ptr-read/u8)
 (define-write-asciiz ptr-write/asciiz! ptr-write/u8!)
@@ -74,8 +87,10 @@
 (define-values (dlopen dlsym)
                (make-bootstraploader yuniffi-nccc-call
                                      yuniffi-nccc-bootstrap
-                                     ptr-write/asciiz!
-                                     integer->ptr))
+                                     ptr?
+                                     bv-read/w64ptr
+                                     bv-write/w64ptr!
+                                     ptr-write/asciiz!))
 
 (define (yuniffi-nccc-call . args)
   (ensure-yuniffi-loaded!)

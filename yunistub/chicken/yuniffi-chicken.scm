@@ -7,7 +7,10 @@
   (export %%yuniffi-nccc-bootstrap
           %%yuniffi-nccc-call
           %%yuniffi-module-prefix-set!-inner
-          %%yuniffi-module-prefix)
+          %%yuniffi-module-prefix
+          %%yuniffi-ptr64-ref/ptr
+          %%yuniffi-ptr64-ref/bv
+          %%yuniffi-ptr64-set!/bv)
   (import scheme chicken foreign lolevel)
 
 ;;
@@ -27,6 +30,34 @@
   ;(display (list 'nccc-call: in)) (newline)
   (%%%yuniffi-nccc-call
     func in in_offset in_len out out_offset out_len))
+
+(define %%yuniffi-ptr64-ref/ptr
+  (foreign-lambda*
+    c-pointer
+    ((c-pointer ptr)
+     (size_t off))
+    "void* in;
+     in = ptr + off;
+     C_return((void*)(uintptr_t)(*(uint64_t*)in));"))
+
+(define %%yuniffi-ptr64-ref/bv
+  (foreign-lambda*
+    c-pointer
+    ((nonnull-u8vector in)
+     (size_t off))
+    "void* in0;
+     in0 = in + off;
+     C_return((void*)(uintptr_t)(*(uint64_t*)in0));"))
+
+(define %%yuniffi-ptr64-set!/bv
+  (foreign-lambda*
+    void
+    ((nonnull-u8vector in)
+     (size_t off)
+     (c-pointer v))
+    "void* in0;
+     in0 = in + off;
+     *(uint64_t *)in0 = (uintptr_t)v;"))
 
 (define %%%yuniffi-nccc-call
   (foreign-safe-lambda* 
