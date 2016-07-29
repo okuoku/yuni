@@ -35,6 +35,6 @@ endmacro()
 
 if(WITH_NMOSH_WIN64)
     test_nmosh_win64(nmosh_win64_sanity _sanity.sps)
-    test_nmosh_win64(nmosh_win64_ncccsanity _ncccsanity.sps)
+    # test_nmosh_win64(nmosh_win64_ncccsanity _ncccsanity.sps)
 endif()
 
