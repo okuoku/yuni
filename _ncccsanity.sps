@@ -27,7 +27,8 @@
                 (write x)
                 (newline))
               (reverse failed-forms)))
-  (flush-output-port (current-output-port)))
+  (flush-output-port (current-output-port))
+  (exit (if (null? failed-forms) 0 1)))
 
 (define-syntax check-equal
   (syntax-rules ()
