@@ -40,12 +40,6 @@ set(ffi_impls # Exclude NMOSH KAWA
     # LARCENY 
     CHEZ_SCHEME CSI RAPID_GAMBIT)
 
-# Issue #37
-if(${CMAKE_SYSTEM_NAME} MATCHES FreeBSD)
-    # Crashes on dlopen()
-    list(REMOVE_ITEM ffi_impls CHIBI_SCHEME)
-endif()
-
 # Issue #38
 if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86$")
     if(NOT WIN32)
