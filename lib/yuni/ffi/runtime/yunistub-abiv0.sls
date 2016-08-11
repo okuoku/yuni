@@ -72,9 +72,7 @@
    (and obj
         (match obj
                ((flags value size offset)
-                (let ((bv (make-bytevector 8)))
-                 (bv-write/u64! bv 0 value)
-                 (bv-read/w64ptr bv 0)))))))
+                (bv-read/w64ptr value 0))))))
 
 (define (realize-constant libstate typesym dbname)
   (define ht (library-state-ht libstate))
@@ -85,19 +83,13 @@
                 ;; Ignore size for now
                 (case typesym
                   ((unsigned)
-                   value)
+                   (bv-read/u64 value 0))
                   ((pointer)
-                   (let ((bv (make-bytevector 8)))
-                    (bv-write/u64! bv 0 value)
-                    (bv-read/w64ptr bv 0)))
+                   (bv-read/w64ptr value 0))
                   ((signed)
-                   (let ((bv (make-bytevector 8)))
-                    (bv-write/u64! bv 0 value)
-                    (bv-read/s64 bv 0)))
+                   (bv-read/s64 value 0))
                   ((real)
-                   (let ((bv (make-bytevector 8)))
-                    (bv-write/u64! bv 0 value)
-                    (bv-read/f64 bv 0)) 
+                   (bv-read/f64 value 0)  
 ;                   #| ;; FIXME: Support real size formatting...
 ;                   (case size
 ;                     ((4) 

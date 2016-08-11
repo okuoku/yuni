@@ -27,6 +27,7 @@
 (define (getrow func idx) ;; => ("name" flags value size offset)
   (define in (make-bytevector (* 8 2) 0))
   (define out (make-bytevector (* 8 8)))
+  (define out3v (make-bytevector 8))
 
   ;; Setup in packet
   (bv-write/u64! in 8 idx)
@@ -38,18 +39,20 @@
   (let ((out0 (bv-read/u64 out 0))
         (out1p (bv-read/w64ptr out (* 8 1)))
         (out2 (bv-read/u64 out (* 8 2)))
-        (out3 (bv-read/u64 out (* 8 3)))
         (out4 (bv-read/u64 out (* 8 4)))
         (out5 (bv-read/u64 out (* 8 5))))
-   (and (not (= out0 0))
-        (list 
-          (and
-            (not (= out0 YUNIFFI_SYMBOL__TERMINATE))
-            (ptr-read/asciiz out1p 0 (+ out2 1)))
-          out0
-          out3
-          out4
-          out5))))
+    (when (not (= out0 0))
+      ;; Copy value
+      (bytevector-copy! out3v 0 out (* 8 3) (* 8 4)))
+    (and (not (= out0 0))
+         (list 
+           (and
+             (not (= out0 YUNIFFI_SYMBOL__TERMINATE))
+             (ptr-read/asciiz out1p 0 (+ out2 1)))
+           out0  ;; Flags
+           out3v ;; Value
+           out4  ;; Size and offset
+           out5))))
 
 (define (yuniffi-abiv0-get-table tbl)
   (define (itr idx cur)
