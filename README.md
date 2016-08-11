@@ -30,6 +30,7 @@ Implementations with FFI compatibility layer:
  * [Chicken](http://www.call-cc.org/) interpreter with `r7rs` egg
  * [Gambit](http://gambitscheme.org/) with Rapid-scheme frontend
  * [ChezScheme](https://github.com/cisco/ChezScheme)
+ * [Picrin](https://github.com/picrin-scheme/picrin) with yuniffi patch
 
 Bootstrapped, but no FFI yet:
 

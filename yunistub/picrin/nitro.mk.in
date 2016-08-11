@@ -1,0 +1,6 @@
+CONTRIB_INITS += yuniffi
+CONTRIB_SRCS += \
+        @YUNIFFI_PICRIN_PATH@/yuniffi_picrin.c
+
+CFLAGS += -I@YUNIFFI_INCLUDE_DIR@
+LDFLAGS += -ldl

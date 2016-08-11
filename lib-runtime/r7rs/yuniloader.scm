@@ -46,7 +46,7 @@
     (and (pair? nam)
          (let ((prefix (car nam)))
           (case prefix
-            ((scheme picrin) #t)
+            ((scheme picrin yuniffi-picrin) #t)
             ((srfi) (number? (cadr nam)))
             (else #f)))))
 
