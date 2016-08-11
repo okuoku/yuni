@@ -33,33 +33,33 @@
 (define ssplit-byte-class
   (%bcdef
     ;; Whitespaces
-    (#x20 SPACE)
+    (32 SPACE)
     (9 TAB)
     (13 CR)
     (10 LF)
 
     ;; Delimiters
-    (#x28 PAREN_L)
-    (#x29 PAREN_R)
-    (#x5B SQ_L)
-    (#x5D SQ_R)
-    (#x3b SEMICOLON)
-    (#x23 SHARP)
-    (#x22 DQUOTE)
+    (40 PAREN_L)
+    (41 PAREN_R)
+    (91 SQ_L)
+    (93 SQ_R)
+    (59 SEMICOLON)
+    (35 SHARP)
+    (34 DQUOTE)
 
     ;; Other special characters
-    (#x5c BACKSLASH)
-    (#x27 QUOTE)
-    (#x40 AT)
-    (#x2c COMMA)
-    (#x7c PIPE)
+    (92 BACKSLASH)
+    (39 QUOTE)
+    (64 AT)
+    (44 COMMA)
+    (124 PIPE)
     ;(#\. DOT) ;; FIMXE: Not needed??
-    (#x60 BQUOTE)
+    (96 BQUOTE)
 
     ;; Ordinal alphabets
-    (#x74 SMALL-T)
-    (#x66 SMALL-F)
-    (#x54 LARGE-T)
-    (#x46 LARGE-F)
+    (116 SMALL-T)
+    (102 SMALL-F)
+    (84 LARGE-T)
+    (70 LARGE-F)
     ))
 )

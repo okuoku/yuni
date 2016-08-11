@@ -356,7 +356,7 @@
 
   (define (stream-end stream index)
     ;; FIXME: Inject whitespace
-    (callstep char #x20 #f #f)
+    (callstep char 32 #f #f)
     (set! terminate? #t))
 
   ;; Driver

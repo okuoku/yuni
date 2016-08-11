@@ -116,10 +116,15 @@
 
 ;(write (list 'ARG: ARG))(newline)
 
+(run (cadr ARG))
+
+#|
+
 (with-exception-handler
   (lambda (e) (PCK 'EXCEPTION: 
                    (error-object-message e) 
                    (error-object-irritants e))
     (exit -1))
   (lambda () (run (cadr ARG))))
+|#
 
