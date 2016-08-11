@@ -53,6 +53,8 @@ do_dlsym(uint64_t handle, uint64_t ptr_name, uint64_t* out_err,
 static void
 yuniffi_bootstrap0(uint64_t* in, int in_len, uint64_t* out, int out_len){
     int func = in[0];
+    (void) in_len;
+    (void) out_len;
     //printf("in = %p, Func = %d\n",in ,func);
     switch(func){
         case YUNIBOOTSTRAP0_MALLOC:
