@@ -63,7 +63,7 @@ function(emit_yunified_kawa_runner_sh)
         ""
         ${YUNI_WITH_YUNIBASE}/current/kawa # Dummy path
         java
-        "-classpath ${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar -Dkawa.import.path=\"${_root}/lib-stub/kawa/*.sld\" kawa.repl --r7rs ${_root}/lib-runtime/kawa/yuniloader.scm --")
+        "-classpath ${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar -Dkawa.import.path=\"${_root}/lib-stub/kawa/*.sld\" kawa.repl --r7rs ${_root}/yuniloader/yuniloader-kawa.scm --")
 endfunction()
 
 function(emit_yunified_runner_sh0 varname flav impl cmd cmdname)
