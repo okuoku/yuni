@@ -4,7 +4,8 @@
         (scheme write)
         (scheme cxr)
         (scheme file)
-        (scheme process-context))
+        (scheme process-context)
+        (yuniffi-config))
 
 ;; Currently, only for picrin
 
@@ -46,7 +47,7 @@
     (and (pair? nam)
          (let ((prefix (car nam)))
           (case prefix
-            ((scheme picrin yuniffi-picrin) #t)
+            ((scheme picrin yuniffi-picrin yuniffi-config) #t)
             ((srfi) (number? (cadr nam)))
             (else #f)))))
 
@@ -112,11 +113,19 @@
 
   (load filename))
 
-(define ARG (cdr (command-line)))
+(define cmdargs (cddr (command-line)))
+(define STUBDIRFLAG (car cmdargs))
+(define STUBDIR (cadr cmdargs))
+(define ARG (cddr cmdargs))
+
+(unless (string=? STUBDIRFLAG "--yuniffi-stubdir")
+  (error "Invalid command-line" (command-line)))
+
+(%%yuniffi-module-prefix-set! STUBDIR)
 
 ;(write (list 'ARG: ARG))(newline)
 
-(run (cadr ARG))
+(run (car ARG))
 
 #|
 

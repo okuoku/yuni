@@ -24,6 +24,7 @@
            (yuni ffi runtime simpleloader)
            (yuni ffi runtime simplestrings)
            (srfi 60)
+           (yuniffi-config)
            (yuniffi-picrin))
 
 (define (yuniffi-nccc-call func in in-offset in-len out out-offset out-len)
@@ -76,7 +77,7 @@
                         bv-write/w64ptr!
                         ptr-write/asciiz!))
 
-(define (%module-path) (list "lib-stub/yunistub")) ;; FIXME
+(define (%module-path) (list (%%yuniffi-module-prefix)))
 
 (define (%module-load path) 
   (dlopen path))
