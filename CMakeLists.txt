@@ -45,29 +45,6 @@ endif()
 
 # YUNIBASE: Use prebuilt implementation to test with
 if(YUNI_WITH_YUNIBASE)
-    # Out-of-tree setup
-    set(YUNI_PLATFORM_LIBDIR 
-        ${CMAKE_CURRENT_BINARY_DIR}/lib-stub/yunistub${_POSTFIX})
-else()
-    # In-tree setup (Default)
-    set(YUNI_PLATFORM_LIBDIR 
-        ${CMAKE_CURRENT_LIST_DIR}/lib-stub/yunistub${_POSTFIX})
-endif()
-
-macro(yuni_install_native_targets)
-    install(TARGETS ${ARGN}
-        DESTINATION ${YUNI_PLATFORM_LIBDIR})
-endmacro()
-macro(yuni_install_native_files)
-    install(FILES ${ARGN}
-        DESTINATION ${YUNI_PLATFORM_LIBDIR})
-endmacro()
-macro(yuni_install_native_programs)
-    install(PROGRAMS ${ARGN}
-        DESTINATION ${YUNI_PLATFORM_LIBDIR})
-endmacro()
-
-if(YUNI_WITH_YUNIBASE)
     if(NOT YUNIBASE_YUNIFIED_PATH)
         set(YUNIBASE_YUNIFIED_PATH ${CMAKE_CURRENT_BINARY_DIR}/yunified)
     endif()
@@ -92,6 +69,30 @@ if(YUNI_WITH_YUNIBASE)
     include(YuniBaseGenRunners)
     emit_yunibase_runners()
 endif()
+
+# YUNI_PLATFORM_LIBDIR: Path-to-nativecode
+if(YUNI_WITH_YUNIBASE)
+    # Out-of-tree setup
+    set(YUNI_PLATFORM_LIBDIR 
+        ${YUNIBASE_YUNIFIED_PATH}/yunistub${_POSTFIX})
+else()
+    # In-tree setup (Default)
+    set(YUNI_PLATFORM_LIBDIR 
+        ${CMAKE_CURRENT_LIST_DIR}/lib-stub/yunistub${_POSTFIX})
+endif()
+
+macro(yuni_install_native_targets)
+    install(TARGETS ${ARGN}
+        DESTINATION ${YUNI_PLATFORM_LIBDIR})
+endmacro()
+macro(yuni_install_native_files)
+    install(FILES ${ARGN}
+        DESTINATION ${YUNI_PLATFORM_LIBDIR})
+endmacro()
+macro(yuni_install_native_programs)
+    install(PROGRAMS ${ARGN}
+        DESTINATION ${YUNI_PLATFORM_LIBDIR})
+endmacro()
 
 # Setup scheme implementation paths for vanilla interpreters
 include(YuniDetectScheme)
