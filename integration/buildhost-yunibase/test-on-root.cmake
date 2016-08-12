@@ -4,8 +4,9 @@ set(_yunibase /yunibase)
 set(_myroot /yuniroot)
 set(_myproject /yuniroot/yuni/integration/buildhost-yunibase)
 set(_buildroot /yuniroot/build)
+set(_yunified /yunified)
+set(_vanilla /vanilla)
 set(_mypath ${CMAKE_CURRENT_LIST_DIR})
-
 
 get_filename_component(_mysrc ${_mypath}/../.. ABSOLUTE)
 
@@ -42,7 +43,11 @@ message(STATUS "Configure (${_myproject})...")
 
 
 execute_step("Configure"
-    ${CMAKE_COMMAND} -DYUNI_WITH_YUNIBASE=${_yunibase} ${_myproject}
+    ${CMAKE_COMMAND} 
+    -DYUNI_WITH_YUNIBASE=${_yunibase} 
+    -DYUNIBASE_YUNIFIED_PATH=${_yunified}
+    -DYUNIBASE_VANILLA_PATH=${_vanilla}
+    ${_myproject}
     WORKING_DIRECTORY ${_buildroot})
 
 message(STATUS "Build...")
