@@ -1,3 +1,7 @@
+# INPUTs:
+#
+#  CLEAN: CLEAN build dir on success
+#
 # Test yuni tree on root
 
 set(_yunibase /yunibase)
@@ -75,5 +79,12 @@ if(rr)
     message(FATAL_ERROR "Test failure: ${rr}")
 endif()
 
-message(STATUS "Done.")
+if(CLEAN)
+    if(EXISTS ${_buildroot})
+        message(STATUS "Removing builddir...")
+        execute_process(COMMAND
+            ${CMAKE_COMMAND} -E remove_directory ${_buildroot})
+    endif()
+endif()
 
+message(STATUS "Done.")

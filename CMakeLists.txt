@@ -65,9 +65,6 @@ if(YUNI_WITH_YUNIBASE)
 
     # Add VANILLA path for find_program
     set(CMAKE_PROGRAM_PATH ${YUNIBASE_VANILLA_PATH} ${CMAKE_PROGRAM_PATH})
-
-    include(YuniBaseGenRunners)
-    emit_yunibase_runners()
 endif()
 
 # YUNI_PLATFORM_LIBDIR: Path-to-nativecode
@@ -79,6 +76,12 @@ else()
     # In-tree setup (Default)
     set(YUNI_PLATFORM_LIBDIR 
         ${CMAKE_CURRENT_LIST_DIR}/lib-stub/yunistub${_POSTFIX})
+endif()
+
+# Emit runners
+if(YUNI_WITH_YUNIBASE)
+    include(YuniBaseGenRunners)
+    emit_yunibase_runners()
 endif()
 
 macro(yuni_install_native_targets)
