@@ -1,6 +1,6 @@
 # Test yuni tree on root
 
-set(_yunibase /build)
+set(_yunibase /yunibase)
 set(_myroot /yuniroot)
 set(_myproject /yuniroot/yuni/integration/buildhost-yunibase)
 set(_buildroot /yuniroot/build)
