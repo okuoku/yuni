@@ -47,11 +47,6 @@ Build
 
 TBD: Document CMake buildsystem here.
 
-Every implementation requires `lib-stub` which will contain library import stubs.
-To generate library import stub, install nmosh from http://storage.osdev.info/pub/mosh/mosh-current.tar.gz and run:
-
- `run/buildstub.sh`
-
 [Blocker-Issues]: https://github.com/okuoku/yuni/issues?q=is%3Aissue+is%3Aopen+label%3AExtern-Blocker
 [r7b-Issues]: https://github.com/okuoku/yuni/issues?q=is%3Aissue+is%3Aopen+label%3ALib-R7RSBridge
 [PortingNotes]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes.markdown

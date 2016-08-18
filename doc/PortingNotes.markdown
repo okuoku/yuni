@@ -1,14 +1,12 @@
 Porting Notes
 -------------
 
-In Yuni, every library written in:
+In Yuni, every libraries written in:
 
 * `.sls` extension
 * R6RS style library definition(R6RS-light)
 
 Obviously, we need some adaptation layer to support various Scheme implementatons. This file describes how Yuni libraries adopt those implementations.
-
-See ../HACKING.markdown for generic library usage and standard commandline to develop the library itself.
 
 SIBR(Scheme Implementation Behaviour Report)
 ============================================
@@ -30,17 +28,15 @@ Yuni libraries are splitted into several directories.
  * `lib-compat` - R6RS-lite. Implementation specific libraries.
  * `lib-r6rs` - R6RS. R7RS base libraries for R6RS. Renamed as `(scheme *)`.
  * `lib-runtime` - Implementation specific format libraries. 
-* (Built with run/buildstub.sh)
+* (Built with bootstrapper)
  * `lib-stub` - Implementation specific format. 
-
-`run/*.sh` describes which directories have to be used with each implementations.
 
 Every library directories except `lib-runtime` should be added to `*library-directories*` variable of `config/config.scm`. `lib-runtime` will be ignored from the build system.
 
-Syntax
-------
+Syntax(R6RS-lite format)
+------------------------
 
-Libraries in `lib` and `lib-compat` have to be written in R6RS-lite format; intersection of R6RS and R7RS lexical syntax. That mean you have to avoid;
+Libraries in `lib` and `lib-compat` have to be written in R6RS-lite format; intersection of R6RS and R7RS lexical syntax. That mean you have to avoid:
 
 * use of #vu8() or #u8(). These are not compatible between R6RS / R7RS.
 * |(vertical bar) for symbol. Ditto.
@@ -49,14 +45,40 @@ Libraries in `lib` and `lib-compat` have to be written in R6RS-lite format; inte
 R6RS-lite is designed to be:
 
 * loaded directly on R6RS/R7RS hybrid implementations such as NMosh or Sagittarius.
-* parsed directly on R6RS and R7RS implementation's native reader. ie. no external reader required.
+* parsed directly on R6RS and R7RS implementation's native reader. ie. no external reader will be required.
 
-Renaming
---------
+Library adaptation and renaming
+-------------------------------
 
-Every libraries except under `lib` will be renamed before its use to provide consistent library namings. 
+Every libraries except under `lib` will be renamed before its use to provide consistent library namings. Its renaming rules are described at `config/config.scm`.
 
-Library renaming rules are described at `config/config.scm`.
+Library renaming is done by auto-generated stub libraries depending on target implementation. Stub libraries need to be regenerated when base R6RS-lite library changed its import or export set.
+
+## R6RS except racket
+
+`lib-stub/<impl>` directory will have stub-library:
+
+```scheme
+(library (r7b-util eval) 
+  (export scheme-report-environment null-environment 
+          eval environment load interaction-environment) 
+  (import (nmosh-r7b-util eval)))
+```
+
+to rename R6RS-lite library `(<impl>-r7b-util eval)` into `(r7b-util eval)`.
+
+## R7RS
+
+Since R7RS uses `define-library` syntax instead of `library` which can be found in R6RS libraries (and yuni which uses R6RS-lite format), 
+
+```scheme
+(define-library (yuni util invalid-form)
+  (export define-invalid-forms define-invalid-form)
+  (import (scheme base) (yuni-runtime r7rs))
+  (include "lib/yuni/util/invalid-form.sls"))
+```
+
+Injected library `(yuni-runtime r7rs)` has `library` macro which expands into library body excluding `export` or `import` sections.
 
 
 SCHEME
@@ -106,26 +128,38 @@ For "Minimal" installation of Racket, Yuni will require `r6rs-lib` and `srfi-lib
 
 ## IronScheme
 
+Yuniffi is not supported yet.
+
 R7RS
 ----
-
-R7RS uses `define-library` form which is different and extended from R6RS' `library` form. To support R7RS implementations, "import stub"s will be generated under `lib-stub` directory.
 
 ## Chibi-scheme
 
 * Supported.
 
+Yuniffi supported through C extension.
+
 ## Gauche
 
 * Supported.
+
+Yuniffi supported through C extension.
 
 ## Chicken
 
 * Supported.
 
+Yuniffi supported through embedded C code which required to be pre-compiled.
+
+## Kawa
+
+Yuniffi is not supported yet.
+
 ## picrin
 
-* Not yet. There is no way to specify library path.
+* Not yet. See [upstream bug #345](https://github.com/picrin-scheme/picrin/issues/345).
+
+Picrin has no native FFI. Yuni has a module to support to enable yuniffi on it.
 
 ## Foment
 
@@ -138,4 +172,3 @@ Others
 
 Yuni uses [Rapid-gambit](https://github.com/okuoku/rapid-gambit) as R7RS compatibility layer/expander. Rapid-gambit expander is port of [Rapid-scheme](https://www.rapid-scheme.org).
 
-Alternatively, Gambit comes with psyntax to implement R5RS `syntax-rules`. 

@@ -271,7 +271,7 @@
 (define yuni-compat-libs
   (begin
     (unless (file-exists? "_testing_liblist.txt")
-      (error "_testing_liblist.txt was not found. Generate it with run/buildstub.sh first."))
+      (error "_testing_liblist.txt was not found. Generate it with CMake first."))
     (let ((p (open-input-file "_testing_liblist.txt")))
      (define (itr cur)
        (let ((l (read-line p)))
