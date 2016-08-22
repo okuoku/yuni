@@ -53,7 +53,11 @@
   (compat-rapid-gambit
     (rapid-gambit-yuni => yuni))
   (r6rs-common
-    (r6rs-common-yuni => yuni)))
+    (r6rs-common-yuni => yuni))
+  ;; Experimental Gambit R5RS
+  (compat-gambit
+    (gambit-yuni => yuni)
+    (gambit-compat-scheme => scheme)))
 
 (GenRacket
   ;; Racket-styled library generator
@@ -138,4 +142,8 @@
     compat-nmosh
     r7rs-bridge
     r6rs-common)
+  ;; Experimental Gambit R5RS
+  (gambit
+    r7rs-common
+    compat-gambit)
   )
