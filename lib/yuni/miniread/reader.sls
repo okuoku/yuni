@@ -24,8 +24,8 @@
   (let ((s (%realize-string-raw bv start end)))
    (read (open-input-string s))))
 
-(define %realize-string %realize-PLACEHOLDER)
-(define %realize-charlit %realize-PLACEHOLDER)
+(define (%realize-string bv start end) (%realize-PLACEHOLDER bv start end))
+(define (%realize-charlit bv start end) (%realize-PLACEHOLDER bv start end))
 
 (define (%realize-number bv start end)
   (string->number (%realize-string-raw bv start end)))
