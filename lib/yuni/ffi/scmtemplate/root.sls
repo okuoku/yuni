@@ -2,8 +2,10 @@
          (export
            append-libname ;; for layouts
            get-scm-libname
+           get-scm-libname/libstate
            get-scm-libname/constants
            ;get-scm-libname/bridgestubs
+           put-scm-stubsource/libstate
            put-scm-stubsource/constants
            )
          (import (yuni scheme)
@@ -28,6 +30,10 @@
 (define (get-c-dllname db)
   (string-append "yunistub_" (symbol->string (get-c-libname db))))
 
+(define (get-scm-libstatename db)
+  (string-append "*LIBSTATE-" (symbol->string (get-c-libname db))
+                 "-*"))
+
 (define (append-libname lis sym)
   (define r (reverse lis))
   (let ((a (car r))
@@ -37,6 +43,9 @@
                                     "-"
                                     (symbol->string sym)))
                    d))))
+
+(define (get-scm-libname/libstate db)
+  (append-libname (get-scm-libname db) 'libstate))
 
 (define (get-scm-libname/constants db)
   (append-libname (get-scm-libname db) 'constants))
@@ -132,8 +141,7 @@
   (define syms/constants (gen-syms/constants flat))
   (define syms/bridgestubs (gen-syms/bridgestubs flat2))
   (define syms (append syms/constants syms/bridgestubs))
-  (define c-libname (get-c-libname db))
-  (define c-dllname (get-c-dllname db))
+  (define libstatename (get-scm-libstatename db))
 
   ; header
   (p "(library " (get-scm-libname/constants db))
@@ -142,13 +150,34 @@
   (for-each (lambda (sym) (p sym)) syms)
   (p ")")
   ; import
+  (p "(import (yuni ffi runtime yunistub-abiv0)")
+  (p (get-scm-libname/libstate db))
+  (p ")")
+  ; body
+  (emit-define-constants port libstatename flat)
+  (emit-bridgestub-constants port libstatename flat2)
+  (p ")"))
+
+(define (put-scm-stubsource/libstate port db)
+  (define (p . obj) (apply put-obj port (append obj (list "\n"))))
+  (define libstatename (get-scm-libstatename db))
+  (define c-libname (get-c-libname db))
+  (define c-dllname (get-c-dllname db))
+
+  ; header
+  (p "(library " (get-scm-libname/libstate db))
+  ; export
+  (p "(export ")
+  (p libstatename)
+  (p ")")
+  ; import
   (p "(import (yuni ffi runtime yunistub-abiv0))")
   ; body
-  (p "(define-library-state *LIBSTATE* \"" c-dllname "\" \""
+  (p "(define-library-state " 
+     libstatename
+     " \"" c-dllname "\" \""
      c-libname "\")")
   (p)
-  (emit-define-constants port "*LIBSTATE*" flat)
-  (emit-bridgestub-constants port "*LIBSTATE*" flat2)
   (p ")"))
 
 )

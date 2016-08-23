@@ -84,8 +84,12 @@
   ;; emit C apistubs
   (when c (proc c))
   (when cxx (proc cxx))
-  ;; emit scm stub
+  ;; emit scm stubs
   (when (or c cxx) 
+    (call-with-output-file-force
+      (output-path/scm (get-scm-libname/libstate db))
+      (lambda (p) (put-scm-stubsource/libstate p db)))
+    
     (call-with-output-file-force
       (output-path/scm (get-scm-libname/constants db))
       (lambda (p) (put-scm-stubsource/constants p db)))))
