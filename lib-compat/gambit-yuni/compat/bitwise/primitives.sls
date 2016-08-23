@@ -94,10 +94,10 @@
 ;; Chibi does not provide any multi-byte write primitives.
 ;; So we need some shift registers here..
 
-(define-syntax defwrt
+(define-syntax mkwrt
   (syntax-rules ()
-    ((_ nam width)
-     (define (nam bv o v)
+    ((_ width)
+     (lambda (bv o v)
        (letrec ((loop (lambda (p reg)
                         (unless (= p width)
                           (let ((b (bitwise-and #xff reg))
@@ -106,12 +106,12 @@
                             (loop (+ 1 p) next))))))
          (loop 0 v))))))
 
-(defwrt bv-write/s16! 2)
-(defwrt bv-write/u16! 2)
-(defwrt bv-write/s32! 4)
-(defwrt bv-write/u32! 4)
-(defwrt bv-write/s64! 8)
-(defwrt bv-write/u64! 8)
+(define bv-write/s16! (mkwrt 2))
+(define bv-write/u16! (mkwrt 2))
+(define bv-write/s32! (mkwrt 4))
+(define bv-write/u32! (mkwrt 4))
+(define bv-write/s64! (mkwrt 8))
+(define bv-write/u64! (mkwrt 8))
 
 ;; Copied from (yuni-r6rs ffi memory)
 (define (bv-read/asciiz bv off bufsiz)

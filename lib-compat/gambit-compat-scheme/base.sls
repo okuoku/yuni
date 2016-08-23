@@ -146,6 +146,20 @@
 (define bytevector-u8-set! u8vector-set!)
 (define make-bytevector make-u8vector)
 
+(define bytevector-copy!
+  (case-lambda
+    ((to at from)
+     (bytevector-copy!  to at from 0))
+    ((to at from start)
+     (let ((flen (bytevector-length from))
+           (tlen (bytevector-length to)))
+       (let ((fmaxcopysize (- flen start))
+             (tmaxcopysize (- tlen at)))
+         (bytevector-copy! to at from start (+ start
+                                               (min fmaxcopysize
+                                                    tmaxcopysize))))))
+    ((to at from start end)
+     (subu8vector-move! from start end to at))))
 
 (define (%utf8->string u8) ;; FIXME: Detect illegal sequence more strictly
   (define len (u8vector-length u8))
@@ -311,6 +325,7 @@
        ((not pred)
         code ...)))))
 
+#| FIXME: Not working..
 (define-syntax %%gen-define-values-delay
   (syntax-rules ()
     ((_ lis (acc0 ...) (acc1 ...) ())
@@ -336,6 +351,7 @@
            (lambda () code)
            (lambda x 
              (%%gen-define-values-delay x () () (frm ...)))))))))
+|#
 
 
 ;; Aux
