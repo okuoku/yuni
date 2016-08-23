@@ -34,6 +34,15 @@
          count
          x)))))
 
+(define-syntax %gen-case-lambda-dotted-reverse-quote
+  (syntax-rules ()
+    ((_ acc (frm . (a . d)))
+     (%gen-case-lambda-dotted-reverse-quote
+       (frm . acc)
+       (a . d)))
+    ((_ acc (frm . rest))
+     '(frm . acc))))
+
 (define-syntax %%gen-case-lambda-dispatch ;; Generation loop
   (syntax-rules () 
     ;; Term
@@ -55,12 +64,12 @@
         (clauses ... ((frms ...) . code))
         next ...)))
     ;; (a b . c)
-    ((_ (n ...) (pred ...) (clauses ...) ((frms ... . rest) . code) next ...)
-     (let ((nn (length '(frms ...))))
+    ((_ (n ...) (pred ...) (clauses ...) ((frms . rest) . code) next ...)
+     (let ((nn (length (%gen-case-lambda-dotted-reverse-quote () (frms . rest)))))
       (%%gen-case-lambda-dispatch
         (n ... nn)
         (pred ... >=)
-        (clauses ... ((frms ... . rest) . code))
+        (clauses ... ((frms . rest) . code))
         next ...)))
     ;; a -- catch-all
     ((_ (n ...) (pred ...) (clauses ...) (frms . code) next ...)
