@@ -1,3 +1,9 @@
+;; Alexpander modified for yuniloader-fake
+
+(define %%yuniloader-alexpander-init #f)
+(define %%yuniloader-alexpander-newenv #f)
+(define %%yuniloader-alexpander-expand-top-level-forms! #f)
+
 ;; alexpander.scm: a macro expander for scheme.
 ;; $Id: alexpander.scm,v 1.65 2007/11/05 02:50:34 al Exp $
 
@@ -646,6 +652,7 @@
 ;;   => (k store loc-n)
 
 
+(let ()
 (define (sid? sexp)          (or (symbol? sexp) (renamed-sid? sexp)))
 (define (renamed-sid? sexp)  (and (vector? sexp) (< 1 (vector-length sexp))))
 (define (svector? sexp)      (and (vector? sexp) (= 1 (vector-length sexp))))
@@ -1905,6 +1912,8 @@
       (set-cdr! mstore loc-n)
       outputs)))
 
+
+#|
 (define repl-mstore (null-mstore))
 
 ;; alexpander-repl: a read-expand-print loop.
@@ -1939,348 +1948,11 @@
   (begin
     (if (null? resume?) (restart))
     (repl)))
+|#
 
-;; If you don't have a pretty-print, here's an unsatisfying substitute:
-;;(define (pretty-print x) (write x) (newline))
+(set! %%yuniloader-alexpander-init null-output)
+(set! %%yuniloader-alexpander-newenv null-mstore)
+(set! %%yuniloader-alexpander-expand-top-level-forms! expand-top-level-forms!)
 
-
-;; If you want to target an even simpler output language, with no
-;; LETREC, DELAY, or BEGIN, then one inefficient way to do so is to
-;; use a second pass, like this:
-(define (expand-program-to-simple forms)
-  (define startup
-    '(begin
-       (define-syntax letrec
-	 (syntax-rules ()
-	   ((letrec ((var init) ...) expr)
-	    (let ((var #f) ...)
-	      (let ((var (let ((tmp init)) (lambda () (set! var tmp))))
-		    ...
-		    (thunk (lambda () expr)))
-		(begin (var) ... (thunk)))))))
-       (define-syntax delay
-	 (syntax-rules ()
-	   ((delay expr)
-	    (let ((result #f) (thunk (lambda () expr)))
-	      (lambda ()
-		(if thunk (let ((x (thunk)))
-			    (if thunk (begin (set! result x)
-					     (set! thunk #f)))))
-		result)))))
-       (define (force x) (x))
-       (define-syntax begin
-	 (syntax-rules ()
-	   ((begin x) x)
-	   ((begin x . y)
-	    ((lambda (ignore) (begin . y)) x))))))
-  (expand-program (cons startup (expand-program forms))))
-
-
-;; Rest of file is a junkyard of thoughts.
-
-'
-(begin
-  (define (file->list file)
-    (define (f) (let ((x (read))) (if (eof-object? x) '() (cons x (f)))))
-    (with-input-from-file file f))
-
-  (define (evali expr) (eval expr (interaction-environment)))
-
-  (define (check-expander filename)
-    (let* ((src (file->list filename))
-	   (out1 (begin (for-each evali src) (expand-program src))))
-      (begin (for-each evali out1) (equal? out1 (expand-program src)))))
+;;
 )
-
-;; r2rs-style currying define.
-'(define-syntax define
-   (let-syntax ((old-define define))
-     (letrec-syntax
-	 ((new-define
-	   (syntax-rules ()
-	     ((_ (var-or-prototype . args) . body)
-	      (new-define var-or-prototype (lambda args . body)))
-	     ((_ var expr) (old-define var expr)))))
-       new-define)))
-
-'(define-syntax define
-   (let-syntax ((old-define define))
-     (define-syntax new-define
-       (syntax-rules ()
-	 ((_ (var-or-prototype . args) . body)
-	  (new-define var-or-prototype (lambda args . body)))
-	 ((_ var expr) (old-define var expr))))
-     new-define))
-
-'(let ((multiplier 2))
-   (define ((curried-* x) y) (* x y))
-   (map (curried-* multiplier) '(3 4 5)))
-
-;; Notes:
-
-;; TODO:
-;;
-;; * fluid-let-syntax
-;; * revamp error handling:
-;;     add an error continuation to expand-top-level-forms.
-;;     keep a backtrace.
-
-
-;; Are these legal in r5rs?
-;;   (let () (define if 1) (+ if) if) => 1
-;;   (let () (define if 1) (set! if 2) if) => 2
-;; The 2002 version of the expander didn't allow them.
-;;
-;; First solution to above problem didn't fix this:
-;;   (let () (define if 1) ((let-syntax () if +)) if) => 1
-;;
-;; 2003-10-05:
-;; New semantics:
-;;
-;;   (let ((a 1) (b 1))
-;;     (define a 2)
-;;     ((syntax-rules () ((_ m) (define (m) (list a b)))) m)
-;;     (define b 2)
-;;     (m))
-;;   => (1 2)
-;;
-;;   (let ((a 1) (b 1))
-;;     (define a 2)
-;;     (define-syntax m (syntax-rules () ((_) (list a b))))
-;;     (define b 2)
-;;     (m))
-;;   => (2 2)
-
-
-;; Idea for syntax-rules extension to provide automatic gensym sequences:
-
-;; (syntax-rules with-id-sequence ()
-;;   ((letrec ((var init) ... (with-id-sequence temp)) . body)
-;;    (let ((var 'undefined) ...)
-;;      (let ((temp init) ...)
-;;        (set! var temp) ... (let () . body)))))
-
-;; (syntax-rules with-ids ()
-;;   ((letrec-values (((var ... (with-ids tmp)) init) ... (with-ids thunk))
-;;      . body)
-;;    (let ()
-;;      (begin (define var 'undefined) ...)
-;;      ...
-;;      (define thunk (call-with-values (lambda () init)
-;; 		        (lambda (tmp ...) (lambda () #f (set! var tmp) ...))))
-;;      ...
-;;      (thunk) ... (let () . body))))
-
-;; (syntax-rules with-ids ()
-;;   ((set!-values (var ... (with-ids tmp)) expr)
-;;    (call-with-values (lambda () expr)
-;;      (lambda (tmp ...) (if #f #f) (set! var tmp) ...))))
-
-;; (let ()
-;;   (define n 0)
-;;   (define (inc) (set! n (+ n 1)) n)
-;;   (define-syntax x (inc))
-;;   (begin x x x x x))
-;; => 5
-
-;; (let-syntax ((real-x #f)
-;;              (real-set! set!))
-;;   (begin
-;;     (define real-x #f)
-;;     (define-syntax x
-;;       (begin (display "x accessed")
-;;              real-x))
-;;     (define-syntax set!
-;;       (syntax-rules (x)
-;;         ((set! x foo)
-;;          (begin (display "x set")
-;;                 (real-set! real-x foo)))
-;;         ((set! . whatever)
-;;          (real-set! . whatever))))))
-
-;; At top-level, (define-identifier-syntax id arg ...)
-;; is equivalent to chez's (define-syntax id (identifier-syntax id arg ...))
-'
-(define-syntax define-identifier-syntax
-  (syntax-rules (set!)
-    ((_ id e)
-     (define-syntax id e))
-    ((_ id (id* e1) ((set! id** pat) tmpl)) ;; id* and id** are ignored
-     (begin
-       (define-syntax id e1)
-       (define-syntax set!
-         (let-syntax ((real-set! set!))
-           (syntax-rules (id)
-             ((set! id pat) tmpl)
-             ((set! . whatever)
-              (real-set! . whatever)))))))))
-
-
-;; Safe-letrec is a letrec that does its own run-time error-checking
-;; for premature variable accesses.  It signals errors by calling
-;; letrec-set!-error or letrec-access-error.
-;; We're careful not to signal an error for cases like:
-;; (call/cc (lambda (k) (letrec ((x (set! x (k 1)))) 2))) => 1
-'(define-syntax safe-letrec
-  (let-syntax ()
-    (define-syntax safe-letrec-with-alt-names
-      (syntax-rules ()
-	((safe-letrec-with-alt-names (var* ...) ((var init) ...) . body)
-	 (let ((var #f) ... (ready? #f))
-	   (define (set-em! var* ...)
-	     (set! var var*) ... (set! ready? #t))
-	   (define (var* new-val)
-	     (if ready? (set! var new-val) (letrec-set!-error 'var new-val)))
-	   ...
-	   (begin
-	     (let-syntax ((var (if ready? var (letrec-access-error 'var))) ...)
-	       (define-syntax new-set!
-		 (let-syntax ((set! set!))
-		   (syntax-rules no-ellipsis (var ...)
-		     ((new-set! var x) (var* x)) ...
-		     ((new-set! . other) (set! . other)))))
-	       (fluid-let-syntax ((set! new-set!))
-		 (set-em! init ...)))
-	     (let () . body))))))
-    (syntax-rules ()
-      ((safe-letrec ((var init) ...) . body)
-       ((syntax-rules no-ellipsis ()
-	  ((_ . args) (safe-letrec-with-alt-names (var ...) . args)))
-	((var init) ...) . body)))))
-
-;; Similarly, an error-checking letrec*.
-'(define-syntax safe-letrec*
-  (let-syntax ()
-    (define-syntax process-bindings
-      (syntax-rules ()
-	((process-bindings) #f)
-	((process-bindings binding ... (var init))
-	 (let ((ready? #f))
-	   (define (finish val) (set! var val) (set! ready? #t))
-	   (define (safe-setter new-val)
-	     (if ready? (set! var new-val) (letrec-set!-error 'var new-val)))
-	   (let-syntax ((var (if ready? var (letrec-access-error 'var))))
-	     (define-syntax new-set!
-	       (let-syntax ((set! set!))
-		 (syntax-rules no-ellipsis (var)
-		   ((new-set! var x) (safe-setter x))
-		   ((new-set! . other) (set! . other)))))
-	     (fluid-let-syntax ((set! new-set!))
-	       (process-bindings binding ...)
-	       (finish init)))))))
-    (syntax-rules ()
-      ((safe-letrec* ((var init) ...) . body)
-       (let ((var #f) ...)
-	 (process-bindings (var init) ...)
-	 (let () . body))))))
-
-
-;; If we wanted to simplify the primitive let-syntax by saying the
-;; first argument must by (), then the full let-syntax could be
-;; written this way:
-'(define-syntax let-syntax
-  (let-syntax ()
-    (define-syntax original-let-syntax let-syntax)
-    (define-syntax original-define-syntax define-syntax)
-    (define-syntax original-syntax-rules syntax-rules)
-    (define-syntax let-syntax-with-temps
-      (syntax-rules ()
-	((let-syntax-with-temps (temp ...) ((kw syn) ...) . body)
-	 (original-let-syntax ()
-	   (original-define-syntax temp syn) ...
-	   (original-let-syntax ()
-	     (original-define-syntax kw temp) ...
-	     (original-let-syntax () . body))))))
-    (syntax-rules ()
-      ((let-syntax ((kw syn) ...) . body)
-       ((original-syntax-rules no-ellipsis ()
-	  ((_ . args) (let-syntax-with-temps (kw ...) . args)))
-	((kw syn) ...) . body)))))
-
-
-;; Example of how an error-checking letrec would be written if we
-;; support an extra slot in keyword bindings such that if we bind a
-;; keyword with (foo expr/syntax1 expr/syntax2) then the form (set!
-;; foo datum ...) gets expanded as (expr/syntax2 datum ...).
-'
-(define-syntax letrec
-  (syntax-rules ()
-    ((_ ((var init) ...) . body)
-     (let ((var #f) ... (ready? #f))
-       (let-syntax
-	   ((var (if ready? var (letrec-access-error 'var))
-		 (syntax-rules ()
-		   ((set!_var expr)
-		    (let ((val expr))
-		      (if ready?
-			  (set! var val)
-			  (letrec-set!-error 'var val))))))
-	    ...)
-	 (let ((var (let ((tmp init)) (lambda () (set! var tmp))))
-	       ...)
-	   (var) ... (set! ready? #t)))
-       (let () . body)))))
-
-
-;; Nested unquote-splicing:
-;;
-;; (define x '(a b c))
-;; (define a 1) (define b 2) (define c 3)
-;;
-;; scheme:
-;; ``(,,@x)
-;; expands=>   (list 'quasiquote (map (lambda (y) (list 'unquote y)) x))
-;; evaluates=> `(,a ,b ,c)
-;; expands=>   (list a b c)
-;; evaluates=> (1 2 3)
-;;
-;; lisp:
-;; ``(,,@x)
-;; expands=>   `(list ,@x)
-;; expands=>   (cons 'list x)
-;; evaluates=> (list a b c)
-;; evaluates=> (1 2 3)
-
-;; ;; Ways to convert a program to an expression suitable for eval:
-;; (expand-program-to-an-expression
-;;   '((define x (- 1))
-;;     (write x)
-;;     (define f (lambda () (if (read) x (set! y 2))))
-;;     (define y (f))
-;;     (define - *)
-;;     (write (+ (-) (-)))))
-;; =>
-;; ;; Simple answer requires knowing which top-level vars are in the
-;; ;; standard environment:
-;; ((lambda (x f y -)
-;;      (begin (set! x (- 1))
-;;             (write x)
-;;             (set! f (lambda () (if (read) x (set! y 2))))
-;;             (set! y (f))
-;;             (set! - *)
-;;             (write (+ (-) (-)))))
-;;    #f #f #f -)
-;; 
-;; ;; More sophisticated version:
-;; ((lambda (x f y - _x_setter _f_setter _y_setter _-_setter)
-;;    ((lambda (_x_inner-setter _f_inner-setter _y_inner-setter _-_inner-setter)
-;;       ((lambda (_x_definer _f_definer _y_definer _-_definer)
-;;          (begin (_x_definer ((-) 1))
-;;                 (write (x))
-;;                 (_f_definer (lambda () (if (read) (x) (_y_setter 2))))
-;;                 (_y_definer ((f)))
-;;                 (_-_definer *)
-;;                 (write (+ ((-)) ((-))))))
-;;        (lambda (_) (begin (set! _x_setter _x_inner-setter) (_x_setter _)))
-;;        (lambda (_) (begin (set! _f_setter _f_inner-setter) (_f_setter _)))
-;;        (lambda (_) (begin (set! _y_setter _y_inner-setter) (_y_setter _)))
-;;        (lambda (_) (begin (set! _-_setter _-_inner-setter) (_-_setter _)))))
-;;     (lambda (_) (set! x (lambda () _)))
-;;     (lambda (_) (set! f (lambda () _)))
-;;     (lambda (_) (set! y (lambda () _)))
-;;     (lambda (_) (set! - (lambda () _)))))
-;;  (lambda () x) (lambda () f) (lambda () y) (lambda () -)
-;;  (lambda (_) (set! x (lambda () _)))
-;;  (lambda (_) (set! f (lambda () _)))
-;;  (lambda (_) (set! y (lambda () _)))
-;;  (lambda (_) (set! - (lambda () _))))
