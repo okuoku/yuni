@@ -137,3 +137,11 @@ set(YUNIIMPL_RAPID_GAMBIT_LIBS
     lib-stub/rapid-gambit
     lib-runtime/r7rs)
 
+##
+## Gambit
+##
+set(YUNIIMPL_GAMBIT_LIBS
+    lib-stub/gambit
+    lib
+    lib-compat
+    lib-stub/gen)

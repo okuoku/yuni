@@ -28,6 +28,7 @@ check_impl(KAWA kawa-yuni)
 check_impl(LARCENY larceny)
 check_impl(PETITE_CHEZ_SCHEME petite-chez-scheme)
 check_impl(CHEZ_SCHEME chez-scheme)
+check_impl(GSI gsi)
 check_impl(RAPID_GAMBIT rapid-gambit)
 check_impl(PICRIN picrin)
 
@@ -36,13 +37,14 @@ set(impls
     PETITE_CHEZ_SCHEME CHEZ_SCHEME
     LARCENY RAPID_GAMBIT
     # PICRIN
-    )
+    GSI)
 
 set(ffi_impls # Exclude NMOSH KAWA
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS VICARE
     # LARCENY 
     CHEZ_SCHEME CSI RAPID_GAMBIT
-    PICRIN)
+    PICRIN
+    GSI)
 
 # Issue #38
 if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86$")

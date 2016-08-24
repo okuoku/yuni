@@ -77,6 +77,12 @@ macro(gen_impl_commandline var type runtimeprefix)
             set(${var} 
                 ${runtimeprefix}/yuniloader/yuniloader-picrin.scm
                 --yuniffi-stubdir ${YUNI_PLATFORM_LIBDIR})
+        elseif("${type}" STREQUAL GAMBIT)
+            gen_libopts(${var} "-I;" ${ARGN})
+            set(${var}
+                ${runtimeprefix}/yuniloader/yuniloader-gsi.scm
+                ${${var}} -MOD ${YUNI_PLATFORM_LIBDIR}
+                -PROG)
         else()
             message(FATAL_ERROR "Unknown scheme type ${type}")
         endif()
