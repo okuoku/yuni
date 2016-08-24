@@ -28,7 +28,7 @@ Implementations with FFI compatibility layer:
  * [Guile](http://www.gnu.org/software/guile/) 2.0 or later
  * [Vicare](http://marcomaggi.github.io/vicare.html)
  * [Chicken](http://www.call-cc.org/) interpreter with `r7rs` egg
- * [Gambit](http://gambitscheme.org/) with Rapid-scheme frontend
+ * [Gambit](http://gambitscheme.org/) with experimental R5RS support
  * [ChezScheme](https://github.com/cisco/ChezScheme)
  * [Picrin](https://github.com/picrin-scheme/picrin) with yuniffi patch
 
