@@ -15,12 +15,8 @@
 
 (define yuniffi-module-load (make-simpleloader 
                               (lambda () 
-                                (pp (list 'MODPATH: 
-                                          %%yuniffi-gambit-modpath
-                                          ))
                                 (list %%yuniffi-gambit-modpath))
                               (lambda (pth)
-                                (pp (list 'DLOPEN: pth))
                                 (dlopen pth))))
 
 (define (yuniffi-module-lookup handle str) (dlsym handle str))
