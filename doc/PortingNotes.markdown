@@ -135,19 +135,13 @@ R7RS
 
 ## Chibi-scheme
 
-* Supported.
-
 Yuniffi supported through C extension.
 
 ## Gauche
 
-* Supported.
-
 Yuniffi supported through C extension.
 
 ## Chicken
-
-* Supported.
 
 Yuniffi supported through embedded C code which required to be pre-compiled.
 
@@ -168,7 +162,24 @@ Picrin has no native FFI. Yuni has a module to support to enable yuniffi on it.
 Others
 ------
 
+Yuni also have some support for pre-R6RS/R7RS Scheme implementations. 
+
+Basic requirements are:
+
+- `SRFI-6` Basic string ports
+- `SRFI-30` Nested multi-line comments
+- `SRFI-46` (Optional) Basic syntax-rules extensions - can use Alexpander 
+
 ## Gambit
 
-Yuni uses [Rapid-gambit](https://github.com/okuoku/rapid-gambit) as R7RS compatibility layer/expander. Rapid-gambit expander is port of [Rapid-scheme](https://www.rapid-scheme.org).
+Currently, Yuni will use bundled Alexpander to expand the library. 
 
+Alternatively, Yuni also supports [Rapid-gambit](https://github.com/okuoku/rapid-gambit) as R7RS compatibility layer/expander. Rapid-gambit expander is port of [Rapid-scheme](https://www.rapid-scheme.org).
+
+## MIT/GNU Scheme
+
+The implementation lacks `SRFI-46`. Yuni will use Alexpander.
+
+Bytevectors are implemented with strings.
+
+Yuniffi is not ported yet.
