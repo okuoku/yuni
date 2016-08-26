@@ -25,7 +25,9 @@
 (define-syntax xid
   (syntax-rules ()
     ((_ sym)
-     (id-new-library-macro 'sym 'sym lib))))
+     (id-new-library-macro 'sym 'sym 
+                           ;; FIXME: should match with lib above
+                           '(r7c-expander-interface)))))
 
 (define %$define/primitive  (xid $define/primitive)  )
 (define %$define-aux-syntax (xid $define-aux-syntax) )
