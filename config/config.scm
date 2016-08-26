@@ -57,7 +57,12 @@
   ;; Experimental Gambit R5RS
   (compat-gambit
     (gambit-yuni => yuni)
-    (gambit-compat-scheme => scheme)))
+    (gambit-compat-scheme => scheme))
+  ;; Experimental MIT/GNU Scheme R5RS
+  (compat-mit-scheme
+    (mit-scheme-yuni => yuni)
+    (mit-scheme-compat-scheme => scheme))
+  )
 
 (GenRacket
   ;; Racket-styled library generator
@@ -146,4 +151,8 @@
   (gambit
     r7rs-common
     compat-gambit)
+  ;; Experimental MIT/GNU Scheme R5RS
+  (mit-scheme
+    r7rs-common
+    compat-mit-scheme)
   )
