@@ -145,3 +145,12 @@ set(YUNIIMPL_GAMBIT_LIBS
     lib
     lib-compat
     lib-stub/gen)
+
+##
+## MIT_SCHEME
+##
+set(YUNIIMPL_MIT_SCHEME_LIBS
+    lib-stub/mit-scheme
+    lib
+    lib-compat
+    lib-stub/gen)

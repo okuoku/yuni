@@ -83,6 +83,16 @@ macro(gen_impl_commandline var type runtimeprefix)
                 ${runtimeprefix}/yuniloader/yuniloader-gsi.scm
                 ${${var}} -MOD ${YUNI_PLATFORM_LIBDIR}
                 -PROG)
+        elseif("${type}" STREQUAL MIT_SCHEME)
+            gen_libopts(${var} "-I;" ${ARGN})
+            set(${var}
+                -YUNIROOT ${runtimeprefix}
+                --batch-mode
+                --load
+                ${runtimeprefix}/yuniloader/yuniloader-mit-scheme.scm
+                --
+                ${${var}} -MOD ${YUNI_PLATFORM_LIBDIR}
+                -PROG)
         else()
             message(FATAL_ERROR "Unknown scheme type ${type}")
         endif()
