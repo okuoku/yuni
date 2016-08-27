@@ -31,13 +31,14 @@ check_impl(CHEZ_SCHEME chez-scheme)
 check_impl(GSI gsi)
 check_impl(RAPID_GAMBIT rapid-gambit)
 check_impl(PICRIN picrin)
+check_impl(MIT_SCHEME mit-scheme)
 
 set(impls
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS CSI VICARE NMOSH KAWA
     PETITE_CHEZ_SCHEME CHEZ_SCHEME
     LARCENY RAPID_GAMBIT
     # PICRIN
-    GSI)
+    GSI MIT_SCHEME)
 
 set(ffi_impls # Exclude NMOSH KAWA
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS VICARE
