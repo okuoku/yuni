@@ -3,9 +3,6 @@
 ##
 ## MODEs:
 ##
-##  Native build (Maintainer mode):
-##    YUNI_WITH_YUNIBASE=false (default)
-##
 ##  Integration build:
 ##    YUNI_WITH_YUNIBASE=/path/to/yunibase/build
 ##    YUNI_SKIP_BOOTSTRAP=false (default)
@@ -43,14 +40,19 @@ else()
     set(_POSTFIX "")
 endif()
 
-# YUNIBASE: Use prebuilt implementation to test with
+# YUNI_PLATFORM_LIBDIR: Path-to-nativecode
+set(YUNI_PLATFORM_LIBDIR 
+    ${YUNIBASE_YUNIFIED_PATH}/yunistub${_POSTFIX})
+
+if(NOT YUNIBASE_YUNIFIED_PATH)
+    set(YUNIBASE_YUNIFIED_PATH ${CMAKE_CURRENT_BINARY_DIR}/yunified)
+endif()
+if(NOT YUNIBASE_VANILLA_PATH)
+    set(YUNIBASE_VANILLA_PATH ${CMAKE_CURRENT_BINARY_DIR}/vanilla)
+endif()
+
+# YUNIBASE: Use Yunibase's prebuilt implementation to build/test with
 if(YUNI_WITH_YUNIBASE)
-    if(NOT YUNIBASE_YUNIFIED_PATH)
-        set(YUNIBASE_YUNIFIED_PATH ${CMAKE_CURRENT_BINARY_DIR}/yunified)
-    endif()
-    if(NOT YUNIBASE_VANILLA_PATH)
-        set(YUNIBASE_VANILLA_PATH ${CMAKE_CURRENT_BINARY_DIR}/vanilla)
-    endif()
 
     # FIXME: Add current paths for linked-libraries
     set(CMAKE_LIBRARY_PATH
@@ -65,21 +67,8 @@ if(YUNI_WITH_YUNIBASE)
 
     # Add VANILLA path for find_program
     set(CMAKE_PROGRAM_PATH ${YUNIBASE_VANILLA_PATH} ${CMAKE_PROGRAM_PATH})
-endif()
 
-# YUNI_PLATFORM_LIBDIR: Path-to-nativecode
-if(YUNI_WITH_YUNIBASE)
-    # Out-of-tree setup
-    set(YUNI_PLATFORM_LIBDIR 
-        ${YUNIBASE_YUNIFIED_PATH}/yunistub${_POSTFIX})
-else()
-    # In-tree setup (Default)
-    set(YUNI_PLATFORM_LIBDIR 
-        ${CMAKE_CURRENT_LIST_DIR}/lib-stub/yunistub${_POSTFIX})
-endif()
-
-# Emit runners
-if(YUNI_WITH_YUNIBASE)
+    # Emit runners from yunibase
     include(YuniBaseGenRunners)
     emit_yunibase_runners()
 endif()
