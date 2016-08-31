@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
-set(CMAKE_LEGACY_CYGWIN_WIN32 0)
+cmake_minimum_required(VERSION 2.8.4)
 project(yunistubs)
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/../yunistub/include)
