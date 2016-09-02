@@ -38,16 +38,17 @@ else()
     set(_POSTFIX "")
 endif()
 
-# YUNI_PLATFORM_LIBDIR: Path-to-nativecode
-set(YUNI_PLATFORM_LIBDIR 
-    ${YUNIBASE_YUNIFIED_PATH}/yunistub${_POSTFIX})
-
 if(NOT YUNIBASE_YUNIFIED_PATH)
     set(YUNIBASE_YUNIFIED_PATH ${CMAKE_CURRENT_BINARY_DIR}/yunified)
 endif()
+
 if(NOT YUNIBASE_VANILLA_PATH)
     set(YUNIBASE_VANILLA_PATH ${CMAKE_CURRENT_BINARY_DIR}/vanilla)
 endif()
+
+# YUNI_PLATFORM_LIBDIR: Path-to-nativecode
+set(YUNI_PLATFORM_LIBDIR 
+    ${YUNIBASE_YUNIFIED_PATH}/yunistub${_POSTFIX})
 
 # YUNIBASE: Use Yunibase's prebuilt implementation to build/test with
 if(YUNI_WITH_YUNIBASE)
@@ -102,11 +103,18 @@ if(YUNI_WITH_YUNIBASE)
 endif()
 message(STATUS "Gauche:           ${YUNI_GOSH}")
 message(STATUS "  Gauche-package: ${YUNI_GAUCHE_PACKAGE}")
+message(STATUS "")
 message(STATUS "chibi-scheme:     ${YUNI_CHIBI_SCHEME}")
 message(STATUS "       chibi-ffi: ${YUNI_CHIBI_FFI}")
 message(STATUS "             lib: ${YUNI_CHIBI_LIB}")
+message(STATUS "")
 message(STATUS "Chicken:          ${YUNI_CHICKEN}")
 message(STATUS "             csc: ${YUNI_CHICKEN_CSC}")
 message(STATUS "             csi: ${YUNI_CHICKEN_CSI}")
+message(STATUS "")
 message(STATUS "Gambit:           ${YUNI_GSC}")
+message(STATUS "")
+message(STATUS "Racket:           ${YUNI_RACKET}")
+message(STATUS "            raco: ${YUNI_RACO}")
+message(STATUS "")
 

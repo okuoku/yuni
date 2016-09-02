@@ -24,16 +24,38 @@ endif()
 find_program(YUNI_CHICKEN
     NAMES
     chicken)
-find_program(YUNI_CHICKEN_CSC 
-    NAMES # FIXME: Can we avoid C# compilers?
-    chicken-csc
-    csc)
-find_program(YUNI_CHICKEN_CSI 
-    NAMES
-    chicken-csi
-    csi)
+
+if(YUNI_CHICKEN)
+    find_program(YUNI_CHICKEN_CSC 
+        NAMES
+        chicken-csc
+        csc)
+    find_program(YUNI_CHICKEN_CSI 
+        NAMES
+        chicken-csi
+        csi)
+endif()
 
 # Gambit
 find_program(YUNI_GSC NAMES gsc
     HINTS
     /usr/local/Gambit/bin)
+
+if(WIN32)
+    # On Win32, gsc requires gcc on PATH to compile modules
+    find_program(YUNI_GCC NAMES gcc)
+endif()
+
+# Racket
+if(WIN32)
+    # Prevent CYGWIN build from checking 
+    set(racket_hint_win32 "$ENV{ProgramFiles}/Racket")
+endif()
+
+find_program(YUNI_RACKET NAMES racket
+    HINTS
+    "${racket_hint_win32}")
+
+find_program(YUNI_RACO NAMES raco
+    HINTS
+    "${racket_hint_win32}")
