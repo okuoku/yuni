@@ -41,10 +41,8 @@ find_program(YUNI_GSC NAMES gsc
     HINTS
     /usr/local/Gambit/bin)
 
-if(WIN32)
-    # On Win32, gsc requires gcc on PATH to compile modules
-    find_program(YUNI_GCC NAMES gcc)
-endif()
+# On Win32, gsc requires gcc on PATH to compile modules
+find_program(YUNI_GCC NAMES gcc)
 
 # Racket
 if(WIN32)
