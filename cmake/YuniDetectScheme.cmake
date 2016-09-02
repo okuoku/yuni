@@ -7,53 +7,97 @@ set(__YUNI_DETECTSCHEME_INCLUDED 1)
 message(STATUS "System: ${CMAKE_HOST_SYSTEM_NAME}")
 message(STATUS "Processor: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 
-# Gauche
-find_program(YUNI_GOSH NAMES gosh)
-find_program(YUNI_GAUCHE_PACKAGE NAMES gauche-package)
+
+set(detect_scheme_hint_paths)
+
+if(NOT _PLATFORM) # root
+    message(FATAL_ERROR "fixme")
+endif()
+
+# Since host CMake can be a 32bit version, we use our own platform detection
+if(${_PLATFORM} STREQUAL WIN64)
+    # FIXME: ProgramW6432 is for Win7 or later
+    list(APPEND detect_scheme_hint_paths "$ENV{ProgramW6432}/Racket")
+else()
+    list(APPEND detect_scheme_hint_paths "$ENV{ProgramFiles}/Racket")
+endif()
+
+macro(detect_scheme)
+    find_program(${ARGN} HINTS ${detect_scheme_hint_paths})
+endmacro()
+
+# On Win32, gsc requires gcc on PATH to compile modules
+find_program(YUNI_GCC NAMES gcc)
 
 # chibi-scheme
-find_program(YUNI_CHIBI_SCHEME NAMES chibi-scheme)
-find_program(YUNI_CHIBI_FFI NAMES chibi-ffi)
+detect_scheme(YUNI_CHIBI_SCHEME NAMES chibi-scheme)
+detect_scheme(YUNI_CHIBI_FFI NAMES chibi-ffi)
 find_library(YUNI_CHIBI_LIB NAMES chibi-scheme)
 if(NOT YUNI_CHIBI_LIB)
     # Second chance for Cygwin/Windows
     find_program(YUNI_CHIBI_LIB NAMES libchibi-scheme.dll)
 endif()
 
+# Gauche
+detect_scheme(YUNI_GOSH NAMES gosh)
+detect_scheme(YUNI_GAUCHE_PACKAGE NAMES gauche-package)
+
+# Guile
+detect_scheme(YUNI_GUILE NAMES guile)
+
+
+detect_scheme(YUNI_RACKET NAMES racket)
+detect_scheme(YUNI_RACO NAMES raco)
+
+# Sagittarius
+detect_scheme(YUNI_SAGITTARIUS NAMES sagittarius)
+
 # Chicken
-find_program(YUNI_CHICKEN
+detect_scheme(YUNI_CHICKEN
     NAMES
     chicken)
 
 if(YUNI_CHICKEN)
-    find_program(YUNI_CHICKEN_CSC 
+    detect_scheme(YUNI_CHICKEN_CSC 
         NAMES
         chicken-csc
         csc)
-    find_program(YUNI_CHICKEN_CSI 
+    detect_scheme(YUNI_CHICKEN_CSI 
         NAMES
         chicken-csi
         csi)
 endif()
 
+# Vicare
+detect_scheme(YUNI_VICARE NAMES vicare)
+
+# nmosh
+detect_scheme(YUNI_NMOSH NAMES nmosh)
+
+# Kawa is only supported on yunibase
+
+# Larceny
+detect_scheme(YUNI_LARCENY NAMES larceny)
+
+# Chez scheme
+# FIXME: May conflict with mit-scheme
+detect_scheme(YUNI_CHEZ_SCHEME NAMES chez-scheme scheme)
+detect_scheme(YUNI_CHEZ_PETITE NAMES petite-chez-scheme petite)
+
 # Gambit
-find_program(YUNI_GSC NAMES gsc
+detect_scheme(YUNI_GSC NAMES gsc
+    HINTS
+    /usr/local/Gambit/bin)
+detect_scheme(YUNI_GSI NAMES gsi
     HINTS
     /usr/local/Gambit/bin)
 
-# On Win32, gsc requires gcc on PATH to compile modules
-find_program(YUNI_GCC NAMES gcc)
+# Picrin
+detect_scheme(YUNI_PICRIN NAMES picrin)
 
-# Racket
-if(WIN32)
-    # Prevent CYGWIN build from checking 
-    set(racket_hint_win32 "$ENV{ProgramFiles}/Racket")
-endif()
+# MIT-SCHEME
+detect_scheme(YUNI_MIT_SCHEME NAMES mit-scheme)
 
-find_program(YUNI_RACKET NAMES racket
-    HINTS
-    "${racket_hint_win32}")
+# Rapid-gambit
+detect_scheme(YUNI_RAPID_GAMBIT NAMES rapid-gambit)
 
-find_program(YUNI_RACO NAMES raco
-    HINTS
-    "${racket_hint_win32}")

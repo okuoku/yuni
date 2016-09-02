@@ -10,7 +10,7 @@
 include(YuniRsrcSchemeImplementations)
 include(YuniRsrcSchemeRunners)
 
-# Output run/*.sh
+# Output vanilla/*.sh
 function(emit_tmpl_runner_sh outpath ldpathname ldpath addpath execpath args)
     # args = a string for additional args
     # FIXME: SCHEMEHEAPDIRS is ChezScheme specific
@@ -34,6 +34,18 @@ function(emit_vanilla_runner_sh0 flav impl cmd cmdname)
         ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin
         ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin/${cmd}
         "")
+endfunction()
+
+function(emit_vanilla_vicare_runner_sh flav impl cmd)
+    # WAR: Add --library-path ${libpath}/vicare-scheme
+    set(_argsstr "--library-path ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/lib/vicare-scheme")
+    file(MAKE_DIRECTORY ${YUNIBASE_VANILLA_PATH})
+    emit_tmpl_runner_sh(${YUNIBASE_VANILLA_PATH}/${cmd}
+        ${_ldpathname}
+        ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/lib
+        ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin
+        ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin/${cmd}
+        "${_argsstr}")
 endfunction()
 
 function(emit_vanilla_runner_sh flav impl cmd)
@@ -64,28 +76,6 @@ function(emit_yunified_kawa_runner_sh)
         ${YUNI_WITH_YUNIBASE}/current/kawa # Dummy path
         java
         "-classpath ${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar -Dkawa.import.path=\"${_root}/lib-stub/kawa/*.sld\" kawa.repl --r7rs ${_root}/yuniloader/yuniloader-kawa.scm --")
-endfunction()
-
-function(emit_yunified_runner_sh0 varname flav impl cmd cmdname)
-    file(MAKE_DIRECTORY ${YUNIBASE_YUNIFIED_PATH})
-    gen_yunilibpaths(_yunilibs ${YUNIIMPL_${varname}_LIBS})
-    set(_libs ${YUNI_PLATFORM_LIBDIR} ${_yunilibs})
-    gen_impl_commandline(_args ${varname} ${YUNI_BASEDIR} ${_libs})
-    gen_string_args(_argsstr ${_args})
-    if(${varname} STREQUAL VICARE)
-        # WAR: Add --library-path ${libpath}/vicare-scheme
-        set(_argsstr "--library-path ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/lib/vicare-scheme ${_argsstr}")
-    endif()
-    emit_tmpl_runner_sh(${YUNIBASE_YUNIFIED_PATH}/${cmdname}
-        ${_ldpathname}
-        ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/lib
-        ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin
-        ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin/${cmd}
-        "${_argsstr}")
-endfunction()
-
-function(emit_yunified_runner_sh varname flav impl cmd)
-    emit_yunified_runner_sh0(${varname} ${flav} ${impl} ${cmd} ${cmd})
 endfunction()
 
 macro(yunibase_check_implementations)
@@ -180,7 +170,7 @@ function(emit_yunibase_runners)
             emit_vanilla_runner_sh(current chicken chicken)
         endif()
         if(YUNIBASE_HAVE_VICARE_CURRENT)
-            emit_vanilla_runner_sh(current vicare vicare)
+            emit_vanilla_vicare_runner_sh(current vicare vicare)
         endif()
         if(YUNIBASE_HAVE_NMOSH_STABLE)
             emit_vanilla_runner_sh(stable nmosh nmosh)
@@ -205,55 +195,74 @@ function(emit_yunibase_runners)
         if(YUNIBASE_HAVE_MIT_SCHEME_CURRENT)
             emit_vanilla_runner_sh(current mit-scheme mit-scheme)
         endif()
-    endif()
-    if(YUNI_WITH_YUNIBASE AND YUNIBASE_YUNIFIED_PATH)
-        if(YUNIBASE_HAVE_CHIBI_SCHEME_CURRENT)
-            emit_yunified_runner_sh(CHIBI_SCHEME current chibi-scheme chibi-scheme)
-        endif()
-        if(YUNIBASE_HAVE_GAUCHE_CURRENT)
-            emit_yunified_runner_sh(GAUCHE current gauche gosh)
-        endif()
-        if(YUNIBASE_HAVE_GUILE_CURRENT)
-            emit_yunified_runner_sh(GUILE current guile guile)
-        endif()
-        if(YUNIBASE_HAVE_RACKET_CURRENT)
-            emit_yunified_runner_sh(RACKET current racket racket)
-        endif()
-        if(YUNIBASE_HAVE_SAGITTARIUS_CURRENT)
-            emit_yunified_runner_sh(SAGITTARIUS current sagittarius sagittarius)
-        endif()
-        if(YUNIBASE_HAVE_CHICKEN_CURRENT)
-            emit_yunified_runner_sh(CHICKEN current chicken csi)
-        endif()
-        if(YUNIBASE_HAVE_VICARE_CURRENT)
-            emit_yunified_runner_sh(VICARE current vicare vicare)
-        endif()
-        if(YUNIBASE_HAVE_NMOSH_STABLE)
-            emit_yunified_runner_sh(NMOSH stable nmosh nmosh)
-        endif()
+
+        # Currently, Kawa is the only Yunibase-only implementation.
+        # Generate yunified runner directly here.
         if(YUNIBASE_HAVE_KAWA_CURRENT)
             emit_yunified_kawa_runner_sh()
         endif()
-        if(YUNIBASE_HAVE_LARCENY_CURRENT)
-            emit_yunified_runner_sh(LARCENY current larceny larceny)
+    endif()
+endfunction()
+
+#
+# "Yunified" script generation
+#
+# FIXME: Move below outside of Yunibase
+#
+
+function(emit_tmpl_runwitharg_cmd outpath execpath args)
+    file(WRITE
+        "${outpath}.bat"
+        "\"${execpath}\" ${args} %*\n")
+endfunction()
+
+function(emit_tmpl_runwitharg_sh outpath execpath args)
+    # args = a string for additional args
+    # FIXME: SCHEMEHEAPDIRS is ChezScheme specific
+    file(WRITE 
+        "${outpath}"
+        "#!/bin/sh\n\nexec ${execpath} ${args} \$*\n")
+    execute_process(
+        COMMAND chmod +x ${outpath}
+        )
+endfunction()
+
+function(emit_yunified_runner varname cmdvar cmdname)
+    if(${cmdvar})
+        set(cmd ${${cmdvar}})
+        file(MAKE_DIRECTORY ${YUNIBASE_YUNIFIED_PATH})
+        gen_yunilibpaths(_yunilibs ${YUNIIMPL_${varname}_LIBS})
+        set(_libs ${YUNI_PLATFORM_LIBDIR} ${_yunilibs})
+        gen_impl_commandline(_args ${varname} ${YUNI_BASEDIR} ${_libs})
+        gen_string_args(_argsstr ${_args})
+        if(${varname} STREQUAL VICARE)
         endif()
-        if(YUNIBASE_HAVE_CHEZ_SCHEME_CURRENT)
-            emit_yunified_runner_sh0(CHEZ_SCHEME current 
-                chez scheme chez-scheme)
-            emit_yunified_runner_sh0(CHEZ_SCHEME current 
-                chez petite petite-chez-scheme)
-        endif()
-        if(YUNIBASE_HAVE_RAPID_GAMBIT_CURRENT)
-            emit_yunified_runner_sh(RAPID_GAMBIT current rapid-gambit rapid-gambit)
-        endif()
-        if(YUNIBASE_HAVE_PICRIN_CURRENT)
-            emit_yunified_runner_sh(PICRIN current picrin picrin)
-        endif()
-        if(YUNIBASE_HAVE_GAMBIT_CURRENT)
-            emit_yunified_runner_sh(GAMBIT current gambit gsi)
-        endif()
-        if(YUNIBASE_HAVE_MIT_SCHEME_CURRENT)
-            emit_yunified_runner_sh(MIT_SCHEME current mit-scheme mit-scheme)
+        if(WIN32)
+            emit_tmpl_runwitharg_cmd(${YUNIBASE_YUNIFIED_PATH}/${cmdname}
+                ${cmd}
+                "${_argsstr}")
+        else()
+            emit_tmpl_runwitharg_sh(${YUNIBASE_YUNIFIED_PATH}/${cmdname}
+                ${cmd}
+                "${_argsstr}")
         endif()
     endif()
+endfunction()
+
+function(emit_yunified_runners)
+    emit_yunified_runner(CHIBI_SCHEME YUNI_CHIBI_SCHEME chibi-scheme)
+    emit_yunified_runner(GAUCHE       YUNI_GOSH         gosh)
+    emit_yunified_runner(GUILE        YUNI_GUILE        guile)
+    emit_yunified_runner(RACKET       YUNI_RACKET       racket)
+    emit_yunified_runner(SAGITTARIUS  YUNI_SAGITTARIUS  sagittarius)
+    emit_yunified_runner(CHICKEN      YUNI_CHICKEN_CSI  csi)
+    emit_yunified_runner(VICARE       YUNI_VICARE       vicare)
+    emit_yunified_runner(NMOSH        YUNI_NMOSH        nmosh)
+    emit_yunified_runner(LARCENY      YUNI_LARCENY      larceny)
+    emit_yunified_runner(CHEZ_SCHEME  YUNI_CHEZ_SCHEME  chez-scheme)
+    emit_yunified_runner(CHEZ_SCHEME  YUNI_CHEZ_PETITE  petite-chez-scheme)
+    emit_yunified_runner(RAPID_GAMBIT YUNI_RAPID_GAMBIT rapid-gambit)
+    emit_yunified_runner(PICRIN       YUNI_PICRIN       picrin)
+    emit_yunified_runner(GAMBIT       YUNI_GSI          gsi)
+    emit_yunified_runner(MIT_SCHEME   YUNI_MIT_SCHEME   mit-scheme)
 endfunction()

@@ -7,7 +7,11 @@
 enable_testing()
 
 macro(check_impl var nam)
-    set(_pth ${YUNIBASE_YUNIFIED_PATH}/${nam})
+    if(WIN32)
+        set(_pth ${YUNIBASE_YUNIFIED_PATH}/${nam}.bat)
+    else()
+        set(_pth ${YUNIBASE_YUNIFIED_PATH}/${nam})
+    endif()
     if(EXISTS ${_pth})
         set(YUNITEST_${var} ${_pth})
         message(STATUS "test: ${var} = ${_pth}")

@@ -50,6 +50,8 @@ endif()
 set(YUNI_PLATFORM_LIBDIR 
     ${YUNIBASE_YUNIFIED_PATH}/yunistub${_POSTFIX})
 
+include(YuniBaseGenRunners)
+
 # YUNIBASE: Use Yunibase's prebuilt implementation to build/test with
 if(YUNI_WITH_YUNIBASE)
 
@@ -68,10 +70,10 @@ if(YUNI_WITH_YUNIBASE)
     set(CMAKE_PROGRAM_PATH ${YUNIBASE_VANILLA_PATH} ${CMAKE_PROGRAM_PATH})
 
     # Emit runners from yunibase
-    include(YuniBaseGenRunners)
     emit_yunibase_runners()
 endif()
 
+# FIXME: Move to YuniPlatform
 macro(yuni_install_native_targets)
     install(TARGETS ${ARGN}
         DESTINATION ${YUNI_PLATFORM_LIBDIR})
@@ -88,33 +90,52 @@ endmacro()
 # Setup scheme implementation paths for vanilla interpreters
 include(YuniDetectScheme)
 
+# Generate yunified/*.sh runners. (Except Kawa, which is Yunibase-only)
+emit_yunified_runners()
+
 # Options
 
 # Components (include testing)
 add_subdirectory(apidata)
 add_subdirectory(yunistub) # Currently this one includes test stubs
-if(YUNI_WITH_YUNIBASE)
-    add_subdirectory(tests/yunibase tests-yunibase)
-endif()
+add_subdirectory(tests/yunibase tests-yunibase)
 
 # Status
 if(YUNI_WITH_YUNIBASE)
     message(STATUS "YUNI_WITH_YUNIBASE = ${YUNI_WITH_YUNIBASE}")
 endif()
-message(STATUS "Gauche:           ${YUNI_GOSH}")
-message(STATUS "  Gauche-package: ${YUNI_GAUCHE_PACKAGE}")
 message(STATUS "")
+
+
 message(STATUS "chibi-scheme:     ${YUNI_CHIBI_SCHEME}")
-message(STATUS "       chibi-ffi: ${YUNI_CHIBI_FFI}")
-message(STATUS "             lib: ${YUNI_CHIBI_LIB}")
-message(STATUS "")
-message(STATUS "Chicken:          ${YUNI_CHICKEN}")
-message(STATUS "             csc: ${YUNI_CHICKEN_CSC}")
-message(STATUS "             csi: ${YUNI_CHICKEN_CSI}")
-message(STATUS "")
-message(STATUS "Gambit:           ${YUNI_GSC}")
-message(STATUS "")
+if(YUNI_CHIBI_SCHEME)
+    message(STATUS "       chibi-ffi: ${YUNI_CHIBI_FFI}")
+    message(STATUS "             lib: ${YUNI_CHIBI_LIB}")
+endif()
+message(STATUS "Gauche:           ${YUNI_GOSH}")
+if(YUNI_GOSH)
+    message(STATUS "  Gauche-package: ${YUNI_GAUCHE_PACKAGE}")
+endif()
+message(STATUS "Guile:            ${YUNI_GUILE}")
 message(STATUS "Racket:           ${YUNI_RACKET}")
-message(STATUS "            raco: ${YUNI_RACO}")
-message(STATUS "")
+if(YUNI_RACKET)
+    message(STATUS "            raco: ${YUNI_RACO}")
+endif()
+message(STATUS "Sagittarius:      ${YUNI_SAGITTARIUS}")
+message(STATUS "Chicken:          ${YUNI_CHICKEN}")
+if(YUNI_CHICKEN)
+    message(STATUS "             csc: ${YUNI_CHICKEN_CSC}")
+    message(STATUS "             csi: ${YUNI_CHICKEN_CSI}")
+endif()
+message(STATUS "Vicare:           ${YUNI_VICARE}")
+message(STATUS "NMosh:            ${YUNI_NMOSH}")
+message(STATUS "Larceny:          ${YUNI_LARCENY}")
+message(STATUS "ChezScheme:       ${YUNI_CHEZ_SCHEME}") # Yuni has no petit
+message(STATUS "Gambit:           ${YUNI_GSC}")
+if(YUNI_GSC)
+    message(STATUS "             gsi: ${YUNI_GSI}")
+endif()
+message(STATUS "Picrin:           ${YUNI_PICRIN}")
+message(STATUS "MIT/GNU Scheme:   ${YUNI_MIT_SCHEME}")
+message(STATUS "RapidGambit:      ${YUNI_RAPID_GAMBIT}")
 
