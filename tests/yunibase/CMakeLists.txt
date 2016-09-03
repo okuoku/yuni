@@ -18,6 +18,19 @@ macro(check_impl var nam)
     else()
         message(STATUS "test: ${var} not found (${_pth})")
     endif()
+
+    # Boot
+    if(WIN32)
+        set(_pth ${YUNI_YUNIBOOT_PATH}/${nam}.bat)
+    else()
+        set(_pth ${YUNI_YUNIBOOT_PATH}/${nam})
+    endif()
+    if(EXISTS ${_pth})
+        set(YUNIBOOTTEST_${var} ${_pth})
+        message(STATUS "test(bootstrap): ${var} = ${_pth}")
+    else()
+        message(STATUS "test(bootstrap): ${var} not found (${_pth})")
+    endif()
 endmacro()
 
 check_impl(CHIBI_SCHEME chibi-scheme)
@@ -59,6 +72,14 @@ if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86$")
     endif()
 endif()
 
+function(test_with_boot prefix fil)
+    if(YUNIBOOTTEST_${prefix})
+        add_test(NAME "${bootstrap}-${prefix}-${fil}"
+            COMMAND ${YUNIBOOTTEST_${prefix}} ${fil}
+            WORKING_DIRECTORY ${YUNI_BASEDIR})
+    endif()
+endfunction()
+
 function(test_with_impl prefix fil)
     if(YUNITEST_${prefix})
         add_test(NAME "${prefix}-${fil}"
@@ -67,9 +88,9 @@ function(test_with_impl prefix fil)
     endif()
 endfunction()
 
-function(test_with_all fil)
+function(test_with_allboot fil)
     foreach(e ${impls})
-        test_with_impl(${e} ${fil})
+        test_with_boot(${e} ${fil})
     endforeach()
 endfunction()
 
@@ -80,5 +101,5 @@ function(test_with_allffi fil)
 endfunction()
 
 # Sanity
-test_with_all(_sanity.sps)
-test_with_allffi(_ncccsanity.sps)
+test_with_allboot(_sanity.sps)
+#test_with_allffi(_ncccsanity.sps)

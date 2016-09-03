@@ -86,20 +86,20 @@
 (GenR7RS
   ;; R7RS library generator
   (gauche
-    r7rs-common
     compat-gauche
+    r7rs-common
     yuni) 
   (chibi
-    r7rs-common
     compat-chibi
+    r7rs-common
     yuni)
   (picrin
-    r7rs-common
     compat-picrin
+    r7rs-common
     yuni)
   (chicken
-    r7rs-common
     compat-chicken
+    r7rs-common
     yuni)
   (kawa
     yuni
@@ -107,11 +107,11 @@
     compat-kawa)
   ;; Sagittarius requires keyword syntax shim.
   (sagittarius
+    compat-sagittarius
     yuni
     r7rs-common
     r6rs-common
-    yuni-r6rs
-    compat-sagittarius)
+    yuni-r6rs)
   ;; experimental
   (rapid-gambit
     yuni
@@ -123,36 +123,36 @@
   ;; Thus, it just renames the libraries
   ;; Larceny has R7RS libraries
   (larceny
-    yuni-r6rs
     compat-larceny
+    yuni-r6rs
     r6rs-common)
   (ironscheme
-    yuni-r6rs
     compat-ironscheme
+    yuni-r6rs
     r6rs-common
     r7rs-bridge)
   (chez
-    yuni-r6rs
     compat-chez
+    yuni-r6rs
     r7rs-bridge
     r6rs-common)
   (vicare
-    yuni-r6rs
     compat-vicare
+    yuni-r6rs
     r7rs-bridge
     r6rs-common)
   ;; Of course, we should do some dog-food
   (nmosh
-    yuni-r6rs
     compat-nmosh
+    yuni-r6rs
     r7rs-bridge
     r6rs-common)
   ;; Experimental Gambit R5RS
   (gambit
-    r7rs-common
-    compat-gambit)
+    compat-gambit
+    r7rs-common)
   ;; Experimental MIT/GNU Scheme R5RS
   (mit-scheme
-    r7rs-common
-    compat-mit-scheme)
+    compat-mit-scheme
+    r7rs-common)
   )

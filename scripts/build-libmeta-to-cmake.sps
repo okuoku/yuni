@@ -42,6 +42,8 @@
       (cond
         ((pair? x)
          (libspec->string x))
+        ((number? x)
+         (number->string x))
         (else (symbol->string x))))
     (if (pair? spec)
       (lis->string
@@ -75,6 +77,21 @@
 (define (quotstr x)
   (string-append "\"" x "\" "))
 
+(define (strip-rename exports)
+  (define (itr acc rest)
+    (if (pair? rest)
+      (let ((x (car rest))
+            (next (cdr rest)))
+        (if (pair? x)
+          (let ((a (car x))
+                (d (cdr x)))
+            (unless (eq? 'rename a)
+              (error "Unknown export format" exports))
+            (itr (append acc (map cadr d)) next))
+          (itr (cons x acc) next)))
+      acc))
+  (itr '() exports))
+
 ;; Main
 (let* ((in (calc-input-file))
        (out (calc-output-file)))
@@ -99,6 +116,14 @@
                            (quotstr (libspec->string e))
                            "\n"))
                     exports)
+          (say p ")\n")
+          ;; Exportsyms (stripped)
+          (say p "set(libexportsyms_" libsym "\n")
+          (for-each (lambda (e)
+                      (say p "  " 
+                           (quotstr (libspec->string e))
+                           "\n"))
+                    (strip-rename exports))
           (say p ")\n")
           ;; Imports
           (say p "set(libimports_" libsym "\n")

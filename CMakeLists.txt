@@ -46,6 +46,10 @@ if(NOT YUNIBASE_VANILLA_PATH)
     set(YUNIBASE_VANILLA_PATH ${CMAKE_CURRENT_BINARY_DIR}/vanilla)
 endif()
 
+if(NOT YUNI_YUNIBOOT_PATH)
+    set(YUNI_YUNIBOOT_PATH ${CMAKE_CURRENT_BINARY_DIR}/yuniboot)
+endif()
+
 # YUNI_PLATFORM_LIBDIR: Path-to-nativecode
 set(YUNI_PLATFORM_LIBDIR 
     ${YUNIBASE_YUNIFIED_PATH}/yunistub${_POSTFIX})
@@ -90,8 +94,11 @@ endmacro()
 # Setup scheme implementation paths for vanilla interpreters
 include(YuniDetectScheme)
 
-# Generate yunified/*.sh runners. (Except Kawa, which is Yunibase-only)
-emit_yunified_runners()
+# Bootstrap
+add_subdirectory(build/bootstrap bootstrap) # => yuni_bootstrap
+
+# Generate yuni runners. (Except Kawa, which is Yunibase-only)
+emit_yuni_runners()
 
 # Options
 
