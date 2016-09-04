@@ -6,7 +6,6 @@
         (scheme process-context))
 
 (define (file->list proc pth)
-  (write pth) (newline)
   (call-with-input-file
     pth
     (lambda (p)
