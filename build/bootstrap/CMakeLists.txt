@@ -60,7 +60,7 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
         -DOP=GENLIBSTUB
         -DGENLIBSTUB_FILE=${src}
         ${bootparams}
-        COMMENT "Generating stub libraries (${sym})"
+        COMMENT "Yuni bootstrap... (${sym})"
         DEPENDS ${yuniroot}/${src}
         ${CMAKE_CURRENT_LIST_DIR}/YuniBootstrap.cmake
         ${yuniroot}/scripts/build-config-to-cmake.sps
