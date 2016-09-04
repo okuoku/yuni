@@ -76,7 +76,7 @@ endif()
 
 function(test_with_boot prefix fil)
     if(YUNIBOOTTEST_${prefix})
-        add_test(NAME "${bootstrap}-${prefix}-${fil}"
+        add_test(NAME "yuniboot-${prefix}-${fil}"
             COMMAND ${YUNIBOOTTEST_${prefix}} ${fil}
             WORKING_DIRECTORY ${YUNI_BASEDIR})
     endif()
