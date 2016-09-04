@@ -6,7 +6,7 @@
 
 set(_yunibase /yunibase)
 set(_myroot /yuniroot)
-set(_myproject /yuniroot/yuni/integration/buildhost-yunibase)
+set(_myproject /yuniroot/yuni)
 set(_buildroot /yuniroot/build)
 set(_yunified /yunified)
 set(_vanilla /vanilla)
