@@ -103,8 +103,8 @@ emit_yuni_runners()
 # Options
 
 # Components (include testing)
-add_subdirectory(apidata)
-add_subdirectory(yunistub) # Currently this one includes test stubs
+# add_subdirectory(apidata)
+add_subdirectory(yunistub)
 add_subdirectory(tests/yunibase tests-yunibase)
 
 # Status
