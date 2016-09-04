@@ -268,6 +268,7 @@
         (y (utf8-read (textfile->bytevector pth))))
     (equal-check-deep x y)))
 
+#|
 (define yuni-compat-libs
   (begin
     (unless (file-exists? "_testing_liblist.txt")
@@ -279,8 +280,9 @@
           cur
           (itr (cons l cur)))))
      (itr '()))))
+|#
 
-(define test-files (append yuni-compat-libs '("_sanity.sps" "_ncccsanity.sps")))
+(define test-files (append '("_sanity.sps" "_ncccsanity.sps")))
 
 (define (miniread-tests)
   (define (checkobj str obj)
