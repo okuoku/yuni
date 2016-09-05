@@ -20,6 +20,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 set(YUNI_BASEDIR ${CMAKE_CURRENT_LIST_DIR})
 
 # CMake modules
+include(YuniWinSupport)
 include(YuniDetectPlatform) 
 
 yuni_detect_platform(_PLATFORM) # => WIN32 / WIN64 / CYG32 / CYG64 / UNKNOWN
@@ -99,6 +100,9 @@ add_subdirectory(build/bootstrap bootstrap) # => yuni_bootstrap
 
 # Generate yuni runners. (Except Kawa, which is Yunibase-only)
 emit_yuni_runners()
+
+# Activation
+
 
 # Options
 

@@ -22,8 +22,21 @@ else()
     list(APPEND detect_scheme_hint_paths "$ENV{ProgramFiles}/Racket")
 endif()
 
-macro(detect_scheme)
-    find_program(${ARGN} HINTS ${detect_scheme_hint_paths})
+macro(detect_scheme var)
+    find_program(${var} ${ARGN} HINTS ${detect_scheme_hint_paths})
+    if(${var})
+        # Yunibase will always have matching ABI
+        if(NOT YUNI_WITH_YUNIBASE)
+            if(WIN32)
+                yuni_get_exe_abi(__abi ${${var}})
+                message(STATUS "${${var}} = ${__abi}")
+                if(NOT ${__abi} STREQUAL ${_PLATFORM})
+                    message(STATUS "Unmatched ABI for ${var}. Disable.")
+                    set(${var} FALSE CACHE PATH "" FORCE)
+                endif()
+            endif()
+        endif()
+    endif()
 endmacro()
 
 # On Win32, gsc requires gcc on PATH to compile modules
@@ -45,7 +58,7 @@ detect_scheme(YUNI_GAUCHE_PACKAGE NAMES gauche-package)
 # Guile
 detect_scheme(YUNI_GUILE NAMES guile)
 
-
+# Racket
 detect_scheme(YUNI_RACKET NAMES racket)
 detect_scheme(YUNI_RACO NAMES raco)
 
