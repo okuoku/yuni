@@ -5,6 +5,11 @@
         (scheme read)
         (scheme process-context))
 
+(define (datum->string x)
+  (let ((p (open-output-string)))
+   (write x p)
+   (get-output-string p)))
+
 (define (file->list proc pth)
   (call-with-input-file
     pth
@@ -43,7 +48,7 @@
          (libspec->string x))
         ((number? x)
          (number->string x))
-        (else (symbol->string x))))
+        (else (datum->string x))))
     (if (pair? spec)
       (lis->string
         (if (string=? "" acc)
@@ -55,7 +60,7 @@
     (string-append "("
                    (lis->string "" spec)
                    ")")
-    (symbol->string spec)))
+    (datum->string spec)))
 
 (define (libname->cmakesym spec)
   (define (itr acc cur)
