@@ -16,30 +16,35 @@
     (syntax-case stx ()
       ((_ (x ...) k)
        (with-syntax ((total (datum->syntax
-                              #'none
+                              (syntax none)
                               (string->symbol
                                 (apply string-append
-                                       (conv (syntax->datum #'(x ...))))))))
-         #'(lambda (h)
+                                       (conv (syntax->datum (syntax (x ...)))))))))
+         (syntax 
+           (lambda (h)
              (syntax-case h ()
                ((out param)
-                (with-syntax ((name (datum->syntax #'out 'total)))
-                  #`(let-syntax ((b (lambda (y)
+                (with-syntax ((name (datum->syntax (syntax out) 'total)))
+                  (syntax 
+                    (let-syntax ((b (lambda (y)
                                       (syntax-case y ()
                                         ;; Definition
                                         ((_ obj)
-                                         (datum->syntax #'out 
-                                                        (syntax->datum #'obj)))
+                                         (datum->syntax (syntax out) 
+                                                        (syntax->datum 
+                                                          (syntax obj))))
                                         ;; Binding
                                         ((_ binding obj)
                                          ;; Strip syntactic information
-                                         (let ((bind (syntax->datum #'binding))
-                                               (prog (syntax->datum #'obj)))
+                                         (let ((bind (syntax->datum 
+                                                       (syntax binding)))
+                                               (prog (syntax->datum 
+                                                       (syntax obj))))
                                            (datum->syntax
-                                             #'out
+                                             (syntax out)
                                              `(letrec ((name ,bind))
                                                 ,prog))))))))
                       (begin
-                       (k b name param))))))))))))
+                       (k b name param))))))))))))))
 
 )

@@ -103,8 +103,8 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
   (lambda (x)
     (syntax-case x ()
       ((_ message args ...) (syntax-violation 'syntax-error
-                                              #'message
-                                              (quote  #'(args ...)))))))
+                                              (syntax message)
+                                              (quote  (syntax (args ...))))))))
 ;; R7RS error object will be mapped to R6RS condition object
 (define error-object? condition?)
 (define file-error? i/o-error?)
