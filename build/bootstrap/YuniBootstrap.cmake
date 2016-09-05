@@ -13,8 +13,13 @@
 #
 
 function(bootstrap_run_scheme script) # ARGN = args
+    if(${BOOTSTRAP_TYPE} STREQUAL "gauche")
+        set(addargs -r7)
+    else()
+        set(addargs)
+    endif()
     execute_process(
-        COMMAND "${BOOTSTRAP}" ${script} ${ARGN}
+        COMMAND "${BOOTSTRAP}" ${addargs} ${script} ${ARGN}
         WORKING_DIRECTORY ${BUILDROOT}
         RESULT_VARIABLE rr)
     if(rr)
@@ -247,6 +252,10 @@ function(bootstrap_libmeta_to_string_strip outvar impl sym sufx)
             endif()
         endif()
         if(NOT do_strip)
+            # Bootstrapping with Gauche may generate |...| instead of ...
+            if("${e}" STREQUAL "|...|")
+                set(e ...)
+            endif()
             set(str "${str}${e}\n")
         endif()
     endforeach()
@@ -325,7 +334,7 @@ endfunction()
 function(bootstrap_GenR6RSCommon_alias impl baselibname tolibname sls)
     bootstrap_libpath_strip(basepath ${sls})
     bootstrap_path_to_libsym(sym ${sls})
-    bootstrap_libmeta_to_string(exports ${sym} exportsyms)
+    bootstrap_libmeta_to_string_strip(exports ${impl} ${sym} exportsyms)
     bootstrap_libname_to_basepath(outpath "${tolibname}")
     bootstrap_libname_to_sexp(fromname "${baselibname}")
     bootstrap_libname_to_sexp(myname "${tolibname}")

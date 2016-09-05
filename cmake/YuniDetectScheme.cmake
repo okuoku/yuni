@@ -15,11 +15,23 @@ if(NOT _PLATFORM) # root
 endif()
 
 # Since host CMake can be a 32bit version, we use our own platform detection
-if(${_PLATFORM} STREQUAL WIN64)
-    # FIXME: ProgramW6432 is for Win7 or later
-    list(APPEND detect_scheme_hint_paths "$ENV{ProgramW6432}/Racket")
-else()
-    list(APPEND detect_scheme_hint_paths "$ENV{ProgramFiles}/Racket")
+if(WIN32)
+    # Detect preferred "Program Files" path
+    if(${_PLATFORM} STREQUAL WIN64)
+        set(YUNI_WIN32_PROGRAM_PATH # Points "c:/Program Files/ always"
+            "$ENV{ProgramW6432}")
+    else()
+        # Pray we use Win32 CMake..
+        # FIXME: Use detect ABI against CMAKE_PROGRAM here.
+        set(YUNI_WIN32_PROGRAM_PATH
+            "$ENV{ProgramFiles}")
+    endif()
+
+    # Append hint paths
+    foreach(e "Racket" "Gauche/bin")
+        list(APPEND detect_scheme_hint_paths
+            "${YUNI_WIN32_PROGRAM_PATH}/${e}")
+    endforeach()
 endif()
 
 macro(detect_scheme var)
@@ -53,7 +65,9 @@ endif()
 
 # Gauche
 detect_scheme(YUNI_GOSH NAMES gosh)
-detect_scheme(YUNI_GAUCHE_PACKAGE NAMES gauche-package)
+if(NOT WIN32)
+    detect_scheme(YUNI_GAUCHE_PACKAGE NAMES gauche-package)
+endif()
 
 # Guile
 detect_scheme(YUNI_GUILE NAMES guile)

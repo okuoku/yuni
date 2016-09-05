@@ -1,14 +1,25 @@
 add_custom_target(yuni_bootstrap)
 
-if(NOT YUNI_CHIBI_SCHEME)
+# Detect bootstrap scheme
+# chibi-scheme >> Gauche
+if(YUNI_CHIBI_SCHEME)
+    set(YUNI_BOOTSTRAP_SCHEME "${YUNI_CHIBI_SCHEME}")
+    set(YUNI_BOOTSTRAP_SCHEME_TYPE r7rs)
+elseif(YUNI_GOSH)
+    set(YUNI_BOOTSTRAP_SCHEME "${YUNI_GOSH}")
+    set(YUNI_BOOTSTRAP_SCHEME_TYPE gauche)
+endif()
+
+
+if(NOT YUNI_BOOTSTRAP_SCHEME)
     message(FATAL_ERROR "Bootstrap Scheme was not found...")
 endif()
 
 set(yuniroot ${CMAKE_CURRENT_LIST_DIR}/../..)
 
 set(bootparams
-    -DBOOTSTRAP=${YUNI_CHIBI_SCHEME}
-    -DBOOTSTRAP_TYPE=CHIBI_SCHEME
+    "-DBOOTSTRAP=${YUNI_BOOTSTRAP_SCHEME}"
+    -DBOOTSTRAP_TYPE=${YUNI_BOOTSTRAP_SCHEME_TYPE}
     -DYUNIROOT=${yuniroot}
     -DBUILDROOT=${CMAKE_CURRENT_BINARY_DIR}
     -DSTUBROOT=${CMAKE_CURRENT_BINARY_DIR}/lib-stub
