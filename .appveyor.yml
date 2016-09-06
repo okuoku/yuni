@@ -6,6 +6,7 @@ skip_tags: true
 environment:
     matrix:
         - BOOTSTRAP: gauche32
+        - BOOTSTRAP: sagittarius32
 
 install:
     - cinst ninja
