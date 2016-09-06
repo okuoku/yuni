@@ -1,6 +1,9 @@
 ##
 ## Yuni Main CMakeLists.txt
 ##
+## INPUT:
+##    YUNI_BOOTSTRAP_USE=chibi-scheme | gauche | sagittarius
+##
 ## MODEs:
 ##
 ##  Integration build:

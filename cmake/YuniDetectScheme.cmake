@@ -28,7 +28,7 @@ if(WIN32)
     endif()
 
     # Append hint paths
-    foreach(e "Racket" "Gauche/bin")
+    foreach(e "Racket" "Gauche/bin" "Sagittarius")
         list(APPEND detect_scheme_hint_paths
             "${YUNI_WIN32_PROGRAM_PATH}/${e}")
     endforeach()
@@ -80,7 +80,13 @@ detect_scheme(YUNI_RACKET NAMES racket)
 detect_scheme(YUNI_RACO NAMES raco)
 
 # Sagittarius
-detect_scheme(YUNI_SAGITTARIUS NAMES sagittarius)
+if(WIN32)
+    set(win32_sagittarius_name sash)
+else()
+    set(win32_sagittarius_name)
+endif()
+
+detect_scheme(YUNI_SAGITTARIUS NAMES sagittarius ${win32_sagittarius_name})
 
 # Chicken
 detect_scheme(YUNI_CHICKEN

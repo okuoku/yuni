@@ -1,17 +1,26 @@
 add_custom_target(yuni_bootstrap)
 
 # Detect bootstrap scheme
-# chibi-scheme >> Gauche
-if(YUNI_CHIBI_SCHEME)
-    set(YUNI_BOOTSTRAP_SCHEME "${YUNI_CHIBI_SCHEME}")
-    set(YUNI_BOOTSTRAP_SCHEME_TYPE r7rs)
-elseif(YUNI_GOSH)
-    set(YUNI_BOOTSTRAP_SCHEME "${YUNI_GOSH}")
-    set(YUNI_BOOTSTRAP_SCHEME_TYPE gauche)
+if(NOT YUNI_BOOTSTRAP_USE)
+    if(YUNI_CHIBI_SCHEME)
+        set(YUNI_BOOTSTRAP_USE chibi-scheme)
+    elseif(YUNI_GOSH)
+        set(YUNI_BOOTSTRAP_USE gauche)
+    elseif(YUNI_SAGITTARIUS)
+        set(YUNI_BOOTSTRAP_USE sagittarius)
+    endif()
 endif()
 
-
-if(NOT YUNI_BOOTSTRAP_SCHEME)
+if(${YUNI_BOOTSTRAP_USE} STREQUAL "gauche")
+    set(YUNI_BOOTSTRAP_SCHEME "${YUNI_GOSH}")
+    set(YUNI_BOOTSTRAP_SCHEME_TYPE gauche)
+elseif(${YUNI_BOOTSTRAP_USE} STREQUAL "sagittarius")
+    set(YUNI_BOOTSTRAP_SCHEME "${YUNI_SAGITTARIUS}")
+    set(YUNI_BOOTSTRAP_SCHEME_TYPE r7rs)
+elseif(${YUNI_BOOTSTRAP_USE} STREQUAL "chibi-scheme")
+    set(YUNI_BOOTSTRAP_SCHEME "${YUNI_CHIBI_SCHEME}")
+    set(YUNI_BOOTSTRAP_SCHEME_TYPE r7rs)
+else()
     message(FATAL_ERROR "Bootstrap Scheme was not found...")
 endif()
 

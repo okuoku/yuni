@@ -19,7 +19,7 @@ function(download_installer filename)
         TLS_VERIFY OFF)
 endfunction()
 
-function(do_build_and_test_yuni)
+function(do_build_and_test_yuni bootstrapuse)
     set(ENV{PATH}
         "c:\\msys64\\mingw32\\bin\;$ENV{PATH}")
     # Configure yuni
@@ -29,12 +29,13 @@ function(do_build_and_test_yuni)
         -G Ninja
         -DCMAKE_C_COMPILER=c:/msys64/mingw32/bin/gcc.exe
         -DCMAKE_CXX_COMPILER=c:/msys64/mingw32/bin/g++.exe
+        -DYUNI_BOOTSTRAP_USE=${bootstrapuse}
         ${_myroot}
         RESULT_VARIABLE rr
         WORKING_DIRECTORY ${workdir})
 
     if(rr)
-        message(FATAL_ERROR "Failed to configure yuni: ${rr}")
+        message(FATAL_ERROR "Failed to configure yuni(${bootstrapuse}): ${rr}")
     endif()
 
     # Build yuni
@@ -60,18 +61,13 @@ function(do_build_and_test_yuni)
     if(rr)
         message(FATAL_ERROR "Failed to test yuni: ${rr}")
     endif()
-
 endfunction()
 
-message(STATUS "BOOTSTRAP = ${BOOTSTRAP}")
-
-file(MAKE_DIRECTORY ${workdir})
-
-if("${BOOTSTRAP}" STREQUAL gauche32)
+function(install_gauche32)
     set(installer Gauche-mingw-0.9.4.msi)
-    message(STATUS "Download...")
+    message(STATUS "Download gauche...")
     download_installer(${installer})
-    message(STATUS "Install...")
+    message(STATUS "Install gauche...")
     # Install Gauche
     execute_process(
         COMMAND # start /wait
@@ -81,8 +77,35 @@ if("${BOOTSTRAP}" STREQUAL gauche32)
     if(rr)
         message(FATAL_ERROR "Failed to install Gauche ${rr}")
     endif()
+endfunction()
 
-    do_build_and_test_yuni()
+function(install_sagittarius installer)
+    message(STATUS "Download Sagittarius(${installer})...")
+    download_installer(${installer})
+    message(STATUS "Install Sagittarius...")
+    # Install Gauche
+    execute_process(
+        COMMAND # start /wait
+        ${installer} /verysilent /norestart
+        RESULT_VARIABLE rr
+        WORKING_DIRECTORY ${workdir})
+    if(rr)
+        message(FATAL_ERROR "Failed to install Sagittarius ${rr}")
+    endif()
+endfunction()
+
+message(STATUS "BOOTSTRAP = ${BOOTSTRAP}")
+
+file(MAKE_DIRECTORY ${workdir})
+
+if("${BOOTSTRAP}" STREQUAL gauche32)
+    install_gauche32()
+    install_sagittarius(setup_sagittarius_0.7.7.exe) # 32bit
+    do_build_and_test_yuni(gauche)
+elseif("${BOOTSTRAP}" STREQUAL sagittarius32)
+    install_gauche32()
+    install_sagittarius(setup_sagittarius_0.7.7.exe) # 32bit
+    do_build_and_test_yuni(sagittarius)
 else()
     message(FATAL_ERROR "Unknown bootstrapper: ${BOOTSTRAP}")
 endif()
