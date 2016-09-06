@@ -6,7 +6,9 @@
 
 get_filename_component(_myroot ${CMAKE_CURRENT_LIST_DIR}/../.. ABSOLUTE)
 
-set(workdir work)
+set(workdir ${CMAKE_CURRENT_BINARY_DIR}/work)
+
+message(STATUS "workdir = ${workdir}")
 
 function(download_installer filename)
     set(base
@@ -60,9 +62,6 @@ function(do_build_and_test_yuni)
     endif()
 
 endfunction()
-
-
-set(BOOTSTRAP "gauche32")
 
 message(STATUS "BOOTSTRAP = ${BOOTSTRAP}")
 
