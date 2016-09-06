@@ -4,6 +4,7 @@ yuni
 R7RS/R6RS Scheme portability library
 
 [![Build Status](https://travis-ci.org/okuoku/yuni.svg?branch=master)](https://travis-ci.org/okuoku/yuni)
+[![Build status](https://ci.appveyor.com/api/projects/status/0mtb3ldlwk2qwvck/branch/master?svg=true)](https://ci.appveyor.com/project/okuoku/yuni/branch/master)
 
 `yuni` is a collection of R6RS/R7RS compatible libraries. It's under development; still USELESS for most people.
 
@@ -33,7 +34,7 @@ Implementations with FFI compatibility layer:
 
 Bootstrapped, but no FFI yet:
 
- * [IronScheme](http://ironscheme.codeplex.com/)
+ * [IronScheme](https://github.com/leppie/IronScheme)
  * [Kawa](http://www.gnu.org/software/kawa/)
  * [Larceny](http://larcenists.org/) - Lacks non-movable bytevectors #46
  * [MIT/GNU Scheme](https://www.gnu.org/software/mit-scheme/) with experimental R5RS support
