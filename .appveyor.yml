@@ -12,5 +12,5 @@ install:
     - set PATH=c:/tools/ninja;%PATH%
 
 build_script:
-    - cmd: cmake -DBOOTSTRAP=%BOOTSTRAP% -P %APPVEYOR_BUILD_FOLDER%/integration/buildhost-win2/test-on-admin.cmake
+    - cmd: cmake -DBOOTSTRAP=%BOOTSTRAP% -P %APPVEYOR_BUILD_FOLDER%/integration/buildhost-win/test-on-admin.cmake
 
