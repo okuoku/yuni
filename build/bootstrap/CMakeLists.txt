@@ -55,7 +55,8 @@ include(${CMAKE_CURRENT_BINARY_DIR}/libgenorder.cmake)
 add_custom_target(yuni_bootstrap_check
     ${CMAKE_COMMAND}
     -DOP=BOOTSTRAP_CHECK
-    ${bootparams})
+    ${bootparams}
+    COMMENT "Checking source tree...")
 
 # Instantiate stub library builds
 set(outdata)
