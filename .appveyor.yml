@@ -3,6 +3,10 @@ branches:
   only:
   - master
 skip_tags: true
+environment:
+    matrix:
+        - BOOTSTRAP: gauche32
+
 build_script:
-    - cmd: cmake %APPVEYOR_BUILD_FOLDER%/integration/buildhost-win
+    - cmd: cmake -DBOOTSTRAP=%BOOTSTRAP% -P %APPVEYOR_BUILD_FOLDER%/integration/buildhost-win2/test-on-admin.cmake
 
