@@ -1,5 +1,9 @@
 add_custom_target(yuni_bootstrap)
 
+set(bootstrap_scripts
+    ${CMAKE_CURRENT_LIST_DIR}/build-config-to-cmake-r7.sps
+    ${CMAKE_CURRENT_LIST_DIR}/build-libmeta-to-cmake-r7.sps)
+
 # Detect bootstrap scheme
 if(NOT YUNI_BOOTSTRAP_USE)
     if(YUNI_CHIBI_SCHEME)
@@ -84,8 +88,7 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
         COMMENT "Yuni bootstrap... (${sym})"
         DEPENDS ${yuniroot}/${src}
         ${CMAKE_CURRENT_LIST_DIR}/YuniBootstrap.cmake
-        ${yuniroot}/scripts/build-config-to-cmake.sps
-        ${yuniroot}/scripts/build-libmeta-to-cmake.sps)
+        ${bootstrap_scripts})
     list(APPEND outdata ${CMAKE_CURRENT_BINARY_DIR}/libdata/${sym}.cmake)
 endforeach()
 add_custom_target(yuni_stublibs ALL DEPENDS ${outdata})

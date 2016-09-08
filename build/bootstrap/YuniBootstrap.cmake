@@ -12,7 +12,26 @@
 #  GENLIBSTUB_FILE: Relative path against YUNIROOT for GENLIBSTUB
 #
 
-function(bootstrap_run_scheme script) # ARGN = args
+function(select_script_file var slot)
+    set(config_to_cmake_r7 
+        ${CMAKE_CURRENT_LIST_DIR}/build-config-to-cmake-r7.sps)
+    set(libmeta_to_cmake_r7
+        ${CMAKE_CURRENT_LIST_DIR}/build-libmeta-to-cmake-r7.sps)
+
+    if(${slot} STREQUAL CONFIG_TO_CMAKE)
+        set(out ${config_to_cmake_r7})
+    elseif(${slot} STREQUAL LIBMETA_TO_CMAKE)
+        set(out ${libmeta_to_cmake_r7})
+    else()
+        message(FATAL_ERROR "Unknown script type: ${slot}")
+    endif()
+
+    set(${var} ${out} PARENT_SCOPE)
+endfunction()
+
+function(bootstrap_run_scheme slot) # ARGN = args
+    select_script_file(script ${slot})
+
     if(${BOOTSTRAP_TYPE} STREQUAL "gauche")
         set(addargs -r7)
     else()
@@ -45,8 +64,7 @@ endfunction()
 
 function(bootstrap_extract_libdata pth nam)
     file(MAKE_DIRECTORY ${BUILDROOT}/libdata)
-    bootstrap_run_scheme(
-        ${YUNIROOT}/scripts/build-libmeta-to-cmake.sps
+    bootstrap_run_scheme(LIBMETA_TO_CMAKE
         ${pth}
         ${BUILDROOT}/libdata/${nam}.cmake)
 endfunction()
@@ -519,8 +537,7 @@ function(bootstrap_cmd_first)
     bootstrap_gen_yunilibfiles(yunilibs.cmake)
 
     # Generate libgroups.cmake and genmappings.cmake
-    bootstrap_run_scheme(${YUNIROOT}/scripts/build-config-to-cmake.sps
-        ${YUNIROOT}/config/config.scm)
+    bootstrap_run_scheme(CONFIG_TO_CMAKE ${YUNIROOT}/config/config.scm)
 
     # Integrate libgroups.cmake and others into liborder
     bootstrap_gen_librequest()
