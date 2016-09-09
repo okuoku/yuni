@@ -30,6 +30,7 @@ function(do_build_and_test_yuni bootstrapuse)
         -DCMAKE_C_COMPILER=c:/msys64/mingw32/bin/gcc.exe
         -DCMAKE_CXX_COMPILER=c:/msys64/mingw32/bin/g++.exe
         -DYUNI_BOOTSTRAP_USE=${bootstrapuse}
+        -DYUNI_IRON_SCHEME_ROOT=${workdir}/IronScheme
         ${_myroot}
         RESULT_VARIABLE rr
         WORKING_DIRECTORY ${workdir})
@@ -94,17 +95,42 @@ function(install_sagittarius installer)
     endif()
 endfunction()
 
+function(install_ironscheme)
+    set(archive "IronScheme-1.0.101-0fdbfcf.zip")
+    message(STATUS "Download IronScheme...")
+    download_installer(${archive})
+    message(STATUS "Extract IronScheme...")
+    # Extract
+    execute_process(
+        COMMAND
+        ${CMAKE_COMMAND} -E tar xf
+        ${archive}
+        RESULT_VARIABLE rr
+        WORKING_DIRECTORY ${workdir})
+    if(rr)
+        message(WARNING "Failed to extract IronScheme ${rr}")
+    endif()
+endfunction()
+
+function(install32)
+    install_gauche32()
+    install_sagittarius(setup_sagittarius_0.7.7.exe) # 32bit
+    install_ironscheme()
+endfunction()
+
 message(STATUS "BOOTSTRAP = ${BOOTSTRAP}")
 
 file(MAKE_DIRECTORY ${workdir})
 
+if(NOT BOOTSTRAP)
+    set(BOOTSTRAP sagittarius32)
+endif()
+
 if("${BOOTSTRAP}" STREQUAL gauche32)
-    install_gauche32()
-    install_sagittarius(setup_sagittarius_0.7.7.exe) # 32bit
+    install32()
     do_build_and_test_yuni(gauche)
 elseif("${BOOTSTRAP}" STREQUAL sagittarius32)
-    install_gauche32()
-    install_sagittarius(setup_sagittarius_0.7.7.exe) # 32bit
+    install32()
     do_build_and_test_yuni(sagittarius)
 else()
     message(FATAL_ERROR "Unknown bootstrapper: ${BOOTSTRAP}")
