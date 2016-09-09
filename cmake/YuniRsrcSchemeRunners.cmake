@@ -109,6 +109,11 @@ function(calc_impl_yuniboot_commandline outvar type runtimeprefix)
             --
             ${out} -MOD ${YUNI_PLATFORM_LIBDIR}
             -PROG)
+    elseif("${type}" STREQUAL IRON_SCHEME)
+        gen_stubprefix(stub ironscheme)
+        gen_libopts(out "-I;" ${stub} ${ARGN})
+        set(out ${runtimeprefix}/yuniloader/yuniloader-ironscheme.scm
+            ${out})
     else()
         message(FATAL_ERROR "Unknown scheme type ${type}")
     endif()
@@ -168,6 +173,8 @@ macro(gen_impl_commandline var type runtimeprefix)
                 --
                 ${${var}} -MOD ${YUNI_PLATFORM_LIBDIR}
                 -PROG)
+        elseif("${type}" STREQUAL IRON_SCHEME)
+            gen_libopts(${var} "-I;" ${ARGN})
         else()
             message(FATAL_ERROR "Unknown scheme type ${type}")
         endif()

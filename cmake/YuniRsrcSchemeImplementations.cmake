@@ -202,3 +202,11 @@ set(YUNIIMPL_MIT_SCHEME_LIBS
     lib
     lib-compat
     lib-stub/gen)
+
+##
+## IRON_SCHEME
+##
+set(YUNIIMPL_IRON_SCHEME_BOOTLIBS
+    lib-r6rs
+    lib-compat
+    lib)

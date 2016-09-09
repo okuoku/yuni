@@ -51,6 +51,24 @@ macro(detect_scheme var)
     endif()
 endmacro()
 
+function(detect_ironscheme var)
+    # FIXME: Implement IronScheme on NuGet/choco
+    # FIXME: Prefer .net 4
+    set(out YUNI_IRON_SCHEME-NOTFOUND)
+    if(YUNI_IRON_SCHEME_ROOT)
+        if(${_PLATFORM} STREQUAL WIN64)
+            set(ironscheme "IronScheme.Console-v4.exe")
+        else()
+            set(ironscheme "IronScheme.Console32-v4.exe")
+        endif()
+        set(theironscheme "${YUNI_IRON_SCHEME_ROOT}/${ironscheme}")
+        if(EXISTS "${theironscheme}")
+            set(out "${theironscheme}")
+        endif()
+    endif()
+    set(${var} ${out} PARENT_SCOPE)
+endfunction()
+
 # On Win32, gsc requires gcc on PATH to compile modules
 find_program(YUNI_GCC NAMES gcc)
 
@@ -137,3 +155,5 @@ detect_scheme(YUNI_MIT_SCHEME NAMES mit-scheme)
 # Rapid-gambit
 detect_scheme(YUNI_RAPID_GAMBIT NAMES rapid-gambit)
 
+# IronScheme
+detect_ironscheme(YUNI_IRON_SCHEME)
