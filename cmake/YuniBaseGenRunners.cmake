@@ -66,18 +66,6 @@ macro(gen_yunilibpaths var)
     endforeach()
 endmacro()
 
-function(emit_yunified_kawa_runner_sh)
-    file(MAKE_DIRECTORY ${YUNIBASE_YUNIFIED_PATH})
-    set(_root ${YUNI_BASEDIR})
-    emit_tmpl_runner_sh(
-        ${YUNIBASE_YUNIFIED_PATH}/kawa-yuni
-        NONE # No LD path override
-        ""
-        ${YUNI_WITH_YUNIBASE}/current/kawa # Dummy path
-        java
-        "-classpath ${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar -Dkawa.import.path=\"${_root}/lib-stub/kawa/*.sld\" kawa.repl --r7rs ${_root}/yuniloader/yuniloader-kawa.scm --")
-endfunction()
-
 macro(yunibase_check_implementations)
     # chibi-scheme
     if(EXISTS ${YUNI_WITH_YUNIBASE}/current/chibi-scheme/bin/chibi-scheme)
@@ -196,11 +184,6 @@ function(emit_yunibase_runners)
             emit_vanilla_runner_sh(current mit-scheme mit-scheme)
         endif()
 
-        # Currently, Kawa is the only Yunibase-only implementation.
-        # Generate yunified runner directly here.
-        if(YUNIBASE_HAVE_KAWA_CURRENT)
-            emit_yunified_kawa_runner_sh()
-        endif()
     endif()
 endfunction()
 
@@ -211,20 +194,39 @@ endfunction()
 #
 
 function(emit_tmpl_runwitharg_cmd outpath execpath args)
-    file(WRITE
-        "${outpath}.bat"
+    file(WRITE "${outpath}.bat"
         "\"${execpath}\" ${args} %*\n")
 endfunction()
 
 function(emit_tmpl_runwitharg_sh outpath execpath args)
     # args = a string for additional args
-    # FIXME: SCHEMEHEAPDIRS is ChezScheme specific
-    file(WRITE 
-        "${outpath}"
+    file(WRITE "${outpath}"
         "#!/bin/sh\n\nexec ${execpath} ${args} \$*\n")
-    execute_process(
-        COMMAND chmod +x ${outpath}
-        )
+    execute_process(COMMAND chmod +x ${outpath})
+endfunction()
+
+function(emit_yuniboot_kawa_runner)
+    if(YUNI_KAWA_JAR AND Java_JAVA_EXECUTABLE)
+        file(MAKE_DIRECTORY ${YUNI_YUNIBOOT_PATH})
+        gen_stubprefix(stub kawa)
+        set(yuniloader ${YUNI_BASEDIR}/yuniloader/yuniloader-kawa.scm)
+        if(WIN32)
+            yuni_path_chop_drive(yuniloader ${yuniloader})
+            yuni_path_chop_drive(stub ${stub})
+        endif()
+
+        set(kawa_args
+            "-classpath ${YUNI_KAWA_JAR} kawa.repl --r7rs ${yuniloader} -I ${stub}")
+        if(WIN32)
+            emit_tmpl_runwitharg_cmd(
+                ${YUNI_YUNIBOOT_PATH}/kawa
+                ${Java_JAVA_EXECUTABLE} ${kawa_args})
+        else()
+            emit_tmpl_runwitharg_sh(
+                ${YUNI_YUNIBOOT_PATH}/kawa
+                ${Java_JAVA_EXECUTABLE} ${kawa_args})
+        endif()
+    endif()
 endfunction()
 
 function(emit_yuniboot_runner varname cmdvar cmdname)
@@ -292,4 +294,5 @@ function(emit_yuni_runners)
     emit_yuni_runner(GAMBIT       YUNI_GSI          gsi)
     emit_yuni_runner(MIT_SCHEME   YUNI_MIT_SCHEME   mit-scheme)
     emit_yuni_runner(IRON_SCHEME  YUNI_IRON_SCHEME  ironscheme)
+    emit_yuniboot_kawa_runner()
 endfunction()

@@ -78,6 +78,14 @@ if(YUNI_WITH_YUNIBASE)
     # Add VANILLA path for find_program
     set(CMAKE_PROGRAM_PATH ${YUNIBASE_VANILLA_PATH} ${CMAKE_PROGRAM_PATH})
 
+    # Find kawa
+    if(NOT YUNI_KAWA_JAR)
+        if(EXISTS "${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar")
+            set(YUNI_KAWA_JAR
+                "${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar")
+        endif()
+    endif()
+
     # Emit runners from yunibase
     emit_yunibase_runners()
 endif()
@@ -102,7 +110,7 @@ include(YuniDetectScheme)
 # Bootstrap
 add_subdirectory(build/bootstrap bootstrap) # => yuni_bootstrap
 
-# Generate yuni runners. (Except Kawa, which is Yunibase-only)
+# Generate yuni runners
 emit_yuni_runners()
 
 # Activation

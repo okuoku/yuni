@@ -157,3 +157,11 @@ detect_scheme(YUNI_RAPID_GAMBIT NAMES rapid-gambit)
 
 # IronScheme
 detect_ironscheme(YUNI_IRON_SCHEME)
+
+# Kawa
+if(YUNI_KAWA_JAR)
+    find_package(Java)
+    if(NOT Java_JAVA_EXECUTABLE)
+        set(YUNI_KAWA_JAR FALSE)
+    endif()
+endif()

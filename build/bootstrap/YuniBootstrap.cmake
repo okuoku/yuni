@@ -126,6 +126,10 @@ function(bootstrap_filter_includepath inoutvar impl)
         # Abuse moudle-7 behaviour: strip down to basename
         get_filename_component(out ${${inoutvar}} NAME)
         set(${inoutvar} ${out} PARENT_SCOPE)
+    elseif(${impl} STREQUAL kawa)
+        # Use absolute paths for kawa
+        set(pth ${YUNIROOT}/${input})
+        set(${inoutvar} ${pth} PARENT_SCOPE)
     endif()
 endfunction()
 
