@@ -162,3 +162,5 @@ message(STATUS "Picrin:           ${YUNI_PICRIN}")
 message(STATUS "MIT/GNU Scheme:   ${YUNI_MIT_SCHEME}")
 message(STATUS "RapidGambit:      ${YUNI_RAPID_GAMBIT}")
 message(STATUS "IronScheme:       ${YUNI_IRON_SCHEME}")
+message(STATUS "Kawa:             ${YUNI_KAWA_JAR}")
+

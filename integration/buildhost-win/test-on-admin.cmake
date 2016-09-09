@@ -24,6 +24,11 @@ function(do_build_and_test_yuni bootstrapuse)
         "c:\\msys64\\mingw32\\bin\;$ENV{PATH}")
     # Configure yuni
     message(STATUS "Configure...")
+    if(EXISTS ${workdir}/kawa.jar)
+        set(kawa_arg -DYUNI_KAWA_JAR=${workdir}/kawa.jar)
+    else()
+        set(kawa_arg)
+    endif()
     execute_process(
         COMMAND ${CMAKE_COMMAND}
         -G Ninja
@@ -31,6 +36,7 @@ function(do_build_and_test_yuni bootstrapuse)
         -DCMAKE_CXX_COMPILER=c:/msys64/mingw32/bin/g++.exe
         -DYUNI_BOOTSTRAP_USE=${bootstrapuse}
         -DYUNI_IRON_SCHEME_ROOT=${workdir}/IronScheme
+        ${kawa_arg}
         ${_myroot}
         RESULT_VARIABLE rr
         WORKING_DIRECTORY ${workdir})
@@ -112,10 +118,17 @@ function(install_ironscheme)
     endif()
 endfunction()
 
+function(install_kawa)
+    set(archive "kawa.jar")
+    message(STATUS "Download Kawa...")
+    download_installer(${archive})
+endfunction()
+
 function(install32)
     install_gauche32()
     install_sagittarius(setup_sagittarius_0.7.7.exe) # 32bit
     install_ironscheme()
+    install_kawa() # FIXME: Not actually 32bit
 endfunction()
 
 message(STATUS "BOOTSTRAP = ${BOOTSTRAP}")
