@@ -19,9 +19,14 @@ function(download_installer filename)
         TLS_VERIFY OFF)
 endfunction()
 
-function(do_build_and_test_yuni bootstrapuse)
+function(do_build_and_test_yuni bitness bootstrapuse)
+    if(${bitness} STREQUAL 32)
+        set(mingw mingw32)
+    else()
+        set(mingw mingw64)
+    endif()
     set(ENV{PATH}
-        "c:\\msys64\\mingw32\\bin\;$ENV{PATH}")
+        "c:\\msys64\\${mingw}\\bin\;$ENV{PATH}")
     # Configure yuni
     message(STATUS "Configure...")
     if(EXISTS ${workdir}/kawa.jar)
@@ -32,8 +37,8 @@ function(do_build_and_test_yuni bootstrapuse)
     execute_process(
         COMMAND ${CMAKE_COMMAND}
         -G Ninja
-        -DCMAKE_C_COMPILER=c:/msys64/mingw32/bin/gcc.exe
-        -DCMAKE_CXX_COMPILER=c:/msys64/mingw32/bin/g++.exe
+        -DCMAKE_C_COMPILER=c:/msys64/${mingw}/bin/gcc.exe
+        -DCMAKE_CXX_COMPILER=c:/msys64/${mingw}/bin/g++.exe
         -DYUNI_BOOTSTRAP_USE=${bootstrapuse}
         -DYUNI_IRON_SCHEME_ROOT=${workdir}/IronScheme
         ${kawa_arg}
@@ -86,6 +91,34 @@ function(install_gauche32)
     endif()
 endfunction()
 
+function(install_racket bitness installer)
+    if(${bitness} STREQUAL 32)
+        set(programfiles "c:/Program Files (x86)/Racket")
+    else()
+        set(programfiles "c:/Program Files/Racket")
+    endif()
+    message(STATUS "Download Racket(${installer})...")
+    download_installer(${installer})
+    message(STATUS "Install Racket...")
+    # Install Gauche
+    execute_process(
+        COMMAND # start /wait
+        ${installer} /S
+        RESULT_VARIABLE rr
+        WORKING_DIRECTORY ${workdir})
+    if(rr)
+        message(FATAL_ERROR "Failed to install Sagittarius ${rr}")
+    endif()
+    message(STATUS "Setting up R6RS/SRFI runtimes...")
+    execute_process(
+        COMMAND # start /wait
+        "${programfiles}/raco.exe"
+        pkg install --skip-installed --scope installation
+        --auto srfi-lib r6rs-lib
+        RESULT_VARIABLE rr
+        WORKING_DIRECTORY ${workdir})
+endfunction()
+
 function(install_sagittarius installer)
     message(STATUS "Download Sagittarius(${installer})...")
     download_installer(${installer})
@@ -125,10 +158,21 @@ function(install_kawa)
 endfunction()
 
 function(install32)
-    install_gauche32()
-    install_sagittarius(setup_sagittarius_0.7.7.exe) # 32bit
-    install_ironscheme()
-    install_kawa() # FIXME: Not actually 32bit
+    if(NOT SKIPINSTALL)
+        install_gauche32()
+        install_sagittarius(setup_sagittarius_0.7.7.exe) # 32bit
+        install_ironscheme()
+        install_racket(32 racket-minimal-6.6-i386-win32.exe)
+    endif()
+endfunction()
+
+function(install64)
+    if(NOT SKIPINSTALL)
+        install_sagittarius(setup_sagittarius_0.7.7_x64.exe) # 64bit
+        install_ironscheme()
+        install_kawa()
+        install_racket(64 racket-minimal-6.6-x86_64-win32.exe)
+    endif()
 endfunction()
 
 message(STATUS "BOOTSTRAP = ${BOOTSTRAP}")
@@ -141,10 +185,13 @@ endif()
 
 if("${BOOTSTRAP}" STREQUAL gauche32)
     install32()
-    do_build_and_test_yuni(gauche)
+    do_build_and_test_yuni(32 gauche)
 elseif("${BOOTSTRAP}" STREQUAL sagittarius32)
     install32()
-    do_build_and_test_yuni(sagittarius)
+    do_build_and_test_yuni(32 sagittarius)
+elseif("${BOOTSTRAP}" STREQUAL sagittarius64)
+    install64()
+    do_build_and_test_yuni(64 sagittarius)
 else()
     message(FATAL_ERROR "Unknown bootstrapper: ${BOOTSTRAP}")
 endif()

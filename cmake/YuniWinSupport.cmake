@@ -3,8 +3,19 @@
 #
 
 function(yuni_get_exe_abi var fn)
-    file(READ ${fn} peheader OFFSET 128 LIMIT 6 HEX)
+    # Calc PE header offset
+    file(READ ${fn} peoffs OFFSET 60 LIMIT 2 HEX)
+    if(${peoffs} STREQUAL "8000")
+        set(offs 128)
+    elseif(${peoffs} STREQUAL "f000")
+        set(offs 240)
+    else()
+        message(FATAL_ERROR "Unknown PE offset ${fn} = ${peoffs}")
+    endif()
+    file(READ ${fn} peheader OFFSET ${offs} LIMIT 6 HEX)
     # message(STATUS "${fn} = ${peheader}")
+
+    # Detect machine
     if(${peheader} STREQUAL "504500006486")
         set(${var} "WIN64" PARENT_SCOPE)
     else()
