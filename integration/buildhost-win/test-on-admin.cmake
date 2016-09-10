@@ -62,6 +62,18 @@ function(do_build_and_test_yuni bitness bootstrapuse)
         message(FATAL_ERROR "Failed to build yuni: ${rr}")
     endif()
 
+    # Install yuni
+    message(STATUS "Install...")
+    execute_process(
+        COMMAND ${CMAKE_COMMAND}
+        --build .
+        --target install
+        WORKING_DIRECTORY ${workdir})
+
+    if(rr)
+        message(FATAL_ERROR "Failed to install yuni: ${rr}")
+    endif()
+
     # Test yuni
     message(STATUS "Test...")
     execute_process(
