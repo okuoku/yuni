@@ -1,8 +1,33 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <dlfcn.h>
 #include <yuniffi/abiv0/bootstrap.h>
+#ifdef _WIN32
+#include <windows.h>
+
+#define RTLD_NOW 0
+
+static const void*
+dlerror(void){
+    return "Error (Win32 dlopen)";
+}
+
+static void*
+dlopen(const char* pth, int bogus){
+    HMODULE theModule;
+    theModule = LoadLibraryExA(pth, NULL, 0);
+    return theModule;
+}
+static void*
+dlsym(void* mod, const char* nam){
+    HMODULE theModule = (HMODULE)mod;
+    void* out;
+    out = GetProcAddress(theModule, nam);
+    return out;
+}
+#else
+#include <dlfcn.h>
+#endif
 
 typedef void (*yuniffi_nccc_func_t)(uint64_t* in, int in_count,
                                     uint64_t* out, int out_count);
