@@ -7,6 +7,7 @@ environment:
     matrix:
         - BOOTSTRAP: gauche32
         - BOOTSTRAP: sagittarius32
+        - BOOTSTRAP: sagittarius64
 
 install:
     - cinst ninja
