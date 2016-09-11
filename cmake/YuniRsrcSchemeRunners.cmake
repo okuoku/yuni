@@ -96,8 +96,7 @@ function(calc_impl_yuniboot_commandline outvar type runtimeprefix)
         gen_libopts(out "-I;" ${stub} ${ARGN})
         set(out
             ${runtimeprefix}/yuniloader/yuniloader-gsi.scm
-            ${out} -MOD ${YUNI_PLATFORM_LIBDIR}
-            -PROG)
+            ${out} -MOD ${YUNI_PLATFORM_LIBDIR})
     elseif("${type}" STREQUAL MIT_SCHEME)
         gen_stubprefix(stub mit-scheme)
         gen_libopts(out "-I;" ${stub} ${ARGN})
@@ -108,8 +107,7 @@ function(calc_impl_yuniboot_commandline outvar type runtimeprefix)
             --
             -YUNIROOT ${runtimeprefix} # MUST be on the first
             ${out} -MOD ${YUNI_PLATFORM_LIBDIR}
-            -VERBOSE
-            -PROG)
+            -VERBOSE)
     elseif("${type}" STREQUAL IRON_SCHEME)
         gen_stubprefix(stub ironscheme)
         gen_libopts(out "-I;" ${stub} ${ARGN})
@@ -162,8 +160,7 @@ macro(gen_impl_commandline var type runtimeprefix)
             gen_libopts(${var} "-I;" ${ARGN})
             set(${var}
                 ${runtimeprefix}/yuniloader/yuniloader-gsi.scm
-                ${${var}} -MOD ${YUNI_PLATFORM_LIBDIR}
-                -PROG)
+                ${${var}} -MOD ${YUNI_PLATFORM_LIBDIR})
         elseif("${type}" STREQUAL MIT_SCHEME)
             gen_libopts(${var} "-I;" ${ARGN})
             set(${var}
@@ -172,8 +169,7 @@ macro(gen_impl_commandline var type runtimeprefix)
                 ${runtimeprefix}/yuniloader/yuniloader-mit-scheme.scm
                 --
                 -YUNIROOT ${runtimeprefix}
-                ${${var}} -MOD ${YUNI_PLATFORM_LIBDIR}
-                -PROG)
+                ${${var}} -MOD ${YUNI_PLATFORM_LIBDIR})
         elseif("${type}" STREQUAL IRON_SCHEME)
             gen_libopts(${var} "-I;" ${ARGN})
         else()

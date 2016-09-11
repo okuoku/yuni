@@ -50,7 +50,8 @@
     (load fn))
    (cond
      (do-dump
-       (pp (%%expand code)))
+       (pp (%%expand code))
+       (exit 0))
      (else
        (eval (cons 'begin (filtnull (%%expand code)))))))
  (define cmd (command-line))

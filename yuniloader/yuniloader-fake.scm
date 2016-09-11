@@ -14,7 +14,6 @@
 ;;  -DUMP        -- Do not execute, dump expanded code instead
 ;;  -MOD <str>   -- Platform module path
 ;;  -I <str>     -- append to library search path
-;;  -PROG <FILE> -- program file
 ;;
 ;; SPECIAL SYNTAX:
 ;;
@@ -153,11 +152,6 @@
             (let ((pth (car d))
                   (next (cdr d)))
               (set! modpath pth)
-              (parseargs! next)))
-           ((string=? "-PROG" a)
-            (let ((pth (car d))
-                  (next (cdr d)))
-              (set! program-file pth)
               (parseargs! next)))
            (else 
              (set! arg* lis)))))))
@@ -487,6 +481,16 @@
         (error "load-library-file: Malformed library" path))))
 
   (parseargs! input-args*)
+
+  ;; Set program-file (the first argument)
+  (cond
+    ((pair? arg*)
+     (let ((prog (car arg*))
+           (arg (cdr arg*)))
+       (set! program-file prog)
+       (set! arg* arg)))
+    (else
+      (error "run: Program-file not found")))
 
   (PCK 'RUN: program-file)
 
