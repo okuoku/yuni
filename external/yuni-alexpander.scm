@@ -1912,44 +1912,6 @@
       (set-cdr! mstore loc-n)
       outputs)))
 
-
-#|
-(define repl-mstore (null-mstore))
-
-;; alexpander-repl: a read-expand-print loop.
-;; If called with an argument, resumes a previous session.
-;; Top-level vectors are interpreted as directives to the repl:
-;;   #(show loc ...) shows values stored in the locations.
-;;   #(dump) dumps the whole store.
-;;   #(restart) restarts.
-
-(define (alexpander-repl . resume?)
-  (define (pp x) (pretty-print x))
-  (define (restart)
-    (set! repl-mstore (null-mstore))
-    (for-each pp null-output))
-  (define (repl)
-    (display "expander> ")
-    (let ((form (read)))
-      (if (not (eof-object? form))
-	  (begin
-	    (if (vector? form)
-		(let ((l (vector->list form)))
-		  (case (car l)
-		    ((dump) (pp (car repl-mstore)))
-		    ((show)
-		     (for-each (lambda (loc)
-				 (pp (assv loc (car repl-mstore))))
-			       (cdr l)))
-		    ((restart) (restart))))
-		(for-each pp (expand-top-level-forms! (list form)
-						      repl-mstore)))
-	    (repl)))))
-  (begin
-    (if (null? resume?) (restart))
-    (repl)))
-|#
-
 (set! %%yuniloader-alexpander-init null-output)
 (set! %%yuniloader-alexpander-newenv null-mstore)
 (set! %%yuniloader-alexpander-expand-top-level-forms! expand-top-level-forms!)
