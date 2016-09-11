@@ -239,6 +239,14 @@ function(emit_yuniboot_runner varname cmdvar cmdname)
             ${varname} ${YUNI_BASEDIR} ${_libs})
         gen_string_args(_argsstr ${_args})
         if(WIN32)
+            # Workaround for MIT_SCHEME Win32 executable
+            if(${cmdvar} STREQUAL YUNI_MIT_SCHEME)
+                get_filename_component(instdir
+                    "${YUNI_MIT_SCHEME}"
+                    PATH)
+                # https://savannah.gnu.org/bugs/?31710
+                set(_argsstr "--heap 512 --library \"${instdir}/../lib\" ${_argsstr}")
+            endif()
             emit_tmpl_runwitharg_cmd(${YUNI_YUNIBOOT_PATH}/${cmdname}
                 ${cmd}
                 "${_argsstr}")

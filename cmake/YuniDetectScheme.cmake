@@ -28,7 +28,7 @@ if(WIN32)
     endif()
 
     # Append hint paths
-    foreach(e "Racket" "Gauche/bin" "Sagittarius")
+    foreach(e "Racket" "Gauche/bin" "Sagittarius" "MIT-GNU Scheme/bin")
         list(APPEND detect_scheme_hint_paths
             "${YUNI_WIN32_PROGRAM_PATH}/${e}")
     endforeach()

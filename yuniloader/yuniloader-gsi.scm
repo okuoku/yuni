@@ -34,7 +34,7 @@
    (for-each run code))
  |#
 
- (define (runner code arg* modpath)
+ (define (runner code arg* modpath do-dump)
    (define (filtnull code)
      (let loop ((acc '()) (cur code))
       (if (pair? cur)
@@ -48,7 +48,11 @@
    (for-each eval %%yuniloader-alexpander-init)
    (let ((fn (string-append modpath "/yuniffi-gambit")))
     (load fn))
-   (eval (cons 'begin (filtnull (%%expand code)))))
+   (cond
+     (do-dump
+       (pp (%%expand code)))
+     (else
+       (eval (cons 'begin (filtnull (%%expand code)))))))
  (define cmd (command-line))
 
  (%%yuniloader-fake-generate (cddr cmd) runner))

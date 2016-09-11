@@ -42,7 +42,7 @@
 
  (define (eval-core frm)
    (eval frm (nearest-repl/environment)))
- (define (runner code arg* modpath)
+ (define (runner code arg* modpath do-dump)
    (define (filtnull code)
      (let loop ((acc '()) (cur code))
       (if (pair? cur)

@@ -6,10 +6,12 @@
 ;; - For macro exporting library, no namespacing will be provided
 ;;
 ;; (%%yuniloader-fake-generate args* k)
-;;  => (k sexp arg* modpath)
+;;  => (k sexp arg* modpath do-dump)
 ;;
 ;; ARGS:
 ;; 
+;;  -VERBOSE     -- Turn on verbose output
+;;  -DUMP        -- Do not execute, dump expanded code instead
 ;;  -MOD <str>   -- Platform module path
 ;;  -I <str>     -- append to library search path
 ;;  -PROG <FILE> -- program file
@@ -128,7 +130,7 @@
                      (filter-imports imports) 
                      (filter-exports exports) seq)))
     (let ((code (map gen-code loaded-libraries)))
-     (k (filter/reverse-output code) arg* modpath)))
+     (k (filter/reverse-output code) arg* modpath %do-dump)))
 
   (define (parseargs! lis)
     (cond
@@ -136,6 +138,12 @@
        (let ((a (car lis))
              (d (cdr lis)))
          (cond
+           ((string=? "-VERBOSE" a)
+            (set! %verbose #t)
+            (parseargs! d))
+           ((string=? "-DUMP" a)
+            (set! %do-dump #t)
+            (parseargs! d))
            ((string=? "-I" a)
             (let ((pth (car d))
                   (next (cdr d)))
@@ -196,6 +204,7 @@
 
   (define ERRPORT current-error-port)
   (define %verbose #f)
+  (define %do-dump #f)
   (define (PCK . obj)
     (if %verbose
       (begin
