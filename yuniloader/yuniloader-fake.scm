@@ -195,8 +195,9 @@
        . ,body))
 
   (define ERRPORT current-error-port)
+  (define %verbose #f)
   (define (PCK . obj)
-    (if #t  ;; %verbose
+    (if %verbose
       (begin
         (if #t ;; (not DEBUGGING)
           (begin
