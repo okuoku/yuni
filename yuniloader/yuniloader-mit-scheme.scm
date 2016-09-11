@@ -29,13 +29,11 @@
     (string-append %%yunirootpath "/" str)
     str))
 
-(load (%%yuniroot "yuniloader/yuniloader-fake.scm"))
-(load (%%yuniroot "external/yuni-alexpander.scm"))
 
 
 (let ()
- (define %%myenv (%%yuniloader-alexpander-newenv))
  (define (%%expand frm)
+   (define %%myenv (%%yuniloader-alexpander-newenv))
    (%%yuniloader-alexpander-expand-top-level-forms!
      frm
      %%myenv))
@@ -54,15 +52,19 @@
         (reverse acc))))
    (eval-core (cons 'begin (filtnull (%%expand code)))))
 
- (for-each eval-core %%yuniloader-alexpander-init)
  (define cmd (command-line))
 
  (cond
    ((and (list? cmd) (string=? (car cmd) "-YUNIROOT"))
     (let ((root (cadr cmd))
           (next (cddr cmd)))
-      (set! %%yuniroot root)
+      (set! %%yunirootpath root)
       (set! cmd next))))
+
+ (load (%%yuniroot "yuniloader/yuniloader-fake.scm"))
+ (load (%%yuniroot "external/yuni-alexpander.scm"))
+
+ (for-each eval-core %%yuniloader-alexpander-init)
 
  (fluid-let 
    ((standard-error-hook (lambda (c) 
