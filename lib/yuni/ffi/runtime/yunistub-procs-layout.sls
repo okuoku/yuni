@@ -16,7 +16,7 @@
 
 ;; Make-reference (re-exported as (yuni ffi))
 
-(define* <refernce> (layout obj offset deferred*))
+(define* <reference> (layout obj offset deferred*))
 
 (define make-ref
   (case-lambda
@@ -53,7 +53,7 @@
 (define (do-query/multiple sym layout . member-ref*)
   (if (pair? member-ref*)
     (let ((next (cdr member-ref*))
-          (p (~ layout (car member-ref))))
+          (p (~ layout (car member-ref*))))
       (apply do-query/multiple sym p next))
     (do-query/single sym layout)))
 
@@ -65,7 +65,7 @@
 (define size-of
   (case-lambda
     ((layout?)
-     (do-query/single 'sizeof layout))
+     (do-query/single 'sizeof layout?))
     ((layout? . member-ref*)
      (apply do-query/multiple 'sizeof (query-target->layout layout?) 
             member-ref*))))
@@ -73,7 +73,7 @@
 (define offset-of
   (case-lambda
     ((layout?)
-     (do-query/single 'offsetof layout))
+     (do-query/single 'offsetof layout?))
     ((layout? . member-ref*)
      (apply do-query/multiple 'offsetof (query-target->layout layout?)
             member-ref*))))
@@ -90,7 +90,7 @@
   (define-minidispatch-class sublayout self)
   (define offset (if param (car param) 0))
   (define size (if param (cadr param) 0))
-  (define type (if param (caddr param) 'none))
+  (define type (if param (cadr (cdr param)) 'none))
   (define childclass (and child (make-minidispatch-obj child #f)))
   (define (reffunc slot me)
     ;; slot = #f for self reference
@@ -140,7 +140,7 @@
 (define (make-layout-proc param dispatch)
   (define offset (and param (car param)))
   (define size (and param (cadr param)))
-  (define type (and param (caddr param)))
+  (define type (and param (cadr (cdr param))))
   (dispatch-lambda
     ;; Generic
     (('ref slot me)
