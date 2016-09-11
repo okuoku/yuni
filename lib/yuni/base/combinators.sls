@@ -1,6 +1,6 @@
-(library (yuni util combinators)
+(library (yuni base combinators)
          (export compose)
-         (import (scheme base))
+         (import (yuni scheme))
 
 ;; gauche .$, compose
 (define (compose . args)
