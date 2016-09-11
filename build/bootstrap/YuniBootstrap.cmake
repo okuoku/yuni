@@ -17,11 +17,22 @@ function(select_script_file var slot)
         ${CMAKE_CURRENT_LIST_DIR}/build-config-to-cmake-r7.sps)
     set(libmeta_to_cmake_r7
         ${CMAKE_CURRENT_LIST_DIR}/build-libmeta-to-cmake-r7.sps)
+    set(config_to_cmake_r6 
+        ${CMAKE_CURRENT_LIST_DIR}/build-config-to-cmake-r6.sps)
+    set(libmeta_to_cmake_r6
+        ${CMAKE_CURRENT_LIST_DIR}/build-libmeta-to-cmake-r6.sps)
+
+    set(script_type r7)
+    if(${BOOTSTRAP_TYPE} STREQUAL racket)
+        set(script_type r6)
+    elseif(${BOOTSTRAP_TYPE} STREQUAL r6rs)
+        set(script_type r6)
+    endif()
 
     if(${slot} STREQUAL CONFIG_TO_CMAKE)
-        set(out ${config_to_cmake_r7})
+        set(out ${config_to_cmake_${script_type}})
     elseif(${slot} STREQUAL LIBMETA_TO_CMAKE)
-        set(out ${libmeta_to_cmake_r7})
+        set(out ${libmeta_to_cmake_${script_type}})
     else()
         message(FATAL_ERROR "Unknown script type: ${slot}")
     endif()
@@ -34,6 +45,9 @@ function(bootstrap_run_scheme slot) # ARGN = args
 
     if(${BOOTSTRAP_TYPE} STREQUAL "gauche")
         set(addargs -r7)
+    elseif(${BOOTSTRAP_TYPE} STREQUAL "racket")
+        set(addargs 
+            -I scheme/init -l- r6rs/run.rkt)
     else()
         set(addargs)
     endif()

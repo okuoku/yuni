@@ -2,7 +2,9 @@ add_custom_target(yuni_bootstrap)
 
 set(bootstrap_scripts
     ${CMAKE_CURRENT_LIST_DIR}/build-config-to-cmake-r7.sps
-    ${CMAKE_CURRENT_LIST_DIR}/build-libmeta-to-cmake-r7.sps)
+    ${CMAKE_CURRENT_LIST_DIR}/build-libmeta-to-cmake-r7.sps
+    ${CMAKE_CURRENT_LIST_DIR}/build-config-to-cmake-r6.sps
+    ${CMAKE_CURRENT_LIST_DIR}/build-libmeta-to-cmake-r6.sps)
 
 # Detect bootstrap scheme
 if(NOT YUNI_BOOTSTRAP_USE)
@@ -12,6 +14,10 @@ if(NOT YUNI_BOOTSTRAP_USE)
         set(YUNI_BOOTSTRAP_USE gauche)
     elseif(YUNI_SAGITTARIUS)
         set(YUNI_BOOTSTRAP_USE sagittarius)
+    elseif(YUNI_IRON_SCHEME)
+        set(YUNI_BOOTSTRAP_USE ironscheme)
+    elseif(YUNI_RACKET)
+        set(YUNI_BOOTSTRAP_USE racket)
     endif()
 endif()
 
@@ -24,6 +30,12 @@ elseif(${YUNI_BOOTSTRAP_USE} STREQUAL "sagittarius")
 elseif(${YUNI_BOOTSTRAP_USE} STREQUAL "chibi-scheme")
     set(YUNI_BOOTSTRAP_SCHEME "${YUNI_CHIBI_SCHEME}")
     set(YUNI_BOOTSTRAP_SCHEME_TYPE r7rs)
+elseif(${YUNI_BOOTSTRAP_USE} STREQUAL "ironscheme")
+    set(YUNI_BOOTSTRAP_SCHEME "${YUNI_IRON_SCHEME}")
+    set(YUNI_BOOTSTRAP_SCHEME_TYPE r6rs)
+elseif(${YUNI_BOOTSTRAP_USE} STREQUAL "racket")
+    set(YUNI_BOOTSTRAP_SCHEME "${YUNI_RACKET}")
+    set(YUNI_BOOTSTRAP_SCHEME_TYPE racket)
 else()
     message(FATAL_ERROR "Bootstrap Scheme was not found...")
 endif()
