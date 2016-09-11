@@ -102,8 +102,11 @@ set(YUNIIMPL_VICARE_LIBS
 
 ##
 ## CHICKEN
-##    (no longer uses libpath - single import directory)
 ##
+set(YUNIIMPL_CHICKEN_BOOTLIBS
+    lib-runtime/r7rs)
+
+set(YUNIIMPL_MIT_SCHEME_LIBS)
 
 ## 
 ## NMOSH

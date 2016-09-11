@@ -1,7 +1,13 @@
+;; Uses same options as yunifake:
+;; 
+;;  -VERBOSE
+;;  -MOD <str>
+;;  -I <str>
+;; 
 ;; Currently, only for chicken interpreter(csi)
 (define ERRPORT current-error-port)
 (define (PCK . obj)
-  (if #t  ;; %verbose
+  (if %verbose
     (begin
       (if #t ;; (not DEBUGGING)
         (begin
@@ -33,8 +39,6 @@
         (%%yuniffi-module-prefix-set! STUBDIR)))))
 
 (define (run filename)
-  (define import-dirs
-    '("lib-stub/chicken" "lib-runtime/r7rs"))
 
   (define (make-library-path base nam)
     ;(PCK 'make-library-path: base nam)
@@ -172,14 +176,38 @@
          (PCK 'IMPORTS: imports)
          (eval `(module YUNI-PROGRAM () ,imports ,@body)))))))
 
-(define STUBDIRFLAG (car (command-line-arguments)))
-(define STUBDIR (cadr (command-line-arguments)))
-(define ARG (caddr (command-line-arguments)))
+(define ARG (command-line-arguments))
+(define STUBDIR #f)
+(define %verbose #t)
+(define import-dirs '())
 
-(PCK 'CMD: (command-line-arguments))
+(define (procargs!)
+  (cond
+    ((pair? ARG)
+     (let ((a (car ARG))
+           (d (cdr ARG)))
+       (cond
+         ((string=? "-VERBOSE" a)
+          (set! %verbose #t)
+          (set! ARG d)
+          (procargs!))
+         ((string=? "-I" a)
+          (let ((pth (car d))
+                (next (cdr d)))
+            (set! import-dirs (cons pth import-dirs))
+            (set! ARG next)
+            (procargs!)))
+         ((string=? "-MOD" a)
+          (let ((pth (car d))
+                (next (cdr d)))
+            (set! STUBDIR pth)
+            (set! ARG next)
+            (procargs!))))))))
 
-(unless (string=? STUBDIRFLAG "--yuniffi-stubdir")
-  (error "Invalid command-line" (command-line-arguments)))
 
-(run ARG)
+(PCK 'CMD: ARG)
+(procargs!)
+(PCK 'ARG: ARG)
+
+(run (car ARG))
 

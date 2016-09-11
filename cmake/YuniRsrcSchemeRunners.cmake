@@ -73,9 +73,12 @@ function(calc_impl_yuniboot_commandline outvar type runtimeprefix)
         gen_stubprefix(stub vicare)
         gen_libopts(out "--source-path;" ${stub} ${ARGN})
     elseif("${type}" STREQUAL CHICKEN)
+        gen_stubprefix(stub chicken)
+        gen_libopts(out "-I;" ${stub} ${ARGN})
         set(out -b -require-extension r7rs -s
             ${runtimeprefix}/yuniloader/yuniloader-csi.scm
-            --yuniffi-stubdir ${YUNI_PLATFORM_LIBDIR})
+            ${out}
+            -MOD ${YUNI_PLATFORM_LIBDIR})
     elseif("${type}" STREQUAL LARCENY)
         gen_stubprefix(stub larceny)
         gen_loadpath0(_loadpath ${stub} ${ARGN})
