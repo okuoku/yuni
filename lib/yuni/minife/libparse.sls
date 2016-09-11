@@ -27,15 +27,15 @@
     (unless (eq? 'export (car lis))
       (error "malformed export specs" lis))
     (cdr lis))
-  (and (libpase-library? sexp)
+  (and (libparse-library? sexp)
     (return (car (cdr (cdr sexp))))))
 
-(define (libpase-body sexp)
-  (if (libpase-library? sexp)
+(define (libparse-body sexp)
+  (if (libparse-library? sexp)
     (cdr (cdr (cdr (cdr sexp))))
     (cdr sexp)))
 
-(define (libpase-library? sexp)
+(define (libparse-library? sexp)
   (and (pair? sexp) (eq? (car sexp) 'library)))
          
 )
