@@ -199,13 +199,28 @@ function(bootstrap_gen_librequest)
     # Generate libgenorder.cmake
     file(WRITE ${BUILDROOT}/libgenorder.cmake
         "set(libgenorder \"${libsym}\")\n")
+    set(yuniall)
     foreach(e ${yunilibfiles})
         bootstrap_path_to_libsym(sym ${e})
         file(APPEND ${BUILDROOT}/libgenorder.cmake
             "set(libgenorder_${sym}_SOURCE \"${e}\")\n")
         file(APPEND ${BUILDROOT}/libgenorder.cmake
             "set(libgenorder_${sym} \"${libgenorder_${sym}}\")\n")
+        bootstrap_libsym_split(first bogus ${sym})
+        if(${first} STREQUAL "yuni")
+            bootstrap_libpath_strip(libname ${e})
+            string(REGEX REPLACE "/" ";" libname ${libname})
+            bootstrap_libname_to_sexp(libname_sexp "${libname}")
+            list(APPEND yuniall "${libname_sexp}")
+        endif()
     endforeach()
+
+    # Generate _yuniall.sps
+    file(WRITE ${BUILDROOT}/_yuniall.sps "(import\n")
+    foreach(e ${yuniall})
+        file(APPEND ${BUILDROOT}/_yuniall.sps "${e}\n")
+    endforeach()
+    file(APPEND ${BUILDROOT}/_yuniall.sps ")\n")
 endfunction()
 
 function(bootstrap_libname_to_basepath outvar libname)
@@ -429,12 +444,25 @@ function(bootstrap_GenRacket impl baselibname sls)
     bootstrap_libname_to_sexp(myname "${truelibname}")
     # Calc output filename
     set(outname ${STUBROOT}/${impl}/${basepath}.sls)
-    file(WRITE ${outname}
-        "#!r6rs
+    if(${impl} STREQUAL racket)
+        file(WRITE ${outname}
+            "#!r6rs
+(library ${myname}
+    (export\n${exports})
+    (import 
+    (yuni-runtime ${impl})
+    (only (racket) file)
+    (rename (only (racket include) include) (include %%internal-paste:include))
+    ${imports})
+    (%%internal-paste:include (file \"${YUNIROOT}/${sls}\")))")
+    else()
+        file(WRITE ${outname}
+            "#!r6rs
 (library ${myname}
     (export\n${exports})
     (import (yuni-runtime ${impl}) ${imports})
     (%%internal-paste \"${YUNIROOT}/${sls}\"))")
+    endif()
 endfunction()
 
 function(bootstrap_generate_stublib sls orderlist)
