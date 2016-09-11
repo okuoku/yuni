@@ -75,6 +75,15 @@ if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86$")
     endif()
 endif()
 
+function(test_negative_boot prefix)
+    if(YUNIBOOTTEST_${prefix})
+        add_test(NAME "SanityNegative-${prefix}"
+            COMMAND ${CMAKE_COMMAND} -DPROG=${YUNIBOOTTEST_${prefix}}
+            -DARG=${CMAKE_CURRENT_LIST_DIR}/_negative.sps
+            -P ${CMAKE_CURRENT_LIST_DIR}/negative.cmake)
+    endif()
+endfunction()
+
 function(test_with_boot prefix fil)
     if(YUNIBOOTTEST_${prefix})
         add_test(NAME "yuniboot-${prefix}-${fil}"
@@ -92,6 +101,8 @@ function(test_with_impl prefix fil)
 endfunction()
 
 function(test_with_allboot fil)
+
+    # Library basic tests
     foreach(e ${impls})
         test_with_boot(${e} ${fil})
     endforeach()
@@ -102,6 +113,11 @@ function(test_with_allffi fil)
         test_with_impl(${e} ${fil})
     endforeach()
 endfunction()
+
+# Add Simple tests first.
+foreach(e ${impls})
+    test_negative_boot(${e})
+endforeach()
 
 # Sanity
 test_with_allboot(_sanity.sps)
