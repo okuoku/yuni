@@ -2,6 +2,7 @@
 #
 # INPUTs:
 #  BOOTSTRAP: Which scheme to use with bootstrap and build yuni
+#  SKIPINSTALL: Skip installation phase for test
 #
 
 get_filename_component(_myroot ${CMAKE_CURRENT_LIST_DIR}/../.. ABSOLUTE)
