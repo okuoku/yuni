@@ -18,6 +18,8 @@ if(NOT YUNI_BOOTSTRAP_USE)
         set(YUNI_BOOTSTRAP_USE ironscheme)
     elseif(YUNI_RACKET)
         set(YUNI_BOOTSTRAP_USE racket)
+    else()
+        message(FATAL_ERROR "Failed to detect bootstrap scheme...")
     endif()
 endif()
 
