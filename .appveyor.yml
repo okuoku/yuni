@@ -6,11 +6,8 @@ skip_tags: true
 environment:
     matrix:
         - BOOTSTRAP: gauche32
-        - BOOTSTRAP: sagittarius32
         - BOOTSTRAP: sagittarius64
         - BOOTSTRAP: racket32
-        - BOOTSTRAP: ironscheme32
-        - BOOTSTRAP: racket64
         - BOOTSTRAP: ironscheme64
 
 install:
