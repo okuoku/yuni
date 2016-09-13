@@ -105,11 +105,10 @@ function(test_with_impl prefix fil)
     endif()
 endfunction()
 
-function(test_with_allboot fil)
-
+function(test_with_all fil)
     # Library basic tests
     foreach(e ${impls})
-        test_with_boot(${e} ${fil})
+        test_with_impl(${e} ${fil})
     endforeach()
 endfunction()
 
@@ -125,5 +124,5 @@ foreach(e ${impls})
 endforeach()
 
 # Sanity
-test_with_allboot(_sanity.sps)
+test_with_all(_sanity.sps)
 #test_with_allffi(_ncccsanity.sps)
