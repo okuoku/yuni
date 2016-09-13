@@ -122,36 +122,43 @@
   ;; Thus, it just renames the libraries
   ;; Larceny has R7RS libraries
   (larceny
+    yuni
     compat-larceny
     yuni-r6rs
     r6rs-common)
   (ironscheme
+    yuni
     compat-ironscheme
     yuni-r6rs
     r6rs-common
     r7rs-bridge)
   (chez
+    yuni
     compat-chez
     yuni-r6rs
     r7rs-bridge
     r6rs-common)
   (vicare
+    yuni
     compat-vicare
     yuni-r6rs
     r7rs-bridge
     r6rs-common)
   ;; Of course, we should do some dog-food
   (nmosh
+    yuni
     compat-nmosh
     yuni-r6rs
     r7rs-bridge
     r6rs-common)
   ;; Experimental Gambit R5RS
   (gambit
+    yuni
     compat-gambit
     r7rs-common)
   ;; Experimental MIT/GNU Scheme R5RS
   (mit-scheme
+    yuni
     compat-mit-scheme
     r7rs-common)
   )

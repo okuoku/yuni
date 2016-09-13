@@ -8,6 +8,7 @@
 #  YUNIROOT: Full path to yunisource
 #  BUILDROOT: Full path to metadata
 #  STUBROOT: Full path to stublib
+#  RUNTIMEROOT: Full path to runtime
 #
 #  GENLIBSTUB_FILE: Relative path against YUNIROOT for GENLIBSTUB
 #
@@ -325,7 +326,7 @@ function(bootstrap_calc_r7rs_libext outvar impl)
     elseif(${impl} STREQUAL chicken)
         set(ext "scm")
     elseif(${impl} STREQUAL sagittarius)
-        set(ext "sls")
+        set(ext "sagittarius.sls")
     else()
         set(ext "sld")
     endif()
@@ -341,7 +342,9 @@ function(bootstrap_GenR7RS impl baselibname sls)
     bootstrap_libname_to_sexp(myname "${baselibname}")
     bootstrap_calc_r7rs_libext(libext ${impl})
     bootstrap_filter_includepath(sls ${impl})
+    get_filename_component(runtimesls ${sls} NAME)
     set(outname ${STUBROOT}/${impl}/${basepath}.${libext})
+    set(runtimename ${RUNTIMEROOT}/${impl}/${basepath}.${libext})
     if(${impl} STREQUAL picrin) 
         # Picrin needs import - include - export order
         # FIXME: Is that still true?
@@ -350,6 +353,11 @@ function(bootstrap_GenR7RS impl baselibname sls)
 (import (yuni-runtime picrin) ${imports})
 (include \"${sls}\")
 (export\n${exports}))\n")
+        file(WRITE ${runtimename}
+            "(define-library ${myname}
+(import (yuni-runtime picrin) ${imports})
+(include \"${runtimesls}\")
+(export\n${exports}))\n")
     else()
         # Otherwise: export - import - include (similar to R6RS)
         file(WRITE ${outname}
@@ -357,6 +365,11 @@ function(bootstrap_GenR7RS impl baselibname sls)
 (export\n${exports})
 (import (yuni-runtime r7rs) ${imports})
 (include \"${sls}\"))\n")
+        file(WRITE ${runtimename}
+            "(define-library ${myname}
+(export\n${exports})
+(import (yuni-runtime r7rs) ${imports})
+(include \"${runtimesls}\"))\n")
     endif()
 endfunction()
 
@@ -369,6 +382,7 @@ function(bootstrap_GenR7RS_alias impl baselibname tolibname sls)
     bootstrap_libname_to_sexp(myname "${tolibname}")
     bootstrap_calc_r7rs_libext(libext ${impl})
     set(outname ${STUBROOT}/${impl}/${outpath}.${libext})
+    set(runtimename ${RUNTIMEROOT}/${impl}/${outpath}.${libext})
     if(${impl} STREQUAL picrin)
         # Picrin needs import - export order
         # FIXME: Is that still true?
@@ -376,9 +390,17 @@ function(bootstrap_GenR7RS_alias impl baselibname tolibname sls)
             "(define-library ${myname}
 (import ${fromname})
 (export\n${exports}))\n")
+        file(WRITE ${runtimename}
+            "(define-library ${myname}
+(import ${fromname})
+(export\n${exports}))\n")
     else()
         # Otherwise: export - import
         file(WRITE ${outname}
+            "(define-library ${myname}
+(export\n${exports})
+(import ${fromname}))\n")
+        file(WRITE ${runtimename}
             "(define-library ${myname}
 (export\n${exports})
 (import ${fromname}))\n")
@@ -394,7 +416,12 @@ function(bootstrap_GenR6RSCommon_alias impl baselibname tolibname sls)
     bootstrap_libname_to_sexp(myname "${tolibname}")
     bootstrap_calc_r7rs_libext(libext ${impl})
     set(outname ${STUBROOT}/${impl}/${outpath}.sls)
+    set(runtimename ${RUNTIMEROOT}/${impl}/${outpath}.sls)
     file(WRITE ${outname}
+        "(library ${myname}
+(export\n${exports})
+(import ${fromname}))\n")
+    file(WRITE ${runtimename}
         "(library ${myname}
 (export\n${exports})
 (import ${fromname}))\n")
@@ -419,7 +446,13 @@ function(bootstrap_GenRacket_alias impl baselibname tolibname sls)
     bootstrap_libname_to_sexp(fromname "${baselibname}")
     bootstrap_libname_to_sexp(myname "${truelibname}")
     set(outname ${STUBROOT}/${impl}/${outpath}.sls)
+    set(runtimename ${RUNTIMEROOT}/${impl}/${outpath}.sls)
     file(WRITE ${outname}
+        "#!r6rs
+(library ${myname}
+    (export\n${exports})
+    (import ${fromname}))")
+    file(WRITE ${runtimename}
         "#!r6rs
 (library ${myname}
     (export\n${exports})
@@ -445,8 +478,17 @@ function(bootstrap_GenRacket impl baselibname sls)
     endif()
     bootstrap_libname_to_basepath(basepath "${truelibname}")
     bootstrap_libname_to_sexp(myname "${truelibname}")
+    get_filename_component(runtimesls ${sls} NAME)
     # Calc output filename
-    set(outname ${STUBROOT}/${impl}/${basepath}.sls)
+    if(${impl} STREQUAL racket)
+        set(outname ${STUBROOT}/${impl}/${basepath}.mzscheme.sls)
+        set(runtimename ${RUNTIMEROOT}/${impl}/${basepath}.mzscheme.sls)
+    elseif(${impl} STREQUAL guile)
+        set(outname ${STUBROOT}/${impl}/${basepath}.guile.sls)
+        set(runtimename ${RUNTIMEROOT}/${impl}/${basepath}.guile.sls)
+    else()
+        message(FATAL_ERROR "Unknown implementation: ${impl}")
+    endif()
     if(${impl} STREQUAL racket)
         file(WRITE ${outname}
             "#!r6rs
@@ -458,6 +500,16 @@ function(bootstrap_GenRacket impl baselibname sls)
     (rename (only (racket include) include) (include %%internal-paste:include))
     ${imports})
     (%%internal-paste:include (file \"${YUNIROOT}/${sls}\")))")
+        file(WRITE ${runtimename}
+            "#!r6rs
+(library ${myname}
+    (export\n${exports})
+    (import 
+    (yuni-runtime ${impl})
+    (only (racket) file)
+    (rename (only (racket include) include) (include %%internal-paste:include))
+    ${imports})
+    (%%internal-paste:include (file \"${runtimesls}\")))")
     else()
         file(WRITE ${outname}
             "#!r6rs
@@ -465,6 +517,12 @@ function(bootstrap_GenRacket impl baselibname sls)
     (export\n${exports})
     (import (yuni-runtime ${impl}) ${imports})
     (%%internal-paste \"${YUNIROOT}/${sls}\"))")
+        file(WRITE ${runtimename}
+            "#!r6rs
+(library ${myname}
+    (export\n${exports})
+    (import (yuni-runtime ${impl}) ${imports})
+    (%%internal-paste \"${RUNTIMEROOT}/${impl}/${sls}\"))")
     endif()
 endfunction()
 
