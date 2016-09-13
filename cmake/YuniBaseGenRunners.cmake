@@ -208,7 +208,7 @@ endfunction()
 function(emit_yuniboot_kawa_runner)
     if(YUNI_KAWA_JAR AND Java_JAVA_EXECUTABLE)
         file(MAKE_DIRECTORY ${YUNI_YUNIBOOT_PATH})
-        gen_stubprefix(stub kawa)
+        gen_stubprefix(stub yuniboot kawa)
         set(yuniloader ${YUNI_BASEDIR}/yuniloader/yuniloader-kawa.scm)
         if(WIN32)
             yuni_path_chop_drive(yuniloader ${yuniloader})
@@ -221,21 +221,33 @@ function(emit_yuniboot_kawa_runner)
             emit_tmpl_runwitharg_cmd(
                 ${YUNI_YUNIBOOT_PATH}/kawa
                 ${Java_JAVA_EXECUTABLE} ${kawa_args})
+            emit_tmpl_runwitharg_cmd(
+                ${YUNIBASE_YUNIFIED_PATH}/kawa
+                ${Java_JAVA_EXECUTABLE} ${kawa_args})
         else()
             emit_tmpl_runwitharg_sh(
                 ${YUNI_YUNIBOOT_PATH}/kawa
+                ${Java_JAVA_EXECUTABLE} ${kawa_args})
+            emit_tmpl_runwitharg_sh(
+                ${YUNIBASE_YUNIFIED_PATH}/kawa
                 ${Java_JAVA_EXECUTABLE} ${kawa_args})
         endif()
     endif()
 endfunction()
 
-function(emit_yuniboot_runner varname cmdvar cmdname)
+function(emit_yunirunner flav varname cmdvar cmdname)
     if(${cmdvar}) # Check for vanilla Scheme
         set(cmd ${${cmdvar}})
         file(MAKE_DIRECTORY ${YUNI_YUNIBOOT_PATH})
-        gen_yunilibpaths(_yunilibs ${YUNIIMPL_${varname}_BOOTLIBS})
+        if(${flav} STREQUAL yuniboot)
+            gen_yunilibpaths(_yunilibs ${YUNIIMPL_${varname}_BOOTLIBS})
+            set(out ${YUNI_YUNIBOOT_PATH}/${cmdname})
+        else()
+            set(_yunilibs)
+            set(out ${YUNIBASE_YUNIFIED_PATH}/${cmdname})
+        endif()
         set(_libs ${YUNI_PLATFORM_LIBDIR} ${_yunilibs})
-        calc_impl_yuniboot_commandline(_args 
+        calc_impl_yuniboot_commandline(_args ${flav}
             ${varname} ${YUNI_BASEDIR} ${_libs})
         gen_string_args(_argsstr ${_args})
         if(WIN32)
@@ -247,33 +259,11 @@ function(emit_yuniboot_runner varname cmdvar cmdname)
                 # https://savannah.gnu.org/bugs/?31710
                 set(_argsstr "--heap 512 --library \"${instdir}/../lib\" ${_argsstr}")
             endif()
-            emit_tmpl_runwitharg_cmd(${YUNI_YUNIBOOT_PATH}/${cmdname}
+            emit_tmpl_runwitharg_cmd(${out}
                 ${cmd}
                 "${_argsstr}")
         else()
-            emit_tmpl_runwitharg_sh(${YUNI_YUNIBOOT_PATH}/${cmdname}
-                ${cmd}
-                "${_argsstr}")
-        endif()
-    endif()
-endfunction()
-
-function(emit_yunified_runner varname cmdvar cmdname)
-    if(${cmdvar})
-        set(cmd ${${cmdvar}})
-        file(MAKE_DIRECTORY ${YUNIBASE_YUNIFIED_PATH})
-        gen_yunilibpaths(_yunilibs ${YUNIIMPL_${varname}_LIBS})
-        set(_libs ${YUNI_PLATFORM_LIBDIR} ${_yunilibs})
-        gen_impl_commandline(_args ${varname} ${YUNI_BASEDIR} ${_libs})
-        gen_string_args(_argsstr ${_args})
-        if(${varname} STREQUAL VICARE)
-        endif()
-        if(WIN32)
-            emit_tmpl_runwitharg_cmd(${YUNIBASE_YUNIFIED_PATH}/${cmdname}
-                ${cmd}
-                "${_argsstr}")
-        else()
-            emit_tmpl_runwitharg_sh(${YUNIBASE_YUNIFIED_PATH}/${cmdname}
+            emit_tmpl_runwitharg_sh(${out}
                 ${cmd}
                 "${_argsstr}")
         endif()
@@ -281,8 +271,8 @@ function(emit_yunified_runner varname cmdvar cmdname)
 endfunction()
 
 function(emit_yuni_runner)
-    emit_yunified_runner(${ARGN})
-    emit_yuniboot_runner(${ARGN})
+    emit_yunirunner(yuniboot ${ARGN})
+    emit_yunirunner(yunified ${ARGN})
 endfunction()
 
 function(emit_yuni_runners)

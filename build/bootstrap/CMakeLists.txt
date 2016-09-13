@@ -153,11 +153,12 @@ function(deploy_impl_specific_runtime impl dirname)
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${in} ${out}
                 DEPENDS ${in})
+            message(STATUS "Runtime deploy: ${in} => ${out}")
             list(APPEND destfiles ${out})
         endforeach()
     endif()
     if(destfiles)
-        add_custom_target(${impl}-runtime
+        add_custom_target(${impl}-runtime ALL
             DEPENDS
             ${destfiles})
         add_dependencies(yuni_bootstrap ${impl}-runtime)

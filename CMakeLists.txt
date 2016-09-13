@@ -114,6 +114,7 @@ add_subdirectory(build/bootstrap bootstrap) # => yuni_bootstrap
 emit_yuni_runners()
 
 # Activation
+add_subdirectory(build/package package) # => yuni_package
 
 
 # Options

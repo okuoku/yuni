@@ -522,7 +522,7 @@ function(bootstrap_GenRacket impl baselibname sls)
 (library ${myname}
     (export\n${exports})
     (import (yuni-runtime ${impl}) ${imports})
-    (%%internal-paste \"${RUNTIMEROOT}/${impl}/${sls}\"))")
+    (%%internal-paste \"${RUNTIMEROOT}/${impl}/${basepath}.sls\"))")
     endif()
 endfunction()
 
