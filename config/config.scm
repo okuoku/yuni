@@ -1,6 +1,5 @@
 ;; Library directories
 (*library-directories*
-  "lib-stub/gen"
   "lib"
   "lib-r6rs"
   "lib-compat")
