@@ -36,6 +36,14 @@ check_impl(IRON_SCHEME ironscheme)
 # Pre-Cache: Guile, Sagittarius, nmosh
 #
 
+if(YUNIBUILD_GUILE)
+    add_custom_target(yuni_precache_guile ALL
+        ${YUNIBUILD_GUILE} ${allsps}
+        )
+    add_dependencies(yuni_precache_guile yuni_bootstrap)
+endif()
+
+
 #
 # Compile: Racket, Vicare
 #
