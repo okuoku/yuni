@@ -76,14 +76,14 @@ if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86$")
     endif()
 endif()
 
-function(test_negative_boot prefix)
+function(test_negative prefix)
     # Issue #58
     if(${prefix} STREQUAL IRON_SCHEME)
         return()
     endif()
     if(YUNIBOOTTEST_${prefix})
         add_test(NAME "SanityNegative-${prefix}"
-            COMMAND ${CMAKE_COMMAND} -DPROG=${YUNIBOOTTEST_${prefix}}
+            COMMAND ${CMAKE_COMMAND} -DPROG=${YUNITEST_${prefix}}
             -DARG=${CMAKE_CURRENT_LIST_DIR}/_negative.sps
             -P ${CMAKE_CURRENT_LIST_DIR}/negative.cmake)
     endif()
@@ -120,7 +120,7 @@ endfunction()
 
 # Add Simple tests first.
 foreach(e ${impls})
-    test_negative_boot(${e})
+    test_negative(${e})
 endforeach()
 
 # Sanity
