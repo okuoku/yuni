@@ -1,1 +1,1 @@
-(set! %load-extensions '(".guile.sls" ".sls" ".scm"))
+(set! %load-extensions '(".guile.sls"))

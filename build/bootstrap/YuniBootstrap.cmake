@@ -451,8 +451,13 @@ function(bootstrap_GenRacket_alias impl baselibname tolibname sls)
     bootstrap_libname_to_basepath(outpath "${truelibname}")
     bootstrap_libname_to_sexp(fromname "${baselibname}")
     bootstrap_libname_to_sexp(myname "${truelibname}")
-    set(outname ${STUBROOT}/${impl}/${outpath}.sls)
-    set(runtimename ${RUNTIMEROOT}/${impl}/${outpath}.sls)
+    if(${impl} STREQUAL guile)
+        set(ext guile.sls)
+    else()
+        set(ext sls)
+    endif()
+    set(outname ${STUBROOT}/${impl}/${outpath}.${ext})
+    set(runtimename ${RUNTIMEROOT}/${impl}/${outpath}.${ext})
     file(WRITE ${outname}
         "#!r6rs
 (library ${myname}
@@ -521,14 +526,20 @@ function(bootstrap_GenRacket impl baselibname sls)
             "#!r6rs
 (library ${myname}
     (export\n${exports})
-    (import (yuni-runtime ${impl}) ${imports})
-    (%%internal-paste \"${YUNIROOT}/${sls}\"))")
+    (import 
+    (yuni-runtime ${impl})
+    (rename (only (guile) include) (include %%internal-paste:include))
+    ${imports})
+    (%%internal-paste:include \"${YUNIROOT}/${sls}\"))")
         file(WRITE ${runtimename}
             "#!r6rs
 (library ${myname}
     (export\n${exports})
-    (import (yuni-runtime ${impl}) ${imports})
-    (%%internal-paste \"${RUNTIMEROOT}/${impl}/${basepath}.sls\"))")
+    (import 
+    (yuni-runtime ${impl})
+    (rename (only (guile) include) (include %%internal-paste:include))
+    ${imports})
+    (%%internal-paste:include \"${RUNTIMEROOT}/${impl}/${basepath}.sls\"))")
     endif()
 endfunction()
 
