@@ -49,9 +49,11 @@ precache(GUILE)
 precache(NMOSH)
 precache(SAGITTARIUS)
 
-
 #
 # Compile: Racket, Vicare
 #
 
 precache(RACKET --compile)
+# FIXME: Not working.
+#precache(VICARE --build-directory ${YUNIBASE_YUNIFIED_PATH}/runtime/vicare
+#    --compile-dependencies)
