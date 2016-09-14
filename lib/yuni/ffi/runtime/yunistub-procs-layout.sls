@@ -87,6 +87,8 @@
   (error "Implement me"))
 
 (define (make-field-proc sym param child)
+  (error "Implement me")
+  #|
   (define-minidispatch-class sublayout self)
   (define offset (if param (car param) 0))
   (define size (if param (cadr param) 0))
@@ -135,7 +137,10 @@
        size)
       (('offsetof)
        offset)))
-  self)
+  self
+  |#
+  
+  #f)
 
 (define (make-layout-proc param dispatch)
   (define offset (and param (car param)))
