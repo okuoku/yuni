@@ -24,7 +24,8 @@
     (if (pair? nam)
       (make-library-path (string-append (string-append base "/")
                                         (symbol->string (car nam)))
-                         (cdr nam))
+                         (cdr nam)
+                         ext)
       (string-append base "." ext)))
 
   (define (library-name->path name)
