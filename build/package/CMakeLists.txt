@@ -43,6 +43,13 @@ if(YUNIBUILD_GUILE)
     add_dependencies(yuni_precache_guile yuni_bootstrap)
 endif()
 
+if(YUNIBUILD_NMOSH)
+    add_custom_target(yuni_precache_nmosh ALL
+        ${YUNIBUILD_NMOSH} ${allsps}
+        )
+    add_dependencies(yuni_precache_nmosh yuni_bootstrap)
+endif()
+
 
 #
 # Compile: Racket, Vicare

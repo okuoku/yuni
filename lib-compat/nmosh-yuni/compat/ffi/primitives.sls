@@ -12,7 +12,9 @@
                  ptr-write/s8! ptr-write/u8! ptr-write/s16! ptr-write/u16!
                  ptr-write/s32! ptr-write/u32! ptr-write/s64! ptr-write/u64!
                  ptr-write/asciiz!
-                 )
+
+                 bv-read/w64ptr
+                 bv-write/w64ptr!)
          (import (yuni scheme)
                  (yuni ffi runtime simplepatcher)
                  (yuni ffi runtime simpleloader)
@@ -62,6 +64,12 @@
 
 (define-read-asciiz ptr-read/asciiz ptr-read/u8)
 (define-write-asciiz ptr-write/asciiz! ptr-write/u8!)
+
+(define (bv-read/w64ptr x off)
+  (integer->pointer (bv-read/u64 x off)))
+(define (bv-write/w64ptr! x off v)
+  (bv-write/u64! x off (pointer->integer v)))
+
 
 ;; 
 
