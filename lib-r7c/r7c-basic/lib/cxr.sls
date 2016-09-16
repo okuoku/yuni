@@ -1,4 +1,4 @@
-(library (r7c-lib cxr)
+(library (r7c-basic lib cxr)
          (export
            caaar caadr cadar caddr cdaar cdadr cddar cdddr
            caaaar caaadr caadar caaddr cadaar cadadr caddar cadddr 
