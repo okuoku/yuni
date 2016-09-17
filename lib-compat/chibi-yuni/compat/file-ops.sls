@@ -1,4 +1,4 @@
-(library (yuni compat file-ops)
+(library (chibi-yuni compat file-ops)
          (export 
            ;; chez like file-ops
            file-regular?
