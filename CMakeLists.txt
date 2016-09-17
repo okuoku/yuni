@@ -124,6 +124,20 @@ add_subdirectory(build/package package) # => yuni_package
 add_subdirectory(yunistub)
 add_subdirectory(tests/yunibase tests-yunibase)
 
+# Reset target
+
+add_custom_target(reset
+    COMMAND ${CMAKE_COMMAND} -E remove_directory 
+    ${CMAKE_CURRENT_BINARY_DIR}/bootstrap
+    COMMAND ${CMAKE_COMMAND} -E remove_directory 
+    ${YUNIBASE_YUNIFIED_PATH}
+    COMMAND ${CMAKE_COMMAND} -E remove_directory 
+    ${YUNIBASE_VANILLA_PATH}
+    COMMAND ${CMAKE_COMMAND} -E remove_directory 
+    ${YUNI_YUNIBOOT_PATH}
+    COMMAND ${CMAKE_COMMAND} .
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
 # Status
 if(YUNI_WITH_YUNIBASE)
     message(STATUS "YUNI_WITH_YUNIBASE = ${YUNI_WITH_YUNIBASE}")
