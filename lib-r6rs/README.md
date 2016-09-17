@@ -1,5 +1,5 @@
 lib-r6rs
 ========
 
-This directory includes common runtime library shared with R6RS implementations.
+This directory includes R7RS small implementation for R6RS.
 

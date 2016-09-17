@@ -1,4 +1,4 @@
-(library (yuni-r6rs ffi memory)
+(library (r6rs-common-yuni compat bitwise primitives)
          (export
            bv-read/s8
            bv-read/u8
