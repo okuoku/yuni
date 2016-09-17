@@ -46,7 +46,7 @@ function(precache impl)
 endfunction()
 
 precache(GUILE)
-precache(NMOSH)
+# precache(NMOSH)
 precache(SAGITTARIUS)
 
 #
