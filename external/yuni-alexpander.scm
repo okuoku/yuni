@@ -958,6 +958,19 @@
 		     (and (= 1 len) (eq? builtin 'define))
 		     (error "Malformed definition: " sexp))
 		 ((get-dk sexp) builtin sexp id-n env store loc-n))
+                (($$yunifake-callback)
+                 ((get-ek sexp)
+                  ($$yunifake-hook expand-expr 
+                                   expand-subexpr
+                                   expand-body
+                                   again
+                                   unwrap-vecs
+                                   sid-id
+                                   loc->var
+                                   extend-env
+                                   extend-store
+                                   sexp
+                                   id-n env store loc-n)))
 		(else (get-ek sexp) (ek (handle-expr-builtin))))))))
     (define (handle-combination output)
       (ek (if (and (pair? output) (eq? 'lambda (car output))
@@ -1647,7 +1660,8 @@
 	(let ((n (number->string loc)))
 	  (string->symbol (string-append "_" str "_" n)))
 	(if (case sym
-	      ((begin define delay if lambda letrec quote set!) #t)
+	      ((begin define delay if lambda letrec quote set! 
+                      $$yunifake-callback) #t)
 	      (else (and (positive? (string-length str))
 			 (char=? #\_ (string-ref str 0)))))
 	    (string->symbol (string-append "_" str "_"))
@@ -1655,7 +1669,10 @@
 
 (define builtins-store
   (let loop ((bs '(begin define define-syntax if lambda quote set! delay
-			 let-syntax syntax-rules))
+			 let-syntax syntax-rules
+                         ;; yunifake additions
+                         $$yunifake-callback
+                         ))
 	     (store empty-store))
     (if (null? bs)
 	store

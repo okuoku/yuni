@@ -24,6 +24,68 @@
 ;; 
 ;;  - (yunifake . anything) - Ignored
 
+
+;; FIXME: This is only for Alexpander.. Move this.
+;;
+;; (let/core ((frm init) ...) body ...)
+;;  => ($$yunifake-inject let/core/phase2
+;;       (($$yunifake-expand init)
+;;        ...)
+;;       ($$yunifake-bind (frm ...) body ...))
+;;
+;; 0: $$yunifake-inject-primitive
+;; 1: $$yunifake-inject
+;; 2: $$yunifake-expand-expr
+;; 3: $$yunifake-expand-body
+;; 4: $$yunifake-bind
+(define ($$yunifake-hook 
+          ;; callbacks
+          expand-expr    ;; (expand-expr sexp id-n env store loc-n)
+          expand-subexpr
+          expand-body    ;; (expand-body sexps id-n ...) -- body sequence
+          again          ;; (again sexp id-n store loc-n)
+          unwrap-vecs    ;; (unwrap-vecs sexp) -- quote
+          sid-id         ;; (sid-id sid)
+          loc->var       ;; (loc->var loc-n int/sym)
+          extend-env     ;; (extend-env env id location)
+          extend-store   ;; (extend-store store loc val)
+          ;; Input
+          sexp 
+          ;; current context
+          id-n env store loc-n)
+  (define code (cadr sexp))
+  (case code
+    ((0) ;; (inject-primitive CODE sym body ...)
+     (let ((sym (unwrap-vecs (caddr sexp)))
+           (body* (cdddr sexp)))
+       (cons sym (expand-subexpr body*))))
+    ((1) ;; (inject CODE id body ...)
+     (let ((top (caddr sexp))
+           (body (expand-subexpr (cddr sexp))))
+      (again (cons top body) id-n store loc-n)))
+    ((2) ;; (expand-expr CODE body)
+     (let ((body (caddr sexp)))
+      (expand-subexpr body)))
+    ((3) ;; (expand-body CODE body ...)
+     (let ((body (cddr sexp)))
+      (expand-body body id-n env store loc-n #f (lambda (x) x) #f #f #f)))
+    ((4) ;; (bind CODE frms body ...) => ((frms ...) body ...)
+     (let ((frms* (caddr sexp))
+           (body (cdddr sexp)))
+       (let loop ((frm frms*)
+                  (rout '())
+                  (env env) (store store) (loc-n loc-n))
+         (if (pair? frm)
+           (let ((v (car frm)))
+            (let* ((var (loc->var loc-n v))
+                   (env (extend-env env (sid-id v) loc-n))
+                   (store (extend-store store loc-n var)))
+              (loop (cdr frm) (cons var rout) env store (+ loc-n 1))))
+           (cons (reverse rout) 
+                 (expand-expr body id-n env store loc-n))))))
+    (else
+      (error "Unknown object for $$yunifake-hook" sexp))))
+
 (define (%%yuniloader-fake-generate input-args* k)
 
   (define FIXME-DEFAULT-MACROS '(~ :=))
