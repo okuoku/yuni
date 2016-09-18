@@ -126,7 +126,9 @@
            zero?
 
            )
-         (import (scheme case-lambda))
+         (import 
+           (yunifake-util scheme-syntax)
+           (scheme case-lambda))
 ;;
 (define %%my-eof-object
   (let ((p (open-input-string "")))
