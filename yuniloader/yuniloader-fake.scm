@@ -27,17 +27,12 @@
 
 ;; FIXME: This is only for Alexpander.. Move this.
 ;;
-;; (let/core ((frm init) ...) body ...)
-;;  => ($$yunifake-inject let/core/phase2
-;;       (($$yunifake-expand init)
-;;        ...)
-;;       ($$yunifake-bind (frm ...) body ...))
-;;
-;; 0: $$yunifake-inject-primitive
-;; 1: $$yunifake-inject
-;; 2: $$yunifake-expand-expr
-;; 3: $$yunifake-expand-body
-;; 4: $$yunifake-bind
+;; 0: $$yunifake-inject-primitive/raw
+;; 1: $$yunifake-inject-primitive
+;; 2: $$yunifake-inject
+;; 3: $$yunifake-expand-expr
+;; 4: $$yunifake-expand-body
+;; 5: $$yunifake-bind
 (define ($$yunifake-hook 
           ;; callbacks
           expand-expr    ;; (expand-expr sexp id-n env store loc-n)
@@ -55,21 +50,25 @@
           id-n env store loc-n)
   (define code (cadr sexp))
   (case code
-    ((0) ;; (inject-primitive CODE sym body ...)
+    ((0) ;; (inject-primitive/raw CODE sym body ...)
      (let ((sym (unwrap-vecs (caddr sexp)))
            (body* (cdddr sexp)))
-       (cons sym (expand-subexpr body*))))
-    ((1) ;; (inject CODE id body ...)
+       (cons sym body*)))
+    ((1) ;; (inject-primitive CODE sym body ...)
+     (let ((sym (unwrap-vecs (caddr sexp)))
+           (body* (expand-subexpr (cdddr sexp))))
+       (cons sym body*)))
+    ((2) ;; (inject CODE id body ...)
      (let ((top (caddr sexp))
-           (body (expand-subexpr (cddr sexp))))
+           (body (expand-subexpr (cdddr sexp))))
       (again (cons top body) id-n store loc-n)))
-    ((2) ;; (expand-expr CODE body)
+    ((3) ;; (expand-expr CODE body)
      (let ((body (caddr sexp)))
       (expand-subexpr body)))
-    ((3) ;; (expand-body CODE body ...)
+    ((4) ;; (expand-body CODE body ...)
      (let ((body (cddr sexp)))
       (expand-body body id-n env store loc-n #f (lambda (x) x) #f #f #f)))
-    ((4) ;; (bind CODE frms body ...) => ((frms ...) body ...)
+    ((5) ;; (bind CODE frms body ...) => ((frms ...) body ...)
      (let ((frms* (caddr sexp))
            (body (cdddr sexp)))
        (let loop ((frm frms*)
