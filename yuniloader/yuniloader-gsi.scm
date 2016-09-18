@@ -34,6 +34,12 @@
    (for-each run code))
  |#
 
+ (define do-slow-eval #f)
+ (define (do-eval form)
+   (pp "==================================")
+   (pp form)
+   (pp "==================================")
+   (eval form))
  (define (runner code arg* modpath do-dump)
    (define (filtnull code)
      (let loop ((acc '()) (cur code))
@@ -52,6 +58,10 @@
      (do-dump
        (pp (%%expand code))
        (exit 0))
+     (do-slow-eval
+       (for-each do-eval (filtnull (%%expand code)))
+       (exit 0)
+       )
      (else
        (eval (cons 'begin (filtnull (%%expand code))))
        (exit 0))))

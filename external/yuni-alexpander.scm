@@ -1,4 +1,13 @@
 ;; Alexpander modified for yuniloader-fake
+;;
+;; FIXME: Removed lambda rewrite (perhaps for let implementation)
+;;        Why did that exist?
+;;
+;; FIXME: Allowed () for expression. Expects self-evaluating nil.
+;;        Perhaps we should implement more accurate way to implement 
+;;        form-injection.
+;;
+;; FIXME: Modifed unrename.
 
 (define %%yuniloader-alexpander-init #f)
 (define %%yuniloader-alexpander-newenv #f)
@@ -966,14 +975,15 @@
                                    again
                                    unwrap-vecs
                                    sid-id
-                                   loc->var
+                                   intloc->var
                                    extend-env
                                    extend-store
                                    sexp
                                    id-n env store loc-n)))
 		(else (get-ek sexp) (ek (handle-expr-builtin))))))))
     (define (handle-combination output)
-      (ek (if (and (pair? output) (eq? 'lambda (car output))
+      ;; FIXME: yunifake - do not rewrite lambda
+      (ek (if (and #f (pair? output) (eq? 'lambda (car output))
 		   (null? (cadr output)) (null? (cdr sexp)))
 	      ;; simplifies ((lambda () <expr>)) to <expr>
 	      (caddr output)
@@ -1551,7 +1561,8 @@
 
   (define (unrename annexpr changes)
     (define (unrename-var var)
-      (if (symbol? (var-loc var)) var (make-var1 (var-name var))))
+      (if (or (symbol? var) 
+              (symbol? (var-loc var))) var (make-var1 (var-name var))))
     (cond ((var? annexpr)
 	   (cond ((assoc annexpr changes) => cdr)
 		 (else annexpr)))
@@ -1748,23 +1759,7 @@
 	       ;; The lambda ensures letrec is only used for expressions.
 	       ((lambda ()
 		  (let-syntax ()
-		    (define var init) ... (let-syntax () . body))))))))
-	(define-protected-macros letrec-syntax
-	    (if lambda quote begin define letrec) (eqv?)
-	  (define-syntax let
-	    (syntax-rules ()
-	      ((_ ((var init) ...) . body)
-	       ((lambda (var ...) . body)
-		init ...))
-	      ((_ name ((var init) ...) . body)
-	       ((letrec ((name (lambda (var ...) . body)))
-		  name)
-		init ...))))
-	  (define-syntax let*
-	    (syntax-rules ()
-	      ((_ () . body) (let () . body))
-	      ((let* ((var init) . bindings) . body)
-	       (let ((var init)) (let* bindings . body))))))))))
+		    (define var init) ... (let-syntax () . body))))))))))))
 
 (define null-stuff (expand-top-level-forms null-prog builtins-store 0 list))
 (define null-output (car null-stuff))

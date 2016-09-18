@@ -4,6 +4,7 @@
            $$yunifake-inject-primitive
            $$yunifake-inject
            $$yunifake-bind
+           $$yunifake-bind/body
            $$yunifake-expand-expr
            $$yunifake-expand-body)
          (import)
@@ -37,8 +38,13 @@
 
 (define-syntax $$yunifake-bind
   (syntax-rules ()
-    ((_ (frm ...) body ...)
-     ($$yunifake-callback 5 (frm ...) body ...))))
+    ((_ cb cb-arg (frm ...) body ...)
+     ($$yunifake-callback 5 cb cb-arg (frm ...) body ...))))
+
+(define-syntax $$yunifake-bind/body
+  (syntax-rules ()
+    ((_ cb cb-arg (frm ...) body ...)
+     ($$yunifake-callback 6 cb cb-arg (frm ...) body ...))))
 
          
 )

@@ -33,6 +33,7 @@
 ;; 3: $$yunifake-expand-expr
 ;; 4: $$yunifake-expand-body
 ;; 5: $$yunifake-bind
+;; 6: $$yunifake-bind/body
 (define ($$yunifake-hook 
           ;; callbacks
           expand-expr    ;; (expand-expr sexp id-n env store loc-n)
@@ -41,7 +42,7 @@
           again          ;; (again sexp id-n store loc-n)
           unwrap-vecs    ;; (unwrap-vecs sexp) -- quote
           sid-id         ;; (sid-id sid)
-          loc->var       ;; (loc->var loc-n int/sym)
+          intloc->var    ;; (intloc->var loc-n int)
           extend-env     ;; (extend-env env id location)
           extend-store   ;; (extend-store store loc val)
           ;; Input
@@ -50,9 +51,9 @@
           id-n env store loc-n)
   (define code (cadr sexp))
   (case code
-    ((0) ;; (inject-primitive/raw CODE sym body)
+    ((0) ;; (inject-primitive/raw CODE sym body ...)
      (let ((sym (unwrap-vecs (caddr sexp)))
-           (body* (cadddr sexp)))
+           (body* (cdddr sexp)))
        (cons sym body*)))
     ((1) ;; (inject-primitive CODE sym body)
      (let ((sym (unwrap-vecs (caddr sexp)))
@@ -60,7 +61,7 @@
        (cons sym body*)))
     ((2) ;; (inject CODE id body ...)
      (let ((top (caddr sexp))
-           (body (expand-subexpr (cdddr sexp))))
+           (body (cdddr sexp)))
       (again (cons top body) id-n store loc-n)))
     ((3) ;; (expand-expr CODE body)
      (let ((body (caddr sexp)))
@@ -68,20 +69,32 @@
     ((4) ;; (expand-body CODE body ...)
      (let ((body (cddr sexp)))
       (expand-body body id-n env store loc-n #f (lambda (x) x) #f #f #f)))
-    ((5) ;; (bind CODE frms body ...) => ((frms ...) body ...)
-     (let ((frms* (caddr sexp))
-           (body (cdddr sexp)))
+    ((5 6) ;; (bind CODE cb CB-ARG frms body ...) 
+           ;;   => (cb CB-ARG (frms ...) body ...)
+     (let ((frms* (caddr (cddr sexp)))
+           (body (cdddr (cddr sexp)))
+           (cb (caddr sexp))
+           (cb-arg (cadddr sexp)))
+       ;(pp (list 'Body: body))
        (let loop ((frm frms*)
                   (rout '())
                   (env env) (store store) (loc-n loc-n))
          (if (pair? frm)
            (let ((v (car frm)))
-            (let* ((var (loc->var loc-n v))
+            (let* ((var (intloc->var loc-n v))
                    (env (extend-env env (sid-id v) loc-n))
                    (store (extend-store store loc-n var)))
               (loop (cdr frm) (cons var rout) env store (+ loc-n 1))))
-           (cons (reverse rout) 
-                 (expand-expr body id-n env store loc-n))))))
+           (expand-subexpr
+             (cons cb
+                 (cons (expand-subexpr cb-arg)
+                       (list (reverse rout) 
+                             (case code
+                               ((5)
+                                (expand-expr body id-n env store loc-n))
+                               ((6)
+                                (expand-body body id-n env store loc-n #f 
+                                             (lambda (x) x) #f #f #f)))))))))))
     (else
       (error "Unknown object for $$yunifake-hook" sexp))))
 
