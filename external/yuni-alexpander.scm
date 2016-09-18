@@ -987,10 +987,11 @@
 	  ((and (pair? sexp) (list? sexp))
 	   (expand-any (car sexp) id-n env store loc-n #f
 	     (and ek handle-combination) handle-syntax-use #f #f))
-	  ((or (number? sexp) (boolean? sexp) (string? sexp) (char? sexp))
+	  ((or (number? sexp) (boolean? sexp) (string? sexp) (char? sexp)
+               (null? sexp))
 	   ((get-ek sexp) sexp))
 	  (else (error (cond ((pair? sexp) "Improper list: ")
-			     ((null? sexp) "Empty list: ")
+			     ;((null? sexp) "Empty list: ") ;; Yuni: Self-eval
 			     ((vector? sexp) "Vector: ")
 			     (else "Non-S-Expression: "))
 		       sexp
@@ -1764,17 +1765,6 @@
 	      ((_ () . body) (let () . body))
 	      ((let* ((var init) . bindings) . body)
 	       (let ((var init)) (let* bindings . body)))))
-	  (define-syntax do
-	    (let-syntax ((do-step (syntax-rules () ((_ x) x) ((_ x y) y))))
-	      (syntax-rules ()
-		((_ ((var init step ...) ...)
-		    (test expr ...)
-		    command ...)
-		 (let loop ((var init) ...)
-		   (if test
-		       (begin (if #f #f) expr ...)
-		       (begin command ...
-			      (loop (do-step var step ...) ...))))))))
 	  (define-syntax case
 	    (letrec-syntax
 		((compare
@@ -1803,17 +1793,7 @@
 	      ((_ (x => proc) . rest)
 	       (let ((tmp x)) (cond (tmp (proc tmp)) . rest)))
 	      ((_ (x . exps) . rest)
-	       (if x (begin . exps) (cond . rest)))))
-	  (define-syntax and
-	    (syntax-rules ()
-	      ((_) #t)
-	      ((_ test) (let () test))
-	      ((_ test . tests) (if test (and . tests) #f))))
-	  (define-syntax or
-	    (syntax-rules ()
-	      ((_) #f)
-	      ((_ test) (let () test))
-	      ((_ test . tests) (let ((x test)) (if x x (or . tests)))))))
+	       (if x (begin . exps) (cond . rest))))))
 	;; Quasiquote uses let-syntax scope so that it can recognize
 	;; nested uses of itself using a syntax-rules literal (that
 	;; is, the quasiquote binding that is visible in the
