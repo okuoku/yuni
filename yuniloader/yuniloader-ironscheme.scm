@@ -11,6 +11,8 @@
 (define filename '())
 (define args '())
 
+(define compile-mode #f)
+
 (define (init-args!)
   (when (pair? cmdline)
     (let ((a (car cmdline))
@@ -26,7 +28,11 @@
               (next (cdr d)))
           (set! cmdline next)
           (set! libpaths (cons dir libpaths))
-          (init-args!))))))
+          (init-args!)))
+      (when (string=? a "-COMPILE")
+        (set! compile-mode #t)
+        (set! cmdline d)
+        (init-args!)))))
 
 
 (init-args!)
@@ -34,4 +40,8 @@
 (parameterize ((library-path (append libpaths
                                      (library-path)))
                (command-line args))
-              (load filename))
+              (cond
+                (compile-mode
+                  (compile filename #f #f))
+                (else
+                  (load filename))))
