@@ -5,7 +5,7 @@
            cond
            and
            or
-           )
+           quasiquote)
          (import (yunifake-util expander-callbacks))
          
 (define-syntax $$do/remap
@@ -61,6 +61,14 @@
     ((_ q ...)
      ($$yunifake-inject-primitive
        cond
+       ($$yunifake-expand-expr q)
+       ...))))
+
+(define-syntax quasiquote
+  (syntax-rules ()
+    ((_ q ...)
+     ($$yunifake-inject-primitive
+       quasiquote
        ($$yunifake-expand-expr q)
        ...))))
 
