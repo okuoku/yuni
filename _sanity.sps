@@ -50,6 +50,13 @@
              (else
                (set! failed-forms (cons 'form failed-forms)))))))))
 
+(check-equal #t (let ((m (lambda () #t))) (m)))
+(check-equal '#(0 1 2 3 4)
+             (do ((vec (make-vector 5))
+                  (i 0 (+ i 1)))
+               ((= i 5) vec)
+               (vector-set! vec i i)))
+
 ;(check-equal 10 ((^a (+ 1 a)) 9))
 ;(check-equal 10 ((^ (form) (+ 2 form)) 8))
 (check-equal 10 (match '(1 10 11) ((a b c) b)))
