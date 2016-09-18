@@ -12,13 +12,13 @@
 
 (define-syntax $$yunifake-inject-primitive/raw
   (syntax-rules ()
-    ((_ prim body ...)
-     ($$yunifake-callback 0 prim body ...))))
+    ((_ prim . body)
+     ($$yunifake-callback 0 prim . body))))
 
 (define-syntax $$yunifake-inject-primitive
   (syntax-rules ()
-    ((_ prim body ...)
-     ($$yunifake-callback 1 prim body ...))))
+    ((_ prim . body)
+     ($$yunifake-callback 1 prim . body))))
 
 (define-syntax $$yunifake-inject
   (syntax-rules ()
