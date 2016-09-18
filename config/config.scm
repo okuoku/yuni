@@ -7,6 +7,7 @@
 (*library-groups*
   ;; Yuni
   (yuni yuni yuniffi)
+  (yunifake yunifake-util)
   (yuni-r6rs yuni-r6rs)
   ;; FIXME: Hack. We don't have any convention for generated libraries yet.
   ;; R7RS
@@ -155,10 +156,12 @@
   (gambit
     yuni
     compat-gambit
+    yunifake
     r7rs-common)
   ;; Experimental MIT/GNU Scheme R5RS
   (mit-scheme
     yuni
     compat-mit-scheme
+    yunifake
     r7rs-common)
   )
