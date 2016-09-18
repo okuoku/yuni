@@ -56,7 +56,7 @@
     (SQ_L => LIST_BEGIN_SQ)
     (SQ_R => LIST_END_SQ)
     ;; Quotes
-    (QUOTE => NEXT_QUOTE)
+    (FQUOTE => NEXT_QUOTE)
     (BQUOTE => NEXT_QUASIQUOTE)
     (COMMA => NEXT_UNQUOTE #t) ;; Unquote splicing
     ;; Spaces

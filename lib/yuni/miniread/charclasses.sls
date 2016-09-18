@@ -49,7 +49,7 @@
 
     ;; Other special characters
     (92 BACKSLASH)
-    (39 QUOTE)
+    (39 FQUOTE)
     (64 AT)
     (44 COMMA)
     (124 PIPE)
