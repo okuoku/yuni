@@ -1764,36 +1764,7 @@
 	    (syntax-rules ()
 	      ((_ () . body) (let () . body))
 	      ((let* ((var init) . bindings) . body)
-	       (let ((var init)) (let* bindings . body)))))
-	  (define-syntax case
-	    (letrec-syntax
-		((compare
-		  (syntax-rules ()
-		    ((_ key ()) #f)
-		    ((_ key (datum . data))
-		     (if (eqv? key 'datum) #t (compare key data)))))
-		 (case
-		  (syntax-rules (else)
-		    ((case key) (if #f #f))
-		    ((case key (else result1 . results))
-		     (begin result1 . results))
-		    ((case key ((datum ...) result1 . results) . clauses)
-		     (if (compare key (datum ...))
-			 (begin result1 . results)
-			 (case key . clauses))))))
-	      (syntax-rules ()
-		((_ expr clause1 clause ...)
-		 (let ((key expr))
-		   (case key clause1 clause ...))))))
-	  (define-syntax cond
-	    (syntax-rules (else =>)
-	      ((_) (if #f #f))
-	      ((_ (else . exps)) (let () (begin . exps)))
-	      ((_ (x) . rest) (or x (cond . rest)))
-	      ((_ (x => proc) . rest)
-	       (let ((tmp x)) (cond (tmp (proc tmp)) . rest)))
-	      ((_ (x . exps) . rest)
-	       (if x (begin . exps) (cond . rest))))))
+	       (let ((var init)) (let* bindings . body))))))
 	;; Quasiquote uses let-syntax scope so that it can recognize
 	;; nested uses of itself using a syntax-rules literal (that
 	;; is, the quasiquote binding that is visible in the
