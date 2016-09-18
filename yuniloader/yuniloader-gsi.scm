@@ -53,7 +53,8 @@
        (pp (%%expand code))
        (exit 0))
      (else
-       (eval (cons 'begin (filtnull (%%expand code)))))))
+       (eval (cons 'begin (filtnull (%%expand code))))
+       (exit 0))))
  (define cmd (command-line))
 
  (%%yuniloader-fake-generate (cddr cmd) runner))
