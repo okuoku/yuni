@@ -126,7 +126,8 @@
            zero?
 
            )
-         (import (scheme case-lambda))
+         (import (yunifake-util scheme-syntax)
+                 (scheme case-lambda))
 ;;
 
 ;; FIXME: current-error-port is in yuniloader..!
