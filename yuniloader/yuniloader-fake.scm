@@ -39,6 +39,7 @@
           expand-expr    ;; (expand-expr sexp id-n env store loc-n)
           expand-subexpr
           expand-body    ;; (expand-body sexps id-n ...) -- body sequence
+          ek             ;; (expression expr)
           again          ;; (again sexp id-n store loc-n)
           unwrap-vecs    ;; (unwrap-vecs sexp) -- quote
           sid-id         ;; (sid-id sid)
@@ -54,27 +55,30 @@
     ((0) ;; (inject-primitive/raw CODE sym body ...)
      (let ((sym (unwrap-vecs (caddr sexp)))
            (body* (cdddr sexp)))
-       (cons sym body*)))
+       (ek (cons sym body*))))
     ((1) ;; (inject-primitive CODE sym body)
      (let ((sym (unwrap-vecs (caddr sexp)))
            (body* (expand-subexpr (cadddr sexp))))
-       (cons sym body*)))
+       (ek (cons sym body*))))
     ((2) ;; (inject CODE id body ...)
      (let ((top (caddr sexp))
            (body (cdddr sexp)))
       (again (cons top body) id-n store loc-n)))
+    #|
     ((3) ;; (expand-expr CODE body)
      (let ((body (caddr sexp)))
       (expand-subexpr body)))
     ((4) ;; (expand-body CODE body ...)
      (let ((body (cddr sexp)))
       (expand-body body id-n env store loc-n #f (lambda (x) x) #f #f #f)))
+    |#
     ((5 6) ;; (bind CODE cb CB-ARG frms body ...) 
            ;;   => (cb CB-ARG (frms ...) body ...)
      (let ((frms* (caddr (cddr sexp)))
            (body (cdddr (cddr sexp)))
            (cb (caddr sexp))
-           (cb-arg (cadddr sexp)))
+           (cb-arg (cadddr sexp))
+           (do-again (lambda (expr) (again expr id-n store loc-n))))
        ;(pp (list 'Body: body))
        (let loop ((frm frms*)
                   (rout '())
@@ -85,7 +89,7 @@
                    (env (extend-env env (sid-id v) loc-n))
                    (store (extend-store store loc-n var)))
               (loop (cdr frm) (cons var rout) env store (+ loc-n 1))))
-           (expand-subexpr
+           (again
              (cons cb
                  (cons (expand-subexpr cb-arg)
                        (list (reverse rout) 
@@ -94,7 +98,8 @@
                                 (expand-expr body id-n env store loc-n))
                                ((6)
                                 (expand-body body id-n env store loc-n #f 
-                                             (lambda (x) x) #f #f #f)))))))))))
+                                             (lambda (x) x) #f #f #f))))))
+             id-n store loc-n)))))
     (else
       (error "Unknown object for $$yunifake-hook" sexp))))
 

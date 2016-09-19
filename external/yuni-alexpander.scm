@@ -968,18 +968,18 @@
 		     (error "Malformed definition: " sexp))
 		 ((get-dk sexp) builtin sexp id-n env store loc-n))
                 (($$yunifake-callback)
-                 ((get-ek sexp)
-                  ($$yunifake-hook expand-expr 
-                                   expand-subexpr
-                                   expand-body
-                                   again
-                                   unwrap-vecs
-                                   sid-id
-                                   intloc->var
-                                   extend-env
-                                   extend-store
-                                   sexp
-                                   id-n env store loc-n)))
+                 ($$yunifake-hook expand-expr 
+                                  expand-subexpr
+                                  expand-body
+                                  ek
+                                  again
+                                  unwrap-vecs
+                                  sid-id
+                                  intloc->var
+                                  extend-env
+                                  extend-store
+                                  sexp
+                                  id-n env store loc-n))
 		(else (get-ek sexp) (ek (handle-expr-builtin))))))))
     (define (handle-combination output)
       ;; FIXME: yunifake - do not rewrite lambda

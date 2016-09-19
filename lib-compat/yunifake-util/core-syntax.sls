@@ -66,35 +66,30 @@
   (syntax-rules ()
     ((_ . q)
      ($$yunifake-inject-primitive
-       and
-       ($$yunifake-expand-expr q)))))
+       and q))))
 
 (define-syntax or
   (syntax-rules ()
     ((_ . q)
      ($$yunifake-inject-primitive
-       or
-       ($$yunifake-expand-expr q)))))
+       or q))))
 
 (define-syntax case
   (syntax-rules ()
     ((_ . q)
      ($$yunifake-inject-primitive
-       case
-       ($$yunifake-expand-expr q)))))
+       case q))))
 
 (define-syntax cond
   (syntax-rules ()
     ((_ . q)
      ($$yunifake-inject-primitive
-       cond
-       ($$yunifake-expand-expr q)))))
+       cond q))))
 
 (define-syntax quasiquote
   (syntax-rules ()
     ((_ . q)
      ($$yunifake-inject-primitive
-       quasiquote
-       ($$yunifake-expand-expr q)))))
+       quasiquote q))))
 
 )
