@@ -8,6 +8,8 @@
 ;;        form-injection.
 ;;
 ;; FIXME: Modifed unrename.
+;;
+;; FIXME: make-letrec now generates (let () (define ...) ...) sequence
 
 (define %%yuniloader-alexpander-init #f)
 (define %%yuniloader-alexpander-newenv #f)
@@ -807,8 +809,31 @@
 (define (make-begin outputs)
   (if (list1? outputs) (car outputs) (cons 'begin outputs)))
 
+;; yuni: Original make-letrec
+;(define (make-letrec bindings expr)
+;  (if (null? bindings) expr (list 'letrec bindings expr)))
+
+(define (gen-define-seq bindings)
+  (map (lambda (e)
+         (let ((name (car e))
+               (expr (cadr e)))
+           (cond
+             ((and (pair? expr) (eq? 'lambda (car expr)))
+              ;; (name (lambda frm . body))
+              ;; => (define (name . frm) . body)
+              (let ((frm (cadr expr))
+                    (body (cddr expr)))
+                (cons 'define
+                      (cons (cons name frm)
+                            body))))
+             (else
+               (cons 'define e)))))
+       bindings))
+
 (define (make-letrec bindings expr)
-  (if (null? bindings) expr (list 'letrec bindings expr)))
+  (if (null? bindings) 
+    expr
+    `(let () ,@(gen-define-seq bindings) ,expr)))
 
 (define (expand-lambda formals expr id-n env store loc-n)
   ;; (a b . c) => (a b c)
