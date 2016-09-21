@@ -6,7 +6,8 @@
            $$yunifake-bind
            $$yunifake-bind/body
            $$yunifake-expand-expr
-           $$yunifake-expand-body)
+           $$yunifake-expand-body
+           $$yunifake-inject-definition)
          (import)
 
 ;;
@@ -45,6 +46,11 @@
   (syntax-rules ()
     ((_ cb cb-arg (frm ...) body ...)
      ($$yunifake-callback 6 cb cb-arg (frm ...) body ...))))
+
+(define-syntax $$yunifake-inject-definition
+  (syntax-rules ()
+    ((_ nam frm)
+     ($$yunifake-callback 7 nam frm))))
 
          
 )

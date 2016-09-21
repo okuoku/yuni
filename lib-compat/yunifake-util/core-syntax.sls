@@ -7,9 +7,87 @@
            cond
            and
            or
-           quasiquote)
+           quasiquote
+           define-vaules)
          (import (yunifake-util expander-callbacks))
 
+
+(define-syntax $$define-values/dotted-itr
+  (syntax-rules ()
+    ((_ (frms ...) (v0 v1 v2 ...) expr)
+     ($$define-values/dotted-itr (frms ... v0) (v1 v2 ...) expr))
+    ((_ (frms ...) (last) expr)
+     ($$yunifake-inject-primitive/raw
+       define-values
+       .
+       ((frms ... . last) expr)))))
+
+(define-syntax $$define-values/remap-dotted
+  (syntax-rules ()
+    ((_ () () (vars expr))
+     ($$define-values/dotted-itr
+       ()
+       vars
+       expr))))
+
+(define-syntax $$define-values/remap
+  (syntax-rules ()
+    ((_ () () body)
+     ($$yunifake-inject-primitive/raw 
+       define-values
+       .
+       body))))
+
+(define-syntax $$define-values/emit
+  (syntax-rules ()
+    ((_ remap (frms ...) last expr)
+     (begin
+       ($$yunifake-inject-definition frms #f)
+       ...
+       ($$yunifake-inject-definition
+         last
+         ($$yunifake-bind
+           remap () ()
+           (frms ... last) expr))))
+    ((_ remap #f var expr)
+     ($$yunifake-inject-definition
+       var
+       ($$yunifake-bind
+         remap () ()
+         var expr))))) 
+
+(define-syntax $$define-values/construct
+  (syntax-rules ()
+    ((_ (acc ...) (frm . (next . out)) expr)
+     ($$define-values/construct
+       (acc ... frm)
+       (next . out)
+       expr))
+    ((_ (acc ...) (frm) expr)
+     ($$define-values/emit
+       $$define-values/remap
+       (acc ...)
+       frm
+       expr))
+    ((_ (acc ...) (frm . rest) expr)
+     ($$define-values/emit
+       $$define-values/remap-dotted
+       (acc ... frm)
+       rest
+       expr))
+    ((_ () frm expr)
+     ($$define-values/emit
+       $$define-values/remap
+       #f
+       frm
+       expr))))
+
+(define-syntax define-values
+  (syntax-rules ()
+    ((_ frm expr)
+     ($$define-values/construct
+       () ;; acc
+       frm expr))))
 
 (define-syntax $$let/remap
   (syntax-rules ()
