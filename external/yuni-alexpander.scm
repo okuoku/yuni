@@ -997,6 +997,7 @@
                                   expand-subexpr
                                   expand-body
                                   ek
+                                  dk
                                   again
                                   unwrap-vecs
                                   sid-id
@@ -1073,7 +1074,9 @@
 		 (let* ((var (intloc->var loc-n sid))
 			(store (extend-store store loc-n var))
 			(loc-n (+ loc-n 1)))
-		   (k (cons sexp vds) sds exprs id-n env store loc-n))))))))
+		   (k (cons sexp vds) sds exprs id-n env store loc-n)))
+                (else
+                  (error "What??" builtin)))))))
     (define (bk sexp id-n env store loc-n)
       (let loop ((sexps (cdr sexp)) (vds vds) (sds sds) (exprs exprs)
 		 (id-n id-n) (env env) (store store) (loc-n loc-n) (dek dek))
@@ -1135,16 +1138,21 @@
 		       (sid (car tail))
 		       (loc (lookup-sid sid env*))
 		       (init (cadr tail)))
-		  (if (eq? builtin 'define)
-		      (let* ((expr (expand-expr init id-n* env* store loc-n))
-			     (var (loc->var loc sid))
-			     (acc (cons (list 'define var expr) acc))
-			     (store (substitute-in-store store loc var)))
-			(expand rest id-n env store loc-n acc k))
-		      (expand-val init id-n* env* store loc-n
-			(lambda (val store loc-n)
-			  (let ((store (substitute-in-store store loc val)))
-			    (expand rest id-n env store loc-n acc k))))))))
+                  (case builtin
+                    ((define)
+                     (let* ((expr (expand-expr init id-n* env* store loc-n))
+                            (var (loc->var loc sid))
+                            (acc (cons (list 'define var expr) acc))
+                            (store (substitute-in-store store loc var)))
+                       (expand rest id-n env store loc-n acc k)))
+                    ((define-syntax)
+                     (expand-val 
+                       init id-n* env* store loc-n
+                       (lambda (val store loc-n)
+                         (let ((store (substitute-in-store store loc val)))
+                          (expand rest id-n env store loc-n acc k)))))
+                    (else
+                      (error "What??" builtin))))))
 	  (define (bk sexp id-n* env* store loc-n)
 	    (expand (cdr sexp) id-n* env* store loc-n acc
 		    (lambda (store loc-n acc)

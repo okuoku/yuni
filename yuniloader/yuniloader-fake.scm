@@ -40,6 +40,7 @@
           expand-subexpr
           expand-body    ;; (expand-body sexps id-n ...) -- body sequence
           ek             ;; (expression expr)
+          dk             ;; (definition builtin sexp id-n env store loc-n)
           again          ;; (again sexp id-n store loc-n)
           unwrap-vecs    ;; (unwrap-vecs sexp) -- quote
           sid-id         ;; (sid-id sid)
