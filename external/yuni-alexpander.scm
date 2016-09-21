@@ -814,21 +814,34 @@
 ;  (if (null? bindings) expr (list 'letrec bindings expr)))
 
 (define (gen-define-seq bindings)
-  (map (lambda (e)
-         (let ((name (car e))
-               (expr (cadr e)))
-           (cond
-             ((and (pair? expr) (eq? 'lambda (car expr)))
-              ;; (name (lambda frm . body))
-              ;; => (define (name . frm) . body)
-              (let ((frm (cadr expr))
-                    (body (cddr expr)))
-                (cons 'define
-                      (cons (cons name frm)
-                            body))))
-             (else
-               (cons 'define e)))))
-       bindings))
+  (define (itr acc rest)
+    (if (pair? rest)
+      (let ((e (car rest))
+            (next (cdr rest)))
+        (itr
+          (if e
+            (cons 
+              (let ((name (car e))
+                    (expr (cadr e)))
+                (cond
+                  ((and (pair? expr) (eq? 'lambda (car expr)))
+                   ;; (name (lambda frm . body))
+                   ;; => (define (name . frm) . body)
+                   (let ((frm (cadr expr))
+                         (body (cddr expr)))
+                     (cons 'define
+                           (cons (cons name frm)
+                                 body))))
+                  ((eq? name '$$yunifake-define1)
+                   ;; FIXME: Unhygienic
+                   expr)
+                  (else
+                    (cons 'define e))))
+              acc)
+            acc)
+          next))
+      (reverse acc)))
+  (itr '() bindings))
 
 (define (make-letrec bindings expr)
   (if (null? bindings) 
@@ -1070,7 +1083,8 @@
 	      (case builtin
 		((define-syntax)
 		 (k vds (cons sexp sds) exprs id-n env store (+ loc-n 1)))
-		((define)
+		((define $$yunifake-define1)
+                 ;; ($$yunifake-define1 nam #f/body?)
 		 (let* ((var (intloc->var loc-n sid))
 			(store (extend-store store loc-n var))
 			(loc-n (+ loc-n 1)))
@@ -1099,7 +1113,17 @@
 	(lambda (store loc-n)
 	  (define (iexpand sexp) (expand-expr sexp id-n env store loc-n))
 	  (define (expand-vd vd)
-	    (list (lookup2 (cadr vd) env store) (iexpand (caddr vd))))
+            (let ((builtin (sid-name (car vd))))
+             (case builtin
+               ((define)
+                (list (lookup2 (cadr vd) env store) (iexpand (caddr vd))))
+               (($$yunifake-define1)
+                (let ((nam (cadr vd))
+                      (init (caddr vd)))
+                  (and init
+                       (list builtin (iexpand init)))))
+               (else
+                 (error "What0??" builtin)))))
 	  (if (and (null? rest) (null? vds) (null? exprs))
 	      (expand-any first id-n env store loc-n lsd? ek sk dk bk)
 	      (ek (make-letrec
@@ -1143,6 +1167,13 @@
                      (let* ((expr (expand-expr init id-n* env* store loc-n))
                             (var (loc->var loc sid))
                             (acc (cons (list 'define var expr) acc))
+                            (store (substitute-in-store store loc var)))
+                       (expand rest id-n env store loc-n acc k)))
+                    (($$yunifake-define1)
+                     ;; ($$yunifake-define1 nam #f/body)
+                     (let* ((expr (and init (expand-expr init id-n* env* store loc-n)))
+                            (var (loc->var loc sid))
+                            (acc (if init (cons expr acc) acc))
                             (store (substitute-in-store store loc var)))
                        (expand rest id-n env store loc-n acc k)))
                     ((define-syntax)

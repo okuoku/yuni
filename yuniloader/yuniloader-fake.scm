@@ -34,6 +34,7 @@
 ;; 4: $$yunifake-expand-body
 ;; 5: $$yunifake-bind
 ;; 6: $$yunifake-bind/body
+;; 7: $$yunifake-inject-definition
 (define ($$yunifake-hook 
           ;; callbacks
           expand-expr    ;; (expand-expr sexp id-n env store loc-n)
@@ -101,6 +102,10 @@
                                 (expand-body body id-n env store loc-n #f 
                                              (lambda (x) x) #f #f #f))))))
              id-n store loc-n)))))
+    ((7) ;; (inject-definition CODE nam frm)
+     (dk '$$yunifake-define1 
+         (cons '$$yunifake-define1 (cddr sexp))
+         id-n env store loc-n ))
     (else
       (error "Unknown object for $$yunifake-hook" sexp))))
 
