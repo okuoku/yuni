@@ -8,10 +8,12 @@
            and
            or
            quasiquote
-           define-vaules)
+           ;define-vaules
+           )
          (import (yunifake-util expander-callbacks))
 
 
+#|
 (define-syntax $$define-values/dotted-itr
   (syntax-rules ()
     ((_ (frms ...) (v0 v1 v2 ...) expr)
@@ -88,6 +90,7 @@
      ($$define-values/construct
        () ;; acc
        frm expr))))
+|#
 
 (define-syntax $$let/remap
   (syntax-rules ()
