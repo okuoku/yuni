@@ -7,6 +7,7 @@
     frm
     %%myenv))
 
+;; FIXME: Unused
 (define 
   %%yuniloader-macros
   '((define-macro (define-values frm expr)
@@ -88,7 +89,7 @@
         (reverse acc)) ))
    (set! %%yuniffi-gambit-modpath modpath)
    (for-each eval %%yuniloader-alexpander-init)
-   (for-each eval %%yuniloader-macros)
+   ;(for-each eval %%yuniloader-macros)
    (let ((fn (string-append modpath "/yuniffi-gambit")))
     (load fn))
    (cond

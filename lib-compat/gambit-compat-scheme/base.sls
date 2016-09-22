@@ -128,6 +128,7 @@
            )
          (import 
            (yunifake-util scheme-syntax)
+           (yunifake-util define-values)
            (scheme case-lambda))
 ;;
 (define %%my-eof-object
@@ -326,35 +327,6 @@
      (cond
        ((not pred)
         code ...)))))
-
-#| FIXME: Not working..
-(define-syntax %%gen-define-values-delay
-  (syntax-rules ()
-    ((_ lis (acc0 ...) (acc1 ...) ())
-     (apply (lambda (acc0 ...)
-              (set! acc1 acc0)
-              ...)
-            lis))
-    ((_ lis (acc0 ...) (acc1 ...) (frm0 frm1 ...))
-     (%%gen-define-values-delay
-       lis
-       (acc0 ... %%tmp)
-       (acc1 ... frm0)
-       (frm1 ...)))))
-
-(define-syntax define-values
-  (syntax-rules ()
-    ((_ (frm ...) code)
-     (begin
-       (define frm #f)
-       ...
-       (define %%define-values-delay
-         (call-with-values
-           (lambda () code)
-           (lambda x 
-             (%%gen-define-values-delay x () () (frm ...)))))))))
-|#
-
 
 ;; Aux
 (define-syntax-names/yunifake
