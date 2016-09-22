@@ -57,6 +57,31 @@
                ((= i 5) vec)
                (vector-set! vec i i)))
 
+(define-values (va vb vc) (values 10 20 30))
+(define-values (vva vvb . vvc) (values 10 20 30 40))
+(define-values vvva (values 10 20 30 40))
+
+(check-equal 10 va)
+(check-equal 20 vb)
+(check-equal 30 vc)
+(check-equal 10 vva)
+(check-equal 20 vvb)
+(check-equal '(30 40) vvc)
+(check-equal '(10 20 30 40) vvva)
+
+(let ()
+ (define-values (va vb vc) (values 1 2 3))
+ (define-values (vva vvb . vvc) (values 1 2 3 4))
+ (define-values vvva (values 1 2 3 4))
+
+ (check-equal 1 va)
+ (check-equal 2 vb)
+ (check-equal 3 vc)
+ (check-equal 1 vva)
+ (check-equal 2 vvb)
+ (check-equal '(3 4) vvc)
+ (check-equal '(1 2 3 4) vvva))
+
 ;(check-equal 10 ((^a (+ 1 a)) 9))
 ;(check-equal 10 ((^ (form) (+ 2 form)) 8))
 (check-equal 10 (match '(1 10 11) ((a b c) b)))
