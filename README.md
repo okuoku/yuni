@@ -39,15 +39,36 @@ Bootstrapped, but no FFI yet:
  * [Larceny](http://larcenists.org/) - Lacks non-movable bytevectors #46
  * [MIT/GNU Scheme](https://www.gnu.org/software/mit-scheme/) with experimental R5RS support
 
-## Licensing
+## Build
 
-(TBD. Each source should include its own license terms. We will provide combined license document later for binary distributions.)
+Install one of bootstrap Scheme and configure this directory with `cmake`. Following Scheme supported as bootstrap Scheme:
 
-Build
------
+ * chibi-scheme
+ * Racket
+ * Sagittarius
+ * Gauche
+ * IronScheme (`YUNI_IRON_SCHEME_ROOT`)
 
-TBD: Document CMake buildsystem here.
+Implementations except IronScheme will be auto-detected by the build script.
+
+See [Build][] for details.
+
+## License
+
+Public domain (CC0-1.0). Yuni R6RS/R7RS runtime component is released into public domain by the author. See `COPYING.CC0` for full license text.
+
+Yuni R5RS support uses Alexpander(BSD3/GPL2+).
+
+NOTE: Following directories contain copyrighted materials from other projects.
+
+ * `apidata`
+ * `external`
+ * `tests`
+
+These directories are not part of Yuni runtime library.
+
 
 [Blocker-Issues]: https://github.com/okuoku/yuni/issues?q=is%3Aissue+is%3Aopen+label%3AExtern-Blocker
 [r7b-Issues]: https://github.com/okuoku/yuni/issues?q=is%3Aissue+is%3Aopen+label%3ALib-R7RSBridge
 [PortingNotes]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes.markdown
+[Build]: https://github.com/okuoku/yuni/tree/master/build
