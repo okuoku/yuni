@@ -7,6 +7,42 @@
     frm
     %%myenv))
 
+(define 
+  %%yuniloader-macros
+  '((define-macro (define-values frm expr)
+      (define (flatten frm)
+        (cond
+          ((pair? frm)
+           (cons
+             (cons (car frm) (gensym (car frm)))
+             (flatten (cdr frm))))
+          ((null? frm) '())
+          (else (list (cons frm (gensym frm))))))
+      (define (dotted-vars frm)
+        (if (null? (cddr frm))
+          (cons (cdr (car frm)) (cdr (cadr frm)))
+          (cons (cdr (car frm)) (dotted-vars (cdr frm)))))
+      (define dotted? (and (pair? frm) (not (list? frm))))
+      (define single? (not (pair? frm)))
+      (let ((vars (flatten frm))
+            (bogus (gensym 'bogus)))
+       `(begin
+          ,@(map (lambda (v) `(define ,(car v) #f)) vars)
+          (define ,bogus
+            (call-with-values
+              (lambda () ,expr)
+              ,(cond
+                 (dotted?
+                   `(lambda ,(dotted-vars vars)
+                      ,@(map (lambda (v) `(set! ,(car v) ,(cdr v))) vars)))
+                 (single?
+                   `(lambda ,(cdr (car vars))
+                      (set! ,frm ,(cdr (car vars)))))
+                 (else
+                   `(lambda ,(map cdr vars)
+                      ,@(map (lambda (v) 
+                               `(set! ,(car v) ,(cdr v))) vars)))))))))))
+
 
 (define %%yuniffi-gambit-modpath #f)
 
@@ -52,6 +88,7 @@
         (reverse acc)) ))
    (set! %%yuniffi-gambit-modpath modpath)
    (for-each eval %%yuniloader-alexpander-init)
+   (for-each eval %%yuniloader-macros)
    (let ((fn (string-append modpath "/yuniffi-gambit")))
     (load fn))
    (cond
