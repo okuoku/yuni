@@ -206,16 +206,16 @@
   (match ir
          (() db)
          (((top . objs) . rest)
-          (define (next) (read-stubir0! db rest))
-          (case top
-            ((config) (read-config! db objs) (next))
-            ((prologue) (read-prologue! db objs) (next))
-            ((types) (read-types! db objs) (next))
-            ((layouts) (read-layouts! db objs) (next))
-            ((functions) (read-functions! db objs) (next))
-            ((exports) (read-exports! db objs) (next))
-            (else
-              (error "Invalid object in ir" top))))))
+          (let ((next (lambda () (read-stubir0! db rest))))
+           (case top
+             ((config) (read-config! db objs) (next))
+             ((prologue) (read-prologue! db objs) (next))
+             ((types) (read-types! db objs) (next))
+             ((layouts) (read-layouts! db objs) (next))
+             ((functions) (read-functions! db objs) (next))
+             ((exports) (read-exports! db objs) (next))
+             (else
+               (error "Invalid object in ir" top)))))))
 
 (define (stubir0->database ir)
   (match ir
