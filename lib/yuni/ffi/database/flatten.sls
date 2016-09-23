@@ -111,7 +111,7 @@
 
   (define (resolve-pointer-base!)
     (define (notyet) (filter1 (lambda (e) (not (string? 
-                                                (hashtable-ref type-ht e)))) 
+                                                (hashtable-ref type-ht e #f)))) 
                              (vector->list (hashtable-keys type-ht))))
     (define (proc name)
       (let ((t (hashtable-ref type-ht name #f)))
