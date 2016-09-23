@@ -68,6 +68,13 @@ set(ffi_impls # Exclude NMOSH KAWA
     PICRIN
     GSI)
 
+set(bootstrap_impls
+    CHIBI_SCHEME
+    GOSH
+    SAGITTARIUS
+    IRON_SCHEME
+    RACKET)
+
 # Issue #38
 if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86$")
     if(NOT WIN32)
@@ -118,6 +125,27 @@ function(test_with_allffi fil)
     endforeach()
 endfunction()
 
+function(test_yunistub_bootstrap fil)
+    # FIXME: Copy'n'paste
+    set(gen_yuniffi_stubs
+            ${CMAKE_CURRENT_LIST_DIR}/../../build/ffistub/gen-yuniffi-stubs.sps)
+
+    foreach(e ${bootstrap_impls})
+        if(YUNITEST_${e})
+            set(wrkdir ${CMAKE_CURRENT_BINARY_DIR}/yunistubtest/${e})
+            file(MAKE_DIRECTORY ${wrkdir})
+            add_test(NAME "yuniffi-stub-${e}"
+                COMMAND ${YUNITEST_${e}}
+                ${gen_yuniffi_stubs}
+                -BOGUS
+                -CDIR ${wrkdir}
+                -SCMDIR ${wrkdir}
+                -FILE ${fil}
+                WORKING_DIRECTORY ${wrkdir})
+        endif()
+    endforeach()
+endfunction()
+
 # Add Simple tests first.
 foreach(e ${impls})
     test_negative(${e})
@@ -126,3 +154,7 @@ endforeach()
 # Sanity
 test_with_all(_sanity.sps)
 #test_with_allffi(_ncccsanity.sps)
+
+# yunistub bootstraps
+test_yunistub_bootstrap(
+    ${CMAKE_CURRENT_LIST_DIR}/../yunistub/trivial/testing.scm)

@@ -1,10 +1,16 @@
 set(top ${CMAKE_CURRENT_LIST_DIR}/../..)
 
 # FIXME: Merge with package phase
-if(WIN32)
-    set(bootstrap ${YUNIBASE_YUNIFIED_PATH}/${YUNI_BOOTSTRAP_USE}.bat)
+if(${YUNI_BOOTSTRAP_USE} STREQUAL gauche)
+    set(bootstrap_name gosh)
 else()
-    set(bootstrap ${YUNIBASE_YUNIFIED_PATH}/${YUNI_BOOTSTRAP_USE})
+    set(bootstrap_name ${YUNI_BOOTSTRAP_USE})
+endif()
+
+if(WIN32)
+    set(bootstrap ${YUNIBASE_YUNIFIED_PATH}/${bootstrap_name}.bat)
+else()
+    set(bootstrap ${YUNIBASE_YUNIFIED_PATH}/${bootstrap_name})
 endif()
 
 set(gen_yuniffi_stubs
