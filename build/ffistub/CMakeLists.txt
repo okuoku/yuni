@@ -30,9 +30,9 @@ function(add_yuniffi_stub tgt stubir scmdir cdir) # ARGN = csrcnames
         -SCMDIR ${scmdir}
         -FILE ${stubir}
         DEPENDS ${gen_yuniffi_stubs}
+        yuni_package_build yuni_bootstrap
         COMMENT "Processing StubIR0(${tgt})...")
     add_custom_target(${tgt} DEPENDS ${outc})
-    add_dependencies(${tgt} yuni_package_build yuni_bootstrap)
 endfunction()
 
 add_subdirectory(${top}/apidata apidata)
