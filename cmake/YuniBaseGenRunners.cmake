@@ -195,7 +195,7 @@ endfunction()
 
 function(emit_tmpl_runwitharg_cmd outpath execpath args)
     file(WRITE "${outpath}.bat"
-        "\"${execpath}\" ${args} %*\n")
+        "@echo off\n\"${execpath}\" ${args} %*\n")
 endfunction()
 
 function(emit_tmpl_runwitharg_sh outpath execpath args)
