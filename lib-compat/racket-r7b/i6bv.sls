@@ -3,5 +3,8 @@
            ;;open-input-bytevector
            open-output-bytevector
            get-output-bytevector)
-         (import (r7b-util bytevector-buffer)))
+         (import (rename
+                   (only (racket base) open-output-bytes get-output-bytes)
+                   (open-output-bytes open-output-bytevector)
+                   (get-output-bytes  get-output-bytevector))))
 
