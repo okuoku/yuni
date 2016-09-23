@@ -39,12 +39,13 @@
     ((USING-EQUAL-HASH) (make-hash-table 'equal?))
     ((USING-STRING-HASH) (make-hash-table 'string=?))
     ((USING-SYMBOL-HASH) (make-hash-table 'eq?))
+    ((USING-EQV-HASH) (make-hash-table 'eqv?))
     (else (error "FIXME: Unrecognized hashtable type.." h))))
 
 (define (make-eq-hashtable)
-  (make-hashtable hash-by-identity eq?))         
+  (make-hashtable 'USING-SYMBOL-HASH eq?))         
 (define (make-eqv-hashtable)
-  (make-hashtable hash-by-identity eqv?))
+  (make-hashtable 'USING-EQV-HASH eqv?))
 
 (define hashtable? hash-table?)
 
@@ -59,7 +60,8 @@
 (define (hashtable-update! . _) (error "unimpl"))
 (define (hashtable-copy . _) (error "unimpl"))
 (define (hashtable-clear! . _) (error "unimpl"))
-(define (hashtable-keys . _) (error "unimpl"))
+(define (hashtable-keys h) 
+  (list->vector (hash-table-keys h)))
 (define (hashtable-entries . _) (error "unimpl"))
 (define (hashtable-equivalence-function . _) (error "unimpl"))
 (define (hashtable-hash-function . _) (error "unimpl"))
