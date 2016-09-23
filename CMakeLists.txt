@@ -108,19 +108,19 @@ endmacro()
 include(YuniDetectScheme)
 
 # Bootstrap
-add_subdirectory(build/bootstrap bootstrap) # => yuni_bootstrap
+# => yuni_bootstrap, YUNI_BOOTSTRAP_USE
+add_subdirectory(build/bootstrap bootstrap) 
 
 # Generate yuni runners
 emit_yuni_runners()
 
 # Activation
-add_subdirectory(build/package package) # => yuni_package
-
+add_subdirectory(build/package package) # => yuni_package, yuni_package_build
+add_subdirectory(build/ffistub ffistub)
 
 # Options
 
 # Components (include testing)
-# add_subdirectory(apidata)
 add_subdirectory(yunistub)
 add_subdirectory(tests/yunibase tests-yunibase)
 

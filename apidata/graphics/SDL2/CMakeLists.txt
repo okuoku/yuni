@@ -5,9 +5,15 @@ find_package(SDL2)
 
 if(SDL2_FOUND)
     include_directories(${SDL2_INCLUDE_DIR})
+    add_yuniffi_stub(SDL2-yunistub
+        ${CMAKE_CURRENT_LIST_DIR}/SDL2.scm
+        ${CAMKE_CURRENT_BINARY_DIR} # temp
+        ${CMAKE_CURRENT_BINARY_DIR}
+        SDL2.stub.c)
     add_library(yunistub_SDL2 MODULE
-        ${YUNISTUB_STUBSOURCE_PREFIX}/graphics/SDL2/SDL2.stub.c
+        ${CMAKE_CURRENT_BINARY_DIR}/SDL2.stub.c
         )
+    add_dependencies(yunistub_SDL2 SDL2-yunistub)
     target_link_libraries(yunistub_SDL2 
         ${SDL2_LIBRARY})
     yuni_install_native_targets(yunistub_SDL2)

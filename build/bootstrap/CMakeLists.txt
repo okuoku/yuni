@@ -191,3 +191,5 @@ deploy_impl_specific_runtimes(
     MIT_SCHEME   mit-scheme
     )
 
+# Decided bootstrap scheme impl.
+set(YUNI_BOOTSTRAP_USE "${YUNI_BOOTSTRAP_USE}" PARENT_SCOPE)

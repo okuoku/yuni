@@ -1,4 +1,5 @@
 add_custom_target(yuni_package)
+add_custom_target(yuni_package_build)
 
 set(allsps ${CMAKE_CURRENT_BINARY_DIR}/../bootstrap/_yuniall.sps)
 
@@ -11,6 +12,9 @@ macro(check_impl var nam)
     endif()
     if(EXISTS ${_pth})
         set(YUNIBUILD_${var} ${_pth})
+        if(${nam} STREQUAL ${YUNI_BOOTSTRAP_USE})
+            set(YUNIBUILD_${var}_IS_BOOTSTRAP TRUE)
+        endif()
     endif()
 endmacro()
 
@@ -36,12 +40,20 @@ check_impl(IRON_SCHEME ironscheme)
 # Pre-Cache: Guile, Sagittarius, nmosh
 #
 
+function(check_bootstrap impl tgt)
+    if(YUNIBUILD_${impl}_IS_BOOTSTRAP)
+        add_dependencies(yuni_package_build ${tgt})
+    endif()
+endfunction()
+
+
 function(precache impl)
     if(YUNIBUILD_${impl})
         add_custom_target(yuni_precache_${impl} ALL
             ${YUNIBUILD_${impl}} ${ARGN} ${allsps}
             COMMENT "Precache(${impl})")
         add_dependencies(yuni_precache_${impl} yuni_bootstrap)
+        check_bootstrap(${impl} yuni_precache_${impl})
     endif()
 endfunction()
 
