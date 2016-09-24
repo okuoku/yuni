@@ -10,7 +10,7 @@ Port Status
 |[sagittarius][] |X         |X         |X     |X       |Native      |
 |[racket][]      |X         |X         |X     |X       |Native      |
 |[guile][]       |X         |          |      |X       |Native      |
-|[larceny][]     |X         |          |      |Partial |Native      |
+|[larceny][]     |X         |          |X     |Partial |Native      |
 |[ironscheme][]  |X         |X         |X     |        |            |
 |[chez][]        |X         |          |      |X       |Native      |
 |[vicare][]      |Partial   |          |      |X       |Native      |

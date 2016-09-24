@@ -131,7 +131,16 @@ detect_scheme(YUNI_NMOSH NAMES nmosh)
 # Kawa is only supported on yunibase
 
 # Larceny
-detect_scheme(YUNI_LARCENY NAMES larceny)
+if(WIN32)
+    if(YUNI_LARCENY_ROOT)
+        set(yuni_larceny_bin ${YUNI_LARCENY_ROOT}/larceny.bin.exe)
+        if(EXISTS ${YUNI_LARCENY_ROOT}/larceny.bin.exe)
+            set(YUNI_LARCENY ${yuni_larceny_bin})
+        endif()
+    endif()
+else()
+    detect_scheme(YUNI_LARCENY NAMES larceny)
+endif()
 
 # Chez scheme
 # FIXME: May conflict with mit-scheme

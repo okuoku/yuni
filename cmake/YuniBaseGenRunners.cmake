@@ -198,6 +198,11 @@ function(emit_tmpl_runwitharg_cmd outpath execpath args)
         "@echo off\n\"${execpath}\" ${args} %*\n")
 endfunction()
 
+function(emit_tmpl_runwitharg_cmd_larceny outpath execpath args)
+    file(WRITE "${outpath}.bat"
+        "@echo off\n\nset XX_SEMICOLON=;\nset LARCENY_ROOT=${YUNI_LARCENY_ROOT}\n\"${execpath}\" ${args} %*\n")
+endfunction()
+
 function(emit_tmpl_runwitharg_sh outpath execpath args)
     # args = a string for additional args
     file(WRITE "${outpath}"
@@ -259,9 +264,15 @@ function(emit_yunirunner flav varname cmdvar cmdname)
                 # https://savannah.gnu.org/bugs/?31710
                 set(_argsstr "--heap 512 --library \"${instdir}/../lib\" ${_argsstr}")
             endif()
-            emit_tmpl_runwitharg_cmd(${out}
-                ${cmd}
-                "${_argsstr}")
+            if(${cmdvar} STREQUAL YUNI_LARCENY)
+                emit_tmpl_runwitharg_cmd_larceny(${out}
+                    ${cmd}
+                    "${_argsstr}")
+            else()
+                emit_tmpl_runwitharg_cmd(${out}
+                    ${cmd}
+                    "${_argsstr}")
+            endif()
         else()
             emit_tmpl_runwitharg_sh(${out}
                 ${cmd}
