@@ -219,9 +219,10 @@
 
 (define (stubir0->database ir)
   (match ir
-         (('stubir0 libname-c libname-scheme . rest)
-          (let ((out (make-database)))
-           ;; FIXME: Check libname validity here..
+         (('stubir0 libname-c . rest)
+          (let ((out (make-database))
+                (libname-scheme (list libname-c)))
+           ;; FIXME: Check libname-c validity here..
            (database-libinfo-set! out (make-libinfo libname-c libname-scheme))
            (read-stubir0! out rest)
            out))

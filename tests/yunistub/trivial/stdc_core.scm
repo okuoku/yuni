@@ -1,6 +1,5 @@
 (stubir0
   stdlibc_core
-  (yunistub stdlibc_core)
 
 ;; No import
 ;; No prologue

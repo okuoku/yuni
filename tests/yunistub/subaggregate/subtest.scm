@@ -1,6 +1,5 @@
 (stubir0
   unnamed
-  (testing unnamed)
   (config
     (stubs (c "unnamed.stub.c")))
   (prologue)

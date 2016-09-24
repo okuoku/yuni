@@ -21,7 +21,7 @@
 (define (get-scm-libname db)
   (define libinfo (database-libinfo db))
   (define scmname (libinfo-scheme-name libinfo))
-  (cons 'yuniffi scmname))
+  (cons 'yunistub scmname))
 
 (define (get-c-libname db)
   (define libinfo (database-libinfo db))

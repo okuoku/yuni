@@ -1,6 +1,5 @@
 (stubir0
   SDL2
-  (graphics SDL2)
   (config
     (stubs (c "SDL2.stub.c")))
 

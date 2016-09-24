@@ -1,6 +1,5 @@
 (stubir0
   testing_trivial
-  (testing trivial)
   (config
     (stubs (c   "testing.stub.c")
            (cxx "testing.stub.cpp")))
