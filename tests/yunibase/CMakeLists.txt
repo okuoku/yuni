@@ -157,4 +157,4 @@ test_with_all(_sanity.sps)
 
 # yunistub bootstraps
 test_yunistub_bootstrap(
-    ${CMAKE_CURRENT_LIST_DIR}/../yunistub/trivial/testing.scm)
+    ${CMAKE_CURRENT_LIST_DIR}/../yunistub/trivial/testing_trivial.scm)
