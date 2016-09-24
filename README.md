@@ -70,5 +70,5 @@ These directories are not part of Yuni runtime library.
 
 [Blocker-Issues]: https://github.com/okuoku/yuni/issues?q=is%3Aissue+is%3Aopen+label%3AExtern-Blocker
 [r7b-Issues]: https://github.com/okuoku/yuni/issues?q=is%3Aissue+is%3Aopen+label%3ALib-R7RSBridge
-[PortingNotes]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes.markdown
+[PortingNotes]: https://github.com/okuoku/yuni/tree/master/doc/PortingNotes
 [Build]: https://github.com/okuoku/yuni/tree/master/build
