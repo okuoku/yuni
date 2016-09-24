@@ -2,10 +2,8 @@
 
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 
-add_yuniffi_stub(stub_yunistub_testing_trivial
-    ${CMAKE_CURRENT_LIST_DIR}/testing.scm
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
+gen_yuniffi_stub(stub_yunistub_testing_trivial
+    ${CMAKE_CURRENT_LIST_DIR}/testing_trivial.scm
     testing.stub.cpp testing.stub.c)
 
 add_library(yunistub_testing_trivial MODULE

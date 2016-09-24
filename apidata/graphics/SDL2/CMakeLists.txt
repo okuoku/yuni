@@ -5,10 +5,8 @@ find_package(SDL2)
 
 if(SDL2_FOUND)
     include_directories(${SDL2_INCLUDE_DIR})
-    add_yuniffi_stub(SDL2-yunistub
+    gen_yuniffi_stub(SDL2-yunistub
         ${CMAKE_CURRENT_LIST_DIR}/SDL2.scm
-        ${CAMKE_CURRENT_BINARY_DIR} # temp
-        ${CMAKE_CURRENT_BINARY_DIR}
         SDL2.stub.c)
     add_library(yunistub_SDL2 MODULE
         ${CMAKE_CURRENT_BINARY_DIR}/SDL2.stub.c
