@@ -130,6 +130,10 @@ add_custom_target(reset
     COMMAND ${CMAKE_COMMAND} -E remove_directory 
     ${CMAKE_CURRENT_BINARY_DIR}/bootstrap
     COMMAND ${CMAKE_COMMAND} -E remove_directory 
+    ${CMAKE_CURRENT_BINARY_DIR}/ffistub
+    COMMAND ${CMAKE_COMMAND} -E remove_directory 
+    ${CMAKE_CURRENT_BINARY_DIR}/package
+    COMMAND ${CMAKE_COMMAND} -E remove_directory 
     ${YUNIBASE_YUNIFIED_PATH}
     COMMAND ${CMAKE_COMMAND} -E remove_directory 
     ${YUNIBASE_VANILLA_PATH}
