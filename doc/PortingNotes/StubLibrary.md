@@ -3,23 +3,23 @@ Stub library
 
 Since Yuni uses R6RS-lite format; R6RS library format with R7RS small libraries, most Scheme implementations require a conversion step to convert Yuni's R6RS-lite libraries into their native format.
 
-| impl       | Format | File extension | Filter              | Remarks                      |
-|:-----------|:------:|:--------------:|:--------------------|:-----------------------------|
-|gauche      |R7RS    |.scm            |Strip-Keywords       |[SIBR0005][]                  |
-|chibi-scheme|R7RS    |.sld            |Include-Basename     |Refered as `chibi` for now    |
-|picrin      |R7RS    |.scm            |Reverse-import-export|No library search-load feature|
-|chicken     |R7RS    |.scm            |Strip-Stdaux         |No library search-load feature|
-|kawa        |R7RS    |.sld            |none                 |Always use absolute paths     |
-|sagittarius |R7RS    |.sagittarius.sls|Strip-Keywords       |R6RS Hybrid                   |
-|racket      |R6RS    |.mzscheme.sls   |Strip-Stdaux         |Require `#!r6rs`              |
-|guile       |R6RS    |.guile.sls      |Strip-Stdaux         |                              |
-|larceny     |none    |.sls            |none                 |                              |
-|ironscheme  |none    |.sls            |none                 |                              |
-|chez        |none    |.sls            |none                 |                              |
-|vicare      |none    |.sls            |none                 |                              |
-|nmosh       |none    |.sls            |none                 |                              |
-|gambit      |none    |.sls            |none                 |yunifake R5RS loader          |
-|mit-scheme  |none    |.sls            |none                 |yunifake R5RS loader          |
+| impl       |std | File extension | Filter              | Remarks                      |
+|:-----------|:--:|:--------------:|:--------------------|:-----------------------------|
+|gauche      |R7RS|.scm            |Strip-Keywords       |[SIBR0005][]                  |
+|chibi-scheme|R7RS|.sld            |Include-Basename     |Refered as `chibi` for now    |
+|picrin      |R7RS|.scm            |Reverse-import-export|No library search-load feature|
+|chicken     |R7RS|.scm            |Strip-Stdaux         |No library search-load feature|
+|kawa        |R7RS|.sld            |none                 |Always use absolute paths     |
+|sagittarius |R7RS|.sagittarius.sls|Strip-Keywords       |R6RS Hybrid                   |
+|racket      |R6RS|.mzscheme.sls   |Strip-Stdaux         |Require `#!r6rs`              |
+|guile       |R6RS|.guile.sls      |Strip-Stdaux         |Special file extension        |
+|larceny     |-   |.sls            |none                 |                              |
+|ironscheme  |-   |.sls            |none                 |                              |
+|chez        |-   |.sls            |none                 |                              |
+|vicare      |-   |.sls            |none                 |                              |
+|nmosh       |-   |.sls            |none                 |                              |
+|gambit      |-   |.sls            |none                 |yunifake R5RS loader          |
+|mit-scheme  |-   |.sls            |none                 |yunifake R5RS loader          |
 
 `SIBR` refers Scheme Imprementation Behaviour Registry(SIBR) number. See `doc/sibr`.
 
