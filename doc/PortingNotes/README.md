@@ -68,6 +68,7 @@ Basic requirements are:
 [picrin]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/picrin.md
 [kawa]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/kawa.md
 [sagittarius]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/sagittarius.md
+[racket]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/racket.md
 [guile]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/guile.md
 [larceny]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/larceny.md
 [ironscheme]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/ironscheme.md
