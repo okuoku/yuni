@@ -1,4 +1,5 @@
 set(top ${CMAKE_CURRENT_LIST_DIR}/../..)
+set(stubroot ${CMAKE_CURRENT_BINARY_DIR})
 
 # FIXME: Merge with package phase
 if(${YUNI_BOOTSTRAP_USE} STREQUAL gauche)
@@ -41,8 +42,10 @@ function(add_yuniffi_stub tgt stubir scmdir cdir) # ARGN = csrcnames
 endfunction()
 
 function(gen_yuniffi_stub tgt stubir)
+    file(MAKE_DIRECTORY
+        ${stubroot}/yuniffi/yunistub)
     add_yuniffi_stub(${tgt} ${stubir} 
-        ${YUNI_PLATFORM_LIBDIR}/yunistub
+        ${stubroot}/yuniffi/yunistub
         ${CMAKE_CURRENT_BINARY_DIR}
         ${ARGN})
 endfunction()
