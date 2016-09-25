@@ -112,9 +112,6 @@ include(YuniDetectScheme)
 # => yuni_package, yuni_package_build
 add_subdirectory(build/bootstrap bootstrap) 
 
-# Generate yuni runners
-emit_yuni_runners()
-
 # Activation
 add_subdirectory(build/ffistub ffistub)
 

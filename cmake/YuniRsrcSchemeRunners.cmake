@@ -54,7 +54,7 @@ endmacro()
 macro(gen_stubprefix var flav nam)
     if(${flav} STREQUAL yuniboot)
         set(${var}
-            ${CMAKE_CURRENT_BINARY_DIR}/bootstrap/lib-stub/${nam})
+            ${CMAKE_CURRENT_BINARY_DIR}/lib-stub/${nam})
     else()
         set(${var}
             ${YUNIBASE_YUNIFIED_PATH}/runtime/${nam})

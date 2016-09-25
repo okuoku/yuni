@@ -260,4 +260,7 @@ deploy_impl_specific_runtimes(
 # Decided bootstrap scheme impl.
 set(YUNI_BOOTSTRAP_USE "${YUNI_BOOTSTRAP_USE}" PARENT_SCOPE)
 
+# Generate runner
+emit_yuni_runners()
+
 include(${CMAKE_CURRENT_LIST_DIR}/package.cmake)
