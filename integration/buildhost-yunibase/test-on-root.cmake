@@ -1,5 +1,6 @@
 # INPUTs:
 #
+#  VERBOSE: Verbose output
 #  CLEAN: CLEAN build dir on success
 #
 # Test yuni tree on root
@@ -15,15 +16,24 @@ set(_mypath ${CMAKE_CURRENT_LIST_DIR})
 get_filename_component(_mysrc ${_mypath}/../.. ABSOLUTE)
 
 function(execute_step str)
-    execute_process(COMMAND ${ARGN}
-        RESULT_VARIABLE rr
-        OUTPUT_VARIABLE out
-        ERROR_VARIABLE err
-        )
-    if(rr)
-        message(STATUS "Stdout:\n${out}\n\n")
-        message(STATUS "Stderr:\n${err}\n\n")
-        message(FATAL_ERROR "Fail: [${str}] (${rr})")
+    if(NOT VERBOSE)
+        execute_process(COMMAND ${ARGN}
+            RESULT_VARIABLE rr
+            OUTPUT_VARIABLE out
+            ERROR_VARIABLE err
+            )
+        if(rr)
+            message(STATUS "Stdout:\n${out}\n\n")
+            message(STATUS "Stderr:\n${err}\n\n")
+            message(FATAL_ERROR "Fail: [${str}] (${rr})")
+        endif()
+    else()
+        execute_process(COMMAND ${ARGN}
+            RESULT_VARIABLE rr
+            )
+        if(rr)
+            message(FATAL_ERROR "Fail: [${str}] (${rr})")
+        endif()
     endif()
 endfunction()
 
@@ -56,9 +66,15 @@ execute_step("Configure"
 
 message(STATUS "Build...")
 
-execute_step("Build"
-    ${CMAKE_COMMAND} --build .
-    WORKING_DIRECTORY ${_buildroot})
+if(EXISTS ${_buildroot}/Makefile)
+    execute_step("Build(Make)"
+        make -j16
+        WORKING_DIRECTORY ${_buildroot})
+else()
+    execute_step("Build"
+        ${CMAKE_COMMAND} --build .
+        WORKING_DIRECTORY ${_buildroot})
+endif()
 
 message(STATUS "Setup...")
 

@@ -10,9 +10,16 @@ if(NOT IMAGE)
 endif()
 
 macro(run_docker_image img rr)
+    if(${img} STREQUAL "okuoku/yunibase:testing-ubuntu32")
+        message(STATUS "Activating verbose output.")
+        set(verbo "-DVERBOSE=ON")
+    else()
+        set(verbo)
+    endif()
     execute_process(COMMAND
-        docker run -it --rm -v ${_myroot}:/yuni:Z ${img} cmake -P
-        /yuni/integration/buildhost-yunibase/test-on-root.cmake
+        docker run -it --rm -v ${_myroot}:/yuni:Z ${img} cmake 
+        ${verbo}
+        -P /yuni/integration/buildhost-yunibase/test-on-root.cmake
         RESULT_VARIABLE ${rr})
 endmacro()
 
