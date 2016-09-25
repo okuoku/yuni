@@ -78,6 +78,9 @@ set(compile_impls)
 if(YUNIBUILD_RACKET)
     list(APPEND compile_impls racket)
 endif()
+if(YUNIBUILD_LARCENY)
+    list(APPEND compile_impls larceny)
+endif()
 
 ## Phase1: Construct libsym_impl to depfiles table
 ##   libs_<impl>_<libsym>_file     => path to main file
@@ -122,6 +125,20 @@ foreach(sym ${libgenorder})
 endforeach()
 
 add_custom_target(yunipreroll_racket)
+
+function(larceny_compile tgt src)
+    get_filename_component(srcbase ${src} PATH)
+    get_filename_component(srcname ${src} NAME_WE)
+    set(cachefile ${srcbase}/${srcname}.slfasl)
+    set(_script ${CMAKE_CURRENT_LIST_DIR}/_larceny_compile.sps)
+    add_custom_command(
+        OUTPUT ${cachefile}
+        COMMAND ${YUNIBUILD_LARCENY} ${_script} ${src}
+        DEPENDS ${src} ${_script} yuni_bootstrap 
+        COMMENT "Compile(Larceny, ${tgt})...")
+    add_custom_target(${tgt} ALL
+        DEPENDS ${cachefile})
+endfunction()
 
 function(racket_compile_dep dep tgt src)
     get_filename_component(srcbase ${src} PATH)
@@ -181,6 +198,22 @@ foreach(impl ${compile_impls})
                     list(APPEND yunicompile_tgt_${impl} 
                         yunicompile_${impl}_${tgt})
                     # message(STATUS "Alias Build: ${aliassrc} => yunicompile_${impl}_${tgt}")
+                endif()
+            elseif(${impl} STREQUAL larceny)
+                set(src ${libs_${impl}_${sym}_file})
+                larceny_compile(yunicompile_${impl}_${sym} ${src})
+                list(APPEND yunicompile_tgt_${impl}
+                    yunicompile_${impl}_${sym})
+                if(libs_${impl}_${sym}_alias_of)
+                    # Add alias target too here.
+                    set(tgt ${libs_${impl}_${sym}_alias_of})
+                    # Calc alias path using libsym
+                    string(REGEX REPLACE "_" "/" pthbase ${tgt})
+                    set(aliassrc ${YUNIBASE_YUNIFIED_PATH}/runtime/larceny/${pthbase}.sls)
+                    larceny_compile(yunicompile_${impl}_${tgt}
+                        ${aliassrc})
+                    list(APPEND yunicompile_tgt_${impl} 
+                        yunicompile_${impl}_${tgt})
                 endif()
             endif()
         endif()

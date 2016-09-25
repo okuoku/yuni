@@ -200,7 +200,7 @@ endfunction()
 
 function(emit_tmpl_runwitharg_cmd_larceny outpath execpath args)
     file(WRITE "${outpath}.bat"
-        "@echo off\n\nset XX_SEMICOLON=;\nset LARCENY_ROOT=${YUNI_LARCENY_ROOT}\n\"${execpath}\" ${args} %*\n")
+        "@echo off\n\nset XX_SEMICOLON=;\nset progname=%1\nshift\nset LARCENY_ROOT=${YUNI_LARCENY_ROOT}\n\"${execpath}\" ${args} %progname% -- %1 %2 %3 %4 %5 %6 %7 %8 %9\n")
 endfunction()
 
 function(emit_tmpl_runwitharg_sh outpath execpath args)
