@@ -1,4 +1,5 @@
 (import (rnrs)
+        (ironscheme clr)
         (ironscheme))
 
 (define cmdline
@@ -34,6 +35,20 @@
         (set! cmdline d)
         (init-args!)))))
 
+(define (run-with-guard thunk)
+  (define err (current-output-port))
+  (clr-guard (e (e (display "Unhandled CLR exception:\n" err)
+                   (display e err)
+                   (newline err)
+                   (exit 2)))
+             (with-exception-handler
+               (lambda (e)
+                 (display "Unhandled exception:\n" err)
+                 (display e err)
+                 (newline err)
+                 (exit 1))
+               thunk)))
+
 
 (init-args!)
 
@@ -44,4 +59,5 @@
                 (compile-mode
                   (compile filename #f #f))
                 (else
-                  (load filename))))
+                  (let ((thunk (compile->closure filename)))
+                   (run-with-guard thunk)))))
