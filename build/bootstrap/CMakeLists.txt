@@ -120,14 +120,50 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
             "Order list unmatched(Run cmake again): ${sym} ${src}")
     endif()
     set(_done ${CMAKE_CURRENT_BINARY_DIR}/done/${sym}.done)
+    set(stubs)
+    # Add output arguments for Package build phase
+    foreach(e ${libgenorder_${sym}})
+        if(${e} MATCHES "([^:]*):([^:]*):([^:]*)")
+            set(impl ${CMAKE_MATCH_1})
+            set(top ${CMAKE_MATCH_3})
+            # orig: Remove first 1 elem and replace it with ${impl}
+            string(REGEX REPLACE "[^/]+/(.*)"
+                "${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/\\1" 
+                orig ${src})
+            # maybe_alias: Remove 2 entries and replace it with ${impl}/${top}
+            string(REGEX REPLACE "[^/]+/[^/]+/(.*)"
+                "${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/${top}/\\1" 
+                maybe_alias ${src})
+            if(${impl} STREQUAL racket)
+                # base0 file0 workaround
+                string(REGEX REPLACE "scheme/base\\.sls" 
+                    "scheme/base0.sls" maybe_alias ${maybe_alias})
+                string(REGEX REPLACE "scheme/file\\.sls" 
+                    "scheme/file0.sls" maybe_alias ${maybe_alias})
+                # Replace extension
+                string(REGEX REPLACE "\\.sls" ".mzscheme.sls"
+                    orig ${orig})
+                string(REGEX REPLACE "\\.sls" ".mzscheme.sls"
+                    maybe_alias ${maybe_alias})
+                #message(STATUS "We generate ${orig}")
+                list(APPEND stubs ${orig})
+                if(NOT ${orig} STREQUAL ${maybe_alias})
+                    #message(STATUS "We too generate ${maybe_alias}")
+                    list(APPEND stubs ${maybe_alias})
+                endif()
+            endif()
+        endif()
+    endforeach()
+
+    # Instantiate output command
     add_custom_command(
-        OUTPUT ${_done}
+        OUTPUT ${_done} ${stubs}
         COMMAND ${CMAKE_COMMAND}
         -DOP=GENLIBSTUB
         -DGENLIBSTUB_FILE=${src}
         ${bootparams}
         COMMENT "Generate stub library... (${sym})"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        COMMAND ${CMAKE_COMMAND} -E copy # Enforce touch
         ${yuniroot}/${src} ${_done}
         DEPENDS ${yuniroot}/${src}
         ${CMAKE_CURRENT_LIST_DIR}/YuniBootstrap.cmake
@@ -142,7 +178,7 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
                 "${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/\\1" 
                 out ${src})
             add_custom_command(
-                OUTPUT ${out}
+                OUTPUT ${out} 
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${yuniroot}/${src} ${out}
                 DEPENDS ${yuniroot}/${src})
