@@ -52,12 +52,15 @@
 
 (init-args!)
 
-(parameterize ((library-path (append libpaths
-                                     (library-path)))
-               (command-line args))
-              (cond
-                (compile-mode
-                  (compile filename #f #f))
-                (else
-                  (let ((thunk (compile->closure filename)))
-                   (run-with-guard thunk)))))
+(run-with-guard ;; FIXME: Ineffective for compile.
+  (lambda ()
+    (parameterize ((library-path (append libpaths
+                                         (library-path)))
+                   (command-line args))
+                  (cond
+                    (compile-mode
+                      (compile filename #f #f))
+                    (else
+                      (let ((thunk (compile->closure filename)))
+                       (thunk)))))))
+

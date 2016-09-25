@@ -89,6 +89,10 @@ function(test_negative prefix)
             COMMAND ${CMAKE_COMMAND} -DPROG=${YUNITEST_${prefix}}
             -DARG=${CMAKE_CURRENT_LIST_DIR}/_negative.sps
             -P ${CMAKE_CURRENT_LIST_DIR}/negative.cmake)
+        add_test(NAME "SanityNegative2-${prefix}"
+            COMMAND ${CMAKE_COMMAND} -DPROG=${YUNITEST_${prefix}}
+            -DARG=${CMAKE_CURRENT_LIST_DIR}/_negative2.txt
+            -P ${CMAKE_CURRENT_LIST_DIR}/negative.cmake)
     endif()
 endfunction()
 
