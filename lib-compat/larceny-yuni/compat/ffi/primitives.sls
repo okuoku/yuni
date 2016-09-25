@@ -12,6 +12,10 @@
            ptr-write/s8! ptr-write/u8! ptr-write/s16! ptr-write/u16!
            ptr-write/s32! ptr-write/u32! ptr-write/s64! ptr-write/u64!
            ptr-write/asciiz!
+
+           ptr-read/w64ptr
+           bv-read/w64ptr
+           bv-write/w64ptr!
            )
          (import (yuni scheme)
                  (yuni ffi runtime simpleloader)
@@ -19,6 +23,8 @@
                  (yuni compat bitwise primitives)
                  ;; FIXME: Move them into runtime
                  (primitives
+                   bytevector-u64-native-ref
+                   bytevector-u64-native-set!
                    void*-rt
                    peek-bytes
                    poke-bytes
@@ -73,6 +79,15 @@
 
 (define-read-asciiz ptr-read/asciiz ptr-read/u8)
 (define-write-asciiz ptr-write/asciiz! ptr-write/u8!)
+
+(define (ptr-read/w64ptr x off)
+  (integer->ptr (ptr-read/u64 x off)))
+
+(define (bv-read/w64ptr x off)
+  (integer->ptr (bytevector-u64-native-ref x off)))
+
+(define (bv-write/w64ptr! x off v)
+  (bytevector-u64-native-set! x off (ptr->integer v)))
 
 ;; NB: It seems Larceny's FFI do not support any namespacing..
 
