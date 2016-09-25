@@ -173,7 +173,7 @@ endfunction()
 function(install32)
     if(NOT SKIPINSTALL)
         install_gauche32()
-        install_sagittarius(setup_sagittarius_0.7.7.exe) # 32bit
+        install_sagittarius(setup_sagittarius_0.7.8.exe) # 32bit
         install_ironscheme()
         install_racket(32 racket-minimal-6.6-i386-win32.exe)
     endif()
@@ -181,7 +181,7 @@ endfunction()
 
 function(install64)
     if(NOT SKIPINSTALL)
-        install_sagittarius(setup_sagittarius_0.7.7_x64.exe) # 64bit
+        install_sagittarius(setup_sagittarius_0.7.8_x64.exe) # 64bit
         install_ironscheme()
         install_kawa()
         install_racket(64 racket-minimal-6.6-x86_64-win32.exe)
