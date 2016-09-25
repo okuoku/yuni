@@ -2,7 +2,7 @@
 # YuniBootstrap: Common code for bootstrap
 #
 # INPUTs:
-#  OP: BOOTSTRAP_FIRST | BOOTSTRAP_CHECK | GENLIBSTUB
+#  OP: BOOTSTRAP_FIRST | BOOTSTRAP_CHECK | GENLIBSTUB | GENLIBMETA
 #  BOOTSTRAP: Full path to Bootstrap Scheme
 #  BOOTSTRAP_TYPE: CHIBI_SCHEME
 #  YUNIROOT: Full path to yunisource
@@ -11,6 +11,10 @@
 #  RUNTIMEROOT: Full path to runtime
 #
 #  GENLIBSTUB_FILE: Relative path against YUNIROOT for GENLIBSTUB
+#
+#  GENLIBMETA_IN: Input for yunilibs.scm (Relative path list)
+#  GENLIBMETA_OUT: Output for libmeta.cmake
+#
 #
 
 function(select_script_file var slot)
@@ -75,13 +79,6 @@ function(bootstrap_collect_sls var) # Generate library file list
         list(APPEND sls ${fns})
     endforeach()
     set(${var} ${sls} PARENT_SCOPE)
-endfunction()
-
-function(bootstrap_extract_libdata pth nam)
-    file(MAKE_DIRECTORY ${BUILDROOT}/libdata)
-    bootstrap_run_scheme(LIBMETA_TO_CMAKE
-        ${pth}
-        ${BUILDROOT}/libdata/${nam}.cmake)
 endfunction()
 
 function(bootstrap_gen_yunilibfiles nam)
@@ -596,30 +593,6 @@ function(bootstrap_generate_stublib sls orderlist)
     endforeach()
 endfunction()
 
-function(bootstrap_rebuild_all)
-    bootstrap_collect_sls(sls)
-    include(${BUILDROOT}/libgenorder.cmake)
-    message(STATUS "Generating library export/import info")
-
-    # FIXME: Extend Scheme side to generate every metadata with 1 invoke..
-    foreach(e ${sls})
-        bootstrap_path_to_libsym(sym ${e})
-        bootstrap_extract_libdata(${YUNIROOT}/${e} ${sym})
-        include(${BUILDROOT}/libdata/${sym}.cmake)
-    endforeach()
-
-    # Generate actual libstub
-    foreach(e ${sls})
-        bootstrap_path_to_libsym(sym ${e})
-        if(libgenorder_${sym})
-            bootstrap_generate_stublib(${e} "${libgenorder_${sym}}")
-        else()
-            message(STATUS 
-                "WARNING: Ignored ${sym} for ${e} (Not used at all?)")
-        endif()
-    endforeach()
-endfunction()
-
 function(bootstrap_cmd_check)
     set(require_rebuild OFF)
     # Generate yunilibfiles.cmake.tmp (do not overwrite .cmake for now)
@@ -645,13 +618,7 @@ function(bootstrap_cmd_check)
     endif()
 
     if(require_rebuild)
-        message(STATUS "Library files count does not match. Force rebuilding.")
-
-        # Enforce CMake regeneration for next build
-        # FIXME: It's okay to just a copy: .tmp -> .cmake
-        bootstrap_gen_yunilibfiles(yunilibs.cmake)
-        bootstrap_gen_librequest()
-        bootstrap_rebuild_all()
+        message(FATAL_ERROR "Inconsistent builddir state. Rerun CMake.")
     else()
         message(STATUS "Yuni library build system -- check done.")
     endif()
@@ -673,9 +640,8 @@ endfunction()
 function(bootstrap_cmd_genlibstub)
     bootstrap_path_to_libsym(sym ${GENLIBSTUB_FILE})
 
-    # Generate/Instantiate libmetadata
-    bootstrap_extract_libdata(${YUNIROOT}/${GENLIBSTUB_FILE} ${sym})
-    include(${BUILDROOT}/libdata/${sym}.cmake)
+    # Instantiate libmetadata
+    include(${BUILDROOT}/libmeta.cmake)
 
     # Generate stublibs
     include(${BUILDROOT}/libgenorder.cmake)
@@ -685,6 +651,12 @@ function(bootstrap_cmd_genlibstub)
         message(STATUS 
             "WARNING: Ignored ${sym} for ${e} (Not used at all?)")
     endif()
+endfunction()
+
+function(bootstrap_cmd_genlibmeta)
+    bootstrap_run_scheme(LIBMETA_TO_CMAKE
+        ${GENLIBMETA_IN}
+        ${GENLIBMETA_OUT})
 endfunction()
 
 if(NOT BUILDROOT)
@@ -703,6 +675,8 @@ elseif(${OP} STREQUAL "BOOTSTRAP_CHECK")
     bootstrap_cmd_check()
 elseif(${OP} STREQUAL "GENLIBSTUB")
     bootstrap_cmd_genlibstub()
+elseif(${OP} STREQUAL "GENLIBMETA")
+    bootstrap_cmd_genlibmeta()
 else()
     message(FATAL_ERROR "Unknown OP: ${OP}")
 endif()

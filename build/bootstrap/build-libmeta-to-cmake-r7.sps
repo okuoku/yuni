@@ -26,7 +26,7 @@
  
 (define (calc-input-file)
   (define (usage)
-    (display "Usage: build-libmeta-to-cmake.sps <libfile.sls> <out.cmake>\n")
+    (display "Usage: build-libmeta-to-cmake.sps <liblist.scm> <out.cmake>\n")
     (exit #f))
   (let ((l (command-line)))
    (unless (= 3 (length l)) (usage))
@@ -118,9 +118,7 @@
         (loop acc (cdr imports))))
      acc)))
 
-;; Main
-(let* ((in (calc-input-file))
-       (out (calc-output-file)))
+(define (proc in p)
   (let ((code (file->sexp-list in)))
    (unless (and (pair? code) (list? code) (= 1 (length code)))
      (error "Invalid library format" in code))
@@ -130,42 +128,53 @@
           (exports (cdr (caddr lib)))
           (imports (cdr (cadddr lib)))
           (importlibs (strip-imports imports)))
-     (when (file-exists? out)
-       (delete-file out))
-     (call-with-output-file
-       out
-       (lambda (p)
-         (let ((libsym (libname->cmakesym name)))
-          ;; Existence check
-          (say p "set(libfilename_" libsym " \"" in "\")\n")
-          ;; Deps
-          (say p "set(libdeps_" libsym "\n")
-          (for-each (lambda (e)
-                      (say p "  "
-                           (libname->cmakesym e) "\n"))
-                    importlibs)
-          (say p ")\n")
-          ;; Exports
-          (say p "set(libexports_" libsym "\n")
-          (for-each (lambda (e)
-                      (say p "  " 
-                           (quotstr (libspec->string e))
-                           "\n"))
-                    exports)
-          (say p ")\n")
-          ;; Exportsyms (stripped)
-          (say p "set(libexportsyms_" libsym "\n")
-          (for-each (lambda (e)
-                      (say p "  " 
-                           (quotstr (libspec->string e))
-                           "\n"))
-                    (strip-rename exports))
-          (say p ")\n")
-          ;; Imports
-          (say p "set(libimports_" libsym "\n")
-          (for-each (lambda (e)
-                      (say p "  " 
-                           (quotstr (libspec->string e))
-                           "\n"))
-                    imports)
-          (say p ")\n")))))))
+
+     (let ((libsym (libname->cmakesym name)))
+      ;; Existence check
+      (say p "set(libfilename_" libsym " \"" in "\")\n")
+      ;; Deps
+      (say p "set(libdeps_" libsym "\n")
+      (for-each (lambda (e)
+                  (say p "  "
+                       (libname->cmakesym e) "\n"))
+                importlibs)
+      (say p ")\n")
+      ;; Exports
+      (say p "set(libexports_" libsym "\n")
+      (for-each (lambda (e)
+                  (say p "  " 
+                       (quotstr (libspec->string e))
+                       "\n"))
+                exports)
+      (say p ")\n")
+      ;; Exportsyms (stripped)
+      (say p "set(libexportsyms_" libsym "\n")
+      (for-each (lambda (e)
+                  (say p "  " 
+                       (quotstr (libspec->string e))
+                       "\n"))
+                (strip-rename exports))
+      (say p ")\n")
+      ;; Imports
+      (say p "set(libimports_" libsym "\n")
+      (for-each (lambda (e)
+                  (say p "  " 
+                       (quotstr (libspec->string e))
+                       "\n"))
+                imports)
+      (say p ")\n")))))
+
+
+;; Main
+(let ((in (calc-input-file))
+      (out (calc-output-file)))
+  (let ((lis (car (file->sexp-list in))))
+   (when (file-exists? out)
+     (delete-file out))
+   (call-with-output-file
+     out
+     (lambda (p)
+       (for-each
+         (lambda (e)
+           (proc e p))
+         lis)))))

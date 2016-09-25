@@ -1,4 +1,4 @@
-set(yuniroot ${CMAKE_CURRENT_LIST_DIR}/../..)
+set(yuniroot ${YUNI_BASEDIR})
 
 include(${yuniroot}/lib-runtime/lib-runtime.cmake)
 
@@ -56,10 +56,12 @@ set(bootparams
     -P ${CMAKE_CURRENT_LIST_DIR}/YuniBootstrap.cmake)
 
 # Run First bootstrap step
+message(STATUS "Generating library order list...")
 execute_process(
     COMMAND ${CMAKE_COMMAND} 
     -DOP=BOOTSTRAP_FIRST
     ${bootparams})
+message(STATUS "Done.")
 
 # Hook-up configuration dependencies
 configure_file(
@@ -82,6 +84,26 @@ include(${CMAKE_CURRENT_BINARY_DIR}/yunilibs.cmake.current)
 include(${CMAKE_CURRENT_BINARY_DIR}/libgenorder.cmake)
 include(${CMAKE_CURRENT_BINARY_DIR}/genmappings.cmake)
 
+# Generate yunilibs.scm to generate libmeta
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/yunilibs.scm
+    "(\n")
+foreach(e ${yunilibfiles})
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/yunilibs.scm 
+        "\"${YUNI_BASEDIR}/${e}\"\n")
+endforeach()
+file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/yunilibs.scm ")\n")
+
+# Generate libmeta.cmake
+message(STATUS "Generating library database...")
+execute_process(
+    COMMAND ${CMAKE_COMMAND}
+    -DGENLIBMETA_IN=${CMAKE_CURRENT_BINARY_DIR}/yunilibs.scm
+    -DGENLIBMETA_OUT=${CMAKE_CURRENT_BINARY_DIR}/libmeta.cmake
+    -DOP=GENLIBMETA
+    ${bootparams}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../..)
+message(STATUS "Done.")
+
 # Instantiate checker
 add_custom_target(yuni_bootstrap_check
     ${CMAKE_COMMAND}
@@ -97,13 +119,16 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
         message(FATAL_ERROR 
             "Order list unmatched(Run cmake again): ${sym} ${src}")
     endif()
+    set(_done ${CMAKE_CURRENT_BINARY_DIR}/done/${sym}.done)
     add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libdata/${sym}.cmake
+        OUTPUT ${_done}
         COMMAND ${CMAKE_COMMAND}
         -DOP=GENLIBSTUB
         -DGENLIBSTUB_FILE=${src}
         ${bootparams}
-        COMMENT "Yuni bootstrap... (${sym})"
+        COMMENT "Generate stub library... (${sym})"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${yuniroot}/${src} ${_done}
         DEPENDS ${yuniroot}/${src}
         ${CMAKE_CURRENT_LIST_DIR}/YuniBootstrap.cmake
         ${bootstrap_scripts})
@@ -124,7 +149,7 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
             list(APPEND outdata ${out})
         endif()
     endforeach()
-    list(APPEND outdata ${CMAKE_CURRENT_BINARY_DIR}/libdata/${sym}.cmake)
+    list(APPEND outdata ${_done})
 endforeach()
 add_custom_target(yuni_stublibs ALL DEPENDS ${outdata})
 add_dependencies(yuni_stublibs yuni_bootstrap_check)
