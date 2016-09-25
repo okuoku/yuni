@@ -60,9 +60,11 @@
     (datum->string spec)))
 
 (define (libname->cmakesym spec)
+  (define (conv elem)
+    (datum->string elem))
   (define (itr acc cur)
     (if (pair? cur)
-      (itr (string-append acc "_" (symbol->string (car cur)))
+      (itr (string-append acc "_" (conv (car cur)))
            (cdr cur))
       acc))
   (itr (symbol->string (car spec)) (cdr spec)))
@@ -93,6 +95,26 @@
       acc))
   (itr '() exports))
 
+(define (strip-import import)
+  (unless (pair? import)
+    (error "Unknown import format" import))
+
+  (let ((a (car import)))
+   (case a
+     ((only except rename for) (strip-import (cadr import)))
+     ;; FIXME: Handle primive for now (we should remove them)
+     ((primitive) #f)
+     (else import))))
+
+(define (strip-imports imports)
+  (let loop ((acc '()) (imports imports))
+   (if (pair? imports)
+     (let ((e (strip-import (car imports))))
+      (if e
+        (loop (cons e acc) (cdr imports))
+        (loop acc (cdr imports))))
+     acc)))
+
 ;; Main
 (let* ((in (calc-input-file))
        (out (calc-output-file)))
@@ -103,13 +125,23 @@
           (head (car lib))
           (name (cadr lib))
           (exports (cdr (caddr lib)))
-          (imports (cdr (cadddr lib))))
+          (imports (cdr (cadddr lib)))
+          (importlibs (strip-imports imports)))
      (when (file-exists? out)
        (delete-file out))
      (call-with-output-file
        out
        (lambda (p)
          (let ((libsym (libname->cmakesym name)))
+          ;; Existence check
+          (say p "set(libfilename_" libsym " \"" in "\")\n")
+          ;; Deps
+          (say p "set(libdeps_" libsym "\n")
+          (for-each (lambda (e)
+                      (say p "  "
+                           (libname->cmakesym e) "\n"))
+                    importlibs)
+          (say p ")\n")
           ;; Exports
           (say p "set(libexports_" libsym "\n")
           (for-each (lambda (e)
