@@ -152,7 +152,6 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
                     list(APPEND stubs ${maybe_alias})
                 endif()
             elseif(${impl} STREQUAL larceny)
-                list(APPEND stubs ${orig})
                 if(NOT ${orig} STREQUAL ${maybe_alias})
                     list(APPEND stubs ${maybe_alias})
                 endif()
@@ -167,12 +166,13 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
         -DOP=GENLIBSTUB
         -DGENLIBSTUB_FILE=${src}
         ${bootparams}
-        COMMENT "Generate stub library... (${sym})"
         COMMAND ${CMAKE_COMMAND} -E copy # Enforce touch
         ${yuniroot}/${src} ${_done}
         DEPENDS ${yuniroot}/${src}
         ${CMAKE_CURRENT_LIST_DIR}/YuniBootstrap.cmake
-        ${bootstrap_scripts})
+        ${bootstrap_scripts}
+        COMMENT "Generate stub library... (${sym})")
+
     # Deploy base .sls file into runtime dir
     foreach(e ${libgenorder_${sym}})
         if(${e} MATCHES "([^:]*):([^:]*):([^:]*)")
@@ -259,3 +259,5 @@ deploy_impl_specific_runtimes(
 
 # Decided bootstrap scheme impl.
 set(YUNI_BOOTSTRAP_USE "${YUNI_BOOTSTRAP_USE}" PARENT_SCOPE)
+
+include(${CMAKE_CURRENT_LIST_DIR}/package.cmake)

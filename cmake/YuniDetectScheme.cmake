@@ -139,7 +139,7 @@ if(WIN32)
         endif()
     endif()
 else()
-    detect_scheme(YUNI_LARCENY NAMES larceny)
+    detect_scheme(YUNI_LARCENY NAMES larceny.bin)
 endif()
 
 # Chez scheme

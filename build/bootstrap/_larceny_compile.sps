@@ -1,6 +1,6 @@
 (import (rnrs)
         (larceny compiler))
 
-(define file (cadr (command-line)))
+(define file (caddr (command-line)))
 
 (compile-file file)

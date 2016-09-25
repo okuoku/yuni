@@ -109,13 +109,13 @@ include(YuniDetectScheme)
 
 # Bootstrap
 # => yuni_bootstrap, YUNI_BOOTSTRAP_USE
+# => yuni_package, yuni_package_build
 add_subdirectory(build/bootstrap bootstrap) 
 
 # Generate yuni runners
 emit_yuni_runners()
 
 # Activation
-add_subdirectory(build/package package) # => yuni_package, yuni_package_build
 add_subdirectory(build/ffistub ffistub)
 
 # Options

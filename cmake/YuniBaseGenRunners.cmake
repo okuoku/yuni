@@ -164,7 +164,7 @@ function(emit_yunibase_runners)
             emit_vanilla_runner_sh(stable nmosh nmosh)
         endif()
         if(YUNIBASE_HAVE_LARCENY_CURRENT)
-            emit_vanilla_runner_sh(current larceny larceny)
+            emit_vanilla_runner_sh(current larceny larceny.bin)
         endif()
         if(YUNIBASE_HAVE_CHEZ_SCHEME_CURRENT)
             emit_vanilla_runner_sh0(current chez scheme chez-scheme)
@@ -200,7 +200,18 @@ endfunction()
 
 function(emit_tmpl_runwitharg_cmd_larceny outpath execpath args)
     file(WRITE "${outpath}.bat"
-        "@echo off\n\nset XX_SEMICOLON=;\nset progname=%1\nshift\nset LARCENY_ROOT=${YUNI_LARCENY_ROOT}\n\"${execpath}\" ${args} %progname% -- %1 %2 %3 %4 %5 %6 %7 %8 %9\n")
+        "@echo off\n\nset XX_SEMICOLON=;\nset LARCENY_ROOT=${YUNI_LARCENY_ROOT}\n\"${execpath}\" ${args} %1 -- %*\n")
+endfunction()
+
+function(emit_tmpl_runwitharg_sh_larceny outpath execpath args)
+    if(YUNI_WITH_YUNIBASE)
+        set(larceny_root ${YUNI_WITH_YUNIBASE}/current/larceny/bin)
+    else()
+        get_filename_component(larceny_root ${YUNI_LARCENY} PATH)
+    endif()
+    file(WRITE "${outpath}"
+        "#!/bin/sh\n\nLARCENY_ROOT=${larceny_root}\nexport LARCENY_ROOT\nexec ${execpath} -heap \$LARCENY_ROOT/larceny.heap ${args} \$1 -- \$*\n")
+    execute_process(COMMAND chmod +x ${outpath})
 endfunction()
 
 function(emit_tmpl_runwitharg_sh outpath execpath args)
@@ -274,9 +285,16 @@ function(emit_yunirunner flav varname cmdvar cmdname)
                     "${_argsstr}")
             endif()
         else()
-            emit_tmpl_runwitharg_sh(${out}
-                ${cmd}
-                "${_argsstr}")
+            if(${cmdvar} STREQUAL YUNI_LARCENY)
+                emit_tmpl_runwitharg_sh_larceny(${out}
+                    ${cmd}
+                    "${_argsstr}")
+            else()
+                emit_tmpl_runwitharg_sh(${out}
+                    ${cmd}
+                    "${_argsstr}")
+            endif()
+
         endif()
     endif()
 endfunction()
