@@ -5,6 +5,10 @@
 #  SKIPINSTALL: Skip installation phase for test
 #
 
+# Globals
+set(larceny_version "larceny-0.99-bin-native-ia32-win32")
+
+
 get_filename_component(_myroot ${CMAKE_CURRENT_LIST_DIR}/../.. ABSOLUTE)
 
 set(workdir ${CMAKE_CURRENT_BINARY_DIR}/work)
@@ -42,6 +46,7 @@ function(do_build_and_test_yuni bitness bootstrapuse)
         -DCMAKE_CXX_COMPILER=c:/msys64/${mingw}/bin/g++.exe
         -DYUNI_BOOTSTRAP_USE=${bootstrapuse}
         -DYUNI_IRON_SCHEME_ROOT=${workdir}/IronScheme
+        -DYUNI_LARCENY_ROOT=${workdir}/${larceny_version}
         ${kawa_arg}
         ${_myroot}
         RESULT_VARIABLE rr
@@ -147,6 +152,23 @@ function(install_sagittarius installer)
     endif()
 endfunction()
 
+function(install_larceny)
+    set(archive ${larceny_version}.zip)
+    message(STATUS "Download Larceny...")
+    download_installer(${archive})
+    message(STATUS "Extract Larceny...")
+    # Extract
+    execute_process(
+        COMMAND
+        ${CMAKE_COMMAND} -E tar xf
+        ${archive}
+        RESULT_VARIABLE rr
+        WORKING_DIRECTORY ${workdir})
+    if(rr)
+        message(WARNING "Failed to extract Larceny ${rr}")
+    endif()
+endfunction()
+
 function(install_ironscheme)
     set(archive "IronScheme-1.0.101-0fdbfcf.zip")
     message(STATUS "Download IronScheme...")
@@ -175,6 +197,7 @@ function(install32)
         install_gauche32()
         install_sagittarius(setup_sagittarius_0.7.8.exe) # 32bit
         install_ironscheme()
+        install_larceny()
         install_racket(32 racket-minimal-6.6-i386-win32.exe)
     endif()
 endfunction()
