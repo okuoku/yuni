@@ -217,7 +217,9 @@ function(deploy_impl_specific_runtime impl dirname)
                 out ${out})
             add_custom_command(
                 OUTPUT ${out}
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                # We could copy_if_different here but just wanted ensure
+                # "touch" will cause rebuild
+                COMMAND ${CMAKE_COMMAND} -E copy
                 ${in} ${out}
                 DEPENDS ${in})
             # message(STATUS "Runtime deploy: ${in} => ${out}")
