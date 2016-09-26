@@ -126,10 +126,15 @@ endforeach()
 
 add_custom_target(yunipreroll_racket)
 
-function(larceny_compile tgt src) # ARGN = deps
+function(calc_larceny_output_name var src)
     get_filename_component(srcbase ${src} PATH)
     get_filename_component(srcname ${src} NAME_WE)
     set(cachefile ${srcbase}/${srcname}.slfasl)
+    set(${var} ${cachefile} PARENT_SCOPE)
+endfunction()
+
+function(larceny_compile tgt src) # ARGN = deps
+    calc_larceny_output_name(cachefile ${src})
     set(_script ${CMAKE_CURRENT_LIST_DIR}/_larceny_compile.sps)
     add_custom_command(
         OUTPUT ${cachefile}
@@ -140,10 +145,15 @@ function(larceny_compile tgt src) # ARGN = deps
         DEPENDS ${cachefile})
 endfunction()
 
-function(racket_compile_dep dep tgt src) # ARGN = deps
+function(calc_racket_output_name var src)
     get_filename_component(srcbase ${src} PATH)
     get_filename_component(srcname ${src} NAME_WE)
     set(cachefile ${srcbase}/compiled/${srcname}.mzscheme_sls.zo)
+    set(${var} ${cachefile} PARENT_SCOPE)
+endfunction()
+
+function(racket_compile_dep dep tgt src) # ARGN = deps
+    calc_racket_output_name(cachefile ${src})
     add_custom_command(
         OUTPUT ${cachefile}
         COMMAND ${YUNIBUILD_RACKET} --compile ${src}
@@ -161,10 +171,68 @@ function(racket_compile tgt src)
     racket_compile_dep(yunipreroll_racket ${tgt} ${src} ${ARGN})
 endfunction()
 
+function(calc_depoutputs var impl tgt)
+    set(out)
+    set(deps ${libs_${impl}_${tgt}_deplibs})
+    foreach(sym ${deps})
+        if(NOT yunioutput_${impl}_${sym})
+            message(STATUS "Ignored for dep ${tgt}. ${impl} ${sym}")
+        else()
+            message(STATUS "Dep ${impl} ${tgt} += ${yunioutput_${impl}_${sym}}")
+        endif()
+        list(APPEND out ${yunioutput_${impl}_${sym}})
+    endforeach()
+    set(${var} ${out} PARENT_SCOPE)
+endfunction()
+
 ## Phase2: Instantiate build rules
 ##      yunicompile_tgt_<impl> => list of tgts
 foreach(impl ${compile_impls})
     set(yunicompile_tgt_${impl})
+    ## Phase2.0: Calc output name for libsyms
+    foreach(sym ${libgenorder})
+        set(request_build OFF)
+        set(request_build OFF)
+        foreach(e ${libgenorder_${sym}})
+            if(${e} MATCHES "([^:]*):([^:]*):([^:]*)")
+                set(buildimpl ${CMAKE_MATCH_1})
+                if(${buildimpl} STREQUAL ${impl})
+                    set(request_build ON)
+                endif()
+            endif()
+        endforeach()
+        if(request_build)
+            if(${impl} STREQUAL racket)
+                # convert source path .sls => .mzscheme.sls
+                set(basepath ${libs_${impl}_${sym}_file})
+                string(REGEX REPLACE "\\.sls" ".mzscheme.sls"
+                    src ${basepath})
+                calc_racket_output_name(yunioutput_${impl}_${sym} ${src})
+            elseif(${impl} STREQUAL larceny)
+                set(src ${libs_${impl}_${sym}_file})
+                calc_larceny_output_name(yunioutput_${impl}_${sym} ${src})
+            endif()
+
+            # Calc output name for alias libraries
+            if(libs_${impl}_${sym}_alias_of)
+                set(tgt ${libs_${impl}_${sym}_alias_of})
+                message(STATUS "Alias ${tgt} (from ${impl} ${sym})")
+                if(${impl} STREQUAL racket)
+                    # Calc alias path using libsym
+                    string(REGEX REPLACE "_" "/" pthbase ${tgt})
+                    set(aliassrc ${YUNIBASE_YUNIFIED_PATH}/runtime/racket/${pthbase}.mzscheme.sls)
+                    calc_racket_output_name(yunioutput_${impl}_${tgt} ${aliassrc})
+                elseif(${impl} STREQUAL larceny)
+                    set(src ${libs_${impl}_${sym}_file})
+                    # Calc alias path using libsym
+                    string(REGEX REPLACE "_" "/" pthbase ${tgt})
+                    set(aliassrc ${YUNIBASE_YUNIFIED_PATH}/runtime/larceny/${pthbase}.sls)
+                    calc_larceny_output_name(yunioutput_${impl}_${tgt} ${src})
+                endif()
+            endif()
+        endif()
+    endforeach()
+
     ## Phase2.1: Instantiate actual build rules
     ##  yunicompile_<impl>_<libsym>
     foreach(sym ${libgenorder})
@@ -184,75 +252,53 @@ foreach(impl ${compile_impls})
                 set(basepath ${libs_${impl}_${sym}_file})
                 string(REGEX REPLACE "\\.sls" ".mzscheme.sls"
                     src ${basepath})
-                racket_compile(yunicompile_${impl}_${sym} ${src} ${yunisource})
+                calc_depoutputs(deps ${impl} ${sym})
+                racket_compile(yunicompile_${impl}_${sym} ${src} ${yunisource}
+                    ${deps})
                 list(APPEND yunicompile_tgt_${impl} yunicompile_${impl}_${sym})
                 check_bootstrap(${impl} yunicompile_${impl}_${sym})
                 # message(STATUS "Build: ${src} => yunicompile_${impl}_${sym}")
                 if(libs_${impl}_${sym}_alias_of)
                     # Add alias target too here.
                     set(tgt ${libs_${impl}_${sym}_alias_of})
+                    calc_racket_output_name(origout ${src})
                     # Calc alias path using libsym
                     string(REGEX REPLACE "_" "/" pthbase ${tgt})
                     set(aliassrc ${YUNIBASE_YUNIFIED_PATH}/runtime/racket/${pthbase}.mzscheme.sls)
                     racket_compile(yunicompile_${impl}_${tgt}
-                        ${aliassrc} ${yunisource})
+                        ${aliassrc} ${yunisource} ${origout})
                     list(APPEND yunicompile_tgt_${impl} 
                         yunicompile_${impl}_${tgt})
                     # message(STATUS "Alias Build: ${aliassrc} => yunicompile_${impl}_${tgt}")
                 endif()
             elseif(${impl} STREQUAL larceny)
                 set(src ${libs_${impl}_${sym}_file})
-                larceny_compile(yunicompile_${impl}_${sym} ${src} ${yunisource})
+                calc_depoutputs(deps ${impl} ${sym})
+                larceny_compile(yunicompile_${impl}_${sym} ${src} 
+                    ${yunisource} ${deps})
                 list(APPEND yunicompile_tgt_${impl}
                     yunicompile_${impl}_${sym})
                 if(libs_${impl}_${sym}_alias_of)
                     # Add alias target too here.
                     set(tgt ${libs_${impl}_${sym}_alias_of})
+                    calc_larceny_output_name(origout ${src})
                     # Calc alias path using libsym
                     string(REGEX REPLACE "_" "/" pthbase ${tgt})
                     set(aliassrc ${YUNIBASE_YUNIFIED_PATH}/runtime/larceny/${pthbase}.sls)
                     larceny_compile(yunicompile_${impl}_${tgt}
-                        ${aliassrc} ${yunisource})
+                        ${aliassrc} ${yunisource} ${origout})
                     list(APPEND yunicompile_tgt_${impl} 
                         yunicompile_${impl}_${tgt})
                 endif()
             endif()
         endif()
     endforeach()
-
-    ## Phase2.2: Establish build dependencies
-    foreach(sym ${libgenorder})
-        if(TARGET yunicompile_${impl}_${sym})
-            set(depfiles)
-            if(libs_${impl}_${sym}_deplibs)
-                foreach(dep ${libs_${impl}_${sym}_deplibs})
-                    if(${impl} STREQUAL racket)
-                        if(${dep} STREQUAL scheme_base)
-                            set(dep scheme_base0)
-                        elseif(${dep} STREQUAL scheme_file)
-                            set(dep scheme_file0)
-                        endif()
-                    endif()
-                    if(TARGET yunicompile_${impl}_${dep})
-                        # message(STATUS "dep(${sym}): ${dep}")
-                        add_dependencies(yunicompile_${impl}_${sym}
-                            yunicompile_${impl}_${dep})
-                    else()
-                        # message(STATUS "dep(${sym}): ${dep} NOTFOUND")
-                    endif()
-                endforeach()
-            endif()
-            # Alias libs should be built *after* original(impl. specific name)
-            if(libs_${impl}_${sym}_alias_of)
-                set(tgt ${libs_${impl}_${sym}_alias_of})
-                add_dependencies(yunicompile_${impl}_${tgt}
-                    yunicompile_${impl}_${sym})
-            endif()
-        endif()
-    endforeach()
 endforeach()
 
 # Phase3: Preroll/Fixup
+# FIXME: We should have this phase in front of phase2.x instead
+#        (Currently we don't have to do so because Racket fixup should
+#         take care dependencies too)
 foreach(impl ${compile_impls})
     if(${impl} STREQUAL racket)
         foreach(fil ${lib_runtime_RACKET})
