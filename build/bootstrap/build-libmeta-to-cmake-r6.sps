@@ -103,7 +103,7 @@
    (case a
      ((only except rename for) (strip-import (cadr import)))
      ;; FIXME: Handle primive for now (we should remove them)
-     ((primitive) #f)
+     ((primitives) #f)
      (else import))))
 
 (define (strip-imports imports)
