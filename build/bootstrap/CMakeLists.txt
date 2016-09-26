@@ -187,6 +187,9 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${yuniroot}/${src} ${out}
                 DEPENDS ${yuniroot}/${src})
+            set(yunisource_${impl}_${sym}
+                ${yuniroot}/${src} ${out})
+            # message(STATUS "Deploy ${out}")
             list(APPEND outdata ${out})
         endif()
     endforeach()
@@ -217,7 +220,7 @@ function(deploy_impl_specific_runtime impl dirname)
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${in} ${out}
                 DEPENDS ${in})
-            message(STATUS "Runtime deploy: ${in} => ${out}")
+            # message(STATUS "Runtime deploy: ${in} => ${out}")
             list(APPEND destfiles ${out})
         endforeach()
     endif()

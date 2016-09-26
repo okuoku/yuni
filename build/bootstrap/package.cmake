@@ -126,7 +126,7 @@ endforeach()
 
 add_custom_target(yunipreroll_racket)
 
-function(larceny_compile tgt src)
+function(larceny_compile tgt src) # ARGN = deps
     get_filename_component(srcbase ${src} PATH)
     get_filename_component(srcname ${src} NAME_WE)
     set(cachefile ${srcbase}/${srcname}.slfasl)
@@ -134,31 +134,31 @@ function(larceny_compile tgt src)
     add_custom_command(
         OUTPUT ${cachefile}
         COMMAND ${YUNIBUILD_LARCENY} ${_script} ${src}
-        DEPENDS ${src} ${_script} yuni_bootstrap 
+        DEPENDS ${src} ${_script} yuni_bootstrap  ${ARGN}
         COMMENT "Compile(Larceny, ${tgt})...")
     add_custom_target(${tgt} ALL
         DEPENDS ${cachefile})
 endfunction()
 
-function(racket_compile_dep dep tgt src)
+function(racket_compile_dep dep tgt src) # ARGN = deps
     get_filename_component(srcbase ${src} PATH)
     get_filename_component(srcname ${src} NAME_WE)
     set(cachefile ${srcbase}/compiled/${srcname}.mzscheme_sls.zo)
     add_custom_command(
         OUTPUT ${cachefile}
         COMMAND ${YUNIBUILD_RACKET} --compile ${src}
-        DEPENDS ${src} yuni_bootstrap ${dep}
+        DEPENDS ${src} yuni_bootstrap ${dep} ${ARGN}
         COMMENT "Compile(Racket, ${tgt})...")
     add_custom_target(${tgt} ALL
         DEPENDS ${cachefile})
 endfunction()
 
 function(racket_compile_preroll tgt src)
-    racket_compile_dep("" ${tgt} ${src})
+    racket_compile_dep("" ${tgt} ${src} ${ARGN})
 endfunction()
 
 function(racket_compile tgt src)
-    racket_compile_dep(yunipreroll_racket ${tgt} ${src})
+    racket_compile_dep(yunipreroll_racket ${tgt} ${src} ${ARGN})
 endfunction()
 
 ## Phase2: Instantiate build rules
@@ -178,12 +178,13 @@ foreach(impl ${compile_impls})
             endif()
         endforeach()
         if(request_build)
+            set(yunisource ${yunisource_${impl}_${sym}})
             if(${impl} STREQUAL racket)
                 # convert source path .sls => .mzscheme.sls
                 set(basepath ${libs_${impl}_${sym}_file})
                 string(REGEX REPLACE "\\.sls" ".mzscheme.sls"
                     src ${basepath})
-                racket_compile(yunicompile_${impl}_${sym} ${src})
+                racket_compile(yunicompile_${impl}_${sym} ${src} ${yunisource})
                 list(APPEND yunicompile_tgt_${impl} yunicompile_${impl}_${sym})
                 check_bootstrap(${impl} yunicompile_${impl}_${sym})
                 # message(STATUS "Build: ${src} => yunicompile_${impl}_${sym}")
@@ -194,14 +195,14 @@ foreach(impl ${compile_impls})
                     string(REGEX REPLACE "_" "/" pthbase ${tgt})
                     set(aliassrc ${YUNIBASE_YUNIFIED_PATH}/runtime/racket/${pthbase}.mzscheme.sls)
                     racket_compile(yunicompile_${impl}_${tgt}
-                        ${aliassrc})
+                        ${aliassrc} ${yunisource})
                     list(APPEND yunicompile_tgt_${impl} 
                         yunicompile_${impl}_${tgt})
                     # message(STATUS "Alias Build: ${aliassrc} => yunicompile_${impl}_${tgt}")
                 endif()
             elseif(${impl} STREQUAL larceny)
                 set(src ${libs_${impl}_${sym}_file})
-                larceny_compile(yunicompile_${impl}_${sym} ${src})
+                larceny_compile(yunicompile_${impl}_${sym} ${src} ${yunisource})
                 list(APPEND yunicompile_tgt_${impl}
                     yunicompile_${impl}_${sym})
                 if(libs_${impl}_${sym}_alias_of)
@@ -211,7 +212,7 @@ foreach(impl ${compile_impls})
                     string(REGEX REPLACE "_" "/" pthbase ${tgt})
                     set(aliassrc ${YUNIBASE_YUNIFIED_PATH}/runtime/larceny/${pthbase}.sls)
                     larceny_compile(yunicompile_${impl}_${tgt}
-                        ${aliassrc})
+                        ${aliassrc} ${yunisource})
                     list(APPEND yunicompile_tgt_${impl} 
                         yunicompile_${impl}_${tgt})
                 endif()
