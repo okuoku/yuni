@@ -105,7 +105,7 @@ execute_process(
 message(STATUS "Done.")
 
 # Instantiate checker
-add_custom_target(yuni_bootstrap_check
+add_custom_target(yuni_bootstrap_check ALL
     ${CMAKE_COMMAND}
     -DOP=BOOTSTRAP_CHECK
     ${bootparams}
@@ -193,8 +193,6 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
     list(APPEND outdata ${_done})
 endforeach()
 add_custom_target(yuni_stublibs ALL DEPENDS ${outdata})
-add_dependencies(yuni_stublibs yuni_bootstrap_check)
-
 add_dependencies(yuni_bootstrap yuni_stublibs)
 
 # Generate impl => libdirlist
