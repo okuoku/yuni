@@ -620,7 +620,7 @@ function(bootstrap_cmd_check)
     if(require_rebuild)
         message(FATAL_ERROR "Inconsistent builddir state. Rerun CMake.")
     else()
-        message(STATUS "Yuni library build system -- check done.")
+        # message(STATUS "Yuni library build system -- check done.")
     endif()
 endfunction()
 
