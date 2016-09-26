@@ -15,6 +15,8 @@
     (assertion-violation 'try "Cannot create FASL" file fasl))
   (let ((a (file-modification-time file))
         (b (file-modification-time fasl)))
+    ;(display (list 'file: a)) (newline)
+    ;(display (list 'fasl: b)) (newline)
     (when (equal? a b)
       (display (list "Retry..." a)) (newline)
       (set! retry-limit (- retry-limit 1))
