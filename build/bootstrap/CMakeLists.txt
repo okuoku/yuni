@@ -187,8 +187,6 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${yuniroot}/${src} ${out}
                 DEPENDS ${yuniroot}/${src})
-            set(yunisource_${impl}_${sym}
-                ${yuniroot}/${src} ${out})
             # message(STATUS "Deploy ${out}")
             list(APPEND outdata ${out})
         endif()

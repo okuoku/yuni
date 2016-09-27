@@ -270,14 +270,13 @@ foreach(impl ${compile_impls})
             endif()
         endforeach()
         if(request_build)
-            set(yunisource ${yunisource_${impl}_${sym}})
             if(${impl} STREQUAL racket)
                 # convert source path .sls => .mzscheme.sls
                 set(basepath ${libs_${impl}_${sym}_file})
                 string(REGEX REPLACE "\\.sls" ".mzscheme.sls"
                     src ${basepath})
                 calc_depoutputs(deps ${impl} ${sym})
-                racket_compile(yunicompile_${impl}_${sym} ${src} ${yunisource}
+                racket_compile(yunicompile_${impl}_${sym} ${src} 
                     ${deps})
                 list(APPEND yunicompile_tgt_${impl} yunicompile_${impl}_${sym})
                 check_bootstrap(${impl} yunicompile_${impl}_${sym})
@@ -290,7 +289,7 @@ foreach(impl ${compile_impls})
                     string(REGEX REPLACE "_" "/" pthbase ${tgt})
                     set(aliassrc ${YUNIBASE_YUNIFIED_PATH}/runtime/racket/${pthbase}.mzscheme.sls)
                     racket_compile(yunicompile_${impl}_${tgt}
-                        ${aliassrc} ${yunisource} ${origout})
+                        ${aliassrc} ${origout})
                     list(APPEND yunicompile_tgt_${impl} 
                         yunicompile_${impl}_${tgt})
                     # message(STATUS "Alias Build: ${aliassrc} => yunicompile_${impl}_${tgt}")
@@ -298,8 +297,7 @@ foreach(impl ${compile_impls})
             elseif(${impl} STREQUAL larceny)
                 set(src ${libs_${impl}_${sym}_file})
                 calc_depoutputs(deps ${impl} ${sym})
-                larceny_compile(yunicompile_${impl}_${sym} ${src} 
-                    ${yunisource} ${deps})
+                larceny_compile(yunicompile_${impl}_${sym} ${src} ${deps})
                 list(APPEND yunicompile_tgt_${impl}
                     yunicompile_${impl}_${sym})
                 if(libs_${impl}_${sym}_alias_of)
@@ -310,7 +308,7 @@ foreach(impl ${compile_impls})
                     string(REGEX REPLACE "_" "/" pthbase ${tgt})
                     set(aliassrc ${YUNIBASE_YUNIFIED_PATH}/runtime/larceny/${pthbase}.sls)
                     larceny_compile(yunicompile_${impl}_${tgt}
-                        ${aliassrc} ${yunisource} ${origout})
+                        ${aliassrc} ${origout})
                     list(APPEND yunicompile_tgt_${impl} 
                         yunicompile_${impl}_${tgt})
                 endif()
