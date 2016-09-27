@@ -184,7 +184,7 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
                 out ${src})
             add_custom_command(
                 OUTPUT ${out} 
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                COMMAND ${CMAKE_COMMAND} -E copy
                 ${yuniroot}/${src} ${out}
                 DEPENDS ${yuniroot}/${src})
             # message(STATUS "Deploy ${out}")
