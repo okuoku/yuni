@@ -12,6 +12,7 @@ set(larceny_version "larceny-0.99-bin-native-ia32-win32")
 get_filename_component(_myroot ${CMAKE_CURRENT_LIST_DIR}/../.. ABSOLUTE)
 
 set(workdir ${CMAKE_CURRENT_BINARY_DIR}/work)
+set(ENV{CTEST_OUTPUT_ON_FAILURE} 1)
 
 message(STATUS "workdir = ${workdir}")
 

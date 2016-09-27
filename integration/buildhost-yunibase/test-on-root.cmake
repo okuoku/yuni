@@ -13,6 +13,8 @@ set(_yunified /yunified)
 set(_vanilla /vanilla)
 set(_mypath ${CMAKE_CURRENT_LIST_DIR})
 
+set(ENV{CTEST_OUTPUT_ON_FAILURE} 1)
+
 get_filename_component(_mysrc ${_mypath}/../.. ABSOLUTE)
 
 function(execute_step str)
