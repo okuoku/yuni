@@ -67,8 +67,13 @@ execute_step("Configure"
 message(STATUS "Build...")
 
 if(EXISTS ${_buildroot}/Makefile)
+    if(VERBOSE)
+        set(para_count "")
+    else()
+        set(para_count "-j16")
+    endif()
     execute_step("Build(Make)"
-        make -j16
+        make ${para_count}
         WORKING_DIRECTORY ${_buildroot})
 else()
     execute_step("Build"
