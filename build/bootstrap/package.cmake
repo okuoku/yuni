@@ -149,10 +149,11 @@ endfunction()
 
 function(larceny_compile tgt src) # ARGN = deps
     calc_larceny_output_name(cachefile ${src})
+    file(TO_NATIVE_PATH ${src} nsrc)
     set(_script ${CMAKE_CURRENT_LIST_DIR}/_larceny_compile.sps)
     add_custom_command(
         OUTPUT ${cachefile}
-        COMMAND ${YUNIBUILD_LARCENY} ${_script} ${src}
+        COMMAND ${YUNIBUILD_LARCENY} ${_script} ${nsrc}
         DEPENDS ${src} ${_script} yuni_bootstrap  ${ARGN}
         COMMENT "Compile(Larceny, ${tgt})...")
     add_custom_target(${tgt} ALL
