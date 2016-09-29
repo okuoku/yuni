@@ -16,20 +16,7 @@ macro(check_impl var nam)
         set(YUNITEST_${var} ${_pth})
         message(STATUS "test: ${var} = ${_pth}")
     else()
-        message(STATUS "test: ${var} not found (${_pth})")
-    endif()
-
-    # Boot
-    if(WIN32)
-        set(_pth ${YUNI_YUNIBOOT_PATH}/${nam}.bat)
-    else()
-        set(_pth ${YUNI_YUNIBOOT_PATH}/${nam})
-    endif()
-    if(EXISTS ${_pth})
-        set(YUNIBOOTTEST_${var} ${_pth})
-        message(STATUS "test(bootstrap): ${var} = ${_pth}")
-    else()
-        message(STATUS "test(bootstrap): ${var} not found (${_pth})")
+        # message(STATUS "test: ${var} not found (${_pth})")
     endif()
 endmacro()
 
@@ -84,7 +71,7 @@ if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86$")
 endif()
 
 function(test_negative prefix)
-    if(YUNIBOOTTEST_${prefix})
+    if(YUNITEST_${prefix})
         add_test(NAME "SanityNegative-${prefix}"
             COMMAND ${CMAKE_COMMAND} -DPROG=${YUNITEST_${prefix}}
             -DARG=${CMAKE_CURRENT_LIST_DIR}/_negative.sps
@@ -93,14 +80,6 @@ function(test_negative prefix)
             COMMAND ${CMAKE_COMMAND} -DPROG=${YUNITEST_${prefix}}
             -DARG=${CMAKE_CURRENT_LIST_DIR}/_negative2.txt
             -P ${CMAKE_CURRENT_LIST_DIR}/negative.cmake)
-    endif()
-endfunction()
-
-function(test_with_boot prefix fil)
-    if(YUNIBOOTTEST_${prefix})
-        add_test(NAME "yuniboot-${prefix}-${fil}"
-            COMMAND ${YUNIBOOTTEST_${prefix}} ${fil}
-            WORKING_DIRECTORY ${YUNI_BASEDIR})
     endif()
 endfunction()
 
