@@ -28,7 +28,8 @@ Implementations with FFI compatibility layer:
  * [Guile](http://www.gnu.org/software/guile/) 2.0 or later
  * [Vicare](http://marcomaggi.github.io/vicare.html)
  * [Chicken](http://www.call-cc.org/) interpreter with `r7rs` egg
- * [Gambit](http://gambitscheme.org/) with experimental R5RS support
+ * [Larceny](http://larcenists.org/)
+ * [Gambit](http://gambitscheme.org/) with experimental R5RS support(BSD3/GPL2+)
  * [ChezScheme](https://github.com/cisco/ChezScheme)
  * [Picrin](https://github.com/picrin-scheme/picrin) with yuniffi patch
 
@@ -36,8 +37,7 @@ Bootstrapped, but no FFI yet:
 
  * [IronScheme](https://github.com/leppie/IronScheme)
  * [Kawa](http://www.gnu.org/software/kawa/)
- * [Larceny](http://larcenists.org/) - Lacks non-movable bytevectors #46
- * [MIT/GNU Scheme](https://www.gnu.org/software/mit-scheme/) with experimental R5RS support
+ * [MIT/GNU Scheme](https://www.gnu.org/software/mit-scheme/) with experimental R5RS support(BSD3/GPL2+)
 
 ## Build
 
