@@ -387,6 +387,11 @@ function(bootstrap_GenR7RS_alias impl baselibname tolibname sls)
     bootstrap_libname_to_sexp(fromname "${baselibname}")
     bootstrap_libname_to_sexp(myname "${tolibname}")
     bootstrap_calc_r7rs_libext(libext ${impl})
+    if(${impl} STREQUAL chicken)
+        set(maybe_schemebase "(scheme base)")
+    else()
+        set(maybe_schemebase)
+    endif()
     set(outname ${STUBROOT}/${impl}/${outpath}.${libext})
     set(runtimename ${RUNTIMEROOT}/${impl}/${outpath}.${libext})
     if(${impl} STREQUAL picrin)
@@ -405,11 +410,11 @@ function(bootstrap_GenR7RS_alias impl baselibname tolibname sls)
         file(WRITE ${outname}
             "(define-library ${myname}
 (export\n${exports})
-(import ${fromname}))\n")
+(import ${maybe_schemebase} ${fromname}))\n")
         file(WRITE ${runtimename}
             "(define-library ${myname}
 (export\n${exports})
-(import ${fromname}))\n")
+(import ${maybe_schemebase} ${fromname}))\n")
     endif()
 endfunction()
 
