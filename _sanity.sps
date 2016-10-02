@@ -8,6 +8,7 @@
         (yuni async) (yuni core) 
         ; FIXME: Disable shorten library for now...
         ; (yuni base shorten)
+        (yuni compat ident)
         (yuni base match)
         (yuni core)
         (yuni base dispatch)
@@ -378,5 +379,7 @@
 
 (miniread-tests)
 (for-each verify-file test-files)
+
+(check-equal #t (symbol? (ident-impl)))
 
 (check-finish)

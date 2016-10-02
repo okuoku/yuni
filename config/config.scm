@@ -40,6 +40,7 @@
     (chez-yuni => yuni)
     (chez-r7b => r7b-compat))
   (compat-ironscheme
+    (ironscheme-yuni => yuni)
     (ironscheme-r7b => r7b-compat))
   (compat-nmosh
     (nmosh-yuni => yuni)
