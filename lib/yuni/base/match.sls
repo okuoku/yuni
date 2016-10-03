@@ -1,5 +1,6 @@
 (library (yuni base match)
-         (export match ... _)
+         (export match ... _ =>
+                 quote quasiquote = and or not set!)
          (import (yuni scheme))
          
 ;;;; match.scm -- portable hygienic pattern matcher
