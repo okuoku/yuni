@@ -62,6 +62,7 @@ function(do_build_and_test_yuni bitness bootstrapuse)
     execute_process(
         COMMAND ${CMAKE_COMMAND}
         --build .
+        -- -j1
         RESULT_VARIABLE rr
         WORKING_DIRECTORY ${workdir})
 
