@@ -86,8 +86,7 @@ detect_scheme(YUNI_GOSH NAMES gosh)
 if(NOT WIN32)
     detect_scheme(YUNI_GAUCHE_PACKAGE NAMES gauche-package)
 else(YUNI_GCC)
-    # 0.9.4 gauche-package does not work yet.
-    # detect_scheme(YUNI_GAUCHE_PACKAGE NAMES gauche-package)
+    detect_scheme(YUNI_GAUCHE_PACKAGE NAMES gauche-package)
 endif()
 
 # Guile
