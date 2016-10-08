@@ -9,21 +9,17 @@ if(YUNI_GOSH AND YUNI_GAUCHE_PACKAGE)
         ${CMAKE_CURRENT_LIST_DIR}/yuniffi.c)
     set(stubfile
         ${CMAKE_CURRENT_LIST_DIR}/yuniffilib.stub)
+    set(callgenstub
+        ${CMAKE_CURRENT_BINARY_DIR}/callgenstub.scm)
     include_directories(${CMAKE_CURRENT_LIST_DIR}/../include
         ${CMAKE_CURRENT_LIST_DIR})
-    # FIXME: Use separate_arguments()
-    if(WIN32)
-        set(cgen "\"cgen-genstub \\\"${stubfile}\\\"\"")
-    else()
-        set(cgen "cgen-genstub \\\"${stubfile}\\\"")
-    endif()
+    configure_file(${CMAKE_CURRENT_LIST_DIR}/callgenstub.scm.in
+        ${callgenstub} @ONLY)
     add_custom_command(OUTPUT yuniffilib.c
         COMMAND ${YUNI_GOSH}
-        -b
-        -E "use gauche.cgen.stub"
-        -E "${cgen}"
-        -E exit
+        ${callgenstub}
         DEPENDS 
+        callgenstub.scm.in
         ${stubfile})
     add_custom_command(OUTPUT ${output_name}
         COMMAND ${YUNI_GAUCHE_PACKAGE} compile
