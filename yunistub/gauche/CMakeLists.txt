@@ -5,26 +5,32 @@ if(YUNI_GOSH AND YUNI_GAUCHE_PACKAGE)
         set(module_sufx "so")
     endif()
     set(output_name ${CMAKE_CURRENT_BINARY_DIR}/yuniffi.${module_sufx})
-    set(callgenstub ${CMAKE_CURRENT_BINARY_DIR}/call-genstub.scm)
     set(srcs
         ${CMAKE_CURRENT_LIST_DIR}/yuniffi.c)
     set(stubfile
         ${CMAKE_CURRENT_LIST_DIR}/yuniffilib.stub)
     include_directories(${CMAKE_CURRENT_LIST_DIR}/../include
         ${CMAKE_CURRENT_LIST_DIR})
-
-    file(WRITE ${callgenstub}
-        "(use gauche.cgen.stub)\n(cgen-genstub \"${stubfile}\")\n")
+    # FIXME: Use separate_arguments()
+    if(WIN32)
+        set(cgen "\"cgen-genstub \\\"${stubfile}\\\"\"")
+    else()
+        set(cgen "cgen-genstub \\\"${stubfile}\\\"")
+    endif()
     add_custom_command(OUTPUT yuniffilib.c
-        COMMAND ${YUNI_GOSH} ${callgenstub}
+        COMMAND ${YUNI_GOSH}
+        -b
+        -E "use gauche.cgen.stub"
+        -E "${cgen}"
+        -E exit
         DEPENDS 
-        ${stubfile}
-        ${callgenstub})
+        ${stubfile})
     add_custom_command(OUTPUT ${output_name}
         COMMAND ${YUNI_GAUCHE_PACKAGE} compile
         --cppflags=-I${CMAKE_CURRENT_LIST_DIR}/../include
-        # HACK!
+        # HACK! (to add 2 include paths)
         --cflags=-I${CMAKE_CURRENT_LIST_DIR}
+        --cc=${CMAKE_C_COMPILER}
         yuniffi
         ${srcs}
         yuniffilib.c
