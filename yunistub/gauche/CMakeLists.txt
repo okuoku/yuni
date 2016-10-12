@@ -1,4 +1,8 @@
 if(YUNI_GOSH AND YUNI_GAUCHE_PACKAGE)
+    if(MSVC)
+        # FIXME: Ignore MSVC based build for now
+        return()
+    endif()
     if(CYGWIN OR WIN32)
         set(module_sufx "dll")
     else()
