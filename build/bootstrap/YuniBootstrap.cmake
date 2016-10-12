@@ -9,6 +9,7 @@
 #  BUILDROOT: Full path to metadata
 #  STUBROOT: Full path to stublib
 #  RUNTIMEROOT: Full path to runtime
+#  CONFIGROOT: Full path to config-time generated libraries
 #
 #  GENLIBSTUB_FILE: Relative path against YUNIROOT for GENLIBSTUB
 #
@@ -74,10 +75,12 @@ function(bootstrap_collect_sls var) # Generate library file list
     set(sls)
     foreach(e ${libdirs})
         file(GLOB_RECURSE fns
-            RELATIVE ${YUNIROOT}
             ${YUNIROOT}/${e}/*.sls)
         list(APPEND sls ${fns})
     endforeach()
+    # Add configroot
+    file(GLOB_RECURSE fns ${CONFIGROOT}/*.sls)
+    list(APPEND sls ${fns})
     set(${var} ${sls} PARENT_SCOPE)
 endfunction()
 
@@ -114,16 +117,22 @@ endfunction()
 function(bootstrap_libpath_strip var pth)
     set(rootname)
     foreach(root ${libdirs})
-        if(${pth} MATCHES "${root}/([^.]*).*")
+        if(${pth} MATCHES "${YUNIROOT}/${root}/([^.]*).*")
             set(rootname ${CMAKE_MATCH_1})
             break()
         endif()
     endforeach()
-    if(rootname)
-        set(${var} ${rootname} PARENT_SCOPE)
-    else()
-        message(FATAL_ERROR "Unknown rootpath for .sls ${pth}")
+
+    if(NOT rootname)
+        # Second chance for configroot
+        if(${pth} MATCHES "${CONFIGROOT}/([^.]*).*")
+            set(rootname ${CMAKE_MATCH_1})
+        else()
+            message(FATAL_ERROR "Unknown rootpath for .sls ${pth}")
+        endif()
     endif()
+
+    set(${var} ${rootname} PARENT_SCOPE)
 endfunction()
 
 function(bootstrap_path_to_libsym var pth)
@@ -140,7 +149,7 @@ function(bootstrap_filter_includepath inoutvar impl)
         set(${inoutvar} ${out} PARENT_SCOPE)
     elseif(${impl} STREQUAL kawa)
         # Use absolute paths for kawa
-        set(pth ${YUNIROOT}/${input})
+        set(pth ${input})
         set(${inoutvar} ${pth} PARENT_SCOPE)
     endif()
 endfunction()
@@ -194,19 +203,22 @@ function(bootstrap_gen_librequest)
         endforeach()
     endforeach()
 
-    # Generate libgenorder.cmake
+    # Generate libgenorder.cmake and collect libs for _yuniall
     file(WRITE ${BUILDROOT}/libgenorder.cmake
         "set(libgenorder \"${libsym}\")\n")
     set(yuniall)
     foreach(e ${yunilibfiles})
+        bootstrap_libpath_strip(libname ${e})
         bootstrap_path_to_libsym(sym ${e})
         file(APPEND ${BUILDROOT}/libgenorder.cmake
             "set(libgenorder_${sym}_SOURCE \"${e}\")\n")
         file(APPEND ${BUILDROOT}/libgenorder.cmake
+            "set(libgenorder_${sym}_RELSOURCE \"${libname}.sls\")\n")
+        file(APPEND ${BUILDROOT}/libgenorder.cmake
             "set(libgenorder_${sym} \"${libgenorder_${sym}}\")\n")
         bootstrap_libsym_split(first bogus ${sym})
         if(${first} STREQUAL "yuni")
-            bootstrap_libpath_strip(libname ${e})
+            # We can ignore yuniconfig here
             string(REGEX REPLACE "/" ";" libname ${libname})
             bootstrap_libname_to_sexp(libname_sexp "${libname}")
             list(APPEND yuniall "${libname_sexp}")
@@ -515,7 +527,7 @@ function(bootstrap_GenRacket impl baselibname sls)
     (only (racket) file)
     (rename (only (racket include) include) (include %%internal-paste:include))
     ${imports})
-    (%%internal-paste:include (file \"${YUNIROOT}/${sls}\")))")
+    (%%internal-paste:include (file \"${sls}\")))")
         file(WRITE ${runtimename}
             "#!r6rs
 (library ${myname}
@@ -535,7 +547,7 @@ function(bootstrap_GenRacket impl baselibname sls)
     (yuni-runtime ${impl})
     (rename (only (guile) include) (include %%internal-paste:include))
     ${imports})
-    (%%internal-paste:include \"${YUNIROOT}/${sls}\"))")
+    (%%internal-paste:include \"${sls}\"))")
         file(WRITE ${runtimename}
             "#!r6rs
 (library ${myname}
@@ -555,7 +567,6 @@ function(bootstrap_generate_stublib sls orderlist)
             set(impl ${CMAKE_MATCH_1})
             set(flav ${CMAKE_MATCH_2})
             set(top ${CMAKE_MATCH_3})
-            # message(STATUS "ORDER: ${impl} ${flav} ${top} ${sls} ${baselibname}")
             bootstrap_libpath_strip(baselibname ${sls})
             string(REGEX REPLACE "/" ";" baselibname ${baselibname})
             set(tolibname)

@@ -86,7 +86,7 @@ endif()
 ##   libs_<impl>_<libsym>_deplibs  => libsym for dependency
 ##   libs_<impl>_<libsym>_alias_of => libsym to original
 foreach(sym ${libgenorder})
-    set(relsrc ${libgenorder_${sym}_SOURCE})
+    set(relsrc ${libgenorder_${sym}_RELSOURCE})
     if(${sym} MATCHES "([^_]*)_(.*)")
         set(orighead ${CMAKE_MATCH_1})
         set(origrest ${CMAKE_MATCH_2})
@@ -99,9 +99,7 @@ foreach(sym ${libgenorder})
             set(impl ${CMAKE_MATCH_1})
             set(flav ${CMAKE_MATCH_2})
             set(top ${CMAKE_MATCH_3})
-            string(REGEX REPLACE "[^/]+/(.*)"
-                "${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/\\1"
-                src ${relsrc})
+            set(src ${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/${relsrc})
             set(libs_${impl}_${sym}_file ${src})
             if(libdeps_${sym})
                 set(deps ${libdeps_${sym}})

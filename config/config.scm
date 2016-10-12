@@ -6,7 +6,7 @@
 
 (*library-groups*
   ;; Yuni
-  (yuni yuni yuniffi)
+  (yuni yuni yuniffi yuniconfig)
   (yunifake yunifake-util)
   (yuni-r6rs yuni-r6rs)
   ;; FIXME: Hack. We don't have any convention for generated libraries yet.

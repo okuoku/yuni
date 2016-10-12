@@ -53,7 +53,15 @@ set(bootparams
     -DBUILDROOT=${CMAKE_CURRENT_BINARY_DIR}
     -DSTUBROOT=${CMAKE_CURRENT_BINARY_DIR}/lib-stub
     -DRUNTIMEROOT=${YUNIBASE_YUNIFIED_PATH}/runtime
+    -DCONFIGROOT=${YUNI_BUILDCONFIG_LIBDIR}
     -P ${CMAKE_CURRENT_LIST_DIR}/YuniBootstrap.cmake)
+
+# Generate (yuniconfig build) library
+set(YUNIPLATFORM ${_PLATFORM})
+configure_file(
+    ${CMAKE_CURRENT_LIST_DIR}/yuniconfig-build.sls.in
+    ${YUNI_BUILDCONFIG_LIBDIR}/yuniconfig/build.sls
+    @ONLY)
 
 # Run First bootstrap step
 message(STATUS "Generating library order list...")
@@ -89,7 +97,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/yunilibs.scm
     "(\n")
 foreach(e ${yunilibfiles})
     file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/yunilibs.scm 
-        "\"${YUNI_BASEDIR}/${e}\"\n")
+        "\"${e}\"\n")
 endforeach()
 file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/yunilibs.scm ")\n")
 
@@ -115,7 +123,8 @@ add_custom_target(yuni_bootstrap_check ALL
 set(outdata)
 foreach(sym ${libgenorder}) # from libgenorder.cmake
     set(src ${libgenorder_${sym}_SOURCE})
-    if(NOT EXISTS ${yuniroot}/${src})
+    set(relsrc ${libgenorder_${sym}_RELSOURCE})
+    if(NOT EXISTS ${src})
         message(FATAL_ERROR 
             "Order list unmatched(Run cmake again): ${sym} ${src}")
     endif()
@@ -126,14 +135,11 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
         if(${e} MATCHES "([^:]*):([^:]*):([^:]*)")
             set(impl ${CMAKE_MATCH_1})
             set(top ${CMAKE_MATCH_3})
-            # orig: Remove first 1 elem and replace it with ${impl}
+            set(orig ${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/${relsrc})
+            # maybe_alias: Remove 1 entry and replace it with ${impl}/${top}
             string(REGEX REPLACE "[^/]+/(.*)"
-                "${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/\\1" 
-                orig ${src})
-            # maybe_alias: Remove 2 entries and replace it with ${impl}/${top}
-            string(REGEX REPLACE "[^/]+/[^/]+/(.*)"
                 "${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/${top}/\\1" 
-                maybe_alias ${src})
+                maybe_alias ${relsrc})
             if(${impl} STREQUAL racket)
                 # base0 file0 workaround
                 string(REGEX REPLACE "scheme/base\\.sls" 
@@ -167,8 +173,8 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
         -DGENLIBSTUB_FILE=${src}
         ${bootparams}
         COMMAND ${CMAKE_COMMAND} -E copy # Enforce touch
-        ${yuniroot}/${src} ${_done}
-        DEPENDS ${yuniroot}/${src}
+        ${src} ${_done}
+        DEPENDS ${src}
         ${CMAKE_CURRENT_LIST_DIR}/YuniBootstrap.cmake
         ${bootstrap_scripts}
         COMMENT "Generate stub library... (${sym})")
@@ -179,14 +185,12 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
             set(impl ${CMAKE_MATCH_1})
             set(flav ${CMAKE_MATCH_2})
             set(top ${CMAKE_MATCH_3})
-            string(REGEX REPLACE "[^/]+/(.*)"
-                "${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/\\1" 
-                out ${src})
+            set(out ${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/${relsrc})
             add_custom_command(
                 OUTPUT ${out} 
                 COMMAND ${CMAKE_COMMAND} -E copy
-                ${yuniroot}/${src} ${out}
-                DEPENDS ${yuniroot}/${src})
+                ${src} ${out}
+                DEPENDS ${src})
             # message(STATUS "Deploy ${out}")
             list(APPEND outdata ${out})
         endif()
