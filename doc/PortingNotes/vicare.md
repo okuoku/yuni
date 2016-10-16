@@ -1,6 +1,10 @@
 Vicare Scheme support
 =====================
 
+* [Official site](http://marcomaggi.github.io/vicare.html)
+* [GitHub](https://github.com/marcomaggi/vicare)
+* [Reference](http://marcomaggi.github.io/docs/vicare-libs.html/)
+
 Caveats
 -------
 

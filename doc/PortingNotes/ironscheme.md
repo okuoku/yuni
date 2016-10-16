@@ -1,6 +1,9 @@
 IronScheme support
 ==================
 
+* [GitHub](https://github.com/leppie/IronScheme)
+* [Documentation](http://ironscheme.codeplex.com/documentation)
+
 Caveats
 -------
 

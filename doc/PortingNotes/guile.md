@@ -1,6 +1,9 @@
 Guile support
 =============
 
+* [Official site](http://www.gnu.org/software/guile/)
+* [Reference](https://www.gnu.org/software/guile/docs/master/guile.html)
+
 Caveats
 -------
 

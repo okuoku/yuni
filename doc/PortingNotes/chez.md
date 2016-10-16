@@ -1,6 +1,9 @@
 ChezScheme support
 ==================
 
+* [GitHub](https://github.com/cisco/ChezScheme)
+* [Official document](http://cisco.github.io/ChezScheme/csug9.4/csug.html)
+
 YuniFFI
 -------
 
