@@ -24,7 +24,6 @@
            current-directory
            create-directory
            delete-directory
-           system-msdos-style-path?
 
            ;; nmosh utils
            expand-loadpath
