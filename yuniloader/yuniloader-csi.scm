@@ -60,7 +60,7 @@
     (and (pair? nam)
          (let ((prefix (car nam)))
           (case prefix
-            ((scheme chicken matchable lolevel numbers yuniffi-chicken) #t)
+            ((scheme chicken matchable lolevel numbers yuniffi-chicken posix) #t)
             ((srfi) (number? (cadr nam)))
             (else #f)))))
 
