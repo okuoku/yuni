@@ -58,6 +58,7 @@ set(bootparams
 
 # Generate (yuniconfig build) library
 set(YUNIPLATFORM ${_PLATFORM})
+set(YUNIRUNTIMEROOTPATH ${YUNIBASE_YUNIFIED_PATH}/runtime)
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/yuniconfig-build.sls.in
     ${YUNI_BUILDCONFIG_LIBDIR}/yuniconfig/build.sls

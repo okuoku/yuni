@@ -52,7 +52,7 @@
              (else
                (set! failed-forms (cons 'form failed-forms)))))))))
 
-(check-equal #t (string? yuniconfig-platform))
+(check-equal #t (string? (yuniconfig-platform)))
 
 (check-equal #t (let ((m (lambda () #t))) (m)))
 (check-equal '#(0 1 2 3 4)

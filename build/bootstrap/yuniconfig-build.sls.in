@@ -4,5 +4,6 @@
 
 ;;
 
-(define yuniconfig-platform "@YUNIPLATFORM@")
+(define (yuniconfig-runtime-rootpath) "@YUNIRUNTIMEROOTPATH@")
+(define (yuniconfig-platform) "@YUNIPLATFORM@")
 )
