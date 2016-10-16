@@ -50,7 +50,11 @@
             (loop acc d)
             (loop (cons a acc) d)))
         (reverse acc))))
-   (eval-core (cons 'begin (filtnull (%%expand code)))))
+   (let ((expanded (cons 'begin (filtnull (%%expand code)))))
+    (cond
+      (do-dump
+        (pp expanded)))
+    (eval-core expanded)))
 
  (define cmd (command-line))
 
