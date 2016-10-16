@@ -76,12 +76,12 @@
   (read-line port))
 
 ;; from mosh-utils5.scm
-(define (system-msdos-style-path?)
+(define (system-msdos-style-path0?)
   (let ((c (yuniconfig-platform)))
    (or (string=? "WIN32" c)
        (string=? "WIN64" c))))
 
-(define (run-win32-np?) (system-msdos-style-path?))
+(define (run-win32-np?) (system-msdos-style-path0?))
 (define CHR-ENVPATHSEP (if (run-win32-np?) #\; #\:))
 
 (define pathfilter 
