@@ -9,19 +9,12 @@
            ;; mosh directory procedure
            create-directory
            delete-directory
-
-           ;; ancient
-           system-msdos-style-path?
            )
          (import (scheme base)
                  (chibi filesystem))
 
 
 (define directory-list directory-files)
-
-(define (system-msdos-style-path?)
-  ;; FIXME
-  #f)
 
 )
 

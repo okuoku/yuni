@@ -9,9 +9,6 @@
            ;; mosh directory procedure
            create-directory
            delete-directory
-
-           ;; ancient
-           system-msdos-style-path?
            )
          (import (scheme base)
                  (primitives 
@@ -22,9 +19,6 @@
 
                    ;; For create-directory
                    system
-
-                   ;; For system-msdos-style-path?
-                   system-features
                    )
                  )
 
@@ -33,9 +27,6 @@
 (define (file-regular? x) 
   ;; FIXME: Does file-attributes working on Win32??
   (not (file-directory? x)))
-
-(define (system-msdos-style-path?)
-  (equal? (cdr (assq 'os-name (system-features)))))
 
 (define (create-directory pth)
   ;; FIXME: Seriously??
@@ -46,5 +37,4 @@
   (system (string-append "rmdir " pth)))
 
 )
-
 

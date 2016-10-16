@@ -33,6 +33,7 @@
            ;; directory-fold
            )
          (import (yuni scheme) 
+                 (yuniconfig build)
                  (yuni compat file-ops))
 
 ;; TEMP
@@ -74,8 +75,12 @@
 (define (get-line port) ;; FIXME: Use R7RS name
   (read-line port))
 
-
 ;; from mosh-utils5.scm
+(define (system-msdos-style-path?)
+  (let ((c (yuniconfig-platform)))
+   (or (string=? "WIN32" c)
+       (string=? "WIN64" c))))
+
 (define (run-win32-np?) (system-msdos-style-path?))
 (define CHR-ENVPATHSEP (if (run-win32-np?) #\; #\:))
 

@@ -9,9 +9,6 @@
            ;; mosh directory procedure
            create-directory
            delete-directory
-
-           ;; ancient
-           system-msdos-style-path?
            )
          (import (yuni scheme)
                  (only (racket)
@@ -32,9 +29,5 @@
 
 (define (create-directory x)
   (make-directory x))
-
-(define (system-msdos-style-path?)
-  ;; FIXME
-  #f)
 
 )
