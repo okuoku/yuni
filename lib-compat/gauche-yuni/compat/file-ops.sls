@@ -10,7 +10,7 @@
            create-directory
            delete-directory
            )
-         (import (gauche base))
+         (import (gauche base) (file util))
 
 (define file-regular? file-is-regular?)
 (define file-directory? file-is-directory?)

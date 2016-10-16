@@ -12,14 +12,16 @@
            )
          (import (yuni scheme))
 
+(define-primitive-names/yunifake
+  file-regular?
+  file-directory?
+  delete-directory)
 
 (define current-directory working-directory-pathname)
 
 ;; FIXME: It returns absolute paths
-(define direcrtory-list directory-read)
+(define directory-list directory-read)
          
 (define create-directory make-directory)
 
 )
-
-

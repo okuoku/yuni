@@ -14,16 +14,15 @@
                  (primitives 
                    ;; Some of them are not described in the manual
                    list-directory
-                   file-directory?
+                   larceny:directory?
                    current-directory
 
                    ;; For create-directory
-                   system
-                   )
-                 )
+                   system))
 
 
 (define directory-list list-directory)
+(define file-directory? larceny:directory?)
 (define (file-regular? x) 
   ;; FIXME: Does file-attributes working on Win32??
   (not (file-directory? x)))

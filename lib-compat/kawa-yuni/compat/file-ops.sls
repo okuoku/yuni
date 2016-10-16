@@ -12,8 +12,13 @@
            )
          (import (scheme base)
                  (kawa lib ports)
-                 (kawa lib files))
+                 (rename (kawa lib files)
+                         (file-directory? kawa:file-directory?)))
 
+
+(define (file-directory? pth)
+  ;; FIXME: no stat feature
+  (error "Unimpl."))
 (define (file-regular? pth) (not (file-directory? pth)))
 
 (define delete-directory delete-file)

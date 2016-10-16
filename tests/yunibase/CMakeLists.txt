@@ -70,6 +70,16 @@ if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "i?86$")
     endif()
 endif()
 
+function(test_with_cleandir prefix nam prog)
+    if(YUNITEST_${prefix})
+        add_test(NAME ${nam}
+            COMMAND ${CMAKE_COMMAND} -DPROG=${YUNITEST_${prefix}}
+            -DARG=${CMAKE_CURRENT_LIST_DIR}/${prog}
+            -DDIRNAME=${CMAKE_CURRENT_BINARY_DIR}/testdir-${prefix}-${prog}
+            -P ${CMAKE_CURRENT_LIST_DIR}/runwithcleandir.cmake)
+    endif()
+endfunction()
+
 function(test_negative prefix)
     if(YUNITEST_${prefix})
         add_test(NAME "SanityNegative-${prefix}"
@@ -137,3 +147,8 @@ test_with_all(_sanity.sps)
 # yunistub bootstraps
 test_yunistub_bootstrap(
     ${CMAKE_CURRENT_LIST_DIR}/../yunistub/trivial/testing_trivial.scm)
+
+# File-ops
+foreach(e ${impls})
+    test_with_cleandir(${e} "FileOps-${e}" _fileops.sps)
+endforeach()

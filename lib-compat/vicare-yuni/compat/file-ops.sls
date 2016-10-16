@@ -14,8 +14,12 @@
                  (only (vicare posix)
                        file-is-regular-file?
                        file-is-directory?
-                       
-                       )) 
+                       opendir
+                       readdir/string
+                       getcwd/string
+                       closedir
+                       mkdir
+                       rmdir)) 
 
 (define file-regular? file-is-regular-file?)
 (define file-directory? file-is-directory?)

@@ -11,7 +11,7 @@
            delete-directory
            )
          (import (scheme base)
-                 (chicken posix))
+                 (posix))
 
 (define file-regular? regular-file?)
 
