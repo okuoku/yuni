@@ -21,7 +21,7 @@ Command-line options format for path specifications varies between implementatio
 |racket      |Type 2|`++path`       |           |    |                   |
 |guile       |Type 1|`-L`           |           |    |                   |
 |larceny     |Type 2|`-path`        |`-program` |`--`|                   |
-|ironscheme  |Type 3|               |           |    |                   |
+|ironscheme  |Type 0|               |           |    |FIXME: Actually Type1|
 |chez        |Type 2|`--libdirs`    |`--program`|    |                   |
 |vicare      |Type 1|`--source-path`|           |    |                   |
 |nmosh       |Type 2|`--loadpath=`  |           |    |                   |
@@ -32,9 +32,9 @@ Command-line options format for path specifications varies between implementatio
 
 Some implementations do not have library-path concept at all. On these implementations, Yuniloader will parse program and locate libraries before performing actual loading.
 
-Type 0 implementations: `chicken` `gambit` `kawa` `mit-scheme` `picrin`
+Type 0 implementations: `chicken` `gambit` `kawa` `mit-scheme` `picrin` `ironscheme`
 
-Kawa actually have library path and lookup feature but due to path handling issue on Win32, Yuni currently treats the implementation as Type 0.
+Kawa actually has library path and lookup feature but due to path handling issue on Win32, Yuni currently treats the implementation as Type 0. IronScheme also has library path features but Yuni wraps it to prevent returning zero exit code on failure.
 
 ### Type 1
 
@@ -53,12 +53,6 @@ Type 2 implementations will take a option for multiple library paths. These impl
 In these implementations, a character is reserved for separator. On Unix-like platforms, it will be `:`, on Win32 it will be `;`. 
 
 Type 2 implementations: `chez` `larceny` `nmosh`
-
-### Type 3
-
-Type 3 implementations cannot specify library paths on command line. Currently IronScheme is the only example of type 3 implementation.
-
-Type 3 implementation: `ironscheme`
 
 
 Command line templates
