@@ -24,7 +24,7 @@ Implementations with FFI compatibility layer:
  * [chibi-scheme](http://synthcode.com/wiki/chibi-scheme)
  * [Racket](https://racket-lang.org/) with `srfi-lib` and `r6rs-lib` packages
  * [Sagittarius](https://bitbucket.org/ktakashi/sagittarius-scheme/wiki/Home)
- * [Gauche](http://practical-scheme.net/gauche/) 0.9.4 or later
+ * [Gauche](http://practical-scheme.net/gauche/) 0.9.5 or later
  * [Guile](http://www.gnu.org/software/guile/) 2.0 or later
  * [Vicare](http://marcomaggi.github.io/vicare.html)
  * [Chicken](http://www.call-cc.org/) interpreter with `r7rs` egg
