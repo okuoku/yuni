@@ -1,9 +1,4 @@
 (import (yuni scheme)
-        (scheme time)
-        ;(scheme complex)
-        (scheme inexact)
-        (scheme write)
-        (scheme lazy)
         (yuni testing testeval)
         (yuni async) (yuni core) 
         ; FIXME: Disable shorten library for now...

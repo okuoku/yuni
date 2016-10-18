@@ -1,6 +1,6 @@
 (library (r7b-util s45)
          (export lazy eager delay force promise?)
-         (import (scheme base))
+         (import (rnrs) (rnrs mutable-pairs))
 
 ;; r7b-util addition for R7RS draft 7
 (define promise? list?)

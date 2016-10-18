@@ -1,6 +1,6 @@
 (library (yuni util invalid-form)
          (export define-invalid-form define-invalid-forms)
-         (import (scheme base))
+         (import (yuni scheme))
 
 (define-syntax define-invalid-form
   (syntax-rules () 

@@ -10,7 +10,7 @@
 ;|#
            
            )
-         (import (scheme base)
+         (import (yuni scheme)
                  (yuni compat macro primitives))
          (begin
 ;;

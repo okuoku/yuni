@@ -4,7 +4,7 @@
            rlet1
            let1
            define-values)
-         (import (scheme base))
+         (import (yuni scheme))
 
 (define-syntax cdr/nil
   (syntax-rules ()

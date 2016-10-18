@@ -8,7 +8,6 @@
   ;; Yuni
   (yuni yuni yuniffi yuniconfig)
   (yunifake yunifake-util)
-  (yuni-r6rs yuni-r6rs)
   ;; FIXME: Hack. We don't have any convention for generated libraries yet.
   ;; R7RS
   (compat-chicken
@@ -28,8 +27,12 @@
   ;; R6RS
   ;;; R7RS-bridge: R7RS library for R6RS implementations
   (r7rs-bridge ;; Some R6RS might not need this tough
-    r7b-util
+    (r7b-yuni => yuni) ;; Yuni scheme standard libraries
+    r7b-util)
+  (r7b-r7rs-libs ;; Racket may have incompatible R7RS impl.
     (r7b-impl => scheme))
+  (r7b-r7rs-libs/racket
+    r7b-impl)
   (compat-guile
     (guile-yuni => yuni)
     (guile-r7b => r7b-compat))
@@ -68,18 +71,18 @@
 (GenRacket
   ;; Racket-styled library generator
   (racket
+    r7b-r7rs-libs/racket
     yuni
     yunisrfi
-    yuni-r6rs
     r7rs-bridge
     r6rs-common
     compat-racket
     )
   ;; Guile can import R6RS-light but no R7RS
   (guile
+    r7b-r7rs-libs
     yuni
     yunisrfi
-    yuni-r6rs
     compat-guile
     r7rs-bridge
     r6rs-common)) 
@@ -111,8 +114,7 @@
     compat-sagittarius
     yuni
     r7rs-common
-    r6rs-common
-    yuni-r6rs)
+    r6rs-common)
   ;; experimental
   (rapid-gambit
     yuni
@@ -126,31 +128,31 @@
   (larceny
     yuni
     compat-larceny
-    yuni-r6rs
-    r6rs-common)
+    r6rs-common
+    r7rs-common)
   (ironscheme
+    r7b-r7rs-libs
     yuni
     compat-ironscheme
-    yuni-r6rs
     r6rs-common
     r7rs-bridge)
   (chez
+    r7b-r7rs-libs
     yuni
     compat-chez
-    yuni-r6rs
     r7rs-bridge
     r6rs-common)
   (vicare
+    r7b-r7rs-libs
     yuni
     compat-vicare
-    yuni-r6rs
     r7rs-bridge
     r6rs-common)
   ;; Of course, we should do some dog-food
   (nmosh
+    r7b-r7rs-libs
     yuni
     compat-nmosh
-    yuni-r6rs
     r7rs-bridge
     r6rs-common)
   ;; Experimental Gambit R5RS
