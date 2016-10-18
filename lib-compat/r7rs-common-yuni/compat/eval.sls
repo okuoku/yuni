@@ -1,3 +1,5 @@
 (library (r7rs-common-yuni compat eval)
          (export eval environment)
-         (import (scheme eval)))
+         (import 
+           (scheme base) ;; FIXME: WAR for Chicken
+           (scheme eval)))

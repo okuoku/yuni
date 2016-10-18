@@ -1,3 +1,5 @@
 (library (yuni eval)
          (export eval environment)
-         (import (yuni compat eval)))
+         (import 
+           (yuni scheme) ;; FIXME: Chicken WAR
+           (yuni compat eval)))
