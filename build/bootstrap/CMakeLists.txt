@@ -142,11 +142,6 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
                 "${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/${top}/\\1" 
                 maybe_alias ${relsrc})
             if(${impl} STREQUAL racket)
-                # base0 file0 workaround
-                string(REGEX REPLACE "scheme/base\\.sls" 
-                    "scheme/base0.sls" maybe_alias ${maybe_alias})
-                string(REGEX REPLACE "scheme/file\\.sls" 
-                    "scheme/file0.sls" maybe_alias ${maybe_alias})
                 # Replace extension
                 string(REGEX REPLACE "\\.sls" ".mzscheme.sls"
                     orig ${orig})
