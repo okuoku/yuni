@@ -10,6 +10,8 @@
 (define retry-limit 100)
 
 (define (try)
+  (when (file-exists? fasl)
+    (delete-file fasl))
   (compile-file file)
   (unless (file-exists? fasl)
     (assertion-violation 'try "Cannot create FASL" file fasl))
