@@ -46,7 +46,9 @@ string->symbol string->utf8 string->vector string-append string-copy
 string-copy! string-fill! string-for-each string-length string-map string-ref
 string-set! string<=? string<? string=? string>=? string>? string? substring
 symbol->string symbol=? symbol? syntax-error syntax-rules textual-port? truncate
-truncate-quotient truncate-remainder truncate/ u8-ready? unless unquote
+truncate-quotient truncate-remainder truncate/ 
+;u8-ready?
+unless unquote
 unquote-splicing utf8->string values vector vector->list vector->string
 vector-append vector-copy vector-copy! vector-fill! vector-for-each
 vector-length vector-map vector-ref vector-set!  vector? when
@@ -54,6 +56,11 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
 
 
 case-lambda
+
+;; from R7RS draft 7
+caaaar caaadr caaar caadar caaddr caadr cadaar cadadr cadar caddar cadddr caddr
+cdaaar cdaadr cdaar cdadar cdaddr cdadr cddaar cddadr cddar cdddar cddddr cdddr
+
 ;char-alphabetic? char-ci<=? char-ci<? char-ci=? char-ci>=? char-ci>?
 ;char-downcase char-foldcase char-lower-case? char-numeric? char-upcase
 ;char-upper-case?  char-whitespace? digit-value string-ci<=? string-ci<?
@@ -67,7 +74,7 @@ open-output-file with-input-from-file with-output-to-file
 
 acos asin atan cos exp finite? log nan? sin sqrt tan
 
-delay force make-promise delay-force
+; delay force make-promise delay-force
 
 ;; from R7RS draft 4
 command-line exit get-environment-variable
