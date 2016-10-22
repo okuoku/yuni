@@ -349,17 +349,24 @@ function(bootstrap_GenR7RS impl baselibname sls)
     get_filename_component(runtimesls ${sls} NAME)
     set(outname ${STUBROOT}/${impl}/${basepath}.${libext})
     set(runtimename ${RUNTIMEROOT}/${impl}/${basepath}.${libext})
+    if(${impl} STREQUAL chicken)
+        set(yuniruntimename chicken)
+    elseif(${impl} STREQUAL picrin)
+        set(yuniruntimename picrin)
+    else()
+        set(yuniruntimename r7rs)
+    endif()
     if(${impl} STREQUAL picrin) 
         # Picrin needs import - include - export order
         # FIXME: Is that still true?
         file(WRITE ${outname}
             "(define-library ${myname}
-(import (yuni-runtime picrin) ${imports})
+(import (yuni-runtime ${yuniruntimename}) ${imports})
 (include \"${sls}\")
 (export\n${exports}))\n")
         file(WRITE ${runtimename}
             "(define-library ${myname}
-(import (yuni-runtime picrin) ${imports})
+(import (yuni-runtime ${yuniruntimename}) ${imports})
 (include \"${runtimesls}\")
 (export\n${exports}))\n")
     else()
@@ -367,12 +374,12 @@ function(bootstrap_GenR7RS impl baselibname sls)
         file(WRITE ${outname}
             "(define-library ${myname}
 (export\n${exports})
-(import (yuni-runtime r7rs) ${imports})
+(import (yuni-runtime ${yuniruntimename}) ${imports})
 (include \"${sls}\"))\n")
         file(WRITE ${runtimename}
             "(define-library ${myname}
 (export\n${exports})
-(import (yuni-runtime r7rs) ${imports})
+(import (yuni-runtime ${yuniruntimename}) ${imports})
 (include \"${runtimesls}\"))\n")
     endif()
 endfunction()

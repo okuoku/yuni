@@ -21,6 +21,6 @@ set(lib_runtime_SAGITTARIUS
     r7rs/yuni-runtime/r7rs.sld)
 
 set(lib_runtime_CHICKEN
-    r7rs/yuni-runtime/r7rs.scm)
+    r7rs/yuni-runtime/chicken.scm)
 
 
