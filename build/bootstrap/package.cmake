@@ -7,6 +7,47 @@ include(${CMAKE_CURRENT_BINARY_DIR}/../bootstrap/libgenorder.cmake)
 
 set(allsps ${CMAKE_CURRENT_BINARY_DIR}/../bootstrap/_yuniall.sps)
 
+set(wellknownlibs
+    # R6RS
+    rnrs
+    rnrs_r5rs
+    rnrs_mutable-strings
+    rnrs_mutable-pairs
+    rnrs_hashtables
+    rnrs_eval
+    # R7RS
+    scheme_base
+    scheme_write
+    scheme_read
+    scheme_process-context
+    scheme_inexact
+    scheme_file
+    scheme_cxr
+    scheme_case-lambda
+    scheme_base
+    scheme_eval
+    # SRFI
+    srfi_:1
+    srfi_:9
+    srfi_:39
+    srfi_:98
+    )
+
+set(locallibs_racket
+    racket # !?
+    racket_base
+    ffi_unsafe
+    yuni-runtime_racket-ffi
+    )
+
+foreach(lib ${wellknownlibs})
+    set(knownlibs_all_${lib} TRUE)
+endforeach()
+
+foreach(lib ${locallibs_racket})
+    set(knownlibs_racket_${lib} TRUE)
+endforeach()
+
 macro(check_impl var nam)
     if(WIN32)
         set(_pth ${YUNIBASE_YUNIFIED_PATH}/${nam}.bat)
@@ -180,11 +221,20 @@ function(calc_depoutputs var impl tgt)
     set(out)
     set(deps ${libs_${impl}_${tgt}_deplibs})
     foreach(sym ${deps})
-        if(NOT yunioutput_${impl}_${sym})
-            message(STATUS "Dep not found(${impl}) for ${tgt}: ${sym}")
-        else()
-            # message(STATUS "Dep ${impl} ${tgt} += ${yunioutput_${impl}_${sym}}(${sym})")
+        set(found)
+        if(yunioutput_${impl}_${sym})
+            set(found 1)
         endif()
+        if(knownlibs_all_${sym})
+            set(found 1)
+        endif()
+        if(knownlibs_${impl}_${sym})
+            set(found 1)
+        endif()
+        if(NOT found)
+            message(STATUS "Dep not found(${impl}) for ${tgt}: ${sym}")
+        endif()
+
         list(APPEND out ${yunioutput_${impl}_${sym}})
         if(libs_${impl}_${sym}_alias_of)
             set(origin_sym ${libs_${impl}_${sym}_alias_of})
