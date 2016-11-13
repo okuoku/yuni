@@ -36,7 +36,7 @@ Implementations with FFI compatibility layer:
 Bootstrapped, but no FFI yet:
 
  * [IronScheme](https://github.com/leppie/IronScheme)
- * [Kawa](http://www.gnu.org/software/kawa/)
+ * [Kawa](http://www.gnu.org/software/kawa/) 2.2 or later
  * [MIT/GNU Scheme](https://www.gnu.org/software/mit-scheme/) with experimental R5RS support(BSD3/GPL2+)
 
 ## Build
