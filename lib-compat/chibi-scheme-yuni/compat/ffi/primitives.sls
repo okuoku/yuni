@@ -1,4 +1,4 @@
-(library (chibi-yuni compat ffi primitives)
+(library (chibi-scheme-yuni compat ffi primitives)
          (export
            yuniffi-nccc-call
            yuniffi-module-load

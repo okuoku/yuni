@@ -12,8 +12,8 @@
   ;; R7RS
   (compat-chicken
     (chicken-yuni => yuni)) 
-  (compat-chibi
-    (chibi-yuni => yuni))
+  (compat-chibi-scheme
+    (chibi-scheme-yuni => yuni))
   (compat-gauche
     (gauche-yuni => yuni))
   (compat-sagittarius
@@ -94,7 +94,7 @@
     r7rs-common
     yuni) 
   (chibi
-    compat-chibi
+    compat-chibi-scheme
     r7rs-common
     yuni)
   (picrin

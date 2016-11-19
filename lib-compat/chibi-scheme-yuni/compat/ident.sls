@@ -1,4 +1,4 @@
-(library (chibi-yuni compat ident)
+(library (chibi-scheme-yuni compat ident)
          (export ident-impl)
          (import (yuni scheme))
          

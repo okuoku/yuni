@@ -1,4 +1,4 @@
-(library (chibi-yuni compat bitwise primitives)
+(library (chibi-scheme-yuni compat bitwise primitives)
          (export 
            ;; Memory OPs (bytevectors)
            bv-read/s8 bv-read/u8 bv-read/s16 bv-read/u16

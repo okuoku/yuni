@@ -1,4 +1,4 @@
-(library (chibi-yuni compat macro primitives)
+(library (chibi-scheme-yuni compat macro primitives)
          (export define-inject-syntax)
          (import (chibi) (chibi match))
 

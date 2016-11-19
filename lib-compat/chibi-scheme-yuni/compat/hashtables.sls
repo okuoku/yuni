@@ -1,4 +1,4 @@
-(library (chibi-yuni compat hashtables)
+(library (chibi-scheme-yuni compat hashtables)
          (export
            ;; 13.1 Constructors
            make-eq-hashtable
