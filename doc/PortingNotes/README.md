@@ -30,27 +30,26 @@ Symbol mapping
 --------------
 
 
-|impl        |CMake variable|Legacy libname|Yunified name|
-|:-----------|:-------------|:-------------|:------------|
-|gauche      |GAUCHE        |              |gosh|
-|chibi-scheme|CHIBI_SCHEME  |chibi||
-|picrin      |PICRIN        |||
-|kawa        |KAWA          |||
-|sagittarius |SAGITTARIUS   |||
-|racket      |RACKET        |||
-|guile       |GUILE         |||
-|larceny     |LARCENY       |||
-|ironscheme  |IRON_SCHEME   |||
-|chez        |CHEZ_SCHEME   |              |chez-scheme  |
-|vicare      |VICARE        |||
-|nmosh       |NMOSH         |||
-|gambit      |GAMBIT        |              |gsi          |
-|mit-scheme  |MIT_SCHEME    |||
+|impl        |CMake variable|Yunified name|
+|:-----------|:-------------|:------------|
+|gauche      |GAUCHE        |gosh|
+|chibi-scheme|CHIBI_SCHEME  ||
+|picrin      |PICRIN        ||
+|kawa        |KAWA          ||
+|sagittarius |SAGITTARIUS   ||
+|racket      |RACKET        ||
+|guile       |GUILE         ||
+|larceny     |LARCENY       ||
+|ironscheme  |IRON_SCHEME   ||
+|chez        |CHEZ_SCHEME   |chez-scheme  |
+|vicare      |VICARE        ||
+|nmosh       |NMOSH         ||
+|gambit      |GAMBIT        |gsi          |
+|mit-scheme  |MIT_SCHEME    ||
 
 For historical reasons, this mapping contains some unintentional inconsistencies:
 
 * `CHEZ_SCHEME` sometimes referenced as `CHEZ` (e.g. in Yunibase)
-* `chibi` library name should be `chibi-scheme`
 
 Others
 ======
