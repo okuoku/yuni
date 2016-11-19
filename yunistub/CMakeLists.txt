@@ -1,4 +1,4 @@
-add_subdirectory(chibi)
+add_subdirectory(chibi-scheme)
 add_subdirectory(gauche)
 add_subdirectory(chicken)
 add_subdirectory(gambit)

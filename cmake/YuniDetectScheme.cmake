@@ -75,10 +75,10 @@ find_program(YUNI_GCC NAMES gcc)
 # chibi-scheme
 detect_scheme(YUNI_CHIBI_SCHEME NAMES chibi-scheme)
 detect_scheme(YUNI_CHIBI_FFI NAMES chibi-ffi)
-find_library(YUNI_CHIBI_LIB NAMES chibi-scheme)
-if(NOT YUNI_CHIBI_LIB)
+find_library(YUNI_CHIBI_SCHEME_LIB NAMES chibi-scheme)
+if(NOT YUNI_CHIBI_SCHEME_LIB)
     # Second chance for Cygwin/Windows
-    find_program(YUNI_CHIBI_LIB NAMES libchibi-scheme.dll)
+    find_program(YUNI_CHIBI_SCHEME_LIB NAMES libchibi-scheme.dll)
 endif()
 
 # Gauche
