@@ -1,5 +1,5 @@
 set(lib_runtime_CHIBI_SCHEME
-    chibi/yuniffi-runtime.sld
+    chibi-scheme/yuniffi-runtime.sld
     r7rs/yuni-runtime/r7rs.sld)
 
 set(lib_runtime_GAUCHE
