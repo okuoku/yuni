@@ -5,43 +5,44 @@
 ;; r7b-util addition for R7RS draft 7
 (define promise? list?)
 
-;; Took from SRFI-45 document
+;; From R7RS
 
-;=========================================================================
-; Boxes
+(define (%make-promise done? proc)
+  (list (cons done? proc)))
 
-(define (box x) (list x)) ;; FIXME: Use unique type for promise?
-(define unbox car)
-(define set-box! set-car!)
+(define (%promise-done? x)
+  (caar x))
+(define (%promise-value x)
+  (cdar x))
+(define (%promise-update! new old)
+  (set-car! (car old) (%promise-done? new))
+  (set-cdr! (car old) (%promise-value new))
+  (set-car! new (car old)))
 
-;=========================================================================
-; Primitives for lazy evaluation:
 
-(define-syntax lazy
+;; Renamed to SRFI-45 names
+(define-syntax lazy ;; delay-force
   (syntax-rules ()
-    ((lazy exp)
-     (box (cons 'lazy (lambda () exp))))))
-
-(define (eager x)
-  (box (cons 'eager x)))
+    ((_ expr)
+     (%make-promise #t (lambda () expr)))))
 
 (define-syntax delay
   (syntax-rules ()
-    ((delay exp) (lazy (eager exp)))))
+    ((_ expr)
+     (lazy (%make-promise #t expr)))))
 
 (define (force promise)
-  (let ((content (unbox promise)))
-    (case (car content)
-      ((eager) (cdr content))
-      ((lazy)  (let* ((promise* ((cdr content)))        
-                      (content  (unbox promise)))                      ; * 
-                 (if (not (eqv? (car content) 'eager))                 ; *
-                     (begin (set-car! content (car (unbox promise*)))
-                            (set-cdr! content (cdr (unbox promise*)))
-                            (set-box! promise* content)))
-                 (force promise))))))
+  (if (%promise-done? promise)
+    (%promise-value promise)
+    (let ((promise* ((%promise-value promise))))
+     (unless (%promise-done? promise)
+       (%promise-update! promise* promise))
+     (force promise))))
 
-; (*) These two lines re-fetch and check the original promise in case 
-;     the first line of the let* caused it to be forced.  For an example  
-;     where this happens, see reentrancy test 3 below.
+;; wrapped %make-promise
+(define (eager val)
+  (let ((v val))
+   (%make-promise #t (lambda () v))))
+
+
 )
