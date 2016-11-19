@@ -240,7 +240,7 @@ macro(deploy_impl_specific_runtimes a b)
 endmacro()
 
 deploy_impl_specific_runtimes(
-    CHIBI_SCHEME chibi
+    CHIBI_SCHEME chibi-scheme
     GAUCHE       gauche
     GUILE        guile
     NMOSH        nmosh 

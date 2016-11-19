@@ -93,7 +93,7 @@
     compat-gauche
     r7rs-common
     yuni) 
-  (chibi
+  (chibi-scheme
     compat-chibi-scheme
     r7rs-common
     yuni)

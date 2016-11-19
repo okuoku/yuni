@@ -27,12 +27,12 @@ set(YUNIIMPL_SAGITTARIUS_BOOTLIBS
 
 ##
 ## CHIBI-SCHEME
-##    chibi-scheme -I$YUNIMOD -I lib-stub/chibi -I lib-runtime/r7rs
-##                 -I lib-runtime/chibi
+##    chibi-scheme -I$YUNIMOD -I lib-stub/chibi-scheme -I lib-runtime/r7rs
+##                 -I lib-runtime/chibi-scheme
 ##
 set(YUNIIMPL_CHIBI_SCHEME_BOOTLIBS
     lib-runtime/r7rs
-    lib-runtime/chibi
+    lib-runtime/chibi-scheme
     # Chibi-scheme will search for include files for these directories
     # These are included from lib-stub
     lib

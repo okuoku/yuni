@@ -143,7 +143,7 @@ endfunction()
 
 function(bootstrap_filter_includepath inoutvar impl)
     set(input ${${inoutvar}})
-    if(${impl} STREQUAL chibi)
+    if(${impl} STREQUAL chibi-scheme)
         # Abuse moudle-7 behaviour: strip down to basename
         get_filename_component(out ${${inoutvar}} NAME)
         set(${inoutvar} ${out} PARENT_SCOPE)
