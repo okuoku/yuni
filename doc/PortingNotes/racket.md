@@ -1,6 +1,9 @@
 Racket support
 ==============
 
+* [Official site](http://racket-lang.org/)
+* [Reference](https://docs.racket-lang.org/)
+
 Compatibility
 -------------
 
