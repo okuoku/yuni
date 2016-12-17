@@ -13,8 +13,9 @@ set(bootstrap_scripts
 # Detect bootstrap scheme
 if(NOT YUNI_BOOTSTRAP_USE)
     # Prefer Chez > Gauche > Sagittarius > ChibiScheme > Racket
+    # Should match with yunibase name
     if(YUNI_CHEZ_SCHEME)
-        set(YUNI_BOOTSTRAP_USE chez)
+        set(YUNI_BOOTSTRAP_USE chez-scheme)
     elseif(YUNI_GOSH)
         set(YUNI_BOOTSTRAP_USE gauche)
     elseif(YUNI_SAGITTARIUS)
@@ -30,9 +31,9 @@ if(NOT YUNI_BOOTSTRAP_USE)
     endif()
 endif()
 
-if(${YUNI_BOOTSTRAP_USE} STREQUAL "chez")
+if(${YUNI_BOOTSTRAP_USE} STREQUAL "chez-scheme")
     set(YUNI_BOOTSTRAP_SCHEME "${YUNI_CHEZ_SCHEME}")
-    set(YUNI_BOOTSTRAP_SCHEME_TYPE chez)
+    set(YUNI_BOOTSTRAP_SCHEME_TYPE chez-scheme)
 elseif(${YUNI_BOOTSTRAP_USE} STREQUAL "gauche")
     set(YUNI_BOOTSTRAP_SCHEME "${YUNI_GOSH}")
     set(YUNI_BOOTSTRAP_SCHEME_TYPE gauche)
