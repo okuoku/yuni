@@ -43,6 +43,7 @@ Bootstrapped, but no FFI yet:
 
 Install one of bootstrap Scheme and configure this directory with `cmake`. Following Scheme supported as bootstrap Scheme:
 
+ * Chez scheme
  * chibi-scheme
  * Racket
  * Sagittarius

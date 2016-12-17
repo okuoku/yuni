@@ -15,6 +15,7 @@ Since CMake cannot read S-expressions directly, Yuni buildsystem will call R6RS/
 
 Not every implementation can be used as bootstrap Scheme. Currently, following implementations are supported:
 
+ * Chez scheme
  * chibi-scheme
  * Racket
  * Sagittarius
