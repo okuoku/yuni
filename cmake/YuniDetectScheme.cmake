@@ -142,9 +142,34 @@ else()
 endif()
 
 # Chez scheme
-# FIXME: May conflict with mit-scheme
 detect_scheme(YUNI_CHEZ_SCHEME NAMES chez-scheme scheme)
 detect_scheme(YUNI_CHEZ_PETITE NAMES petite-chez-scheme petite)
+if(YUNI_CHEZ_SCHEME)
+    # Test picked-up chez scheme is a real ChezScheme
+    execute_process(COMMAND ${YUNI_CHEZ_SCHEME} --help
+        RESULT_VARIABLE rr
+        OUTPUT_VARIABLE out
+        ERROR_VARIABLE err)
+    set(not_a_chez)
+    if(rr)
+        message(STATUS "Failed to evaluate ${YUNI_CHEZ_SCHEME} (${rr})")
+        set(not_a_chez TRUE)
+    else()
+        # ChezScheme should have --verbose in the --help output
+        string(FIND "${out}${err}" --verbose tst)
+        if(NOT ${tst} EQUAL -1)
+            message(STATUS "${YUNI_CHEZ_SCHEME} maybe a ChezScheme")
+        else()
+            message(STATUS "${YUNI_CHEZ_SCHEME} is not a ChezScheme")
+            set(not_a_chez TRUE)
+        endif()
+    endif()
+    if(not_a_chez)
+        message(STATUS "Clear YUNI_CHEZ_SCHEME variable")
+        unset(YUNI_CHEZ_SCHEME) # FIXME: Need this one?
+        unset(YUNI_CHEZ_SCHEME CACHE)
+    endif()
+endif()
 
 # Gambit
 detect_scheme(YUNI_GSC NAMES gsc
