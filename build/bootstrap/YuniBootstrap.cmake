@@ -33,6 +33,8 @@ function(select_script_file var slot)
         set(script_type r6)
     elseif(${BOOTSTRAP_TYPE} STREQUAL r6rs)
         set(script_type r6)
+    elseif(${BOOTSTRAP_TYPE} STREQUAL chez)
+        set(script_type r6)
     endif()
 
     if(${slot} STREQUAL CONFIG_TO_CMAKE)
@@ -54,6 +56,8 @@ function(bootstrap_run_scheme slot) # ARGN = args
     elseif(${BOOTSTRAP_TYPE} STREQUAL "racket")
         set(addargs 
             -I scheme/init -l- r6rs/run.rkt)
+    elseif(${BOOTSTRAP_TYPE} STREQUAL "chez")
+        set(addargs --program)
     else()
         set(addargs)
     endif()
