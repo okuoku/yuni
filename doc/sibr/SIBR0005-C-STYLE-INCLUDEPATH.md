@@ -1,7 +1,7 @@
 SIBR0005: C style include path behaviour
 ========================================
 
-Affected: `Gauche` `Picrin`
+Affected: `Picrin`
 
 Some R7RS implementations does not implement C-styled include path behaviour.
 
@@ -24,3 +24,8 @@ Reference
 
 * https://github.com/okuoku/yuni/issues/6
 * https://github.com/okuoku/yuni/issues/7
+
+History
+=======
+
+* `Gauche` adopted C-style include path behaviour in 0.9.5.
