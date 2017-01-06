@@ -146,11 +146,10 @@ add_custom_target(reset
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 # Status
-if(YUNI_WITH_YUNIBASE)
-    message(STATUS "YUNI_WITH_YUNIBASE = ${YUNI_WITH_YUNIBASE}")
-endif()
-message(STATUS "")
 
+message(STATUS "")
+message(STATUS "Configuration status:")
+message(STATUS "")
 
 message(STATUS "chibi-scheme:     ${YUNI_CHIBI_SCHEME}")
 if(YUNI_CHIBI_SCHEME)
@@ -185,4 +184,12 @@ message(STATUS "MIT/GNU Scheme:   ${YUNI_MIT_SCHEME}")
 message(STATUS "RapidGambit:      ${YUNI_RAPID_GAMBIT}")
 message(STATUS "IronScheme:       ${YUNI_IRON_SCHEME}")
 message(STATUS "Kawa:             ${YUNI_KAWA_JAR}")
+
+if(YUNI_WITH_YUNIBASE)
+    message(STATUS "YUNI_WITH_YUNIBASE = ${YUNI_WITH_YUNIBASE}")
+endif()
+if(YUNI_BOOTSTRAP_USE)
+    message(STATUS "YUNI_BOOTSTRAP_USE = ${YUNI_BOOTSTRAP_USE}")
+endif()
+message(STATUS "")
 
