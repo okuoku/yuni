@@ -66,6 +66,31 @@ set(bootparams
 # Generate (yuniconfig build) library
 set(YUNIPLATFORM ${_PLATFORM})
 set(YUNIRUNTIMEROOTPATH ${YUNIBASE_YUNIFIED_PATH}/runtime)
+macro(setyuniconfigtarget nam)
+    # FIXME: How to handle compilers??
+    if(${nam} STREQUAL GAUCHE)
+        set(_exec GOSH)
+    elseif(${nam} STREQUAL CHICKEN)
+        set(_exec CHICKEN_CSI)
+    elseif(${nam} STREQUAL GAMBIT)
+        set(_exec GSI)
+    elseif(${nam} STREQUAL KAWA)
+        set(_exec KAWA_JAR)
+    else()
+        set(_exec ${nam})
+    endif()
+
+    if(YUNI_${_exec})
+        set(YUNICONFIG${nam} "${YUNI_${_exec}}")
+    else()
+        set(YUNICONFIG${nam} "UNKNOWN")
+    endif()
+endmacro()
+foreach(e GAUCHE CHIBI_SCHEME PICRIN KAWA SAGITTARIUS RACKET GUILE
+        CHICKEN
+        LARCENY IRON_SCHEME CHEZ_SCHEME VICARE NMOSH GAMBIT MIT_SCHEME)
+    setyuniconfigtarget(${e})
+endforeach()
 configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/yuniconfig-build.sls.in
     ${YUNI_BUILDCONFIG_LIBDIR}/yuniconfig/build.sls

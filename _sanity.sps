@@ -47,7 +47,6 @@
              (else
                (set! failed-forms (cons 'form failed-forms)))))))))
 
-(check-equal #t (string? (yuniconfig-platform)))
 
 (check-equal #t (let ((m (lambda () #t))) (m)))
 (check-equal '#(0 1 2 3 4)
@@ -378,6 +377,16 @@
 (miniread-tests)
 (for-each verify-file test-files)
 
+(define (gen-configscm pth)
+  (check-equal #t (string? pth))
+  (and 
+    (string? pth)
+    (string-append pth "/" (symbol->string (ident-impl)) 
+                   "/yuniconfig/build.sls")))
+
 (check-equal #t (symbol? (ident-impl)))
+(check-equal #t (string? (yuniconfig-platform)))
+(check-equal #t (file-exists? (gen-configscm (yuniconfig-runtime-rootpath))))
+(check-equal #t (file-exists? (yuniconfig-executable-path (ident-impl))))
 
 (check-finish)
