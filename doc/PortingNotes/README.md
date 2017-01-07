@@ -3,21 +3,21 @@ Port Status
 
 |impl            |Working?  |Bootstrap?|Win32?|YuniFFI?|YuniFFI impl|
 |:---------------|:--------:|:--------:|:----:|:------:|:-----------|
-|[gauche][]      |X         |X         |X     |X       |Module      |
+|[chez][]        |X         |          |      |X       |Native      |
 |[chibi-scheme][]|X         |X         |X     |X       |Module      |
 |[chicken][]     |X         |X         |      |X       |Module      |
-|[picrin][]      |          |          |      |X       |Compile-in  |
-|[kawa][]        |X         |          |      |        |            |
-|[sagittarius][] |X         |X         |X     |X       |Native      |
-|[racket][]      |X         |X         |X     |X       |Native      |
-|[guile][]       |X         |          |      |X       |Native      |
-|[larceny][]     |X         |          |X     |Partial |Native      |
-|[ironscheme][]  |X         |X         |X     |        |            |
-|[chez][]        |X         |          |      |X       |Native      |
-|[vicare][]      |Partial   |          |      |X       |Native      |
 |[gambit][]      |Alexpander|          |Crash |X       |Module      |
+|[gauche][]      |X         |X         |X     |X       |Module      |
+|[guile][]       |X         |          |      |X       |Native      |
+|[ironscheme][]  |X         |X         |X     |        |            |
+|[kawa][]        |X         |          |      |        |            |
+|[larceny][]     |X         |          |X     |Partial |Native      |
 |[mit-scheme][]  |Alexpander|          |X     |        |            |
-
+|[nmosh][]       |X         |          |      |X       |Native      |
+|[picrin][]      |          |          |      |X       |Compile-in  |
+|[racket][]      |X         |X         |X     |X       |Native      |
+|[sagittarius][] |X         |X         |X     |X       |Native      |
+|[vicare][]      |Partial   |          |      |X       |Native      |
 
 * `Bootstrap?`: These implementations can be used to "bootstrap" yuni library ie.) when building Yuni from source, one of these implementation is required.
 * `Win32?`: For these implementations, Yuni can be bootstrapped/run with Win32 binary distributions.
@@ -31,23 +31,23 @@ Symbol mapping
 --------------
 
 
-|impl        |CMake variable|Yunified name|
-|:-----------|:-------------|:------------|
-|gauche      |GAUCHE        |gosh|
-|chibi-scheme|CHIBI_SCHEME  ||
-|chicken     |CHICKEN       |csi|
-|picrin      |PICRIN        ||
-|kawa        |KAWA          ||
-|sagittarius |SAGITTARIUS   ||
-|racket      |RACKET        ||
-|guile       |GUILE         ||
-|larceny     |LARCENY       ||
-|ironscheme  |IRON_SCHEME   ||
-|chez        |CHEZ_SCHEME   |chez-scheme  |
-|vicare      |VICARE        ||
-|nmosh       |NMOSH         ||
-|gambit      |GAMBIT        |gsi          |
-|mit-scheme  |MIT_SCHEME    ||
+|impl        |CMake variable|CMake interp|CMake comp |CMake pkg     |
+|:-----------|:-------------|:-----------|:----------|:-------------|
+|chez        |CHEZ_SCHEME   |CHEZ_SCHEME |           |              |
+|chibi-scheme|CHIBI_SCHEME  |CHIBI_SCHEME|           |              |
+|chicken     |CHICKEN       |CHICKEN_CSI |CHICKEN_CSC|CHICKEN       |
+|gambit      |GAMBIT        |GSI         |GSC        |              |
+|gauche      |GAUCHE        |GOSH        |           |GAUCHE_PACKAGE|
+|guile       |GUILE         |GUILE       |           |              |
+|ironscheme  |IRON_SCHEME   |IRON_SCHEME |           |              |
+|kawa        |KAWA          |KAWA_JAR    |           |              |
+|larceny     |LARCENY       |LARCENY     |           |              |
+|mit-scheme  |MIT_SCHEME    |MIT_SCHEME  |           |              |
+|nmosh       |NMOSH         |NMOSH       |           |              |
+|picrin      |PICRIN        |PICRIN      |           |              |
+|racket      |RACKET        |RACKET      |           |RACO          |
+|sagittarius |SAGITTARIUS   |SAGITTARIUS |           |              |
+|vicare      |VICARE        |VICARE      |           |              |
 
 For historical reasons, this mapping contains some unintentional inconsistencies:
 
@@ -64,17 +64,19 @@ Basic requirements are:
 - `SRFI-30` Nested multi-line comments
 - `SRFI-46` (Optional) Basic syntax-rules extensions - can use Alexpander 
 
-[gauche]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/gauche.md
-[chibi-scheme]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/chibi-scheme.md
-[picrin]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/picrin.md
-[kawa]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/kawa.md
-[sagittarius]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/sagittarius.md
-[racket]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/racket.md
-[guile]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/guile.md
-[larceny]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/larceny.md
-[ironscheme]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/ironscheme.md
+
 [chez]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/chez.md
-[vicare]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/vicare.md
-[gambit]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/gambit.md
-[mit-scheme]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/mit-scheme.md
+[chibi-scheme]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/chibi-scheme.md
 [chicken]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/chicken.md
+[gambit]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/gambit.md
+[gauche]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/gauche.md
+[guile]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/guile.md
+[ironscheme]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/ironscheme.md
+[kawa]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/kawa.md
+[larceny]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/larceny.md
+[mit-scheme]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/mit-scheme.md
+[nmosh]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/nmosh.md
+[picrin]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/picrin.md
+[racket]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/racket.md
+[sagittarius]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/sagittarius.md
+[vicare]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/vicare.md
