@@ -5,6 +5,7 @@ Port Status
 |:---------------|:--------:|:--------:|:----:|:------:|:-----------|
 |[gauche][]      |X         |X         |X     |X       |Module      |
 |[chibi-scheme][]|X         |X         |X     |X       |Module      |
+|[chicken][]     |X         |X         |      |X       |Module      |
 |[picrin][]      |          |          |      |X       |Compile-in  |
 |[kawa][]        |X         |          |      |        |            |
 |[sagittarius][] |X         |X         |X     |X       |Native      |
@@ -20,7 +21,7 @@ Port Status
 
 * `Bootstrap?`: These implementations can be used to "bootstrap" yuni library ie.) when building Yuni from source, one of these implementation is required.
 * `Win32?`: For these implementations, Yuni can be bootstrapped/run with Win32 binary distributions.
- * Gambit: Sometimes crashes on exit.
+ * Gambit: Sometimes crashes on exit. Use VisualC variant instead.
 * `YuniFFI?`: YuniFFI is supported. 
  * `Module`: Requires stub module loader C extension. C extensions will be built with CMake. See `yunistub` for its sources.
  * `Compile-in`: Specially crafted interpreter required.
@@ -34,6 +35,7 @@ Symbol mapping
 |:-----------|:-------------|:------------|
 |gauche      |GAUCHE        |gosh|
 |chibi-scheme|CHIBI_SCHEME  ||
+|chicken     |CHICKEN       |csi|
 |picrin      |PICRIN        ||
 |kawa        |KAWA          ||
 |sagittarius |SAGITTARIUS   ||
@@ -75,3 +77,4 @@ Basic requirements are:
 [vicare]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/vicare.md
 [gambit]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/gambit.md
 [mit-scheme]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/mit-scheme.md
+[chicken]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/chicken.md
