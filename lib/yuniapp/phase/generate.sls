@@ -7,19 +7,31 @@
                  (yuniapp util openlibfile)
                  (yuniapp util enumlibfiles)
                  (yuniapp tmpl cmdline)
+                 (yuniapp tmpl r7rs)
                  (yuniapp tmpl r6rs))
 
 (define (calc-libsuffix sym)
   (case sym
     ((racket) ".mzscheme.sls")
+    ((chibi-scheme) ".sld")
     (else 
       (error "Unknown implementation" sym))))
 
 (define (calc-generator sym)
   (case sym
     ((racket) tmpl-r6rs/racket)
+    ((chibi-scheme) tmpl-r7rs/chibi-scheme)
     (else
       (error "Unknown implementation" sym))))
+
+(define (use-batchfile?)
+  (let ((o (yuniconfig-platform)))
+   (or (string=? "WIN32" o)
+       (string=? "WIN64" o))))
+
+(define (use-rootrelative?)
+  (let ((o (ident-impl)))
+   (eq? 'chibi-scheme o)))
 
 (define (gen generator runtimepath suffix libfile)
   (write (list 'generating: libfile))
@@ -62,13 +74,10 @@
       (substring str 0 (- len 1))
       str)))
 
-(define (use-batchfile?)
-  (let ((o (yuniconfig-platform)))
-   (or (string=? "WIN32" o)
-       (string=? "WIN64" o))))
 
 (define (generate-app-cmd)
   (define batchfile? (use-batchfile?))
+  (define rootrelative? (use-rootrelative?))
   (define appdir (removetrail (pickup-dir "-GENERATE")))
   (define gendir (removetrail (pickup-dir "-CURRENTDIR")))
   (define appsrc (string-append appdir "/" "app.sps"))
@@ -82,6 +91,10 @@
   (define runscript (string-append gendir "/" 
                                    "run-" (symbol->string impl)
                                    (if batchfile? ".bat" ".sh")))
+
+  (define libpath (if rootrelative?
+                    (list applibpath runtimepath)
+                    (list runtimepath)))
 
   (define libsuffix (calc-libsuffix impl))
   (define libgen (calc-generator impl))
@@ -114,9 +127,9 @@
                      (list 
                        ((if batchfile? 
                           cmdline-win32
-                          #f)
+                          cmdline-sh)
                         impl
-                        (list runtimepath)
+                        libpath
                         appsrc
                         '())))
   )

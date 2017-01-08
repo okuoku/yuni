@@ -1,5 +1,6 @@
 (library (yuniapp tmpl cmdline)
          (export
+           cmdline-sh
            cmdline-win32)
          (import (yuni scheme)
                  (yuniconfig build))
@@ -35,14 +36,20 @@
   (define all-libpaths (cons (string-append runtime "/" 
                                             (symbol->string impl))
                              libpaths))
+  (define args (params " " initargs))
 
   (case impl
+    ((chibi-scheme)
+     (string-append cmd " " (gen-libs "-I" all-libpaths)
+                    " "
+                    progpath
+                    args))
     ((racket)
      (string-append cmd " -I scheme/init -l- r6rs/run.rkt "
                     (gen-libs "++path" all-libpaths)
                     " "
                     progpath
-                    (params " " initargs)))
+                    args))
     (else
       (error "Unknown implementation" impl))))
 
@@ -52,5 +59,12 @@
     "@echo off\n\n"
     cmdraw
     " %*\n"))
+
+(define (cmdline-sh impl libpaths progpath initargs)
+  (define cmdraw (invoke-cmd impl libpaths progpath initargs))
+  (string-append
+    "#!/bin/sh\n\nexec "
+    cmdraw
+    " $*\n"))
 
 )
