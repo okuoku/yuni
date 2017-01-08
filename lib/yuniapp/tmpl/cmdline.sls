@@ -50,6 +50,11 @@
                     " "
                     progpath
                     args))
+    ((gauche)
+     (string-append cmd " " (gen-libs "-I" all-libpaths)
+                    " "
+                    progpath
+                    args))
     (else
       (error "Unknown implementation" impl))))
 

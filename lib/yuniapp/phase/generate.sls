@@ -13,7 +13,7 @@
 (define (calc-libsuffix sym)
   (case sym
     ((racket) ".mzscheme.sls")
-    ((chibi-scheme) ".sld")
+    ((chibi-scheme gauche) ".sld")
     (else 
       (error "Unknown implementation" sym))))
 
@@ -21,6 +21,7 @@
   (case sym
     ((racket) tmpl-r6rs/racket)
     ((chibi-scheme) tmpl-r7rs/chibi-scheme)
+    ((gauche) tmpl-r7rs/gauche)
     (else
       (error "Unknown implementation" sym))))
 
