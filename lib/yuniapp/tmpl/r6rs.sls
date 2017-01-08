@@ -21,6 +21,6 @@
     "           (include %%internal-paste:include))\n"
     (sexp-list->lines importset)
     ")\n"
-    "(%%internal-paste:include (file \"" pth "\")))\n"))
+    "(%%internal-paste:include (file \"" (escape-path pth) "\")))\n"))
          
 )

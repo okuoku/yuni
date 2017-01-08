@@ -1,5 +1,6 @@
 (library (yuniapp util tmplutils)
          (export
+           escape-path
            libname->string
            exportsyms->string
            sexp-list->lines
@@ -7,6 +8,18 @@
            filter-keyword)
 
          (import (yuni scheme))
+
+(define (escape-path pth)
+  (define (itr acc cur)
+    (if (pair? cur)
+      (let ((c (car cur)))
+       (if (char=? #\\ c)
+         (itr (cons #\\ (cons #\\ acc)) (cdr cur))
+         (itr (cons c acc) (cdr cur))))
+      (reverse acc)))
+  (list->string
+    (itr '()
+         (string->list pth))))
 
 (define (libname->string libname)
   (define (itr acc cur)
