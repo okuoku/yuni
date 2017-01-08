@@ -1,10 +1,8 @@
 (import (yuni scheme)
-        (hello)
         (sub hello))
 
-(let ((h (hello)))
- (let ((i (subhello)))
-  (unless (and h i)
+(let ((h (subhello)))
+  (unless h
     (error "Unexpected."))
-  (exit))) 
+  (exit)) 
 
