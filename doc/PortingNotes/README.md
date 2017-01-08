@@ -3,7 +3,7 @@ Port Status
 
 |impl            |Working?  |Bootstrap?|Win32?|YuniFFI?|YuniFFI impl|
 |:---------------|:--------:|:--------:|:----:|:------:|:-----------|
-|[chez][]        |X         |          |      |X       |Native      |
+|[chez][]        |X         |X         |      |X       |Native      |
 |[chibi-scheme][]|X         |X         |X     |X       |Module      |
 |[chicken][]     |X         |X         |      |X       |Module      |
 |[gambit][]      |Alexpander|          |Crash |X       |Module      |
