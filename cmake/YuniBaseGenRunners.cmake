@@ -193,6 +193,17 @@ endfunction()
 # FIXME: Move below outside of Yunibase
 #
 
+function(emit_tmpl_gen_cmd outpath execpath scriptpath)
+    file(WRITE "${outpath}.bat"
+        "@echo off\n\"${execpath}\" ${scriptpath} -CURRENTDIR %CD% -GENERATE %*\n")
+endfunction()
+
+function(emit_tmpl_gen_sh outpath execpath scriptpath)
+    file(WRITE "${outpath}"
+        "#!/bin/sh\n\nexec ${execpath} ${scriptpath} -CURRENTDIR $PWD -GENERATE $*\n")
+    execute_process(COMMAND chmod +x ${outpath})
+endfunction()
+
 function(emit_tmpl_runwitharg_cmd outpath execpath args)
     file(WRITE "${outpath}.bat"
         "@echo off\n\"${execpath}\" ${args} %*\n")
@@ -295,6 +306,18 @@ function(emit_yunirunner flav varname cmdvar cmdname)
                     "${_argsstr}")
             endif()
 
+        endif()
+
+        if(${flav} STREQUAL yunified)
+            if(WIN32)
+                emit_tmpl_gen_cmd(${YUNIBASE_YUNIFIED_PATH}/gen-${cmdname}
+                    ${YUNIBASE_YUNIFIED_PATH}/${cmdname}
+                    ${YUNIBASE_YUNIFIED_PATH}/loader/generate.sps)
+            else()
+                emit_tmpl_gen_sh(${YUNIBASE_YUNIFIED_PATH}/gen-${cmdname}
+                    ${YUNIBASE_YUNIFIED_PATH}/${cmdname}
+                    ${YUNIBASE_YUNIFIED_PATH}/loader/generate.sps)
+            endif()
         endif()
     endif()
 endfunction()

@@ -123,6 +123,7 @@ add_subdirectory(build/ffistub ffistub)
 
 # Components (include testing)
 add_subdirectory(yunistub)
+add_subdirectory(yuniruntime)
 add_subdirectory(tests/yunibase tests-yunibase)
 
 # Reset target
