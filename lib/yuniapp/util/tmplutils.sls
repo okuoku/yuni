@@ -43,7 +43,8 @@
       (let ((a (car cur)))
        (if (proc a)
          (itr acc (cdr cur))
-         (itr (cons a acc) (cdr cur))))))
+         (itr (cons a acc) (cdr cur))))
+      acc))
   (itr '() syms))
 
 (define (sexp-list->lines sexp)

@@ -6,6 +6,7 @@
                  (yuniconfig build)
                  (yuniapp util openlibfile)
                  (yuniapp util enumlibfiles)
+                 (yuniapp util tmplutils)
                  (yuniapp tmpl cmdline)
                  (yuniapp tmpl r7rs)
                  (yuniapp tmpl r6rs))
@@ -13,7 +14,7 @@
 (define (calc-libsuffix sym)
   (case sym
     ((racket) ".mzscheme.sls")
-    ((chibi-scheme gauche) ".sld")
+    ((chibi-scheme gauche sagittarius) ".sld")
     (else 
       (error "Unknown implementation" sym))))
 
@@ -21,7 +22,7 @@
   (case sym
     ((racket) tmpl-r6rs/racket)
     ((chibi-scheme) tmpl-r7rs/chibi-scheme)
-    ((gauche) tmpl-r7rs/gauche)
+    ((gauche sagittarius) tmpl-r7rs/generic-fullpath)
     (else
       (error "Unknown implementation" sym))))
 
@@ -34,7 +35,19 @@
   (let ((o (ident-impl)))
    (eq? 'chibi-scheme o)))
 
-(define (gen generator runtimepath suffix libfile)
+(define (do-strip-keywords?)
+  (let ((o (ident-impl)))
+   (case o
+     ((gauche sagittarius) #t)
+     (else #f))))
+
+(define (do-strip-stdaux?)
+  (let ((o (ident-impl)))
+   (case o
+     ((chicken guile) #t)
+     (else #f))))
+
+(define (gen generator runtimepath suffix libfile strip-keywords? strip-stdaux?)
   (write (list 'generating: libfile))
   (newline)
   (let ((lib (file->sexp-list libfile)))
@@ -45,9 +58,17 @@
           (libname (cadr lib0))
           (exports (cdr (caddr lib0)))
           (imports (cdr (cadddr lib0))))
-     (let ((p (openlibfile #t libname runtimepath suffix)))
-      (display (generator libname exports imports libfile) p)
-      (close-port p)))))
+     ;; Strip exports
+     (let* ((a (if strip-keywords? 
+                 (filter-keyword exports)
+                 exports))
+            (e (if strip-stdaux?
+                 (filter-stdaux a)
+                 a)))
+       ;; Output
+       (let ((p (openlibfile #t libname runtimepath suffix)))
+        (display (generator libname e imports libfile) p)
+        (close-port p))))))
 
 (define (prepare-dir! pth)
   (unless (file-directory? pth)
@@ -79,6 +100,8 @@
 (define (generate-app-cmd)
   (define batchfile? (use-batchfile?))
   (define rootrelative? (use-rootrelative?))
+  (define strip-keywords? (do-strip-keywords?))
+  (define strip-stdaux? (do-strip-stdaux?))
   (define appdir (removetrail (pickup-dir "-GENERATE")))
   (define gendir (removetrail (pickup-dir "-CURRENTDIR")))
   (define appsrc (string-append appdir "/" "app.sps"))
@@ -119,7 +142,8 @@
   (set! libs (enumlibfiles applibpath))
 
   ;; Generate stub libraries
-  (for-each (lambda (f) (gen libgen runtimepath libsuffix f)) libs)
+  (for-each (lambda (f) (gen libgen runtimepath libsuffix f
+                             strip-keywords? strip-stdaux?)) libs)
 
   ;; Generate launch commandline
   (when (file-exists? runscript) ;; Not required actually

@@ -10,7 +10,9 @@
            create-directory
            delete-directory
            )
-         (import (sagittarius))
+         (import (sagittarius) (rnrs))
+
+(define (directory-list x) (read-directory x))
 
 )
 

@@ -1,7 +1,7 @@
 (library (yuniapp util enumlibfiles)
          (export enumlibfiles)
          (import (yuni scheme)
-                 (yuni compat file-ops))
+                 (yuni util files))
 
          
 ;; (enumlibfiles dir) => [file ...]

@@ -16,15 +16,21 @@
     (itr (car l) (cdr l))
     "")) 
 
-(define (gen-libs param l)
+(define (%gen-libs0 param l)
   (define (itr acc l)
     (if (pair? l)
       (let ((a (car l)))
-       (itr (string-append acc " " param " " a) (cdr l)))
+       (itr (string-append acc " " param a) (cdr l)))
       acc))
   (if (pair? l)
-    (itr (string-append param " " (car l)) (cdr l))
+    (itr (string-append param (car l)) (cdr l))
     ""))
+
+(define (gen-libs/nospace param l)
+  (%gen-libs0 param l))
+
+(define (gen-libs param l)
+  (%gen-libs0 (string-append param " ") l))
 
 (define (quote-exec pth)
   (string-append "\"" pth "\""))
@@ -39,6 +45,11 @@
   (define args (params " " initargs))
 
   (case impl
+    ((sagittarius)
+     (string-append cmd " " (gen-libs/nospace "--loadpath=" all-libpaths)
+                    " "
+                    progpath
+                    args))
     ((chibi-scheme)
      (string-append cmd " " (gen-libs "-I" all-libpaths)
                     " "

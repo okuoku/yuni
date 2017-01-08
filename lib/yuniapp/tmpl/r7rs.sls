@@ -1,6 +1,6 @@
 (library (yuniapp tmpl r7rs)
          (export tmpl-r7rs/chibi-scheme
-                 tmpl-r7rs/gauche)
+                 tmpl-r7rs/generic-fullpath)
          (import (yuni scheme)
                  (yuniapp util tmplutils))
 
@@ -18,7 +18,7 @@
       (list->string acc)))
   (itr '() (reverse (string->list pth))))
 
-(define (tmpl-r7rs/gauche libname exportsyms importset pth)
+(define (tmpl-r7rs/generic-fullpath libname exportsyms importset pth)
   (string-append
     "(define-library " (libname->string libname) "\n"
     "    (export\n" (exportsyms->string exportsyms)
