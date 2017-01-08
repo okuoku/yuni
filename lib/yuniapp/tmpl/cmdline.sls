@@ -32,10 +32,20 @@
 (define (gen-libs param l)
   (%gen-libs0 (string-append param " ") l))
 
+(define (gen-pathsep pathsep l)
+  (define (itr acc l)
+    (if (pair? l)
+      (let ((a (car l)))
+       (itr (string-append acc pathsep a) (cdr l)))
+      acc))
+  (if (pair? l)
+    (itr (car l) (cdr l))
+    ""))
+
 (define (quote-exec pth)
   (string-append "\"" pth "\""))
 
-(define (invoke-cmd impl libpaths progpath initargs)
+(define (invoke-cmd win32? impl libpaths progpath initargs)
   (define cmd (quote-exec (yuniconfig-executable-path impl)))
   (define runtime (yuniconfig-runtime-rootpath))
   (define platform (yuniconfig-platform))
@@ -43,8 +53,12 @@
                                             (symbol->string impl))
                              libpaths))
   (define args (params " " initargs))
+  (define pathsep (if win32? ";" ":"))
 
   (case impl
+    ((chez)
+     (string-append cmd " --libdirs " (gen-pathsep pathsep all-libpaths)
+                    " --program " progpath args))
     ((sagittarius)
      (string-append cmd " " (gen-libs/nospace "--loadpath=" all-libpaths)
                     " "
@@ -70,14 +84,14 @@
       (error "Unknown implementation" impl))))
 
 (define (cmdline-win32 impl libpaths progpath initargs)
-  (define cmdraw (invoke-cmd impl libpaths progpath initargs))
+  (define cmdraw (invoke-cmd #t impl libpaths progpath initargs))
   (string-append
     "@echo off\n\n"
     cmdraw
     " %*\n"))
 
 (define (cmdline-sh impl libpaths progpath initargs)
-  (define cmdraw (invoke-cmd impl libpaths progpath initargs))
+  (define cmdraw (invoke-cmd #f impl libpaths progpath initargs))
   (string-append
     "#!/bin/sh\n\nexec "
     cmdraw

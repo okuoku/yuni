@@ -15,14 +15,18 @@
   (case sym
     ((racket) ".mzscheme.sls")
     ((chibi-scheme gauche sagittarius) ".sld")
+    ((chez) ".sls")
     (else 
       (error "Unknown implementation" sym))))
+
+(define (tmpl-do-nothing . bogus) #t)
 
 (define (calc-generator sym)
   (case sym
     ((racket) tmpl-r6rs/racket)
     ((chibi-scheme) tmpl-r7rs/chibi-scheme)
     ((gauche sagittarius) tmpl-r7rs/generic-fullpath)
+    ((chez) tmpl-do-nothing)
     (else
       (error "Unknown implementation" sym))))
 
@@ -31,9 +35,10 @@
    (or (string=? "WIN32" o)
        (string=? "WIN64" o))))
 
-(define (use-rootrelative?)
-  (let ((o (ident-impl)))
-   (eq? 'chibi-scheme o)))
+(define (use-rootrelative? sym)
+  (case sym
+    ((chibi-scheme chez) #t)
+    (else #f)))
 
 (define (do-strip-keywords?)
   (let ((o (ident-impl)))
@@ -66,9 +71,11 @@
                  (filter-stdaux a)
                  a)))
        ;; Output
-       (let ((p (openlibfile #t libname runtimepath suffix)))
-        (display (generator libname e imports libfile) p)
-        (close-port p))))))
+       (let ((content (generator libname e imports libfile)))
+        (when (string? content)
+          (let ((p (openlibfile #t libname runtimepath suffix)))
+           (display content p)
+           (close-port p))))))))
 
 (define (prepare-dir! pth)
   (unless (file-directory? pth)
@@ -98,15 +105,15 @@
 
 
 (define (generate-app-cmd)
+  (define impl (ident-impl))
   (define batchfile? (use-batchfile?))
-  (define rootrelative? (use-rootrelative?))
+  (define rootrelative? (use-rootrelative? impl))
   (define strip-keywords? (do-strip-keywords?))
   (define strip-stdaux? (do-strip-stdaux?))
   (define appdir (removetrail (pickup-dir "-GENERATE")))
   (define gendir (removetrail (pickup-dir "-CURRENTDIR")))
   (define appsrc (string-append appdir "/" "app.sps"))
   (define applib "yunilib")
-  (define impl (ident-impl))
   (define libs '())
   (define applibpath (string-append appdir "/" applib))
   (define runtimeroot (string-append gendir "/_runtime"))
