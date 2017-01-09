@@ -10,23 +10,23 @@ Path specification
 
 Command-line options format for path specifications varies between implementations.
 
-|impl        |Type  |Libpath        |Progfile   |Arg |Remarks            |
-|:-----------|:----:|:--------------|:----------|:---|:------------------|
-|gauche      |Type 1|`-I`           |           |    |`-A` for lib append|
-|chibi-scheme|Type 1|`-I`           |           |    |                   |
-|picrin      |Type 0|               |           |    |                   |
-|chicken     |Type 0|               |           |    |                   |
-|kawa        |Type 0|               |           |    |FIXME: Actually Type2|
-|sagittarius |Type 1|`--loadpath=`  |           |    |                   |
-|racket      |Type 2|`++path`       |           |    |                   |
-|guile       |Type 1|`-L`           |           |    |                   |
-|larceny     |Type 2|`-path`        |`-program` |`--`|                   |
-|ironscheme  |Type 0|               |           |    |FIXME: Actually Type1|
-|chez        |Type 2|`--libdirs`    |`--program`|    |                   |
-|vicare      |Type 1|`--source-path`|           |    |                   |
-|nmosh       |Type 2|`--loadpath=`  |           |    |                   |
-|gambit      |Type 0|               |           |    |                   |
-|mit-scheme  |Type 0|               |           |    |                   |
+|impl        |Type  |Libpath        |Progfile       |Arg |Remarks            |
+|:-----------|:----:|:--------------|:--------------|:---|:------------------|
+|gauche      |Type 1|`-I`           |               |    |`-A` for lib append|
+|chibi-scheme|Type 1|`-I`           |               |    |                   |
+|picrin      |Type 0|               |               |    |                   |
+|chicken     |Type 0|               |               |    |                   |
+|kawa        |Type 0|               |               |    |FIXME: Actually Type2|
+|sagittarius |Type 1|`--loadpath=`  |               |    |                   |
+|racket      |Type 2|`++path`       |               |    |                   |
+|guile       |Type 1|`-L`           |               |    |                   |
+|larceny     |Type 2|`-path`        |`-program`     |`--`|                   |
+|ironscheme  |Type 0|               |               |    |FIXME: Actually Type1|
+|chez        |Type 2|`--libdirs`    |`--program`    |    |                   |
+|vicare      |Type 1|`--source-path`|`--r6rs-script`|`--`|                   |
+|nmosh       |Type 2|`--loadpath=`  |               |    |                   |
+|gambit      |Type 0|               |               |    |                   |
+|mit-scheme  |Type 0|               |               |    |                   |
 
 ### Type 0
 
@@ -143,5 +143,5 @@ sagittarius <LIBS> <PROG> <ARGS>
 ## Vicare
 
 ```
-vicare <LIBS> <PROG> <ARGS>
+vicare <LIBS> --r6rs-script <PROG> -- <ARGS>
 ```
