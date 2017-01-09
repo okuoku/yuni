@@ -54,9 +54,8 @@
      ((chicken guile) #t)
      (else #f))))
 
-(define (gen generator runtimepath suffix libfile strip-keywords? strip-stdaux?)
-  (write (list 'generating: libfile))
-  (newline)
+(define (gen generator prepare-dirs!
+             runtimepath suffix libfile strip-keywords? strip-stdaux?)
   (let ((lib (file->sexp-list libfile)))
    (unless (and lib (pair? lib) (= 1 (length lib)))
      (error "Malformed library" libfile))
@@ -74,10 +73,29 @@
                  a)))
        ;; Output
        (let ((content (generator libname e imports libfile)))
-        (when (string? content)
+        (define (generate sym)
           (let ((p (openlibfile #t libname runtimepath suffix)))
+           (write (list sym libfile))
+           (newline)
            (display content p)
-           (close-port p))))))))
+           (close-port p)))
+        (when (string? content)
+          (prepare-dirs!)
+          (let ((pold (openlibfile #f libname runtimepath suffix)))
+            (cond
+              (pold
+                (let* ((pnew (open-input-string content))
+                       (old (read pold))
+                       (new (read pnew)))
+                  (close-port pold)
+                  (close-port pnew)
+                  (cond
+                    ((equal? old new)
+                     ;; Skip output
+                     (write (list 'skip: libfile))
+                     (newline))
+                    (else (generate 'Update:)))))
+              (else (generate 'Generate:))))))))))
 
 (define (prepare-dir! pth)
   (unless (file-directory? pth)
@@ -105,7 +123,7 @@
       (substring str 0 (- len 1))
       str)))
 
-(define (generate-app-cmd)
+(define (generate-app-cmd) ;; Closes output port
   (define impl (ident-impl))
   (define batchfile? (use-batchfile?))
   (define rootrelative? (use-rootrelative? impl))
@@ -131,6 +149,12 @@
 
   (define libsuffix (calc-libsuffix impl))
   (define libgen (calc-generator impl))
+  (define dir-prepared? #f)
+  (define (prepare-dirs!)
+    (unless dir-prepared?
+      (prepare-dir! runtimeroot)
+      (prepare-dir! runtimepath)
+      (set! dir-prepared? #t)))
 
   ;; Check app.sps
   (unless (file-exists? appsrc)
@@ -144,14 +168,14 @@
   (unless (file-directory? gendir)
     (error "gendir is not a directory" gendir))
   
-  (prepare-dir! runtimeroot)
-  (prepare-dir! runtimepath)
 
   ;; First, enumerate applibs
   (set! libs (enumlibfiles applibpath))
 
   ;; Generate stub libraries
-  (for-each (lambda (f) (gen libgen runtimepath libsuffix f
+  (for-each (lambda (f) (gen libgen 
+                             prepare-dirs!
+                             runtimepath libsuffix f
                              strip-keywords? strip-stdaux?)) libs)
 
   ;; Generate launch commandline
@@ -168,5 +192,5 @@
                         libpath
                         appsrc
                         '())))
-  )
+  (close-port (current-output-port)))
 )
