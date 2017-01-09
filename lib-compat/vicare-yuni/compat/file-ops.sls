@@ -21,8 +21,8 @@
                        mkdir
                        rmdir)) 
 
-(define file-regular? file-is-regular-file?)
-(define file-directory? file-is-directory?)
+(define (file-regular? x) (and (file-exists? x) (file-is-regular-file? x)))
+(define (file-directory? x) (and (file-exists? x) (file-is-directory? x)))
 
 (define (directory-list pth)
   (define ret '())

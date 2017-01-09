@@ -225,6 +225,12 @@ function(emit_tmpl_runwitharg_sh_larceny outpath execpath args)
     execute_process(COMMAND chmod +x ${outpath})
 endfunction()
 
+function(emit_tmpl_runwitharg_sh_vicare outpath execpath args)
+    file(WRITE "${outpath}"
+        "#!/bin/sh\n\nexec ${execpath} ${args} --r6rs-script \$1 -- \$*\n")
+    execute_process(COMMAND chmod +x ${outpath})
+endfunction()
+
 function(emit_tmpl_runwitharg_sh outpath execpath args)
     # args = a string for additional args
     file(WRITE "${outpath}"
@@ -298,6 +304,10 @@ function(emit_yunirunner flav varname cmdvar cmdname)
         else()
             if(${cmdvar} STREQUAL YUNI_LARCENY)
                 emit_tmpl_runwitharg_sh_larceny(${out}
+                    ${cmd}
+                    "${_argsstr}")
+            elseif(${cmdvar} STREQUAL YUNI_VICARE)
+                emit_tmpl_runwitharg_sh_vicare(${out}
                     ${cmd}
                     "${_argsstr}")
             else()

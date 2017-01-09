@@ -15,7 +15,7 @@
   (case sym
     ((racket) ".mzscheme.sls")
     ((chibi-scheme gauche sagittarius) ".sld")
-    ((chez) ".sls")
+    ((chez vicare) ".sls")
     (else 
       (error "Unknown implementation" sym))))
 
@@ -26,7 +26,7 @@
     ((racket) tmpl-r6rs/racket)
     ((chibi-scheme) tmpl-r7rs/chibi-scheme)
     ((gauche sagittarius) tmpl-r7rs/generic-fullpath)
-    ((chez) tmpl-do-nothing)
+    ((chez vicare) tmpl-do-nothing)
     (else
       (error "Unknown implementation" sym))))
 
@@ -37,7 +37,7 @@
 
 (define (use-rootrelative? sym)
   (case sym
-    ((chibi-scheme chez) #t)
+    ((chibi-scheme chez vicare) #t)
     (else #f)))
 
 (define (do-strip-keywords?)

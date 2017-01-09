@@ -56,6 +56,10 @@
   (define pathsep (if win32? ";" ":"))
 
   (case impl
+    ((vicare)
+     (string-append cmd " " (gen-libs "--source-path" all-libpaths)
+                    " --r6rs-script " progpath
+                    " -- " args))
     ((chez)
      (string-append cmd " --libdirs " (gen-pathsep pathsep all-libpaths)
                     " --program " progpath args))
