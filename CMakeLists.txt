@@ -121,10 +121,14 @@ add_subdirectory(build/ffistub ffistub)
 
 # Options
 
-# Components (include testing)
+# Components
 add_subdirectory(yunistub)
 add_subdirectory(yuniruntime)
+
+# Tests
+enable_testing()
 add_subdirectory(tests/yunibase tests-yunibase)
+add_subdirectory(tests/app tests-app)
 
 # Reset target
 

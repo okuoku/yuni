@@ -4,8 +4,6 @@
 #   YUNI_BASEDIR = root of yuni repository
 #   YUNIBASE_YUNIFIED_PATH = yunified runner path
 
-enable_testing()
-
 macro(check_impl var nam)
     if(WIN32)
         set(_pth ${YUNIBASE_YUNIFIED_PATH}/${nam}.bat)
