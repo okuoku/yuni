@@ -45,6 +45,12 @@
 (define (quote-exec pth)
   (string-append "\"" pth "\""))
 
+(define (mapgen sym)
+  (case sym
+    ((gauche) "gosh")
+    ((chez) "chez-scheme")
+    (else (symbol->string sym))))
+
 (define (invoke-cmd win32? impl loaderroot libpaths progpath initargs)
   (define cmd (quote-exec (yuniconfig-executable-path impl)))
   (define runtime (yuniconfig-runtime-rootpath))
@@ -93,17 +99,24 @@
     (else
       (error "Unknown implementation" impl))))
 
-(define (cmdline-win32 impl loaderroot libpaths progpath initargs)
+(define (cmdline-win32 impl loaderroot approot libpaths progpath initargs)
   (define cmdraw (invoke-cmd #t impl loaderroot libpaths progpath initargs))
+  (define genscr (string-append "gen-" (mapgen impl) ".bat"))
   (string-append
     "@echo off\n\n"
+    loaderroot "/../" genscr " " approot
+    " && "
     cmdraw
     " %*\n"))
 
-(define (cmdline-sh impl loaderroot libpaths progpath initargs)
+(define (cmdline-sh impl loaderroot approot libpaths progpath initargs)
   (define cmdraw (invoke-cmd #f impl loaderroot libpaths progpath initargs))
+  (define genscr (string-append "gen-" (mapgen impl)))
   (string-append
-    "#!/bin/sh\n\nexec "
+    "#!/bin/sh\n\n"
+    loaderroot "/../" genscr " " approot
+    " && "
+    "exec "
     cmdraw
     " $*\n"))
 

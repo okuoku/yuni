@@ -164,6 +164,7 @@
                           cmdline-sh)
                         impl
                         loaderroot
+                        appdir
                         libpath
                         appsrc
                         '())))
