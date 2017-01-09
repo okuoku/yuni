@@ -45,7 +45,7 @@
 (define (quote-exec pth)
   (string-append "\"" pth "\""))
 
-(define (invoke-cmd win32? impl libpaths progpath initargs)
+(define (invoke-cmd win32? impl loaderroot libpaths progpath initargs)
   (define cmd (quote-exec (yuniconfig-executable-path impl)))
   (define runtime (yuniconfig-runtime-rootpath))
   (define platform (yuniconfig-platform))
@@ -56,6 +56,12 @@
   (define pathsep (if win32? ";" ":"))
 
   (case impl
+    ((guile)
+     (string-append cmd " -l " loaderroot "/guile-load.scm "
+                    (gen-libs "-L" all-libpaths)
+                    " "
+                    progpath
+                    args))
     ((vicare)
      (string-append cmd " " (gen-libs "--source-path" all-libpaths)
                     " --r6rs-script " progpath
@@ -87,15 +93,15 @@
     (else
       (error "Unknown implementation" impl))))
 
-(define (cmdline-win32 impl libpaths progpath initargs)
-  (define cmdraw (invoke-cmd #t impl libpaths progpath initargs))
+(define (cmdline-win32 impl loaderroot libpaths progpath initargs)
+  (define cmdraw (invoke-cmd #t impl loaderroot libpaths progpath initargs))
   (string-append
     "@echo off\n\n"
     cmdraw
     " %*\n"))
 
-(define (cmdline-sh impl libpaths progpath initargs)
-  (define cmdraw (invoke-cmd #f impl libpaths progpath initargs))
+(define (cmdline-sh impl loaderroot libpaths progpath initargs)
+  (define cmdraw (invoke-cmd #f impl loaderroot libpaths progpath initargs))
   (string-append
     "#!/bin/sh\n\nexec "
     cmdraw

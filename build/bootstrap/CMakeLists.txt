@@ -65,6 +65,7 @@ set(bootparams
 
 # Generate (yuniconfig build) library
 set(YUNIPLATFORM ${_PLATFORM})
+set(YUNILOADERROOTPATH ${YUNIBASE_YUNIFIED_PATH}/loader)
 set(YUNIRUNTIMEROOTPATH ${YUNIBASE_YUNIFIED_PATH}/runtime)
 macro(setyuniconfigtarget nam)
     # FIXME: How to handle compilers??

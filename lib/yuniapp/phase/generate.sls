@@ -14,6 +14,7 @@
 (define (calc-libsuffix sym)
   (case sym
     ((racket) ".mzscheme.sls")
+    ((guile) ".guile.sls")
     ((chibi-scheme gauche sagittarius) ".sld")
     ((chez vicare) ".sls")
     (else 
@@ -24,6 +25,7 @@
 (define (calc-generator sym)
   (case sym
     ((racket) tmpl-r6rs/racket)
+    ((guile) tmpl-r6rs/guile)
     ((chibi-scheme) tmpl-r7rs/chibi-scheme)
     ((gauche sagittarius) tmpl-r7rs/generic-fullpath)
     ((chez vicare) tmpl-do-nothing)
@@ -103,7 +105,6 @@
       (substring str 0 (- len 1))
       str)))
 
-
 (define (generate-app-cmd)
   (define impl (ident-impl))
   (define batchfile? (use-batchfile?))
@@ -116,6 +117,7 @@
   (define applib "yunilib")
   (define libs '())
   (define applibpath (string-append appdir "/" applib))
+  (define loaderroot (removetrail (yuniconfig-loader-rootpath)))
   (define runtimeroot (string-append gendir "/_runtime"))
   (define runtimepath (string-append runtimeroot "/"
                                      (symbol->string impl)))
@@ -161,6 +163,7 @@
                           cmdline-win32
                           cmdline-sh)
                         impl
+                        loaderroot
                         libpath
                         appsrc
                         '())))

@@ -25,8 +25,10 @@
   (let ((st (stat pth)))
    (eq? sym (stat:type st))))
 
-(define (file-regular? pth) (%%file-type-eq? pth 'regular))
-(define (file-directory? pth) (%%file-type-eq? pth 'directory))
+(define (file-regular? pth) (and (file-exists? pth) 
+                                 (%%file-type-eq? pth 'regular)))
+(define (file-directory? pth) (and (file-exists? pth) 
+                                   (%%file-type-eq? pth 'directory)))
 
 (define (directory-list pth)
   (define ret '())
