@@ -1,10 +1,12 @@
-(import (yuni scheme)
-        (yuni ffi database stubir0)
-        (yuni ffi ctemplate root)
-        (yuni ffi scmtemplate root)
-        (yuni ffi database root)
-        (yuni ffi database config)
-        (yuni ffi database libinfo))
+(library (yuniapp phase yuniffistub)
+         (export yuniffistub-app-cmd)
+         (import (yuni scheme)
+                 (yuni ffi database stubir0)
+                 (yuni ffi ctemplate root)
+                 (yuni ffi scmtemplate root)
+                 (yuni ffi database root)
+                 (yuni ffi database config)
+                 (yuni ffi database libinfo))
 
 ;; (yuni util files) excerpt
 (define (file->list proc pth)
@@ -56,37 +58,40 @@
                      (output-path/scm (get-scm-libname/constants db)))
       (lambda (p) (put-scm-stubsource/constants p db)))))
 
-(define cmd (command-line))
-(define scmdir #f)
-(define cdir #f)
-(define file #f)
 
-(define (proc-cmd!)
-  (when (pair? cmd)
-    (let ((a (car cmd))
-          (d (cdr cmd)))
-      (cond
-        ((string=? a "-CDIR")
-         (set! cdir (car d))
-         (set! cmd (cdr d))
-         (proc-cmd!))
-        ((string=? a "-SCMDIR")
-         (set! scmdir (car d))
-         (set! cmd (cdr d))
-         (proc-cmd!))
-        ((string=? a "-FILE")
-         (set! file (car d))
-         (set! cmd (cdr d))
-         (proc-cmd!))
-        (else
-          ;; Ignore unknown args for now
-          (set! cmd d)
-          (proc-cmd!))))))
+(define (yuniffistub-app-cmd)
+  (define cmd (command-line))
+  (define scmdir #f)
+  (define cdir #f)
+  (define file #f)
 
-(proc-cmd!)
+  (define (proc-cmd!)
+    (when (pair? cmd)
+      (let ((a (car cmd))
+            (d (cdr cmd)))
+        (cond
+          ((string=? a "-CDIR")
+           (set! cdir (car d))
+           (set! cmd (cdr d))
+           (proc-cmd!))
+          ((string=? a "-SCMDIR")
+           (set! scmdir (car d))
+           (set! cmd (cdr d))
+           (proc-cmd!))
+          ((string=? a "-FILE")
+           (set! file (car d))
+           (set! cmd (cdr d))
+           (proc-cmd!))
+          (else
+            ;; Ignore unknown args for now
+            (set! cmd d)
+            (proc-cmd!))))))
+  (proc-cmd!)
 
-(cond
-  ((and scmdir cdir file)
-   (procfile file scmdir cdir))
-  (else
-    (error "command-line error!" (command-line))))
+  (cond
+    ((and scmdir cdir file)
+     (procfile file scmdir cdir))
+    (else
+      (error "command-line error!" (command-line)))))
+
+)

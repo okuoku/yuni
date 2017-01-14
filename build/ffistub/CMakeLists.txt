@@ -1,22 +1,6 @@
 set(top ${CMAKE_CURRENT_LIST_DIR}/../..)
 set(stubroot ${CMAKE_CURRENT_BINARY_DIR})
 
-# FIXME: Merge with package phase
-if(${YUNI_BOOTSTRAP_USE} STREQUAL gauche)
-    set(bootstrap_name gosh)
-else()
-    set(bootstrap_name ${YUNI_BOOTSTRAP_USE})
-endif()
-
-if(WIN32)
-    set(bootstrap ${YUNIBASE_YUNIFIED_PATH}/${bootstrap_name}.bat)
-else()
-    set(bootstrap ${YUNIBASE_YUNIFIED_PATH}/${bootstrap_name})
-endif()
-
-set(gen_yuniffi_stubs
-    ${CMAKE_CURRENT_LIST_DIR}/gen-yuniffi-stubs.sps)
-
 function(add_yuniffi_stub tgt stubir scmdir cdir) # ARGN = csrcnames
     get_filename_component(stubirname ${stubir} NAME_WE)
     set(outc)
@@ -27,10 +11,9 @@ function(add_yuniffi_stub tgt stubir scmdir cdir) # ARGN = csrcnames
     foreach(e constants libstate)
         list(APPEND outscm ${scmdir}/${stubirname}-${e}.sls)
     endforeach()
-    add_custom_command(OUTPUT ${outc} ${outscm}
-        COMMAND
-        ${bootstrap}
-        ${gen_yuniffi_stubs}
+    yunibuild_add_custom_command(OUTPUT ${outc} ${outscm}
+        SCRIPT
+        ${top}/yuniruntime/yuniffistub.sps
         -BOGUS # FIXME: IronScheme workaround
         -CDIR ${cdir}
         -SCMDIR ${scmdir}

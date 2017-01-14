@@ -1,6 +1,15 @@
-configure_file(generate.sps
-    ${YUNIBASE_YUNIFIED_PATH}/loader/generate.sps
-    COPYONLY)
-configure_file(guile-load.scm
-    ${YUNIBASE_YUNIFIED_PATH}/loader/guile-load.scm
-    COPYONLY)
+function(installdep f)
+    configure_file(${f}
+        ${YUNIBASE_YUNIFIED_PATH}/loader/${f}
+        COPYONLY)
+endfunction()
+
+set(deps
+    generate.sps
+    yuniffistub.sps
+    guile-load.scm)
+
+foreach(e ${deps})
+    installdep(${e})
+endforeach()
+
