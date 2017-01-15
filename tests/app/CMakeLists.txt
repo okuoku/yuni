@@ -18,10 +18,17 @@ set_impl(SAGITTARIUS  sagittarius  sagittarius)
 set_impl(CHEZ_SCHEME  chez         chez-scheme)
 set_impl(VICARE       vicare       vicare)
 
+if(MSVC)
+    set(gosh_non_msvc)
+else()
+    set(gosh_non_msvc GOSH)
+endif()
+
 set(ffi_impls # Impls which capable to yuniffi
     RACKET GUILE 
     CHIBI_SCHEME 
-    GOSH SAGITTARIUS
+    ${gosh_non_msvc}
+    SAGITTARIUS
     CHEZ_SCHEME VICARE)
 
 function(add_apptest0 dir is_ffi)
