@@ -140,13 +140,14 @@
   (define stublibpath (string-append gendir "/_yunistub"))
   (define runtimepath (string-append runtimeroot "/"
                                      (symbol->string impl)))
+  (define runtimemodpath (yuniconfig-platform-stubdir))
   (define runscript (string-append gendir "/" 
                                    "run-" (symbol->string impl)
                                    (if batchfile? ".bat" ".sh")))
 
   (define libpath (if rootrelative?
-                    (list applibpath runtimepath)
-                    (list runtimepath)))
+                    (list applibpath runtimepath runtimemodpath)
+                    (list runtimepath runtimemodpath)))
 
   (define libsuffix (calc-libsuffix impl))
   (define libgen (calc-generator impl))

@@ -1,5 +1,7 @@
 (library (yuniconfig build)
          (export yuniconfig-platform
+                 yuniconfig-platform-stubdir
+                 yuniconfig-platform-stubdirname
                  yuniconfig-loader-rootpath
                  yuniconfig-runtime-rootpath
                  yuniconfig-executable-path)
@@ -10,6 +12,8 @@
 (define (yuniconfig-loader-rootpath) "@YUNILOADERROOTPATH@")
 (define (yuniconfig-runtime-rootpath) "@YUNIRUNTIMEROOTPATH@")
 (define (yuniconfig-platform) "@YUNIPLATFORM@")
+(define (yuniconfig-platform-stubdir) "@YUNIPLATFORMSTUBDIR@")
+(define (yuniconfig-platform-stubdirname) "@YUNIPLATFORMSTUBDIRNAME@")
 (define (yuniconfig-executable-path sym)
   (let ((x (%yuniconfig-executable-path0 sym)))
    (and (string? x)

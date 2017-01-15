@@ -13,15 +13,15 @@ yuni_detect_platform(apptest_platform)
 set_impl(RACKET       racket       racket)
 set_impl(GUILE        guile        guile)
 set_impl(CHIBI_SCHEME chibi-scheme chibi-scheme)
-set_impl(GAUCHE       gauche       gosh)
+set_impl(GOSH         gauche       gosh)
 set_impl(SAGITTARIUS  sagittarius  sagittarius)
 set_impl(CHEZ_SCHEME  chez         chez-scheme)
 set_impl(VICARE       vicare       vicare)
 
 set(ffi_impls # Impls which capable to yuniffi
     RACKET GUILE 
-    # CHIBI_SCHEME 
-    GAUCHE SAGITTARIUS
+    CHIBI_SCHEME 
+    GOSH SAGITTARIUS
     CHEZ_SCHEME VICARE)
 
 function(add_apptest0 dir is_ffi)
