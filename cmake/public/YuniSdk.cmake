@@ -17,3 +17,11 @@ include(YuniDetectBootstrapScheme)
 
 include(YuniBuild)
 
+function(yuniapp_add_generate tgt dir impl)
+    yunidetectscheme_calc_batchsuffix(sufx)
+    add_custom_target(${tgt} ALL
+        COMMAND
+        ${YUNIBUILD_RUNTIME_ROOT}/gen-${impl}${sufx}
+        ${dir})
+endfunction()
+

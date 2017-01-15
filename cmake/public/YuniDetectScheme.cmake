@@ -222,3 +222,13 @@ macro(yunidetectscheme_guess_bootstrap)
     endif()
 endmacro()
 
+macro(yunidetectscheme_calc_batchsuffix var)
+    if(${yds__PLATFORM} STREQUAL WIN32)
+        set(${var} ".bat")
+    elseif(${yds__PLATFORM} STREQUAL WIN64)
+        set(${var} ".bat")
+    else()
+        set(${var} "")
+    endif()
+endmacro()
+
