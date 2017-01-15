@@ -120,7 +120,7 @@ include(YuniDetectScheme)
 # Bootstrap
 # => yuni_bootstrap, YUNI_BOOTSTRAP_USE
 # => yuni_package, yuni_package_build
-add_subdirectory(build/bootstrap bootstrap) 
+add_subdirectory(bootstrap)
 
 # FIXME: Guess these
 set(YUNIBUILD_RUNTIME_ROOT ${YUNIBASE_YUNIFIED_PATH})

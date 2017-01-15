@@ -114,7 +114,7 @@ configure_file(
     COPYONLY)
 
 configure_file(
-    ${CMAKE_CURRENT_LIST_DIR}/../../config/config.scm
+    ${yuniroot}/config/config.scm
     ${CMAKE_CURRENT_BINARY_DIR}/config.scm.current
     COPYONLY)
 
@@ -145,7 +145,7 @@ execute_process(
     -DGENLIBMETA_OUT=${CMAKE_CURRENT_BINARY_DIR}/libmeta.cmake
     -DOP=GENLIBMETA
     ${bootparams}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../..)
+    WORKING_DIRECTORY ${yuniroot})
 message(STATUS "Done.")
 
 # Instantiate checker

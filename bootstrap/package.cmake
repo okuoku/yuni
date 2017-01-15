@@ -2,10 +2,10 @@ add_custom_target(yuni_package)
 add_custom_target(yuni_package_build)
 
 include(${YUNI_BASEDIR}/lib-runtime/lib-runtime.cmake)
-include(${CMAKE_CURRENT_BINARY_DIR}/../bootstrap/libmeta.cmake)
-include(${CMAKE_CURRENT_BINARY_DIR}/../bootstrap/libgenorder.cmake)
+include(${CMAKE_CURRENT_BINARY_DIR}/libmeta.cmake)
+include(${CMAKE_CURRENT_BINARY_DIR}/libgenorder.cmake)
 
-set(allsps ${CMAKE_CURRENT_BINARY_DIR}/../bootstrap/_yuniall.sps)
+set(allsps ${CMAKE_CURRENT_BINARY_DIR}/_yuniall.sps)
 
 set(wellknownlibs
     # R6RS
