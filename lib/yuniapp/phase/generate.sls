@@ -37,7 +37,7 @@
    (or (string=? "WIN32" o)
        (string=? "WIN64" o))))
 
-(define (use-rootrelative? sym)
+(define (use-rootrelative? sym) ;; Do direct load?
   (case sym
     ((chibi-scheme chez vicare) #t)
     (else #f)))
@@ -137,6 +137,7 @@
   (define applibpath (string-append appdir "/" applib))
   (define loaderroot (removetrail (yuniconfig-loader-rootpath)))
   (define runtimeroot (string-append gendir "/_runtime"))
+  (define stublibpath (string-append gendir "/_yunistub"))
   (define runtimepath (string-append runtimeroot "/"
                                      (symbol->string impl)))
   (define runscript (string-append gendir "/" 
@@ -167,10 +168,18 @@
   ;; Check gendir
   (unless (file-directory? gendir)
     (error "gendir is not a directory" gendir))
-  
 
   ;; First, enumerate applibs
-  (set! libs (enumlibfiles applibpath))
+  (when (file-directory? applibpath)
+    (set! libs (enumlibfiles applibpath)))
+
+  ;; Check stubdir
+  (when (file-directory? stublibpath)
+    (let ((stublibs (enumlibfiles stublibpath)))
+     (unless (null? stublibs)
+       (set! libs (append libs stublibs))
+       (when rootrelative?
+         (set! libpath (append libpath (list stublibpath)))))))
 
   ;; Generate stub libraries
   (for-each (lambda (f) (gen libgen 

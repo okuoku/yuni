@@ -4,7 +4,6 @@ set(inc ${CMAKE_CURRENT_LIST_DIR}/../../../yunistub/include)
 set(yunilibdir ${CMAKE_CURRENT_BINARY_DIR}/_yunistub)
 set(yunilibroot ${yunilibdir}/yunistub)
 
-# file(REMOVE_RECURSE ${yunilibdir})
 file(MAKE_DIRECTORY ${yunilibroot})
 
 include_directories(
