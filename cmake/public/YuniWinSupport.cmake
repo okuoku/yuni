@@ -2,6 +2,12 @@
 # YuniWinSupport: Win32/Win64 support 
 #
 
+if(__YUNI_WINSUPPORT_INCLUDED)
+    return()
+endif()
+
+set(__YUNI_WINSUPPORT_INCLUDED)
+
 function(yuni_get_exe_abi var fn)
     # Calc PE header offset
     file(READ ${fn} peoffs OFFSET 60 LIMIT 2 HEX)

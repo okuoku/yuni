@@ -23,12 +23,11 @@ list(APPEND CMAKE_MODULE_PATH
     # Private modules
     ${CMAKE_CURRENT_LIST_DIR}/cmake
     # Public modules
-    ${CMAKE_CURRENT_LIST_DIR}/cmake/Modules)
+    ${CMAKE_CURRENT_LIST_DIR}/cmake/public)
 
 set(YUNI_BASEDIR ${CMAKE_CURRENT_LIST_DIR})
 
 # CMake modules
-include(YuniWinSupport)
 include(YuniDetectPlatform) 
 
 yuni_detect_platform(_PLATFORM) # => WIN32 / WIN64 / CYG32 / CYG64 / UNKNOWN
@@ -47,9 +46,11 @@ else()
     set(_POSTFIX "")
 endif()
 
-if(NOT YUNIBASE_YUNIFIED_PATH)
+if(NOT YUNIBASE_YUNIFIED_PATH) # Legacy
     set(YUNIBASE_YUNIFIED_PATH ${CMAKE_CURRENT_BINARY_DIR}/yunified)
 endif()
+
+set(YUNISDK_ROOT ${YUNIBASE_YUNIFIED_PATH})
 
 if(NOT YUNIBASE_VANILLA_PATH)
     set(YUNIBASE_VANILLA_PATH ${CMAKE_CURRENT_BINARY_DIR}/vanilla)
@@ -127,38 +128,14 @@ set(YUNIBUILD_RUNTIME_ROOT ${YUNIBASE_YUNIFIED_PATH})
 set(YUNIBUILD_BOOTSTRAP_USE ${YUNI_BOOTSTRAP_USE})
 set(YUNIBUILD_RUNTIME_DEPENDS yuni_package_build yuni_bootstrap)
 
-if(${YUNI_BOOTSTRAP_USE} STREQUAL chez-scheme)
-    set(_runner chez-scheme)
-elseif(${YUNI_BOOTSTRAP_USE} STREQUAL gauche)
-    set(_runner gosh)
-elseif(${YUNI_BOOTSTRAP_USE} STREQUAL sagittarius)
-    set(_runner sagittarius)
-elseif(${YUNI_BOOTSTRAP_USE} STREQUAL chibi-scheme)
-    set(_runner chibi-scheme)
-elseif(${YUNI_BOOTSTRAP_USE} STREQUAL racket)
-    set(_runner racket)
-elseif(${YUNI_BOOTSTRAP_USE} STREQUAL ironscheme)
-    set(_runner ironscheme)
-else()
-    message(FATAL_ERROR "???")
-endif()
-
-if(${_PLATFORM} STREQUAL WIN32)
-    set(_ext ".bat")
-elseif(${_PLATFORM} STREQUAL WIN64)
-    set(_ext ".bat")
-else()
-    set(_ext)
-endif()
-
-set(YUNIBUILD_BOOTSTRAP_COMMAND
-    ${YUNIBUILD_RUNTIME_ROOT}/${_runner}${_ext})
+include(YuniDetectBootstrapScheme)
 
 include(YuniBuild)
 
 # Components
 add_subdirectory(yunistub)
 add_subdirectory(yuniruntime)
+add_subdirectory(cmake/public cmake-public)
 
 # Tests
 enable_testing()

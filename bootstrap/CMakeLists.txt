@@ -10,26 +10,7 @@ set(bootstrap_scripts
     ${CMAKE_CURRENT_LIST_DIR}/build-config-to-cmake-r6.sps
     ${CMAKE_CURRENT_LIST_DIR}/build-libmeta-to-cmake-r6.sps)
 
-# Detect bootstrap scheme
-if(NOT YUNI_BOOTSTRAP_USE)
-    # Prefer Chez > Gauche > Sagittarius > ChibiScheme > Racket
-    # Should match with yunibase name
-    if(YUNI_CHEZ_SCHEME)
-        set(YUNI_BOOTSTRAP_USE chez-scheme)
-    elseif(YUNI_GOSH)
-        set(YUNI_BOOTSTRAP_USE gauche)
-    elseif(YUNI_SAGITTARIUS)
-        set(YUNI_BOOTSTRAP_USE sagittarius)
-    elseif(YUNI_CHIBI_SCHEME)
-        set(YUNI_BOOTSTRAP_USE chibi-scheme)
-    elseif(YUNI_RACKET)
-        set(YUNI_BOOTSTRAP_USE racket)
-    elseif(YUNI_IRON_SCHEME)
-        set(YUNI_BOOTSTRAP_USE ironscheme)
-    else()
-        message(FATAL_ERROR "Failed to detect bootstrap scheme...")
-    endif()
-endif()
+yunidetectscheme_guess_bootstrap()
 
 if(${YUNI_BOOTSTRAP_USE} STREQUAL "chez-scheme")
     set(YUNI_BOOTSTRAP_SCHEME "${YUNI_CHEZ_SCHEME}")

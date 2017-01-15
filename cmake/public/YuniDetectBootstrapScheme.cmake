@@ -1,0 +1,30 @@
+include(YuniDetectPlatform)
+
+yuni_detect_platform(ydbs__PLATFORM)
+
+if(${YUNI_BOOTSTRAP_USE} STREQUAL chez-scheme)
+    set(ydbs__runner chez-scheme)
+elseif(${YUNI_BOOTSTRAP_USE} STREQUAL gauche)
+    set(ydbs__runner gosh)
+elseif(${YUNI_BOOTSTRAP_USE} STREQUAL sagittarius)
+    set(ydbs__runner sagittarius)
+elseif(${YUNI_BOOTSTRAP_USE} STREQUAL chibi-scheme)
+    set(ydbs__runner chibi-scheme)
+elseif(${YUNI_BOOTSTRAP_USE} STREQUAL racket)
+    set(ydbs__runner racket)
+elseif(${YUNI_BOOTSTRAP_USE} STREQUAL ironscheme)
+    set(ydbs__runner ironscheme)
+else()
+    message(FATAL_ERROR "???")
+endif()
+ 
+if(${ydbs__PLATFORM} STREQUAL WIN32)
+    set(ydbs__ext ".bat")
+elseif(${ydbs__PLATFORM} STREQUAL WIN64)
+    set(ydbs__ext ".bat")
+else()
+    set(ydbs__ext)
+endif()
+ 
+set(YUNIBUILD_BOOTSTRAP_COMMAND
+    ${YUNIBUILD_RUNTIME_ROOT}/${ydbs__runner}${ydbs__ext})

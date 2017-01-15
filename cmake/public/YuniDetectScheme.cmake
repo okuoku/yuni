@@ -7,17 +7,17 @@ set(__YUNI_DETECTSCHEME_INCLUDED 1)
 message(STATUS "System: ${CMAKE_HOST_SYSTEM_NAME}")
 message(STATUS "Processor: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
 
+include(YuniDetectPlatform)
+include(YuniWinSupport)
 
 set(detect_scheme_hint_paths)
 
-if(NOT _PLATFORM) # root
-    message(FATAL_ERROR "fixme")
-endif()
+yuni_detect_platform(yds__PLATFORM)
 
 # Since host CMake can be a 32bit version, we use our own platform detection
 if(WIN32)
     # Detect preferred "Program Files" path
-    if(${_PLATFORM} STREQUAL WIN64)
+    if(${yds__PLATFORM} STREQUAL WIN64)
         set(YUNI_WIN32_PROGRAM_PATH # Points "c:/Program Files/ always"
             "$ENV{ProgramW6432}")
     else()
@@ -42,7 +42,7 @@ macro(detect_scheme var)
             if(WIN32)
                 yuni_get_exe_abi(__abi ${${var}})
                 message(STATUS "${${var}} = ${__abi}")
-                if(NOT ${__abi} STREQUAL ${_PLATFORM})
+                if(NOT ${__abi} STREQUAL ${yds__PLATFORM})
                     message(STATUS "Unmatched ABI for ${var}. Disable.")
                     set(${var} FALSE CACHE PATH "" FORCE)
                 endif()
@@ -56,7 +56,7 @@ function(detect_ironscheme var)
     # FIXME: Prefer .net 4
     set(out YUNI_IRON_SCHEME-NOTFOUND)
     if(YUNI_IRON_SCHEME_ROOT)
-        if(${_PLATFORM} STREQUAL WIN64)
+        if(${yds__PLATFORM} STREQUAL WIN64)
             set(ironscheme "IronScheme.Console-v4.exe")
         else()
             set(ironscheme "IronScheme.Console32-v4.exe")
@@ -198,3 +198,27 @@ if(YUNI_KAWA_JAR)
         set(YUNI_KAWA_JAR FALSE)
     endif()
 endif()
+
+macro(yunidetectscheme_guess_bootstrap)
+    # Detect bootstrap scheme
+    if(NOT YUNI_BOOTSTRAP_USE)
+        # Prefer Chez > Gauche > Sagittarius > ChibiScheme > Racket
+        # Should match with yunibase name
+        if(YUNI_CHEZ_SCHEME)
+            set(YUNI_BOOTSTRAP_USE chez-scheme)
+        elseif(YUNI_GOSH)
+            set(YUNI_BOOTSTRAP_USE gauche)
+        elseif(YUNI_SAGITTARIUS)
+            set(YUNI_BOOTSTRAP_USE sagittarius)
+        elseif(YUNI_CHIBI_SCHEME)
+            set(YUNI_BOOTSTRAP_USE chibi-scheme)
+        elseif(YUNI_RACKET)
+            set(YUNI_BOOTSTRAP_USE racket)
+        elseif(YUNI_IRON_SCHEME)
+            set(YUNI_BOOTSTRAP_USE ironscheme)
+        else()
+            message(FATAL_ERROR "Failed to detect bootstrap scheme...")
+        endif()
+    endif()
+endmacro()
+

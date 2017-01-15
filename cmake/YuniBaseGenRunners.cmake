@@ -9,6 +9,7 @@
 
 include(YuniRsrcSchemeImplementations)
 include(YuniRsrcSchemeRunners)
+include(YuniWinSupport)
 
 # Output vanilla/*.sh
 function(emit_tmpl_runner_sh outpath ldpathname ldpath addpath execpath args)
