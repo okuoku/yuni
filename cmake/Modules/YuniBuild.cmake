@@ -36,3 +36,26 @@ function(yunibuild_add_custom_command)
     add_custom_command(${acc})
 endfunction()
 
+function(yunibuild_add_yunistub tgt stubir scmoutdir coutdir)
+    get_filename_component(stubirname ${stubir} NAME_WE)
+    set(outc)
+    foreach(e ${ARGN})
+        list(APPEND outc ${coutdir}/${e})
+    endforeach()
+    set(outscm)
+    foreach(e constants libstate)
+        list(APPEND outscm ${scmoutdir}/${stubirname}-${e}.sls)
+    endforeach()
+    yunibuild_add_custom_command(OUTPUT ${outc} ${outscm}
+        SCRIPT    
+        ${YUNIBUILD_RUNTIME_ROOT}/loader/yuniffistub.sps
+        -BOGUS # FIXME: IronScheme workaround
+        -CDIR ${coutdir}
+        -SCMDIR ${scmoutdir}
+        -FILE ${stubir}
+        DEPENDS 
+        ${YUNIBUILD_RUNTIME_ROOT}/loader/yuniffistub.sps
+        COMMENT "Processing StubIR0(${tgt})...")
+    add_custom_target(${tgt} DEPENDS ${outc} ${outscm})
+endfunction()
+

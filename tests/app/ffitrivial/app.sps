@@ -3,10 +3,7 @@
         (yuni compat ffi primitives)
 
         ;; Generated stubs
-        (yuniffi testing trivial-constants)
-        (yuniffi testing unnamed-constants))
-
-
+        (yunistub testing_trivial-constants))
 
 (define test-counter 0)
 (define success-counter 0)
@@ -44,13 +41,7 @@
 
 (define mod (yuniffi-module-load "yunistub_test_primitives"))
 (define xmod (yuniffi-module-load "NEVERLAND"))
-(define SDL2 (yuniffi-module-load "yunistub_SDL2"))
 (define trivial (yuniffi-module-load "yunistub_testing_trivial"))
-
-;(write mod)(newline)
-;(write xmod)(newline)
-;(write trivial)(newline)
-;(write SDL2)(newline)
 
 ;; xmod should never be found
 (check-equal #f xmod)
@@ -68,17 +59,5 @@
     (check-equal #f UNDEFINED)
     ;(for-each (lambda (e) (write e)(newline)) lis)
     ))
-
-(newline)
-
-(when SDL2
-  (let* ((tbl (yuniffi-abiv0-lookup/constants SDL2 "SDL2"))
-         (func (yuniffi-abiv0-lookup/bridgestubs SDL2 "SDL2"))
-         (lis (yuniffi-abiv0-get-table tbl))
-         (lis2 (yuniffi-abiv0-get-table func)))
-    (check-equal #t (list? lis))
-    (check-equal #t (list? lis2))))
-
-(newline)
 
 (check-finish)

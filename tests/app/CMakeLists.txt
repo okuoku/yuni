@@ -1,5 +1,8 @@
 # Yuniapp testing
 
+# Build Yuniffi modules
+add_subdirectory(ffitrivial)
+
 set(impls)
 macro(set_impl nam sym gen)
     list(APPEND impls ${nam})

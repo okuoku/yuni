@@ -123,6 +123,7 @@ add_subdirectory(build/bootstrap bootstrap)
 # FIXME: Guess these
 set(YUNIBUILD_RUNTIME_ROOT ${YUNIBASE_YUNIFIED_PATH})
 set(YUNIBUILD_BOOTSTRAP_USE ${YUNI_BOOTSTRAP_USE})
+set(YUNIBUILD_RUNTIME_DEPENDS yuni_package_build yuni_bootstrap)
 
 if(${YUNI_BOOTSTRAP_USE} STREQUAL chez-scheme)
     set(_runner chez-scheme)

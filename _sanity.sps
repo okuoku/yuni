@@ -312,7 +312,7 @@
      (itr '()))))
 |#
 
-(define test-files (append '("_sanity.sps" "_ncccsanity.sps")))
+(define test-files (append '("_sanity.sps")))
 
 (define (miniread-tests)
   (define (checkobj str obj)
