@@ -115,7 +115,7 @@ endfunction()
 function(test_yunistub_bootstrap fil)
     # FIXME: Copy'n'paste
     set(gen_yuniffi_stubs
-            ${CMAKE_CURRENT_LIST_DIR}/../../build/ffistub/gen-yuniffi-stubs.sps)
+            ${CMAKE_CURRENT_LIST_DIR}/../../yuniruntime/yuniffistub.sps)
 
     foreach(e ${bootstrap_impls})
         if(YUNITEST_${e})
