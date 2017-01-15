@@ -156,11 +156,6 @@ set(YUNIBUILD_BOOTSTRAP_COMMAND
 
 include(YuniBuild)
 
-# Activation
-add_subdirectory(build/ffistub ffistub)
-
-# Options
-
 # Components
 add_subdirectory(yunistub)
 add_subdirectory(yuniruntime)
