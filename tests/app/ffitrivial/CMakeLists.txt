@@ -41,6 +41,15 @@ add_library(yunistub_testing_trivial_plainc MODULE
     ${stubtop}/testing.h
     ${stubtop}/testinterface.h)
 
+# Since we have duplicated dependencies on generated files,
+# serialize build here
+add_dependencies(yunistub_testing_trivial_plainc
+    test_ffitrivial_trivial)
+
+add_dependencies(yunistub_testing_trivial
+    yunistub_testing_trivial_plainc
+    test_ffitrivial_trivial)
+
 # add_library(yunistub_testing_unnamed MODULE
 #     ${CMAKE_CURRENT_BINARY_DIR}/unnamed.stub.c)
 
