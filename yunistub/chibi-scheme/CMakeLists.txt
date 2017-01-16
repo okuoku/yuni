@@ -26,5 +26,5 @@ if(YUNI_CHIBI_FFI)
         PREFIX ""
         LIBRARY_OUTPUT_NAME chibi-scheme-yuniffi)
     target_link_libraries(chibi-scheme-yuniffi ${YUNI_CHIBI_SCHEME_LIB}) 
-    yuni_install_native_targets(chibi-scheme-yuniffi)
+    yuni_runtime_deploy(TARGETS chibi-scheme-yuniffi)
 endif()

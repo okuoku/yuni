@@ -101,19 +101,6 @@ if(YUNI_WITH_YUNIBASE)
     emit_yunibase_runners()
 endif()
 
-# FIXME: Move to YuniPlatform
-macro(yuni_install_native_targets)
-    install(TARGETS ${ARGN}
-        DESTINATION ${YUNI_PLATFORM_LIBDIR})
-endmacro()
-macro(yuni_install_native_files)
-    install(FILES ${ARGN}
-        DESTINATION ${YUNI_PLATFORM_LIBDIR})
-endmacro()
-macro(yuni_install_native_programs)
-    install(PROGRAMS ${ARGN}
-        DESTINATION ${YUNI_PLATFORM_LIBDIR})
-endmacro()
 
 # Setup scheme implementation paths for vanilla interpreters
 include(YuniDetectScheme)
@@ -131,6 +118,7 @@ set(YUNIBUILD_RUNTIME_DEPENDS yuni_package_build yuni_bootstrap)
 include(YuniDetectBootstrapScheme)
 
 include(YuniBuild)
+include(YuniRuntimeDeploy)
 
 # Components
 add_subdirectory(yunistub)
