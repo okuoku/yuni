@@ -53,5 +53,10 @@ add_dependencies(yunistub_testing_trivial
 # add_library(yunistub_testing_unnamed MODULE
 #     ${CMAKE_CURRENT_BINARY_DIR}/unnamed.stub.c)
 
-yuni_install_native_targets(yunistub_testing_trivial)
-# yuni_install_native_targets(yunistub_testing_unnamed)
+# Deploy the module to library dir
+add_custom_command(TARGET yunistub_testing_trivial 
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    $<TARGET_FILE:yunistub_testing_trivial>
+    ${yunilibroot})
+
