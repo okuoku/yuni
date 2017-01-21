@@ -73,7 +73,8 @@
  (fluid-let 
    ((standard-error-hook (lambda (c) 
                            (display "ERROR!\n" (trace-output-port))
-                           (pp c)
+                           ;FIXME: Disable pretty-print conditions for now
+                           ;(pp c)
                            (write-condition-report c
                                                    (trace-output-port))
                            (newline (trace-output-port))
