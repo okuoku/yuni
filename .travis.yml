@@ -12,12 +12,8 @@ env:
         - DOCKER_IMG=okuoku/yunibase:testing-java
         - DOCKER_IMG=okuoku/yunibase:testing-ubuntu32
         - DOCKER_IMG=okuoku/yunibase:testing-alpine
-
-matrix:
-    allow_failures:
-        env: 
-            - DOCKER_IMG=okuoku/yunibase:testing-fedora
-            - DOCKER_IMG=okuoku/yunibase:testing-raspbian
+        - DOCKER_IMG=okuoku/yunibase:testing-fedora
+        - DOCKER_IMG=okuoku/yunibase:testing-raspbian
 
 script:
     - sudo integration/buildhost-qemu-static/register.sh
