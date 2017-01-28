@@ -15,9 +15,12 @@ env:
 
 matrix:
     allow_failures:
-        env: DOCKER_IMG=okuoku/yunibase:testing-fedora
+        env: 
+            - DOCKER_IMG=okuoku/yunibase:testing-fedora
+            - DOCKER_IMG=okuoku/yunibase:testing-raspbian
 
 script:
+    - sudo integration/buildhost-qemu-static/register.sh
     - docker pull $DOCKER_IMG
     - cmake -DIMAGE=$DOCKER_IMG -P integration/buildhost-docker-linux/test-on-docker.cmake
 
