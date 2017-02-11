@@ -19,10 +19,8 @@ if(YUNI_CHIBI_FFI)
         COMMAND ${YUNI_CHIBI_FFI} ${stubfile} ${stub}
         DEPENDS ${stubfile})
     add_library(chibi-scheme-yuniffi MODULE
-        yuniffi_stub.c
         ${stub})
     add_library(chibi-scheme-yuniffi-bridge MODULE
-        yuniffi_stub.c
         chibi_scheme_yuniffi_bridge.c
         )
     set_target_properties(chibi-scheme-yuniffi

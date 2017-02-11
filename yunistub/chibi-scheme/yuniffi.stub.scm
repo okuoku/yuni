@@ -1,4 +1,4 @@
-(c-include "yuniffi_stub.h")
+(c-include "yuniffi_stub.inc.c")
 
 (define-c (pointer void) yuniffi_nccc_bootstrap ())
 #|

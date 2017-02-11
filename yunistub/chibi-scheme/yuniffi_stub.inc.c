@@ -3,7 +3,7 @@
 
 #include "../common/bootstrap.inc.c"
 
-void
+static void
 yuniffi_nccc_call(sexp ctx, void* func /* Cpointer */,
                   sexp in /* U8 */, int in_offset, int in_len,
                   sexp out /* U8 */, int out_offset, int out_len){
@@ -19,13 +19,13 @@ yuniffi_nccc_call(sexp ctx, void* func /* Cpointer */,
     callee(&in0[in_offset], in_len, &out0[out_offset], out_len);
 }
 
-void*
+static void*
 yuniffi_nccc_bootstrap(void){
     void* ptr = (void*)yuniffi_bootstrap0;
     return ptr;
 }
 
-int
+static int
 yuniffi_pointerp(sexp obj){
     if(sexp_cpointerp(obj)){
         return 1;
@@ -67,13 +67,13 @@ sexp_to64(sexp val){
 }
 
 /* FIXME: Unused? */
-void* 
+static void* 
 yuniffi_offset_ptr(void* ptr, sexp offset){
     void* ret;
     ret = ptr + (intptr_t)sexp_to64(offset);
 }
 
-int 
+static int 
 yuniffi_fetch_s8(void* ptr, int offset){
     signed char c;
     void *x = ptr + offset;
@@ -81,7 +81,7 @@ yuniffi_fetch_s8(void* ptr, int offset){
     return c;
 }
 
-int
+static int
 yuniffi_fetch_u8(void* ptr, int offset){
     unsigned char c;
     void *x = ptr + offset;
@@ -89,7 +89,7 @@ yuniffi_fetch_u8(void* ptr, int offset){
     return c;
 }
 
-int
+static int
 yuniffi_fetch_s16(void* ptr, int offset){
     int16_t c;
     void *x = ptr + offset;
@@ -97,7 +97,7 @@ yuniffi_fetch_s16(void* ptr, int offset){
     return c;
 }
 
-int
+static int
 yuniffi_fetch_u16(void* ptr, int offset){
     uint16_t c;
     void *x = ptr + offset;
@@ -105,7 +105,7 @@ yuniffi_fetch_u16(void* ptr, int offset){
     return c;
 }
 
-int
+static int
 yuniffi_fetch_s32(void* ptr, int offset){
     int32_t c;
     void *x = ptr + offset;
@@ -113,7 +113,7 @@ yuniffi_fetch_s32(void* ptr, int offset){
     return c;
 }
 
-unsigned int
+static unsigned int
 yuniffi_fetch_u32(void* ptr, int offset){
     uint32_t c;
     void *x = ptr + offset;
@@ -121,38 +121,42 @@ yuniffi_fetch_u32(void* ptr, int offset){
     return c;
 }
 
-void 
+static void 
 yuniffi_store_s8(void* ptr, int offset, int value){
     int8_t* x = (ptr + offset);
     *x = value;
 }
-void 
+
+static void 
 yuniffi_store_u8(void* ptr, int offset, unsigned int value){
     uint8_t* x = (ptr + offset);
     *x = value;
 }
-void
+
+static void
 yuniffi_store_s16(void* ptr, int offset, int value){
     int16_t* x = (ptr + offset);
     *x = value;
 }
-void
+
+static void
 yuniffi_store_u16(void* ptr, int offset, unsigned int value){
     uint16_t* x = (ptr + offset);
     *x = value;
 }
-void
+
+static void
 yuniffi_store_s32(void* ptr, int offset, int value){
     int32_t* x = (ptr + offset);
     *x = value;
 }
-void
+static void
 yuniffi_store_u32(void* ptr, int offset, unsigned int value){
     uint32_t* x = (ptr + offset);
     *x = value;
 }
 
-void*
+static void*
 yuniffi_fetch_p64(void* ptr, int offset){
     void* in = ptr + offset;
     uint64_t* in0;
@@ -160,7 +164,7 @@ yuniffi_fetch_p64(void* ptr, int offset){
     return (void*)(uintptr_t)(*in0);
 }
 
-void
+static void
 yuniffi_store_p64(void* ptr, int offset, void* value){
     void* out = ptr + offset;
     uint64_t* out0;
@@ -168,14 +172,14 @@ yuniffi_store_p64(void* ptr, int offset, void* value){
     *out0 = (uint64_t)(uintptr_t)value;
 }
 
-void*
+static void*
 yuniffi_fetch_p64_bv(sexp bv, int offset){
     void* in;
     in = sexp_bytes_data(bv);
     return yuniffi_fetch_p64(in, offset);
 }
 
-void
+static void
 yuniffi_store_p64_bv(sexp bv, int offset, void* value){
     void* out;
     out = sexp_bytes_data(bv);

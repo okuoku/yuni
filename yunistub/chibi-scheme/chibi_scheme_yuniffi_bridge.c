@@ -1,7 +1,7 @@
 /* Hand-written chibi-scheme stub module for callbridge */
 
 #include <chibi/eval.h>
-#include "yuniffi_stub.h"
+#include "yuniffi_stub.inc.c"
 
 #define REQUIRE(ctx, self, arg, fn, typ) \
     if(!fn(arg)) return sexp_type_exception(ctx, self, typ, arg)
