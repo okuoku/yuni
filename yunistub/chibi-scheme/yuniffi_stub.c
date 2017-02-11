@@ -4,7 +4,7 @@
 #include "../common/bootstrap.inc.c"
 
 void
-yuniffi_nccc_call(void* func /* Cpointer */,
+yuniffi_nccc_call(sexp ctx, void* func /* Cpointer */,
                   sexp in /* U8 */, int in_offset, int in_len,
                   sexp out /* U8 */, int out_offset, int out_len){
 

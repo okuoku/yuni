@@ -20,4 +20,5 @@
                         yuniffi_fetch_p64_bv
                         yuniffi_store_p64_bv
                         )
-                (include-shared "chibi-scheme-yuniffi"))
+                (include-shared "chibi-scheme-yuniffi")
+                (include-shared "chibi-scheme-yuniffi-bridge"))

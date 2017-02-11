@@ -21,10 +21,21 @@ if(YUNI_CHIBI_FFI)
     add_library(chibi-scheme-yuniffi MODULE
         yuniffi_stub.c
         ${stub})
+    add_library(chibi-scheme-yuniffi-bridge MODULE
+        yuniffi_stub.c
+        chibi_scheme_yuniffi_bridge.c
+        )
     set_target_properties(chibi-scheme-yuniffi
         PROPERTIES
         PREFIX ""
         LIBRARY_OUTPUT_NAME chibi-scheme-yuniffi)
+    set_target_properties(chibi-scheme-yuniffi-bridge
+        PROPERTIES
+        PREFIX ""
+        LIBRARY_OUTPUT_NAME chibi-scheme-yuniffi-bridge)
     target_link_libraries(chibi-scheme-yuniffi ${YUNI_CHIBI_SCHEME_LIB}) 
-    yuni_runtime_deploy(TARGETS chibi-scheme-yuniffi)
+    target_link_libraries(chibi-scheme-yuniffi-bridge ${YUNI_CHIBI_SCHEME_LIB}) 
+    yuni_runtime_deploy(TARGETS 
+        chibi-scheme-yuniffi
+        chibi-scheme-yuniffi-bridge)
 endif()
