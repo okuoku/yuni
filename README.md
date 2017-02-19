@@ -64,6 +64,7 @@ NOTE: Following directories contain copyrighted materials from other projects.
 
  * `apidata`
  * `external`
+ * `integration`
  * `tests`
 
 These directories are not part of Yuni runtime library.
