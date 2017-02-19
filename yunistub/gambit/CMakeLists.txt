@@ -28,5 +28,5 @@ if(gambit_available)
         IMPLICIT_DEPENDS C
         ${c_srcs})
     add_custom_target(yuniffi-gambit ALL DEPENDS ${output_name})
-    yuni_runtime_deploy(FILES ${output_name})
+    yuni_runtime_deploy(PROGRAMS ${output_name})
 endif()

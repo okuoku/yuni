@@ -22,5 +22,5 @@ if(YUNI_CHICKEN AND YUNI_CHICKEN_CSC)
         IMPLICIT_DEPENDS C
         ${c_srcs})
     add_custom_target(yuniffi-chicken ALL DEPENDS ${output_name})
-    yuni_runtime_deploy(FILES ${output_name})
+    yuni_runtime_deploy(PROGRAMS ${output_name})
 endif()

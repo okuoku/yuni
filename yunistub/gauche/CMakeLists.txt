@@ -40,6 +40,7 @@ if(YUNI_GOSH AND YUNI_GAUCHE_PACKAGE)
         IMPLICIT_DEPENDS C ${srcs})
     add_custom_target(gauche-yuniffi ALL DEPENDS ${output_name})
     yuni_runtime_deploy(
-        FILES ${output_name}
-        ${CMAKE_CURRENT_LIST_DIR}/yuniffi.scm)
+        PROGRAMS ${output_name})
+    yuni_runtime_deploy(
+        FILES ${CMAKE_CURRENT_LIST_DIR}/yuniffi.scm)
 endif()
