@@ -1,6 +1,9 @@
 Larceny support
 ===============
 
+* [GitHub](https://github.com/larcenists/larceny)
+* [Documentation](http://larcenists.org/Documentation/Documentation0.99/index.html)
+
 Caveats
 -------
 
