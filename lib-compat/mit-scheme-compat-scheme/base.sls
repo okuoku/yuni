@@ -141,6 +141,7 @@
 (define (flush-output-port p) 'do-nothing)
 
 
+#|
 ;; Bytevectors
 ;; FIXME: Using strings for now..
 (define bytevector? string?)
@@ -187,6 +188,7 @@
     ((str) (%string->utf8 str))
     ((str start) (%string->utf8 (substring str start (string-length str))))
     ((str start end) (%string->utf8 (substring str start end)))))
+|#
 
 ;; define-record-type
 
