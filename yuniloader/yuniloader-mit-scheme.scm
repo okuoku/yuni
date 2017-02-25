@@ -8,6 +8,7 @@
 (define (current-error-port) (trace-output-port))
 
 (define %%yuniloader-result 0)
+(define %%yuniloader-use-debugger #f) ;; hook
 
 (define (exit . arg) ;; override
   (if (null? arg)
@@ -32,6 +33,14 @@
 
 
 (let ()
+ (define (error-hook c)
+   (display "ERROR!\n" (trace-output-port))
+   ;FIXME: Disable pretty-print conditions for now
+   ;(pp c)
+   (write-condition-report c
+                           (trace-output-port))
+   (newline (trace-output-port))
+   (%exit 1))
  (define (%%expand frm)
    (define %%myenv (%%yuniloader-alexpander-newenv))
    (%%yuniloader-alexpander-expand-top-level-forms!
@@ -70,15 +79,10 @@
 
  (for-each eval-core %%yuniloader-alexpander-init)
 
- (fluid-let 
-   ((standard-error-hook (lambda (c) 
-                           (display "ERROR!\n" (trace-output-port))
-                           ;FIXME: Disable pretty-print conditions for now
-                           ;(pp c)
-                           (write-condition-report c
-                                                   (trace-output-port))
-                           (newline (trace-output-port))
-                           (%exit 1))))
-   (%%yuniloader-fake-generate cmd runner)))
+ (if %%yuniloader-use-debugger
+   (%%yuniloader-fake-generate cmd runner)
+   (fluid-let 
+     ((standard-error-hook error-hook))
+     (%%yuniloader-fake-generate cmd runner))))
 
 (%exit %%yuniloader-result)
