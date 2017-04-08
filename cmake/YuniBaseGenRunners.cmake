@@ -17,7 +17,7 @@ function(emit_tmpl_runner_sh outpath ldpathname ldpath addpath execpath args)
     # FIXME: SCHEMEHEAPDIRS is ChezScheme specific
     file(WRITE 
         "${outpath}"
-        "#!/bin/sh\nexport SCHEMEHEAPDIRS=${ldpath}/csv%v/%m\nexport PATH=${addpath}:\$PATH\nexport ${ldpathname}=${ldpath}:\$${ldpathname}\nexec ${execpath} ${args} \$*\n")
+        "#!/bin/sh\nexport SCHEMEHEAPDIRS=${ldpath}/csv%v/%m\nexport PATH=\"${addpath}:\$PATH\"\nexport ${ldpathname}=${ldpath}:\$${ldpathname}\nexec ${execpath} ${args} \$*\n")
     execute_process(
         COMMAND chmod +x ${outpath}
         )
