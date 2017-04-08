@@ -105,6 +105,12 @@ configure_file(
     COPYONLY)
 
 # Instantiate yuni library parameters
+if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/libgenorder.cmake)
+    message(FATAL_ERROR "libgenorder not generated.")
+endif()
+if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/genmappings.cmake)
+    message(FATAL_ERROR "genmappings not generated.")
+endif()
 include(${CMAKE_CURRENT_BINARY_DIR}/yunilibs.cmake.current)
 include(${CMAKE_CURRENT_BINARY_DIR}/libgenorder.cmake)
 include(${CMAKE_CURRENT_BINARY_DIR}/genmappings.cmake)
