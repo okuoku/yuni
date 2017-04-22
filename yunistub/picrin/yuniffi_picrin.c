@@ -4,15 +4,7 @@
 
 #include "picrin.h"
 #include "picrin/extra.h"
-
-static void
-yunipointer_mark(pic_state* pic, void* data, 
-                 void (*mark)(pic_state*, pic_value)){
-    /* Do nothing */
-    (void)pic;
-    (void)data;
-    (void)mark;
-}
+#include "picrin/lib.h"
 
 static void
 yunipointer_dtor(pic_state* pic, void* data){
@@ -23,8 +15,7 @@ yunipointer_dtor(pic_state* pic, void* data){
 
 static const pic_data_type yunipointer_type = {
     "yunipointer",
-    yunipointer_dtor,
-    yunipointer_mark
+    yunipointer_dtor
 };
 
 static pic_value
@@ -380,7 +371,7 @@ pointer_frombytevector(pic_state* pic){
 }
 
 void
-pic_init_yuniffi(pic_state* pic){
+pic_nitro_init_yuniffi(pic_state* pic){
     pic_deflibrary(pic, "yuniffi-picrin");
     pic_defun(pic, "%%yunipointer?", pointer_p);
     pic_defun(pic, "%%yunipointer_fetch_signed", pointer_fetch_signed);
