@@ -14,6 +14,16 @@ if(YUNI_CHIBI_FFI)
         message(FATAL_ERROR "chibi-scheme header was not found..")
     endif()
 
+    if(APPLE)
+        set(sufx .dylib)
+    elseif(WIN32 OR CYGWIN)
+        # Actually we do not need to set .dll on cygwin...
+        set(sufx .dll)
+    else()
+        set(sufx .so)
+    endif()
+
+
     # Generate stub source
     add_custom_command(OUTPUT ${stub}
         COMMAND ${YUNI_CHIBI_FFI} ${stubfile} ${stub}
@@ -26,10 +36,12 @@ if(YUNI_CHIBI_FFI)
     set_target_properties(chibi-scheme-yuniffi
         PROPERTIES
         PREFIX ""
+        SUFFIX ${sufx}
         LIBRARY_OUTPUT_NAME chibi-scheme-yuniffi)
     set_target_properties(chibi-scheme-yuniffi-bridge
         PROPERTIES
         PREFIX ""
+        SUFFIX ${sufx}
         LIBRARY_OUTPUT_NAME chibi-scheme-yuniffi-bridge)
     target_link_libraries(chibi-scheme-yuniffi ${YUNI_CHIBI_SCHEME_LIB}) 
     target_link_libraries(chibi-scheme-yuniffi-bridge ${YUNI_CHIBI_SCHEME_LIB}) 
