@@ -155,11 +155,24 @@
      ($$yunifake-inject-primitive
        or q))))
 
+(define-syntax $$case/clause
+  (syntax-rules ()
+    ((_ (top . q))
+     ($$yunifake-inject-primitive top q))))
+
+(define-syntax $$case/remap
+  (syntax-rules ()
+    ((_ code (Q ...) clause0 rest ...)
+     ($$case/remap code
+                   (Q ... ($$case/clause clause0)) rest ...))
+    ((_ code Q)
+     ($$yunifake-inject-primitive
+       case (code . Q)))))
+
 (define-syntax case
   (syntax-rules ()
-    ((_ . q)
-     ($$yunifake-inject-primitive
-       case q))))
+    ((_ code clauses ...)
+     ($$case/remap code () clauses ...))))
 
 (define-syntax cond
   (syntax-rules ()
