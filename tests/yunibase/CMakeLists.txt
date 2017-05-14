@@ -142,6 +142,9 @@ endforeach()
 test_with_all(_sanity.sps)
 #test_with_allffi(_ncccsanity.sps)
 
+# yuniVM
+test_with_all(tests/vm/vmtest.sps)
+
 # yunistub bootstraps
 test_yunistub_bootstrap(
     ${CMAKE_CURRENT_LIST_DIR}/../app/ffitrivial/stub/testing_trivial.scm)
