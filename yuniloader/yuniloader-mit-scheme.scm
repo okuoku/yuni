@@ -23,6 +23,15 @@
          (set! %%yuniloader-result x)))
      (%exit %%yuniloader-result))))
 
+(define (call-with-values thunk receiver) ;; override
+  ;; See src/runtime/global.scm for actual impl.
+  (let ((t (thunk)))
+   (cond
+     ((procedure? t)
+      (t receiver))
+     (else
+       (receiver t)))))
+
 (define %%yunirootpath #f)
 
 (define (%%yuniroot str)
