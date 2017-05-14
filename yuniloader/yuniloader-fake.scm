@@ -11,6 +11,7 @@
 ;; ARGS:
 ;; 
 ;;  -VERBOSE     -- Turn on verbose output
+;;  -DEBUG       -- Turn on debugger if available
 ;;  -DUMP        -- Do not execute, dump expanded code instead
 ;;  -MOD <str>   -- Platform module path
 ;;  -I <str>     -- append to library search path
@@ -214,7 +215,7 @@
                      (filter-imports imports) 
                      (filter-exports exports) seq)))
     (let ((code (map gen-code loaded-libraries)))
-     (k (filter/reverse-output code) arg* modpath %do-dump)))
+     (k (filter/reverse-output code) arg* modpath %do-dump %use-debugger)))
 
   (define (parseargs! lis)
     (cond
@@ -224,6 +225,9 @@
          (cond
            ((string=? "-VERBOSE" a)
             (set! %verbose #t)
+            (parseargs! d))
+           ((string=? "-DEBUG" a)
+            (set! %use-debugger #t)
             (parseargs! d))
            ((string=? "-DUMP" a)
             (set! %do-dump #t)
@@ -284,6 +288,7 @@
   (define ERRPORT current-error-port)
   (define %verbose #f)
   (define %do-dump #f)
+  (define %use-debugger #f)
   (define (PCK . obj)
     (if %verbose
       (begin

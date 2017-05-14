@@ -8,7 +8,7 @@
 (define (current-error-port) (trace-output-port))
 
 (define %%yuniloader-result 0)
-(define %%yuniloader-use-debugger #f) ;; hook
+(define %%yuniloader-use-debugger #f) ;; hook (for earlyboot)
 
 (define (exit . arg) ;; override
   (if (null? arg)
@@ -49,7 +49,7 @@
 
  (define (eval-core frm)
    (eval frm (nearest-repl/environment)))
- (define (runner code arg* modpath do-dump)
+ (define (runner0 code arg* modpath do-dump use-debugger)
    (define (filtnull code)
      (let loop ((acc '()) (cur code))
       (if (pair? cur)
@@ -65,6 +65,13 @@
         (pp expanded)))
     (eval-core expanded)))
 
+ (define (runner code arg* modpath do-dump use-debugger)
+   (if use-debugger
+     (fluid-let
+       ((standard-error-hook default-error-hook))
+       (runner0 code arg* modpath do-dump use-debugger))
+     (runner0 code arg* modpath do-dump use-debugger)))
+
  (define cmd (command-line))
 
  (cond
@@ -78,6 +85,8 @@
  (load (%%yuniroot "external/yuni-alexpander.scm"))
 
  (for-each eval-core %%yuniloader-alexpander-init)
+
+ (define default-error-hook standard-error-hook)
 
  (if %%yuniloader-use-debugger
    (%%yuniloader-fake-generate cmd runner)

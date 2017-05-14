@@ -77,7 +77,7 @@
    (pp form)
    (pp "==================================")
    (eval form))
- (define (runner code arg* modpath do-dump)
+ (define (runner code arg* modpath do-dump use-debugger)
    (define (filtnull code)
      (let loop ((acc '()) (cur code))
       (if (pair? cur)

@@ -12,7 +12,7 @@ MIT-Scheme support requires Alexpander which is licensed under BSD3/GPL2+.
 Debugging
 ---------
 
-1. (Activate interactive debugger on yuniloader)
+1. (Specify `-DEBUG` option on yuniloader)
 2. Say `(debug)` on `error>` prompt
 3. `?` for help, `h` for trace, `q` for exit debugger
 
