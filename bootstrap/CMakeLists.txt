@@ -101,7 +101,11 @@ message(STATUS "Generating library order list...")
 execute_process(
     COMMAND ${CMAKE_COMMAND} 
     -DOP=BOOTSTRAP_FIRST
-    ${bootparams})
+    ${bootparams}
+    RESULT_VARIABLE rr)
+if(rr)
+    message(FATAL_ERROR "Failed (${rr})")
+endif()
 message(STATUS "Done.")
 
 # Hook-up configuration dependencies
@@ -148,7 +152,11 @@ execute_process(
     -DGENLIBMETA_OUT=${CMAKE_CURRENT_BINARY_DIR}/libmeta.cmake
     -DOP=GENLIBMETA
     ${bootparams}
-    WORKING_DIRECTORY ${yuniroot})
+    WORKING_DIRECTORY ${yuniroot}
+    RESULT_VARIABLE rr)
+if(rr)
+    message(FATAL_ERROR "Failed (${rr})")
+endif()
 message(STATUS "Done.")
 
 # Instantiate checker
