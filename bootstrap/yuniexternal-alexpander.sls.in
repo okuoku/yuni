@@ -18,10 +18,7 @@
 (define (yuniexternal-alexpander-expand-top-level-forms! forms mstore)
   (x%%yuniloader-alexpander-expand-top-level-forms! forms mstore))
 
-(let ((%%yuniloader-alexpander-init #f)
-      (%%yuniloader-alexpander-newenv #f)
-      (%%yuniloader-alexpander-expand-top-level-forms! #f)
-      ;; 0: $$yunifake-inject-primitive/raw
+(let (;; 0: $$yunifake-inject-primitive/raw
       ;; 1: $$yunifake-inject-primitive
       ;; 2: $$yunifake-inject
       ;; 3: $$yunifake-expand-expr
