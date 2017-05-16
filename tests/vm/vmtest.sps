@@ -1,4 +1,5 @@
 (import (yuni scheme)
+        (yunivm expander expandcore)
         (yunivm vm seq-treeir))
 
 (define test-counter 0)
@@ -414,5 +415,17 @@
                   (LDV)
                   (RET))))
   (1 (2 123 456 789)))
+
+(display "Corelib-null:\n")
+
+(write (get-core-library0))
+
+(newline)
+
+(display "Expand-null:\n")
+
+(write (expand0 '((begin (let ((a 1)) a)))))
+
+(newline)
 
 (check-finish)

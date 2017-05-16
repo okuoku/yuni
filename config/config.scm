@@ -6,7 +6,7 @@
 
 (*library-groups*
   ;; Yuni
-  (yuni yuni yuniffi yuniconfig yuniapp yunivm)
+  (yuni yuni yuniffi yuniconfig yuniapp yunivm yuniexternal)
   (yunifake yunifake-util)
   ;; FIXME: Hack. We don't have any convention for generated libraries yet.
   ;; R7RS

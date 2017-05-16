@@ -80,6 +80,22 @@ configure_file(
     ${YUNI_BUILDCONFIG_LIBDIR}/yuniconfig/build.sls
     @ONLY)
 
+# Generate (yuniexternal alexpander) library
+set(YUNIALEXPANDER ${YUNI_BASEDIR}/external/yuni-alexpander.scm)
+set(YUNIALEXPANDER_LIBSRC 
+    ${CMAKE_CURRENT_LIST_DIR}/yuniexternal-alexpander.sls.in)
+file(READ ${YUNIALEXPANDER} YUNI_ALEXPANDER_SOURCE)
+## Replace $$yunifake-hook => $$yunifake-hook0
+string(REGEX REPLACE "yunifake-hook" "yunifake-hook0"
+    YUNI_ALEXPANDER_SOURCE
+    "${YUNI_ALEXPANDER_SOURCE}")
+configure_file(${YUNIALEXPANDER} 
+    ${CMAKE_CURRENT_BINARY_DIR}/yuni-alexpander.scm.current
+    COPYONLY)
+configure_file(${YUNIALEXPANDER_LIBSRC}
+    ${YUNI_BUILDCONFIG_LIBDIR}/yuniexternal/alexpander.sls
+    @ONLY)
+
 # Run First bootstrap step
 message(STATUS "Generating library order list...")
 execute_process(
