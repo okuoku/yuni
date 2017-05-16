@@ -155,6 +155,9 @@
      ($$yunifake-inject-primitive
        or q))))
 
+#|
+;; FIXME We have to handle special quote case
+;;       Otherwise, we'd fail on compute-free-vars
 (define-syntax $$case/clause
   (syntax-rules ()
     ((_ (top . q))
@@ -173,6 +176,34 @@
   (syntax-rules ()
     ((_ code clauses ...)
      ($$case/remap code () clauses ...))))
+|#
+
+
+;; Took from 7.3 Derived expression types
+(define-syntax case
+  (syntax-rules (else =>)
+    ((case (key ...) clauses ...)
+     (let ((atom-key (key ...)))
+       (case atom-key clauses ...)))
+    ((case key (else => result))
+     (result key))
+    ((case key (else result1 result2 ...))
+     (begin result1 result2 ...))
+    ((case key ((atoms ...) result1 result2 ...))
+     (if (memv key '(atoms ...))
+       (begin result1 result2 ...)))
+    ((case key ((atoms ...) => result))
+     (if (memv key '(atoms ...))
+       (result key)))
+    ((case key ((atoms ...) => result) clause clauses ...)
+     (if (memv key '(atoms ...))
+       (result key)
+       (case key clause clauses ...)))
+    ((case key ((atoms ...) result1 result2 ...) clause clauses ...)
+     (if (memv key '(atoms ...))
+       (begin result1 result2 ...)
+       (case key clause clauses ...)))))
+
 
 (define-syntax cond
   (syntax-rules ()
