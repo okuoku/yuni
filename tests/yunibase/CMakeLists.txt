@@ -99,6 +99,15 @@ function(test_with_impl prefix fil)
     endif()
 endfunction()
 
+function(test_with_all_except fil)
+    set(lis ${impls})
+    list(REMOVE_ITEM lis ${ARGN})
+
+    foreach(e ${lis})
+        test_with_impl(${e} ${fil})
+    endforeach()
+endfunction()
+
 function(test_with_all fil)
     # Library basic tests
     foreach(e ${impls})
@@ -143,7 +152,7 @@ test_with_all(_sanity.sps)
 #test_with_allffi(_ncccsanity.sps)
 
 # yuniVM
-test_with_all(tests/vm/vmtest.sps)
+test_with_all_except(tests/vm/vmtest.sps KAWA)
 
 # yunistub bootstraps
 test_yunistub_bootstrap(
