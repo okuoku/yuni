@@ -106,6 +106,7 @@ function(precache impl)
     endif()
 endfunction()
 
+precache(RACKET --compile) # Tentatively here
 precache(GUILE)
 # precache(NMOSH)
 precache(SAGITTARIUS)
@@ -384,7 +385,6 @@ foreach(impl ${compile_impls})
     endif()
 endforeach()
 
-# precache(RACKET --compile)
 # FIXME: Not working.
 #precache(VICARE --build-directory ${YUNIBASE_YUNIFIED_PATH}/runtime/vicare
 #    --compile-dependencies)
