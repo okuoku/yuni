@@ -111,15 +111,15 @@ precache(GUILE)
 precache(SAGITTARIUS)
 
 #
-# Library-by-Library Compile: Racket, Larceny
+# (DISABLED) Library-by-Library Compile: Racket, Larceny
 #
 
 set(compile_impls)
 if(YUNIBUILD_RACKET)
-    list(APPEND compile_impls racket)
+    #list(APPEND compile_impls racket)
 endif()
 if(YUNIBUILD_LARCENY)
-    list(APPEND compile_impls larceny)
+    #list(APPEND compile_impls larceny)
 endif()
 
 ## Phase1: Construct libsym_impl to depfiles table

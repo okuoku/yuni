@@ -178,12 +178,10 @@ add_custom_target(yuni_bootstrap_check ALL
 # Instantiate depsrc
 foreach(sym ${libgenorder})
     if(libaltsrc_${sym})
-        message(STATUS "Detected alternative for ${sym} ${libaltsrc_${sym}}")
         set(depsrc_${sym} ${libaltsrc_${sym}})
     else()
         set(depsrc_${sym} ${libgenorder_${sym}_SOURCE})
     endif()
-    message(STATUS "${sym} => ${depsrc_${sym}}")
 endforeach()
 
 # Instantiate stub library builds
