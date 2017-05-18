@@ -124,10 +124,13 @@ endif()
 
 ## Phase1: Construct libsym_impl to depfiles table
 ##   libs_<impl>_<libsym>_file     => path to main file
+##   libs_<impl>_<libsym>_depsrc   => CMake path to main file for dep
 ##   libs_<impl>_<libsym>_deplibs  => libsym for dependency
 ##   libs_<impl>_<libsym>_alias_of => libsym to original
+## depsrc is to support generated sources on Ninja
 foreach(sym ${libgenorder})
     set(relsrc ${libgenorder_${sym}_RELSOURCE})
+    set(depsrc ${depsrc_${sym}})
     if(${sym} MATCHES "([^_]*)_(.*)")
         set(orighead ${CMAKE_MATCH_1})
         set(origrest ${CMAKE_MATCH_2})
@@ -142,6 +145,7 @@ foreach(sym ${libgenorder})
             set(top ${CMAKE_MATCH_3})
             set(src ${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/${relsrc})
             set(libs_${impl}_${sym}_file ${src})
+            set(libs_${impl}_${sym}_depsrc ${depsrc})
             if(libdeps_${sym})
                 set(deps ${libdeps_${sym}})
                 # Racket workaround
@@ -181,7 +185,7 @@ function(larceny_compile tgt src) # ARGN = deps
     add_custom_command(
         OUTPUT ${cachefile}
         COMMAND ${YUNIBUILD_LARCENY} ${_script} ${nsrc}
-        DEPENDS ${src} ${_script} yuni_bootstrap  ${ARGN}
+        DEPENDS ${_script} yuni_bootstrap  ${ARGN}
         COMMENT "Compile(Larceny, ${tgt})...")
     add_custom_target(${tgt} ALL
         DEPENDS ${cachefile})
@@ -203,17 +207,17 @@ function(racket_compile_dep dep tgt src) # ARGN = deps
     add_custom_command(
         OUTPUT ${cachefile}
         COMMAND ${YUNIBUILD_RACKET} --compile ${src}
-        DEPENDS ${src} yuni_bootstrap ${dep} ${ARGN}
+        DEPENDS yuni_bootstrap ${dep} ${ARGN}
         COMMENT "Compile(Racket, ${tgt})...")
     add_custom_target(${tgt} ALL
         DEPENDS ${cachefile})
 endfunction()
 
 function(racket_compile_preroll tgt src)
-    racket_compile_dep("" ${tgt} ${src} ${ARGN})
+    racket_compile_dep("" ${tgt} ${src} ${src} ${ARGN})
 endfunction()
 
-function(racket_compile tgt src)
+function(racket_compile tgt src) # ARGN = deps
     racket_compile_dep(yunipreroll_racket ${tgt} ${src} ${ARGN})
 endfunction()
 
@@ -297,6 +301,7 @@ foreach(impl ${compile_impls})
     ## Phase2.1: Instantiate actual build rules
     ##  yunicompile_<impl>_<libsym>
     foreach(sym ${libgenorder})
+        set(depsrc ${libs_${impl}_${sym}_depsrc})
         set(request_build OFF)
         foreach(e ${libgenorder_${sym}})
             if(${e} MATCHES "([^:]*):([^:]*):([^:]*)")
@@ -314,6 +319,7 @@ foreach(impl ${compile_impls})
                     src ${basepath})
                 calc_depoutputs(deps ${impl} ${sym})
                 racket_compile(yunicompile_${impl}_${sym} ${src} 
+                    ${depsrc}
                     ${deps})
                 list(APPEND yunicompile_tgt_${impl} yunicompile_${impl}_${sym})
                 check_bootstrap(${impl} yunicompile_${impl}_${sym})
@@ -326,7 +332,7 @@ foreach(impl ${compile_impls})
                     string(REGEX REPLACE "_" "/" pthbase ${tgt})
                     set(aliassrc ${YUNIBASE_YUNIFIED_PATH}/runtime/racket/${pthbase}.mzscheme.sls)
                     racket_compile(yunicompile_${impl}_${tgt}
-                        ${aliassrc} ${origout})
+                        ${aliassrc} ${aliassrc} ${origout} ${depsrc})
                     list(APPEND yunicompile_tgt_${impl} 
                         yunicompile_${impl}_${tgt})
                     # message(STATUS "Alias Build: ${aliassrc} => yunicompile_${impl}_${tgt}")
@@ -334,7 +340,8 @@ foreach(impl ${compile_impls})
             elseif(${impl} STREQUAL larceny)
                 set(src ${libs_${impl}_${sym}_file})
                 calc_depoutputs(deps ${impl} ${sym})
-                larceny_compile(yunicompile_${impl}_${sym} ${src} ${deps})
+                larceny_compile(yunicompile_${impl}_${sym} ${src} 
+                    ${depsrc} ${deps})
                 list(APPEND yunicompile_tgt_${impl}
                     yunicompile_${impl}_${sym})
                 if(libs_${impl}_${sym}_alias_of)
@@ -345,7 +352,7 @@ foreach(impl ${compile_impls})
                     string(REGEX REPLACE "_" "/" pthbase ${tgt})
                     set(aliassrc ${YUNIBASE_YUNIFIED_PATH}/runtime/larceny/${pthbase}.sls)
                     larceny_compile(yunicompile_${impl}_${tgt}
-                        ${aliassrc} ${origout})
+                        ${aliassrc} ${aliassrc} ${origout})
                     list(APPEND yunicompile_tgt_${impl} 
                         yunicompile_${impl}_${tgt})
                 endif()

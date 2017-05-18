@@ -105,6 +105,9 @@ endif()
 # Setup scheme implementation paths for vanilla interpreters
 include(YuniDetectScheme)
 
+# Runtimefiles
+add_subdirectory(yuniruntime)
+
 # Bootstrap
 # => yuni_bootstrap, YUNI_BOOTSTRAP_USE
 # => yuni_package, yuni_package_build
@@ -122,7 +125,6 @@ include(YuniRuntimeDeploy)
 
 # Components
 add_subdirectory(yunistub)
-add_subdirectory(yuniruntime)
 add_subdirectory(cmake/public cmake-public)
 
 # Tests

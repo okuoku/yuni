@@ -50,6 +50,15 @@ set(YUNILOADERROOTPATH ${YUNIBASE_YUNIFIED_PATH}/loader)
 set(YUNIRUNTIMEROOTPATH ${YUNIBASE_YUNIFIED_PATH}/runtime)
 set(YUNIPLATFORMSTUBDIR ${YUNI_PLATFORM_LIBDIR})
 set(YUNIPLATFORMSTUBDIRNAME ${YUNI_PLATFORM_LIBDIRNAME})
+
+function(genruntime libname src dest)
+    set(out ${YUNI_BUILDCONFIG_LIBDIR}/${dest})
+    set(srcfile ${CMAKE_CURRENT_LIST_DIR}/${src})
+    configure_file(${srcfile} ${out} @ONLY)
+    set(libaltsrc_${libname} ${srcfile} PARENT_SCOPE)
+endfunction()
+
+
 macro(setyuniconfigtarget nam)
     # FIXME: How to handle compilers??
     if(${nam} STREQUAL GAUCHE)
@@ -75,15 +84,12 @@ foreach(e GAUCHE CHIBI_SCHEME PICRIN KAWA SAGITTARIUS RACKET GUILE
         LARCENY IRON_SCHEME CHEZ_SCHEME VICARE NMOSH GAMBIT MIT_SCHEME)
     setyuniconfigtarget(${e})
 endforeach()
-configure_file(
-    ${CMAKE_CURRENT_LIST_DIR}/yuniconfig-build.sls.in
-    ${YUNI_BUILDCONFIG_LIBDIR}/yuniconfig/build.sls
-    @ONLY)
+
+genruntime(yuniconfig_build yuniconfig-build.sls.in 
+    yuniconfig/build.sls)
 
 # Generate (yuniexternal alexpander) library
 set(YUNIALEXPANDER ${YUNI_BASEDIR}/external/yuni-alexpander.scm)
-set(YUNIALEXPANDER_LIBSRC 
-    ${CMAKE_CURRENT_LIST_DIR}/yuniexternal-alexpander.sls.in)
 file(READ ${YUNIALEXPANDER} YUNI_ALEXPANDER_SOURCE)
 ## Replace $$yunifake-hook => $$yunifake-hook0
 string(REGEX REPLACE "yunifake-hook" "yunifake-hook0"
@@ -92,9 +98,10 @@ string(REGEX REPLACE "yunifake-hook" "yunifake-hook0"
 configure_file(${YUNIALEXPANDER} 
     ${CMAKE_CURRENT_BINARY_DIR}/yuni-alexpander.scm.current
     COPYONLY)
-configure_file(${YUNIALEXPANDER_LIBSRC}
-    ${YUNI_BUILDCONFIG_LIBDIR}/yuniexternal/alexpander.sls
-    @ONLY)
+
+genruntime(yuniexternal_alexpander 
+    yuniexternal-alexpander.sls.in
+    yuniexternal/alexpander.sls)
 
 # Run First bootstrap step
 message(STATUS "Generating library order list...")
@@ -135,6 +142,7 @@ include(${CMAKE_CURRENT_BINARY_DIR}/yunilibs.cmake.current)
 include(${CMAKE_CURRENT_BINARY_DIR}/libgenorder.cmake)
 include(${CMAKE_CURRENT_BINARY_DIR}/genmappings.cmake)
 
+
 # Generate yunilibs.scm to generate libmeta
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/yunilibs.scm
     "(\n")
@@ -164,12 +172,25 @@ add_custom_target(yuni_bootstrap_check ALL
     ${CMAKE_COMMAND}
     -DOP=BOOTSTRAP_CHECK
     ${bootparams}
+    DEPENDS yuniruntime-copy 
     COMMENT "Checking source tree...")
+
+# Instantiate depsrc
+foreach(sym ${libgenorder})
+    if(libaltsrc_${sym})
+        message(STATUS "Detected alternative for ${sym} ${libaltsrc_${sym}}")
+        set(depsrc_${sym} ${libaltsrc_${sym}})
+    else()
+        set(depsrc_${sym} ${libgenorder_${sym}_SOURCE})
+    endif()
+    message(STATUS "${sym} => ${depsrc_${sym}}")
+endforeach()
 
 # Instantiate stub library builds
 set(outdata)
 foreach(sym ${libgenorder}) # from libgenorder.cmake
     set(src ${libgenorder_${sym}_SOURCE})
+    set(depsrc ${depsrc_${sym}})
     set(relsrc ${libgenorder_${sym}_RELSOURCE})
     if(NOT EXISTS ${src})
         message(FATAL_ERROR 
@@ -216,7 +237,7 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
         ${bootparams}
         COMMAND ${CMAKE_COMMAND} -E copy # Enforce touch
         ${src} ${_done}
-        DEPENDS ${src}
+        DEPENDS ${depsrc}
         ${CMAKE_CURRENT_LIST_DIR}/YuniBootstrap.cmake
         ${bootstrap_scripts}
         COMMENT "Generate stub library... (${sym})")

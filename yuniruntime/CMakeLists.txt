@@ -1,7 +1,15 @@
+set(runtimefiles)
+
 function(installdep f)
-    configure_file(${f}
-        ${YUNIBASE_YUNIFIED_PATH}/loader/${f}
-        COPYONLY)
+    set(out ${YUNIBASE_YUNIFIED_PATH}/loader/${f})
+    add_custom_command(OUTPUT ${out}
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_LIST_DIR}/${f}
+        ${out}
+        COMMENT "Copy ${f} to runtime path"
+        DEPENDS ${f})
+    list(APPEND runtimefiles ${out})
+    set(runtimefiles ${runtimefiles} PARENT_SCOPE)
 endfunction()
 
 set(deps
@@ -13,3 +21,6 @@ foreach(e ${deps})
     installdep(${e})
 endforeach()
 
+add_custom_target(yuniruntime-copy ALL
+    COMMENT "Copying runtime files (yuniruntime)"
+    DEPENDS ${runtimefiles})
