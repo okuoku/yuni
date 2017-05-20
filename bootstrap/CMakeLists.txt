@@ -226,39 +226,40 @@ foreach(sym ${libgenorder}) # from libgenorder.cmake
         endif()
     endforeach()
 
-    # Instantiate output command
-    add_custom_command(
-        OUTPUT ${_done} ${stubs}
-        COMMAND ${CMAKE_COMMAND}
-        -DOP=GENLIBSTUB
-        -DGENLIBSTUB_FILE=${src}
-        ${bootparams}
-        COMMAND ${CMAKE_COMMAND} -E copy # Enforce touch
-        ${src} ${_done}
-        DEPENDS ${depsrc}
-        ${CMAKE_CURRENT_LIST_DIR}/YuniBootstrap.cmake
-        ${bootstrap_scripts}
-        COMMENT "Generate stub library... (${sym})")
-
     # Deploy base .sls file into runtime dir
+    set(copyrequests)
+    set(copyoutputs)
     foreach(e ${libgenorder_${sym}})
         if(${e} MATCHES "([^:]*):([^:]*):([^:]*)")
             set(impl ${CMAKE_MATCH_1})
             set(flav ${CMAKE_MATCH_2})
             set(top ${CMAKE_MATCH_3})
             set(out ${YUNIBASE_YUNIFIED_PATH}/runtime/${impl}/${relsrc})
-            add_custom_command(
-                OUTPUT ${out} 
-                COMMAND ${CMAKE_COMMAND} -E copy
-                ${src} ${out}
-                DEPENDS ${src})
-            # message(STATUS "Deploy ${out}")
-            list(APPEND outdata ${out})
+            list(APPEND copyoutputs ${out})
+            list(APPEND copyrequests 
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                ${src} ${out})
         endif()
     endforeach()
+
+    # Instantiate output command
+    add_custom_command(
+        OUTPUT ${_done} ${stubs} ${copyoutputs}
+        COMMAND ${CMAKE_COMMAND}
+        -DOP=GENLIBSTUB
+        -DGENLIBSTUB_FILE=${src}
+        ${bootparams}
+        # NB: Make sure keep always up-to-date {_done} file
+        COMMAND ${CMAKE_COMMAND} -E copy # Enforce touch
+        ${src} ${_done}
+        ${copyrequests}
+        DEPENDS ${depsrc}
+        ${CMAKE_CURRENT_LIST_DIR}/YuniBootstrap.cmake
+        ${bootstrap_scripts}
+        COMMENT "Generate stub library... (${sym})")
     list(APPEND outdata ${_done})
 endforeach()
-add_custom_target(yuni_stublibs ALL DEPENDS ${outdata})
+add_custom_target(yuni_stublibs DEPENDS ${outdata})
 add_dependencies(yuni_bootstrap yuni_stublibs)
 
 # Generate impl => libdirlist
@@ -269,33 +270,32 @@ foreach(base GenRacket GenR7RS GenR6RSCommon)
 endforeach()
 
 # Instantiate runtime library deployment (for yunified)
-function(deploy_impl_specific_runtime impl dirname)
+macro(deploy_impl_specific_runtime impl dirname)
     set(destfiles)
     if(lib_runtime_${impl})
         foreach(e ${lib_runtime_${impl}})
+            set(done ${CMAKE_CURRENT_BINARY_DIR}/done/impl-${impl}-${e})
             set(in ${yuniroot}/lib-runtime/${e})
             set(out ${e})
             string(REGEX REPLACE "[^/]+/(.*)"
                 "${YUNIBASE_YUNIFIED_PATH}/runtime/${dirname}/\\1" 
                 out ${out})
             add_custom_command(
-                OUTPUT ${out}
-                # We could copy_if_different here but just wanted ensure
-                # "touch" will cause rebuild
-                COMMAND ${CMAKE_COMMAND} -E copy
+                OUTPUT ${done} ${out}
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
                 ${in} ${out}
+                COMMAND ${CMAKE_COMMAND} -E touch ${done}
+                COMMENT "Copying impl-runtime: ${e}"
                 DEPENDS ${in})
             # message(STATUS "Runtime deploy: ${in} => ${out}")
-            list(APPEND destfiles ${out})
+            list(APPEND destfiles ${done})
         endforeach()
     endif()
     if(destfiles)
-        add_custom_target(${impl}-runtime ALL
-            DEPENDS
-            ${destfiles})
-        add_dependencies(yuni_bootstrap ${impl}-runtime)
+        list(APPEND generated_runtime_files ${destfiles})
+        set(generated_runtime_files ${generated_runtime_files} PARENT_SCOPE)
     endif()
-endfunction()
+endmacro()
 
 macro(deploy_impl_specific_runtimes a b)
     deploy_impl_specific_runtime(${a} ${b})
@@ -303,6 +303,8 @@ macro(deploy_impl_specific_runtimes a b)
         deploy_impl_specific_runtimes(${ARGN})
     endif()
 endmacro()
+
+set(generated_runtime_files)
 
 deploy_impl_specific_runtimes(
     CHIBI_SCHEME chibi-scheme
@@ -322,6 +324,13 @@ deploy_impl_specific_runtimes(
     GAMBIT       gambit
     MIT_SCHEME   mit-scheme
     )
+
+if(generated_runtime_files)
+    add_custom_target(yuni_bootstrap-runtime
+        DEPENDS
+        ${generated_runtime_files})
+    add_dependencies(yuni_bootstrap yuni_bootstrap-runtime)
+endif()
 
 # Decided bootstrap scheme impl.
 set(YUNI_BOOTSTRAP_USE "${YUNI_BOOTSTRAP_USE}" PARENT_SCOPE)

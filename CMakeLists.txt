@@ -106,7 +106,7 @@ endif()
 include(YuniDetectScheme)
 
 # Runtimefiles
-add_subdirectory(yuniruntime)
+add_subdirectory(yuniruntime) # => yuniruntime-copy
 
 # Bootstrap
 # => yuni_bootstrap, YUNI_BOOTSTRAP_USE
@@ -116,7 +116,8 @@ add_subdirectory(bootstrap)
 # FIXME: Guess these
 set(YUNIBUILD_RUNTIME_ROOT ${YUNIBASE_YUNIFIED_PATH})
 set(YUNIBUILD_BOOTSTRAP_USE ${YUNI_BOOTSTRAP_USE})
-set(YUNIBUILD_RUNTIME_DEPENDS yuni_package_build yuni_bootstrap)
+set(YUNIBUILD_RUNTIME_DEPENDS yuni_package_build 
+    yuni_bootstrap yuniruntime-copy)
 
 include(YuniDetectBootstrapScheme)
 

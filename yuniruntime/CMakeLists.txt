@@ -1,3 +1,6 @@
+# Always perform copy on MSBuild...
+# We have no way to avoid BYPRODUCTS here.
+
 set(runtimefiles)
 
 function(installdep f)
@@ -21,6 +24,6 @@ foreach(e ${deps})
     installdep(${e})
 endforeach()
 
-add_custom_target(yuniruntime-copy ALL
+add_custom_target(yuniruntime-copy
     COMMENT "Copying runtime files (yuniruntime)"
     DEPENDS ${runtimefiles})
