@@ -185,6 +185,7 @@ foreach(sym ${libgenorder})
 endforeach()
 
 # Instantiate stub library builds
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/done)
 set(outdata)
 foreach(sym ${libgenorder}) # from libgenorder.cmake
     set(src ${libgenorder_${sym}_SOURCE})
@@ -274,7 +275,8 @@ macro(deploy_impl_specific_runtime impl dirname)
     set(destfiles)
     if(lib_runtime_${impl})
         foreach(e ${lib_runtime_${impl}})
-            set(done ${CMAKE_CURRENT_BINARY_DIR}/done/impl-${impl}-${e})
+            string(REPLACE / _ base ${e})
+            set(done ${CMAKE_CURRENT_BINARY_DIR}/done/impl-${impl}-${base})
             set(in ${yuniroot}/lib-runtime/${e})
             set(out ${e})
             string(REGEX REPLACE "[^/]+/(.*)"
