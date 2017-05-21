@@ -416,6 +416,31 @@
                   (RET))))
   (1 (2 123 456 789)))
 
+(check-treeir
+  ()
+  '((FRAME 1) 
+    (BIND) 
+    (block 0 
+           (LDF (enter 1)) 
+           (JMP (break 0)) 
+           (block 1 
+                  (RECVM 2) 
+                  (LD 0 2) 
+                  (RET))) 
+    (ST 0 0) 
+    (FRAME 3) 
+    (LDI 1) 
+    (MOV 0) 
+    (LDI 2) 
+    (MOV 1) 
+    (LDI 3) 
+    (MOV 2) 
+    (LD 0 0) 
+    (CALL) 
+    (LEAVE))
+  ((3))
+  )
+
 (display "Corelib-null:\n")
 
 (write (get-core-library0))

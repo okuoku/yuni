@@ -122,9 +122,9 @@
                          (vector-ref S idx))
             (loop (+ idx 1)))
            (else
-             (vector-set! vec2 (- idx imm)
-                          (vector-ref S idx))
              (unless (= stack-len idx)
+               (vector-set! vec2 (- idx imm)
+                            (vector-ref S idx))
                (loop (+ idx 1)))))
          (vector-set! vec1 imm
                       (apply vm-args-compose
@@ -298,6 +298,7 @@
   
   ;; Machine cycle
   (define (cycle op arg0 arg1)
+    ;(display (list 'cycle: op arg0 arg1)) (newline)
     (case op
       ((FRAME)  (FRAME arg0))
       ((RECV)   (RECV  arg0))
