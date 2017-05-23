@@ -40,6 +40,8 @@
        (itr-vec (vector-length frmveclis) 0))
       ((pair? frmveclis)
        (itr-lis 0 frmveclis))
+      ((null? frmveclis)
+       #f)
       (else
         (error "Invalid env object" frmveclis))))
 

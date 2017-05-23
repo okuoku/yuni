@@ -131,4 +131,60 @@
   ((+ 2 3))
   (5))
 
+(check-scm
+  ((+ (+ 2 1 1) (+ 0 0 0 9 1)))
+  (14))
+
+(check-scm
+  ((let ((a 0)
+         (b 0))
+    (set! a 10)
+    (list a b)))
+  ((10 0)))
+
+(check-scm
+  ((let ((x 0)
+         (y 0))
+     (set! x 1)
+     (set! y 2)
+     (let ((a 0)
+           (b 1)
+           (f (lambda (b a) (set! x (list 'me a b)))))
+       (let ((a 12)
+             (b 34)
+             (f (lambda (a b) (set! y (list 'foo b a)))))
+         (f b a))
+       (f b a))
+     (list x y)))
+  (((me 0 1) (foo 12 34))))
+
+(check-scm
+  ((let ((f (lambda () 10)))
+    (f)))
+  (10))
+
+(check-scm
+  ((letrec ((a 10)
+            (b a))
+     b))
+  (10))
+
+(check-scm
+  ((let ((a 0)
+         (b 0)
+         (c 0)
+         (x 0)
+         (y 0)
+         (f (lambda () (set! a 1)))
+         (g (lambda () (set! b 2)))
+         (h (lambda () (set! c 3))))
+     (let ((a 0)
+           (b 0))
+       (f) 
+       (set! a 123))
+     (g)
+     (h)
+     (list a b c)))
+  ((1 2 3)))
+
 (check-finish)
