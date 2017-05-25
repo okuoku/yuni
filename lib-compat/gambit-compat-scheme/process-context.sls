@@ -10,7 +10,8 @@
 (define-primitive-names/yunifake
   command-line emergency-exit
   exit
-  get-environment-variable
   get-environment-variables)
+
+(define get-environment-variable 'YUNIFAKE-UNIMPLEMENTED)
          
 )

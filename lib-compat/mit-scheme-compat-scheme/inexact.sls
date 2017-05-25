@@ -11,9 +11,12 @@
 (define-primitive-names/yunifake
   cos asin
   atan acos
-  exp finite?
+  exp 
   infinite? log
-  nan? sin
+  sin
   sqrt tan)
+
+(define nan? 'YUNIFAKE-UNIMPLEMENTED)
+(define finite? 'YUNIFAKE-UNIMPLEMENTED)
          
 )

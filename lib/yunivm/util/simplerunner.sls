@@ -5,51 +5,27 @@
            new-simplerunner)
          (import (yuni scheme)
                  (yunivm compiler compilercore)
-                 (yunivm vm seq-treeir))
+                 (yunivm vm seq-treeir)
+                 (yunivm util basiclibs)
+                 (yunivm loader generator))
 
          
 ;; Quickrunner for test
-         
-(define-syntax gen-basiclibs
-  (syntax-rules ()
-    ((_ frm ...)
-     (list (cons 'frm (seq-treeir-make-primitive frm)) ...))))
 
-(define basiclibs
-  (gen-basiclibs
-    ;; FIXME: Export all (scheme base) procs.
-    +
-    list
-    cons
-    car
-    cdr
-    display
-    newline
-    for-each
-    write
-    reverse
-    null?
-    equal?
-    list->vector
-    vector-ref))
-
-(define vec-global0
+(define basiclibs-proc-vector-converted
   (list->vector
-    (map car basiclibs)))
-
-(define vec-global1
-  (list->vector
-    (map cdr basiclibs)))
+    (map (lambda (p) (seq-treeir-make-primitive p))
+         (vector->list basiclibs-proc-vector))))
 
 (define (simplerunner/treeir-compile runner frm)
-  (call-with-values (lambda () (compile-core frm vec-global0))
+  (call-with-values (lambda () (compile-core frm basiclibs-name-vector))
                     (lambda (ir mx) ir)))
 
 (define (simplerunner/treeir-run runner ir)
   (define (global mod no)
     (unless (= mod 0)
       (error "Something wrong" mod no))
-    (vector-ref vec-global1 no))
+    (vector-ref basiclibs-proc-vector-converted no))
   (seq-treeir global ir))
 
 (define (new-simplerunner) #f)

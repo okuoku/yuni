@@ -297,8 +297,8 @@
   caar
   cadr
   call-with-current-continuation
-  call-with-port call-with-values
-  call/cc car
+  call-with-values
+  car
   cdar
   cddr cdr
   ceiling char->integer
@@ -317,12 +317,11 @@
   ;eof-object
   eof-object? eq?
   equal? eqv?
-  error error-object-irritants
-  error-object-message error-object?
+  error 
   even? exact
-  exact-integer-sqrt exact-integer?
+  exact-integer?
   exact? expt
-  features file-error?
+  features 
   floor floor-quotient
   floor-remainder floor/
   ;flush-output-port 
@@ -356,11 +355,11 @@
   parameterize peek-char
   peek-u8 port?
   positive? procedure?
-  quotient raise
-  raise-continuable rational?
+  quotient 
+  rational?
   rationalize read-bytevector
   read-bytevector! read-char
-  read-error? read-line
+  read-line
   read-string read-u8
   real? remainder
   reverse round
@@ -378,7 +377,7 @@
   string<? string=?
   string>=? string>?
   string? substring
-  symbol->string symbol=?
+  symbol->string
   symbol? 
   textual-port?
   truncate truncate-quotient
@@ -393,10 +392,24 @@
   vector-length vector-map
   vector-ref vector-set!
   vector? 
-  with-exception-handler write-bytevector
+  write-bytevector
   write-char write-string
   write-u8
   zero?
   )
+
+
+(define call-with-port 'YUNIFAKE-UNIMPLEMENTED)
+(define call/cc 'YUNIFAKE-UNIMPLEMENTED)
+(define error-object-irritants 'YUNIFAKE-UNIMPLEMENTED)
+(define error-object-message 'YUNIFAKE-UNIMPLEMENTED)
+(define error-object? 'YUNIFAKE-UNIMPLEMENTED)
+(define exact-integer-sqrt 'YUNIFAKE-UNIMPLEMENTED)
+(define file-error? 'YUNIFAKE-UNIMPLEMENTED)
+(define raise 'YUNIFAKE-UNIMPLEMENTED)
+(define raise-continuable 'YUNIFAKE-UNIMPLEMENTED)
+(define read-error? 'YUNIFAKE-UNIMPLEMENTED)
+(define symbol=? 'YUNIFAKE-UNIMPLEMENTED)
+(define with-exception-handler 'YUNIFAKE-UNIMPLEMENTED)
          
 )

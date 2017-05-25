@@ -4,6 +4,8 @@
          (import)
 
 (define-primitive-names/yunifake
-  display write write-shared write-simple )
+  display write write-shared)
+
+(define write-simple 'YUNIFAKE-UNIMPLEMENTED)
          
 )

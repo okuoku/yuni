@@ -138,7 +138,6 @@
 (define (eof-object) %%my-eof-object)
 (define (flush-output-port p) 'do-nothing)
 
-
 ;; Bytevectors
 (define bytevector? u8vector?)
 (define bytevector u8vector)
@@ -377,7 +376,6 @@
   append apply
   assoc assq
   assv 
-  binary-port? boolean=?
   boolean? 
   ;bytevector
   ;bytevector-append bytevector-copy
@@ -388,7 +386,7 @@
   caar
   cadr
   call-with-current-continuation
-  call-with-port call-with-values
+  call-with-values
   call/cc car
   cdar
   cddr cdr
@@ -407,29 +405,24 @@
   ;eof-object
   eof-object? eq?
   equal? eqv?
-  error error-object-irritants
-  error-object-message error-object?
-  even? exact
-  exact-integer-sqrt exact-integer?
+  error 
+  even? 
   exact? expt
-  features file-error?
-  floor floor-quotient
-  floor-remainder floor/
+  features
+  floor
   ;flush-output-port 
   for-each
-  gcd get-output-bytevector
+  gcd 
   get-output-string guard
-  inexact
-  inexact? input-port-open?
+  inexact?
   input-port? integer->char
   integer? 
   lcm length
   list list->string
-  list->vector list-copy
-  list-ref list-set!
+  list->vector 
+  list-ref 
   list-tail list?
   ;make-bytevector 
-  make-list
   make-parameter make-string
   make-vector map
   max member
@@ -439,19 +432,18 @@
   not null?
   number->string number?
   numerator odd?
-  open-input-bytevector open-input-string
-  open-output-bytevector open-output-string
-  output-port-open?
+  open-input-string
+  open-output-string
   output-port? pair?
   parameterize peek-char
-  peek-u8 port?
+  port?
   positive? procedure?
   quotient raise
-  raise-continuable rational?
-  rationalize read-bytevector
-  read-bytevector! read-char
-  read-error? read-line
-  read-string read-u8
+  rational?
+  rationalize 
+  read-char
+  read-line
+  read-u8
   real? remainder
   reverse round
   set-car!
@@ -459,34 +451,77 @@
   string string->list
   string->number string->symbol
   ;string->utf8 
-  string->vector
   string-append string-copy
-  string-copy! string-fill!
-  string-for-each string-length
-  string-map string-ref
+  string-fill!
+  string-length
+  string-ref
   string-set! string<=?
   string<? string=?
   string>=? string>?
   string? substring
-  symbol->string symbol=?
+  symbol->string 
   symbol? 
-  textual-port?
-  truncate truncate-quotient
-  truncate-remainder truncate/
+  truncate 
   u8-ready? 
   ;utf8->string
   values
   vector vector->list
-  vector->string vector-append
-  vector-copy vector-copy!
-  vector-fill! vector-for-each
-  vector-length vector-map
+  vector-append
+  vector-copy
+  vector-fill! 
+  vector-length 
   vector-ref vector-set!
   vector? 
-  with-exception-handler write-bytevector
-  write-char write-string
+  with-exception-handler 
+  write-char
   write-u8
   zero?
   )
+
+;; Unimpl
+(define binary-port? 'YUNIFAKE-UNIMPLEMENTED)
+(define boolean=? 'YUNIFAKE-UNIMPLEMENTED)
+(define call-with-port 'YUNIFAKE-UNIMPLEMENTED)
+(define error-object-irritants 'YUNIFAKE-UNIMPLEMENTED)
+(define error-object-message 'YUNIFAKE-UNIMPLEMENTED)
+(define error-object? 'YUNIFAKE-UNIMPLEMENTED)
+(define exact 'YUNIFAKE-UNIMPLEMENTED)
+(define exact-integer-sqrt 'YUNIFAKE-UNIMPLEMENTED)
+(define exact-integer? 'YUNIFAKE-UNIMPLEMENTED)
+(define file-error? 'YUNIFAKE-UNIMPLEMENTED)
+(define floor-quotient 'YUNIFAKE-UNIMPLEMENTED)
+(define floor-remainder 'YUNIFAKE-UNIMPLEMENTED)
+(define floor/ 'YUNIFAKE-UNIMPLEMENTED)
+(define get-output-bytevector 'YUNIFAKE-UNIMPLEMENTED)
+(define inexact 'YUNIFAKE-UNIMPLEMENTED)
+(define input-port-open? 'YUNIFAKE-UNIMPLEMENTED)
+(define list-copy 'YUNIFAKE-UNIMPLEMENTED)
+(define list-set! 'YUNIFAKE-UNIMPLEMENTED)
+(define make-list 'YUNIFAKE-UNIMPLEMENTED)
+(define open-input-bytevector 'YUNIFAKE-UNIMPLEMENTED)
+(define open-output-bytevector 'YUNIFAKE-UNIMPLEMENTED)
+(define output-port-open? 'YUNIFAKE-UNIMPLEMENTED)
+(define peek-u8 'YUNIFAKE-UNIMPLEMENTED)
+(define raise-continuable 'YUNIFAKE-UNIMPLEMENTED)
+(define read-bytevector 'YUNIFAKE-UNIMPLEMENTED)
+(define read-bytevector! 'YUNIFAKE-UNIMPLEMENTED)
+(define read-error? 'YUNIFAKE-UNIMPLEMENTED)
+(define read-string 'YUNIFAKE-UNIMPLEMENTED)
+(define string->vector 'YUNIFAKE-UNIMPLEMENTED)
+(define string-copy! 'YUNIFAKE-UNIMPLEMENTED)
+(define string-for-each 'YUNIFAKE-UNIMPLEMENTED)
+(define string-map 'YUNIFAKE-UNIMPLEMENTED)
+(define symbol=? 'YUNIFAKE-UNIMPLEMENTED)
+(define textual-port? 'YUNIFAKE-UNIMPLEMENTED)
+(define truncate-quotient 'YUNIFAKE-UNIMPLEMENTED)
+(define truncate-remainder 'YUNIFAKE-UNIMPLEMENTED)
+(define truncate/ 'YUNIFAKE-UNIMPLEMENTED)
+(define vector->string 'YUNIFAKE-UNIMPLEMENTED)
+(define vector-copy! 'YUNIFAKE-UNIMPLEMENTED)
+(define vector-for-each 'YUNIFAKE-UNIMPLEMENTED)
+(define vector-map 'YUNIFAKE-UNIMPLEMENTED)
+(define write-bytevector 'YUNIFAKE-UNIMPLEMENTED)
+(define write-string 'YUNIFAKE-UNIMPLEMENTED)
+
          
 )
