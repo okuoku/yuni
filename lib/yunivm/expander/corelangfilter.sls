@@ -186,8 +186,7 @@
               ((toplevel)
                (for-each step2/libtop (cdr e)))
               ((subforms libtop)
-               (for-each step2/subforms (cdr e))))
-            (for-each step2 (cdr e)))
+               (for-each step2/subforms (cdr e)))))
            (else
              (add-body! e)))))
        (else
