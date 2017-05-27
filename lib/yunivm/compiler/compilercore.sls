@@ -343,7 +343,8 @@
                                (list nam
                                      (cons 'lambda
                                            (cons args
-                                                 (cdr e)))))))))
+                                                 (cdr e))))))
+                            (else e))))
                        defs)
                   seq)))
     (define (exit defs seq)
