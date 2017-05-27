@@ -187,4 +187,18 @@
      (list a b c)))
   ((1 2 3)))
 
+(check-scm
+  ((let ()
+    (define (a) 10)
+    (define b 20)
+    (list (a) b)))
+  ((10 20)))
+
+(check-scm
+  ((let ()
+    (define (a . b) 10)
+    (define b 20)
+    (list (a) b)))
+  ((10 20)))
+
 (check-finish)

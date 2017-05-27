@@ -295,7 +295,7 @@
          ((lambda) (compile-lambda env frm k))
          ((let let* letrec letrec*)
           (compile-let tail? env frm k))
-         ((define set!)
+         ((set!)
           (compile-set! env frm k))
          ((if)
           (let ((len (and (list? frm) (length frm))))
@@ -308,6 +308,8 @@
           (compile-if2 tail? env frm k))
          ((begin)
           (compile-sequence tail? env (cdr frm) k))
+         ((define global-define)
+          (error "??" frm))
          (else (compile-procedure-call tail? env frm k))))
       (else (cons (obj->loadinst env frm)
                   (k)))))
@@ -329,8 +331,40 @@
       (else (compile-form #f env seq k))))
 
   (define (compile-lambda-body tail? env seq k)
-    ;; FIXME: Implement internal-define here
-    (compile-sequence tail? env seq k))
+    (define (gen-letrec* defs seq)
+      (cons 'letrec*
+            (cons (map (lambda (e)
+                         (let ((nam? (car e)))
+                          (cond
+                            ((symbol? nam?) e)
+                            ((pair? nam?)
+                             (let ((nam (car nam?))
+                                   (args (cdr nam?)))
+                               (list nam
+                                     (cons 'lambda
+                                           (cons args
+                                                 (cdr e)))))))))
+                       defs)
+                  seq)))
+    (define (exit defs seq)
+      (if (null? defs)
+        (compile-sequence tail? env seq k)
+        (compile-form tail? env (gen-letrec* (reverse defs) seq) k)))
+    (define (scan defs seq)
+      (cond
+        ((pair? seq)
+         (let ((frm (car seq))
+               (next (cdr seq)))
+           (cond
+             ((pair? frm)
+              (case (car frm)
+                ((define global-define)
+                 (scan (cons (cdr frm) defs) next))
+                (else
+                  (exit defs seq))))
+             (else (exit defs seq)))))
+        (else (exit defs seq))))
+    (scan '() seq))
 
   (let ((out (compile-lambda-body #f '() scm
                                   (lambda () '()))))

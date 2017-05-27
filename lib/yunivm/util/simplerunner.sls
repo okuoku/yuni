@@ -9,8 +9,8 @@
                  (yunivm vm seq-treeir)
                  (yunivm util basiclibs)
                  (yunivm loader generator)
-                 (yunivm expander expandcore)
                  (yunivm expander corelangfilter)
+                 (yunivm expander expandcore)
                  (yuni compat ident)
                  (yuniconfig build))
 
