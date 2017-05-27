@@ -10,6 +10,7 @@
                  (yunivm util basiclibs)
                  (yunivm loader generator)
                  (yunivm expander expandcore)
+                 (yunivm expander corelangfilter)
                  (yuni compat ident)
                  (yuniconfig build))
 
@@ -69,7 +70,7 @@
 
 (define (simplerunner/expand-program runner prog)
   (define (output code arg* modpath do-dump use-debugger)
-    (expand0 code))
+    (corelangfilter (expand0 code)))
   (define arg*
     (list 
       "-I"
