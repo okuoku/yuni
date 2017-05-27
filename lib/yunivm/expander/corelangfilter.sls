@@ -123,7 +123,7 @@
      (set! has-macro-export? #f)
      (for-each (lambda (e)
                  (add-body! (list 'set! (car e) (cdr e))))
-               deferred-symbols)
+               (reverse deferred-symbols))
      (set! deferred-symbols '())
      (for-each add-body!  (reverse deferred-body))
      (set! deferred-body '()))
