@@ -11,6 +11,11 @@ Caveats
 * Vicare cannot compile Yuni. Not sure why.
 * Sometimes crashes during FFI app execution.
 
+Debugging
+---------
+
+Specify `-g` option to enter debugger.
+
 YuniFFI
 -------
 
