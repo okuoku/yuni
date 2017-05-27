@@ -1,12 +1,15 @@
 ;; Library directories
 (*library-directories*
   "lib"
+  "lib-r7c"
   "lib-r6rs"
   "lib-compat")
 
 (*library-groups*
   ;; Yuni
-  (yuni yuni yuniffi yuniconfig yuniapp yunivm yunivmrt yuniexternal)
+  (yuni yuni yuniffi yuniconfig yuniapp yunivm yuniexternal
+        ;; YuniVM Runtimes
+        yunivmrt r7c-basic r7c-report r7c-system)
   (yunifake yunifake-util)
   ;; FIXME: Hack. We don't have any convention for generated libraries yet.
   ;; R7RS

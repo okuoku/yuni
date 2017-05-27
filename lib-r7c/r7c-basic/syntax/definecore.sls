@@ -1,5 +1,5 @@
 (library (r7c-basic syntax definecore)
-         (export $let/core)
+         (export $define/core)
          (import (r7c-system expander)
                  (r7c-system synrules)
                  (r7c-system core))

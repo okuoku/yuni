@@ -36,7 +36,8 @@
 
   ;; Library data
   ;; 
-  ;;  <LIB> = #(libname libfile libcontent has-macro? <exports>* <imports>*)
+  ;;  <LIB> = #(true-libname libfile libcontent has-macro? 
+  ;;            <exports>* <imports>*)
   ;;  <exports> = (sourcename exportname/#f origlib)  --- #f for macro
   ;;  <imports> = (sourcename exportname/#f sourcelib origlib)
 
@@ -262,13 +263,6 @@
     (PCK 'LOOKUP: name)
     (itr import-dirs))
 
-  (define (library-loaded? nam)
-    (define (itr rest)
-      (and (pair? rest)
-           (or (equal? nam (caar rest))
-               (itr (cdr rest)))))
-    (itr loaded-libraries))
-
   (define (mark-as-loaded! nam filename content has-macro? exports imports)
     (set! loaded-libraries 
       (cons (vector nam filename (filter-sequence content) 
@@ -276,9 +270,8 @@
             loaded-libraries)))
 
   (define (library-lookup-exports name) ;; => nil for embedded library (ignore)
-    (define mapped (remap-library name))
     (cond
-      ((builtin-library? mapped)
+      ((builtin-library? name)
        '())
       (else
         (letrec ((itr (lambda (rest)
@@ -287,8 +280,8 @@
                             (vector-ref (car rest) 4)
                             (itr (cdr rest)))
                           (begin ;; Load specified library automagically
-                            (let ((pth (library-name->path mapped)))
-                             (load-library-file! pth name)
+                            (let ((pth (library-name->path name)))
+                             (load-library-file! pth)
                              (library-lookup-exports name)))))))
           (itr loaded-libraries)))))
 
@@ -300,13 +293,15 @@
                   ;; FIXME: Support them
                   (error "process-import-clause: Unsupported format" lis))
                  (else
-                   (let ((exports (library-lookup-exports lis)))
+                   (let* ((libname lis)
+                          (mapped (remap-library libname))
+                          (exports (library-lookup-exports mapped)))
                     (map (lambda (e)
                            (let ((srcname (car e))
                                  (expname (cadr e))
                                  (origlib (caddr e)))
                              ;; Add sourcelib
-                             (list srcname expname lis origlib)))
+                             (list srcname expname mapped origlib)))
                          exports)))))
           (else
             (error "process-import-clause: Malformed libname" lis))))
@@ -400,7 +395,7 @@
                           ;; length > 1 means some conflict
                           (set! checked (cons (car acc) checked)))
                          (else
-                           (error "process-sequence!: Conflict" acc)))
+                           (error "process-sequence!: Conflict" libname acc)))
                        ;; Go to next itr.
                        (set! to-check nexacc)
                        (pop)))))
@@ -463,7 +458,7 @@
     ;; Register a library
     (mark-as-loaded! libname pth sequence has-macro-export? exports imports))
 
-  (define (load-library-file! path load-as)
+  (define (load-library-file! path)
     (define content (file->sexp-list path))
     (PCK 'PARSING: path)
     (cond
@@ -488,7 +483,7 @@
                     export-clauses)))
 
           (process-sequence! path
-                             load-as
+                             libname
                              (cdr import-clauses) 
                              (cdr export-clauses)
                              sequence))))

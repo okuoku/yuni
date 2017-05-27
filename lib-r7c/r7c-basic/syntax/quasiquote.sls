@@ -6,27 +6,51 @@
                  (r7c heap vector)
                  (r7c-system auxsyntax)
                  (r7c-system synrules))
-
          
 ;; Basic idea took from EIOD.scm (by Al Petrofsky)
-(define-syntax qq
-  (syntax-rules (quasiquote unquote unquote-splicing)
-    ;; Depth 0
-    ((_ (unquote x)) x)
-    ((_ ((unquote-splicing x) . y)) (append x (qq y)))
-    ((_ (quasiquote x) . d)     (cons 'quasiquote (qq (x) d)))
-    ;; Depth 1+
-    ((_ (unquote x) d)          (cons 'unquote (qq (x) . d)))
-    ((_ (unquote-splicing x) d) (cons 'unquote-splicing (qq (x) . d)))
-    ;; Iter
-    ((_ (x . y) . d)    (cons (qq x . d) (qq y . d)))
-    ((_ #(x ...) . d) (list->vector (qq (x ...) . d)))
-    ;; Term
-    ((_ x . d) 'x))) 
+(define-syntax $$yunifake-qq
+  (syntax-rules ($$yunifake-qq quasiquote unquote unquote-splicing)
+    ;; Depth == 0
+    ((_ (unquote input)) input)
+    ((_ ((unquote-splicing x) . y))
+     ;; Reenter
+     (append x ($$yunifake-qq y)))
 
-(define-syntax quasiquote
+    ;; Outputmyself1
+    ((_ (quasiquote x) . depth)
+     ;; Depth++
+     (cons 'quasiquote ($$yunifake-qq (x) depth)))
+    ;; Outputmyself2
+    ((_ ($$yunifake-qq x) . depth)
+     ;; Depth++
+     (cons 'quasiquote ($$yunifake-qq (x) depth)))
+
+    ;; Outputunquote
+    ((_ (unquote x) depth)
+     ;; Depth--
+     (cons 'unquote ($yunifake-qq (x) . depth)))
+    ;; Outputunquote-splicing
+    ((_ (unquote-splicing x) depth)
+     (cons 'unquote-splicing ($$yunifake-qq (x) . depth)))
+
+    ;; Outputcons
+    ((_ (a . d) . depth)
+     ;; Depth no change
+     (cons ($$yunifake-qq a . depth)
+           ($$yunifake-qq d . depth)))
+
+    ;; Outputvector
+    ((_ #(lis ...) . depth)
+     ;; Depth no change
+     (list->vector ($$yunifake-qq (lis ...) . depth)))
+
+    ;; Terminate
+    ((_ input . any) 'input)))
+
+(define-syntax quasiquote ;; Depth zero, entrypoint
   (syntax-rules ()
-    ((_ x)
-     (qq x))))
+    ;; Reject (quasiquote 1 2 ...) case
+    ((_ input)
+     ($$yunifake-qq input))))
          
 )

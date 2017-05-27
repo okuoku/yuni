@@ -32,6 +32,7 @@
          ($let/core ((v (cadr var0)))
            (set! var0 (car var0))
            v))))
+    #|
     ((define-values (var0 var1 ... . varn) expr)
      (begin
        (define var0
@@ -45,6 +46,7 @@
          ($let/core ((v (cdr var0)))
            (set! var0 (car var0))
            v))))
+    |#
     ((define-values var expr)
      (define var
        (call-with-values (lambda () expr)

@@ -1,5 +1,6 @@
 (library (yunivm util simplerunner)
          (export 
+           simplerunner/expand-program
            simplerunner/treeir-compile
            simplerunner/treeir-run
            new-simplerunner)
@@ -7,15 +8,74 @@
                  (yunivm compiler compilercore)
                  (yunivm vm seq-treeir)
                  (yunivm util basiclibs)
-                 (yunivm loader generator))
+                 (yunivm loader generator)
+                 (yunivm expander expandcore)
+                 (yuni compat ident)
+                 (yuniconfig build))
 
          
 ;; Quickrunner for test
+
+(define (libmapper libname)
+  (cond
+    ((or (equal? libname '(r7c-system auxsyntax))
+         (equal? libname '(r7c-system core))
+         (equal? libname '(r7c-system let-syntax))
+         (equal? libname '(r7c-system synrules))
+         (equal? libname '(r7c-basic syntax define))
+         (equal? libname '(r7c-basic syntax if))
+         (equal? libname '(r7c-basic syntax definecore))
+         (equal? libname '(r7c-basic syntax lambda))
+         (equal? libname '(r7c-basic syntax letcore))
+         ;; Aliases
+         (equal? libname '(r7c syntax lambda))
+         (equal? libname '(r7c syntax letcore))
+         (equal? libname '(r7c syntax letrec))
+         (equal? libname '(r7c syntax if))
+         (equal? libname '(r7c syntax definecore)))
+     '(yunivmrt coresyntax))
+    ((or (equal? libname '(r7c heap boolean))
+         (equal? libname '(r7c heap pair))
+         (equal? libname '(r7c heap list))
+         (equal? libname '(r7c heap vector))
+         (equal? libname '(r7c heap undefined))
+         (equal? libname '(r7c heap listloop))
+         (equal? libname '(r7c heap fixnum))
+         (equal? libname '(r7c core values))
+         (equal? libname '(r7c core apply))
+         (equal? libname '(r7c core error))
+         (equal? libname '(r7c core callcc))
+         (equal? libname '(r7c core exception)))
+     '(yunivmrt coreprocs))
+    ((equal? libname '(yuni scheme))
+     '(yunivmrt scheme))
+    ((and (< 2 (length libname)) 
+          (eq? (car libname) 'yuni)
+          (eq? (cadr libname) 'compat))
+     ;; Disallow compat libraries
+     (cons 'NEVERLAND libname))
+    (else
+      (let ((head (car libname)))
+       (case head
+         ;; Disallow direct-access of r7c libraries
+         ((r7c r7c-system)
+          (cons 'NEVERLAND libname))
+         (else libname))))))
 
 (define basiclibs-proc-vector-converted
   (list->vector
     (map (lambda (p) (seq-treeir-make-primitive p))
          (vector->list basiclibs-proc-vector))))
+
+(define (simplerunner/expand-program runner prog)
+  (define (output code arg* modpath do-dump use-debugger)
+    (expand0 code))
+  (define arg*
+    (list 
+      "-I"
+      (string-append (yuniconfig-runtime-rootpath) "/"
+                     (symbol->string (ident-impl)))))
+  (yuniloader-generate arg* libmapper prog output))
 
 (define (simplerunner/treeir-compile runner frm)
   (call-with-values (lambda () (compile-core frm basiclibs-name-vector))
