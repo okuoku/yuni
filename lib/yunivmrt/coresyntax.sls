@@ -38,6 +38,8 @@
   quote
   set!
   
+  ;; extra
+  define
   ;; FIXME
   parameterize
   syntax-error

@@ -70,7 +70,12 @@ command-line exit get-environment-variable
 
 read
 display write write-simple
+
+%%yunifake-dummy-syntax
            )
          (import 
            (yunivmrt scheme-proc)
-           (yunivmrt scheme-syntax)))
+           (yunivmrt scheme-syntax))
+         
+;; Mark explicitly as a macro-library
+(define-syntax-names/yunifake %%yunifake-dummy-syntax))

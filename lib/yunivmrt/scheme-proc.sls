@@ -59,5 +59,10 @@ command-line exit get-environment-variable
 
 read
 display write write-simple
+%%yunifake-dummy-syntax-procs
            )
-         (import (yunifake standard-procs)))
+         (import (yunifake standard-procs))
+         
+;; Mark explicitly as a macro-library
+(define-syntax-names/yunifake %%yunifake-dummy-syntax-procs)         
+         )

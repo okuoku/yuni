@@ -114,6 +114,22 @@
           acc))
       (itr '() lis))
 
+    (define (catch-sym-for-macro imp*)
+      ;; Filter symbols from non-global libs required for macro
+      ;; to make them global too.
+      (define (required? e)
+        (let ((lib (caddr e)))
+         (not (library-has-macro? lib))))
+      (define (itr cur rest)
+        (if (pair? rest)
+          (let ((a (car rest))
+                (d (cdr rest)))
+            (itr (if (required? a)
+                   (cons a cur)
+                   cur) d))
+          cur))
+      (itr '() imp*))
+
     (define (gen-code lib)
       (define libname (vector-ref lib 0))
       (define file (vector-ref lib 1))
@@ -135,7 +151,9 @@
             acc))
         (itr '() lis))
       (if has-macro?
-        (gen-libbody/naked file (filter-imports imports) seq)
+        (gen-libbody/naked file 
+                           (catch-sym-for-macro (filter-imports imports)) 
+                           seq)
         (gen-libbody file 
                      (filter-imports imports) 
                      (filter-exports exports) seq)))
@@ -188,6 +206,9 @@
                (list to from)))
            lis))
     `(begin 
+       ,@(if (null? exports)
+           '()
+           `((quote (*yunifake-exports* . ,(map car exports)))))
        ,@(map (lambda (e)
                 (let ((name (cadr e)))
                  `(define ,name #f)))
@@ -199,16 +220,23 @@
                             (let ((from (car e))
                                   (to (cadr e)))
                               `(set! ,to ,from)))
-                          exports))))))
+                          exports))))
+       (quote (*yunifake-libend*))))
 
   (define (gen-libbody/naked lib renames body)
     `(begin 
+       '(*yunifake-renames*
+          ,@(map
+              (lambda (e)
+                (cons (car e) (cadr e))) 
+              renames))
        ,@(map (lambda (e)
                 (let ((to (car e))
                       (from (cadr e)))
                   `(define ,to ,from)))
               renames)
-       . ,body))
+       ,@body
+       (quote (*yunifake-libend*))))
 
   (define ERRPORT current-error-port)
   (define %verbose #f)
@@ -283,6 +311,19 @@
                             (let ((pth (library-name->path name)))
                              (load-library-file! pth)
                              (library-lookup-exports name)))))))
+          (itr loaded-libraries)))))
+
+  (define (library-has-macro? name)
+    (cond
+      ((builtin-library? name)
+       #t)
+      (else
+        (letrec ((itr (lambda (rest)
+                        (if (pair? rest)
+                          (if (equal? (vector-ref (car rest) 0) name)
+                            (vector-ref (car rest) 3)
+                            (itr (cdr rest)))
+                          (error "Why?" name)))))
           (itr loaded-libraries)))))
 
   (define (process-import-clause lis)

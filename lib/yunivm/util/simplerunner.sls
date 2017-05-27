@@ -8,6 +8,7 @@
                  (yunivm compiler compilercore)
                  (yunivm vm seq-treeir)
                  (yunivm util basiclibs)
+                 (yunivm util compatlibs)
                  (yunivm loader generator)
                  (yunivm expander corelangfilter)
                  (yunivm expander expandcore)
@@ -16,6 +17,14 @@
 
          
 ;; Quickrunner for test
+
+(define libs-proc-vector
+  (vector-append basiclibs-proc-vector
+                 compatlibs-proc-vector))
+
+(define libs-name-vector
+  (vector-append basiclibs-name-vector
+                 compatlibs-name-vector))
 
 (define (libmapper libname)
   (cond
@@ -50,6 +59,11 @@
      '(yunivmrt coreprocs))
     ((equal? libname '(yuni scheme))
      '(yunivmrt scheme))
+    ;; Compat
+    ((equal? libname '(yuni compat simple-struct))
+     '(yunifake compatlibs))
+    ((equal? libname '(yuni compat keywords))
+     '(yunivmrt keywords))
     ((and (< 2 (length libname)) 
           (eq? (car libname) 'yuni)
           (eq? (cadr libname) 'compat))
@@ -63,10 +77,10 @@
           (cons 'NEVERLAND libname))
          (else libname))))))
 
-(define basiclibs-proc-vector-converted
+(define libs-proc-vector-converted
   (list->vector
     (map (lambda (p) (seq-treeir-make-primitive p))
-         (vector->list basiclibs-proc-vector))))
+         (vector->list libs-proc-vector))))
 
 (define (simplerunner/expand-program runner prog)
   (define (output code arg* modpath do-dump use-debugger)
@@ -79,14 +93,14 @@
   (yuniloader-generate arg* libmapper prog output))
 
 (define (simplerunner/treeir-compile runner frm)
-  (call-with-values (lambda () (compile-core frm basiclibs-name-vector))
+  (call-with-values (lambda () (compile-core frm libs-name-vector))
                     (lambda (ir mx) ir)))
 
 (define (simplerunner/treeir-run runner ir)
   (define (global mod no)
     (unless (= mod 0)
       (error "Something wrong" mod no))
-    (vector-ref basiclibs-proc-vector-converted no))
+    (vector-ref libs-proc-vector-converted no))
   (seq-treeir global ir))
 
 (define (new-simplerunner) #f)
