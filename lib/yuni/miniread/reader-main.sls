@@ -122,7 +122,7 @@
       ((CHARLIT) 
        ;; Special: Character literal
        (next b 'CHARLIT #f 'CHARLIT #f stream index))
-      ((#f OBJ0 OBJ0/SHARP)
+      ((#f OBJ0 OBJ0/SHARP OBJ0/DOT)
        (dostep0 ssplit-parse-byte0))
       ((OBJ1 OBJ1/SHARP)
        (dostep ssplit-parse-byte1))
@@ -232,6 +232,9 @@
          ((SHARP)
           (set-prev-here 'OBJ)
           (begin-here 'OBJ1/SHARP))
+         ((DOT)
+          (set-prev-here 'TURN_TO_PAIR)
+          (begin-here 'OBJ0/DOT))
          (else ;; Some object
            ;; OBJ0 is for triggering ssplit-parse-byte0
            ;; which will accept delimiters.
@@ -240,11 +243,11 @@
              (begin-here 'OBJ1)
              (begin-here 'OBJ0)))))
 
-      ((OBJ0 OBJ0/SHARP)
+      ((OBJ0 OBJ0/SHARP OBJ0/DOT)
        (case type
          ((LIST_BEGIN_PAREN) ;; Include L paren into token
-          (cond
-            ((eq? st 'OBJ0/SHARP)
+          (case st
+            ((OBJ0/SHARP)
              (end-here 'OBJ))
             (else
               (end-prev)

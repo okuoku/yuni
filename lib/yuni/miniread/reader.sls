@@ -149,10 +149,26 @@
             ((LIST_BEGIN_PAREN LIST_BEGIN_SQ)
              (push-to-dump 'LIST))
 
+            ((TURN_TO_PAIR)
+             (unless (eq? mode 'LIST)
+               (error "Invalid dot in this context" mode))
+             (itr 'PAIR dump cur d))
+
             ((LIST_END_PAREN LIST_END_SQ)
              ;; Realize object
              (let ((obj (case mode
                           ((LIST) (reverse cur))
+                          ((PAIR)
+                           (unless (and (pair? cur)
+                                        (pair? (cdr cur)))
+                             (error "Invalid object for pair" cur))
+                           (let ((last (car cur))
+                                 (second (cadr cur)))
+                             (let loop ((rest (cddr cur))
+                                        (cur (cons second last)))
+                               (if (pair? rest)
+                                 (loop (cdr rest) (cons (car rest) cur))
+                                 cur))))
                           ((VECTOR) (list->vector (reverse cur)))
                           ((BYTEVECTOR) (%u8-list->bytevector (reverse cur)))
                           (else (error "unknown mode??" mode)))))

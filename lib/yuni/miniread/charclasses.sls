@@ -53,7 +53,7 @@
     (64 AT)
     (44 COMMA)
     (124 PIPE)
-    ;(#\. DOT) ;; FIMXE: Not needed??
+    (46 DOT)
     (96 BQUOTE)
 
     ;; Ordinal alphabets

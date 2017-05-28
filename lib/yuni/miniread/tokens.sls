@@ -64,6 +64,7 @@
     (CR => CR #t) ;; CR LF
     (LF => LF)
     ;; Specials
+    (DOT => DOT)
     (SHARP => SHARP #t) ;; #t #f ...
     (SEMICOLON => SEMICOLON)
     (DQUOTE => DQUOTE)
