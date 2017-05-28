@@ -15,108 +15,126 @@
            tkn-type
            miniread-main)
          (import (yuni scheme)
-                 (yuni core)
                  (yuni miniread charclasses)
                  (yuni miniread tokens))
 
-(define* miniread ;; Reading context
-  (state ;; #f
-         ;; OBJ0 | OBJ1 | OBJ2
-         ;; STRING0 | STRING1
-         ;; LINECOMMENT0 | LINECOMMENT1
-         ;; BLOCKCOMMENT0 | BLOCKCOMMENT1
-   reg
-   hold
-   hold-stream
-   hold-index
-   lineno
-   column
-   blockcomment-depth
-   start-stream
-   start-index
-   start-lineno
-   start-column
-   prev-type
-   prev-stream
-   prev-index
-   prev-lineno
-   prev-column))
+         
+;; FIXME: Use our own record system for now...
 
-(define* tokenvec-entry
-  (start-stream
-   start-index
-   start-lineno
-   start-column
-   end-stream
-   end-index
-   end-lineno
-   end-column
-   type ;; OBJ
-        ;; TRUE | FALSE
-        ;; LIST_BEGIN_PAREN | LIST_END_PAREN | LIST_BEGIN_SQ | LIST_END_SQ
-        ;; COMMENT | NEXT_DATUM_COMMENT | BLOCK_COMMENT
-        ;; NEXT_QUOTE | NEXT_QUASIQUOTE | NEXT_UNQUOTE
-        ;; NEXT_SYNTAX_QUOTE | NEXT_SYNTAX_QUASIQUOTE | NEXT_UNQUOTE_SPLICING
-        ;; STRING
-    ))
+(define (make-mr) (make-vector 17))
+(define (mr-state mr)              (vector-ref mr 0))
+(define (mr-reg mr)                (vector-ref mr 1))
+(define (mr-hold mr)               (vector-ref mr 2))
+(define (mr-hold-stream mr)        (vector-ref mr 3))
+(define (mr-hold-index mr)         (vector-ref mr 4))
+(define (mr-lineno mr)             (vector-ref mr 5))
+(define (mr-column mr)             (vector-ref mr 6))
+(define (mr-blockcomment-depth mr) (vector-ref mr 7))
+(define (mr-start-stream mr)       (vector-ref mr 8))
+(define (mr-start-index mr)        (vector-ref mr 9))
+(define (mr-start-lineno mr)       (vector-ref mr 10))
+(define (mr-start-column mr)       (vector-ref mr 11))
+(define (mr-prev-type mr)          (vector-ref mr 12))
+(define (mr-prev-stream mr)        (vector-ref mr 13))
+(define (mr-prev-index mr)         (vector-ref mr 14))
+(define (mr-prev-lineno mr)        (vector-ref mr 15))
+(define (mr-prev-column mr)        (vector-ref mr 16))
+(define (mr-state! mr v)              (vector-set! mr 0 v))
+(define (mr-reg! mr v)                (vector-set! mr 1 v))
+(define (mr-hold! mr v)               (vector-set! mr 2 v))
+(define (mr-hold-stream! mr v)        (vector-set! mr 3 v))
+(define (mr-hold-index! mr v)         (vector-set! mr 4 v))
+(define (mr-lineno! mr v)             (vector-set! mr 5 v))
+(define (mr-column! mr v)             (vector-set! mr 6 v))
+(define (mr-blockcomment-depth! mr v) (vector-set! mr 7 v))
+(define (mr-start-stream! mr v)       (vector-set! mr 8 v))
+(define (mr-start-index! mr v)        (vector-set! mr 9 v))
+(define (mr-start-lineno! mr v)       (vector-set! mr 10 v))
+(define (mr-start-column! mr v)       (vector-set! mr 11 v))
+(define (mr-prev-type! mr v)          (vector-set! mr 12 v))
+(define (mr-prev-stream! mr v)        (vector-set! mr 13 v))
+(define (mr-prev-index! mr v)         (vector-set! mr 14 v))
+(define (mr-prev-lineno! mr v)        (vector-set! mr 15 v))
+(define (mr-prev-column! mr v)        (vector-set! mr 16 v))
+
+(define (make-tve) (make-vector 9))
+(define (tve-start-stream tve) (vector-ref tve 0))
+(define (tve-start-index tve)  (vector-ref tve 1))
+(define (tve-start-lineno tve) (vector-ref tve 2))
+(define (tve-start-column tve) (vector-ref tve 3))
+(define (tve-end-stream tve)   (vector-ref tve 4))
+(define (tve-end-index tve)    (vector-ref tve 5))
+(define (tve-end-lineno tve)   (vector-ref tve 6))
+(define (tve-end-column tve)   (vector-ref tve 7))
+(define (tve-type tve)         (vector-ref tve 8))
+(define (tve-start-stream! tve v)  (vector-set! tve 0 v))
+(define (tve-start-index! tve v)   (vector-set! tve 1 v))
+(define (tve-start-lineno! tve v)  (vector-set! tve 2 v))
+(define (tve-start-column! tve v)  (vector-set! tve 3 v))
+(define (tve-end-stream! tve v)    (vector-set! tve 4 v))
+(define (tve-end-index! tve v)     (vector-set! tve 5 v))
+(define (tve-end-lineno! tve v)    (vector-set! tve 6 v))
+(define (tve-end-column! tve v)    (vector-set! tve 7 v))
+(define (tve-type! tve v)          (vector-set! tve 8 v))
 
 (define (make-tkn num)
   (list->vector 
-    (map (lambda (e) (make tokenvec-entry))
+    (map (lambda (e) (make-tve))
          (vector->list (make-vector num)))))
 
-(define (%tref vec idx sym)
-  (~ (vector-ref vec idx) sym))
+(define (%tref vec idx proc)
+  (proc (vector-ref vec idx)))
 
 (define (tkn-start-stream vec idx)
-  (%tref vec idx 'start-stream))
+  (%tref vec idx tve-start-stream))
 (define (tkn-start-index vec idx)
-  (%tref vec idx 'start-index))
+  (%tref vec idx tve-start-index))
 (define (tkn-start-lineno vec idx)
-  (%tref vec idx 'start-lineno))
+  (%tref vec idx tve-start-lineno))
 (define (tkn-start-column vec idx)
-  (%tref vec idx 'start-column))
+  (%tref vec idx tve-start-column))
 
 (define (tkn-end-stream vec idx)
-  (%tref vec idx 'end-stream))
+  (%tref vec idx tve-end-stream))
 (define (tkn-end-index vec idx)
-  (%tref vec idx 'end-index))
+  (%tref vec idx tve-end-index))
 (define (tkn-end-lineno vec idx)
-  (%tref vec idx 'end-lineno))
+  (%tref vec idx tve-end-lineno))
 (define (tkn-end-column vec idx)
-  (%tref vec idx 'end-column))
+  (%tref vec idx tve-end-column))
 
 (define (tkn-type vec idx)
-  (%tref vec idx 'type))
+  (%tref vec idx tve-type))
 
 (define (make-miniread)
-  (make miniread
-        (blockcomment-depth 0)
-        (hold #f)
-        (state #f)))
+  (let ((out (make-mr)))
+   (mr-blockcomment-depth! out 0)
+   (mr-hold! out #f)
+   (mr-state! out #f)
+   out))
 
 (define (miniread-main mr vec vecidx vecend cb) ;; => filled idx / #f
   (define terminate? #f)
   (define curidx vecidx)
   (define retidx #f)
-  (define (state) (~ mr 'state))
-  (define (set-state! st) (~ mr 'state := st))
+  (define (state) (mr-state mr))
+  (define (set-state! st) (mr-state! mr st))
   (define (blockcomment-depth-zero?)
-    (zero? (~ mr 'blockcomment-depth)))
+    (zero? (mr-blockcomment-depth mr)))
   (define (%blockcomment-depth-add! x)
-    (let ((d (~ mr 'blockcomment-depth)))
-     (~ mr 'blockcomment-depth := (+ x d))))
+    (let ((d (mr-blockcomment-depth mr)))
+     (mr-blockcomment-depth! mr (+ x d))))
   (define (blockcomment-depth++) (%blockcomment-depth-add! 1))
   (define (blockcomment-depth--) (%blockcomment-depth-add! -1))
 
   ;; Step dispatch
   (define (callstep next b stream index)
     (define (step type has-next?)
-      (define prev-type (~ mr 'reg))
-      (~ mr 'reg := type)
+      (define prev-type (mr-reg mr))
+      (mr-reg! mr type)
       (next b (state) prev-type type has-next? stream index))
     (define (dostep0 p) (call-with-values (lambda () (p b)) step))
-    (define (dostep p) (call-with-values (lambda () (p b (~ mr 'reg))) step))
+    (define (dostep p) (call-with-values (lambda () (p b (mr-reg mr))) step))
 
     (case (state)
       ((CHARLIT) 
@@ -148,37 +166,37 @@
     (define (delimiter?) (ssplit-byte-delimiter? b))
     (define (paren-l?) (eq? 'PAREN_L (ssplit-byte-class b)))
     (define (hold) 
-      (~ mr 'hold := b)
-      (~ mr 'hold-index := index)
-      (~ mr 'hold-stream := stream))
+      (mr-hold! mr b)
+      (mr-hold-index! mr index)
+      (mr-hold-stream! mr stream))
     (define (set-prev-here type)
-      (~ mr 'prev-type := type)
-      (~ mr 'prev-stream := stream)
-      (~ mr 'prev-index := index)
-      (~ mr 'prev-lineno := (~ mr 'lineno))
-      (~ mr 'prev-column := (~ mr 'column)))
+      (mr-prev-type! mr type)
+      (mr-prev-stream! mr stream)
+      (mr-prev-index! mr index)
+      (mr-prev-lineno! mr (mr-lineno mr))
+      (mr-prev-column! mr (mr-column mr)))
 
     (define (begin-here next-state)
       (let ((st (state)))
        ;; Sanity check: Disposable states are #f / CHARLIT
        (when (and st (not (eq? st 'CHARLIT)))
          (error "Invalid state at begin-here" st)) )
-      (~ mr 'state := next-state)
-      (~ mr 'start-stream := stream)
-      (~ mr 'start-index := index)
-      (~ mr 'start-lineno := (~ mr 'lineno))
-      (~ mr 'start-column := (~ mr 'column)))
+      (mr-state! mr next-state)
+      (mr-start-stream! mr stream)
+      (mr-start-index! mr index)
+      (mr-start-lineno! mr (mr-lineno mr))
+      (mr-start-column! mr (mr-column mr)))
 
     (define (%tkn-set-start! tkn type) ;; for both here/prev
-       (~ tkn 'type := type) 
-       (~ tkn 'start-stream := (~ mr 'start-stream))
-       (~ tkn 'start-index := (~ mr 'start-index))
-       (~ tkn 'start-lineno := (~ mr 'start-lineno))
-       (~ tkn 'start-column := (~ mr 'start-column)))
+       (tve-type! tkn type) 
+       (tve-start-stream! tkn (mr-start-stream mr))
+       (tve-start-index! tkn (mr-start-index mr))
+       (tve-start-lineno! tkn (mr-start-lineno mr))
+       (tve-start-column! tkn (mr-start-column mr)))
 
     (define (%emit-tkn!)
       ;; Reset state to #f
-      (~ mr 'state := #f)
+      (mr-state! mr #f)
       (set! retidx curidx)
       (set! curidx (+ 1 curidx)))
 
@@ -186,19 +204,19 @@
       ;; Fill a token
       (let ((tkn (vector-ref vec curidx)))
        (%tkn-set-start! tkn tkn-type)
-       (~ tkn 'end-stream := stream)
-       (~ tkn 'end-index := index)
-       (~ tkn 'end-lineno := (~ mr 'lineno))
-       (~ tkn 'end-column := (~ mr 'column)))
+       (tve-end-stream! tkn stream)
+       (tve-end-index! tkn index)
+       (tve-end-lineno! tkn (mr-lineno mr))
+       (tve-end-column! tkn (mr-column mr)))
       (%emit-tkn!))
 
     (define (end-prev)
       (let ((tkn (vector-ref vec curidx)))
-       (%tkn-set-start! tkn (~ mr 'prev-type))
-       (~ tkn 'end-stream := (~ mr 'prev-stream))
-       (~ tkn 'end-index := (~ mr 'prev-index))
-       (~ tkn 'end-lineno := (~ mr 'prev-lineno))
-       (~ tkn 'end-column := (~ mr 'prev-column)))
+       (%tkn-set-start! tkn (mr-prev-type mr))
+       (tve-end-stream! tkn (mr-prev-stream mr))
+       (tve-end-index! tkn (mr-prev-index mr))
+       (tve-end-lineno! tkn (mr-prev-lineno mr))
+       (tve-end-column! tkn (mr-prev-column mr)))
       (%emit-tkn!))
 
     (define (tkn-single tkn-type)
@@ -374,12 +392,12 @@
 
   (define (itr)
     (unless (or terminate? (= curidx vecend))
-      (let ((hold (~ mr 'hold)))
+      (let ((hold (mr-hold mr)))
        (if hold
-         (let ((stream (~ mr 'hold-stream))
-               (index (~ mr 'hold-index)))
+         (let ((stream (mr-hold-stream mr))
+               (index (mr-hold-index mr)))
            ;; Consume a byte from hold register
-           (~ mr 'hold := #f)
+           (mr-hold! mr #f)
            (byte hold stream index))
          (call-with-values cb byte)))
       (itr)))
