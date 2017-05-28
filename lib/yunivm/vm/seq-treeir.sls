@@ -24,11 +24,11 @@
 (define (vm-args-decompose obj cb) (apply cb obj))
 (define (vm-primitive? obj)
   (and (pair? obj) (eq? *primitive-flag* (car obj))))
-(define (vm-callable obj) (cdr obj))
 (define (vm-call-env obj)
   (cddr obj))
 (define (vm-call-label obj)
   (cadr obj))
+
 
 
 ;; The Sequencer for Tree-IR
@@ -44,8 +44,13 @@
   (define block-siblings #f)
   (define jump-request #f)
 
+  ;; Current VM
+  (define vmcycle #f)
+  (define vmextra #f)
+  (define vmterm #f)
+
   ;; VM body
-  (define (do-cycle vmcycle vmextra vmterm)
+  (define (do-cycle)
     (cond
       ((null? current-code)
        (cond
@@ -55,7 +60,7 @@
                   (nextcode (vector-ref block-breaks current-block)))
             (set! current-block nextblock)
             (set! current-code nextcode)
-            (do-cycle vmcycle vmextra vmterm)))
+            (do-cycle)))
          (else
            ;; Terminate VM
            (vmterm))))
@@ -77,12 +82,48 @@
                (unless jump-request
                  ;; Go to the next inst
                  (set! current-code nextcode))))))
-       (do-cycle vmcycle vmextra vmterm))
+       (do-cycle))
       (else
         (error "Invalid code fragment" current-code current-block))))
 
   ;; VM core support
   ;; Codeflow
+  (define (return-to-orig-ctx cont)
+    (let ((current-current-code current-code)
+          (current-current-block current-block))
+      (lambda vals
+        (set! current-code current-current-code)
+        (set! current-block current-current-block)
+        (set! jump-request #f)
+        (apply cont vals))))
+
+  (define (%vm-callable obj) (cdr obj))
+  (define (%conv-datum gencb datum)
+    (cond
+      ;; Procedure?
+      ((vmclosure? datum)
+       (lambda args
+         (call-with-current-continuation
+           (lambda (c)
+             (let ((launch (gencb datum (return-to-orig-ctx c))))
+              (apply launch args)
+              (unless jump-request
+                (error "launch did not invoked jump request"))
+              (do-cycle))))))
+      ;; As-is
+      (else datum)))
+  (define (%itr-prim-args gencb cur rest)
+    (if (pair? rest)
+      (let ((a (car rest))
+            (d (cdr rest)))
+        (%itr-prim-args gencb (cons (%conv-datum gencb a)
+                                    cur) d))
+      (reverse cur)))
+
+  (define (vm-call-primitive gencb prim lis)
+    (let ((proc (%vm-callable prim))
+          (args (%itr-prim-args gencb '() lis)))
+      (apply proc args)))
   (define (vm-returnpoint) ;; => ('jump currentblock . target)
     (cons 'jump (cons current-block (cdr current-code))))
   (define (jump label)
@@ -117,10 +158,10 @@
       ((VM-ARGS-COMPOSE)    vm-args-compose)
       ((VM-ARGS-DECOMPOSE)  vm-args-decompose)
       ((VM-PRIMITIVE?)      vm-primitive?)
-      ((VM-CALLABLE)        vm-callable)
       ((VM-RETURNPOINT)     vm-returnpoint)
       ((VM-CALL-ENV)        vm-call-env)
       ((VM-CALL-LABEL)      vm-call-label)
+      ((VM-CALL-PRIMITIVE)  vm-call-primitive)
       ((JUMP)               jump)
       ((BRANCH)             branch)
       (else (error "Invalid symbol for query" sym))))
@@ -158,7 +199,10 @@
   
   (call-with-values (lambda () (vmcore-new query))
                     (lambda (cycle extra) 
-                      (let ((vmterm (lambda () (extra 'RESULT #f #f))))
-                       (do-cycle cycle extra vmterm)))))
+                      (let ((xvmterm (lambda () (extra 'RESULT #f #f))))
+                       (set! vmcycle cycle)
+                       (set! vmextra extra)
+                       (set! vmterm xvmterm)
+                       (do-cycle)))))
          
 )

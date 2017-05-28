@@ -40,8 +40,11 @@
     ((_ src expected)
      (let* ((runner (new-simplerunner))
             (code (simplerunner/expand-program runner 'src))
-            (ir (simplerunner/treeir-compile runner code)))
+            (ir (begin
+                  ;(pp code)
+                  (simplerunner/treeir-compile runner code))))
        (set! test-counter (+ 1 test-counter))
+       ;(pp ir)
        ;(display (list 'IR: ir)) (newline)
        (call-with-values (lambda () (simplerunner/treeir-run runner ir))
                          (lambda vals
@@ -51,11 +54,19 @@
                              (else
                                (set! failed-forms (cons
                                                     (list
-                                                      (list 'Scm: 'scm)
-                                                      (list 'IR: ir)
+                                                      (list 'Scm: 'code)
+                                                      ;(list 'IR: ir)
                                                       (list 'Exp: 'expected)
                                                       (list 'Act: vals))
                                                     failed-forms))))))))))
+
+(check-scm
+  ((import (yuni scheme) (yuni core))
+   (define* testtype (a b))
+   ;(define obj0 (make testtype (a 10)))
+   (define obj0 (make testtype))
+   #t)
+  (#t))
 
 (check-scm
   ((import (yuni scheme))
@@ -65,8 +76,22 @@
 
 (check-scm
   ((import (yuni scheme) (yuni miniread reader))
-   (define (a) 10)
-   (a))
-  (10))
+   (define-syntax conv
+     (syntax-rules ()
+       ((_ objs ...)
+        (list
+          (do-conv objs)
+          ...))))
+   (define (do-conv str)
+     (let* ((bv (string->utf8 str))
+            (obj1 (utf8-read bv)))
+       obj1))
+   (conv
+     "10"
+     "#| # |# hoge"
+     "'abc"
+     ",()"
+     ",(,abc)"))
+  (((10) (hoge) ('abc) (,()) (,(,abc)))))
 
 (check-finish)
