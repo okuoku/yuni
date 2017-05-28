@@ -167,9 +167,11 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
 
 (define write-bytevector
   (case-lambda
-    ((bv port)
-     (put-bytevector port bv))
-    ((bv) (write-bytevector bv (current-output-port))))) 
+    ((bv) (write-bytevector bv (current-output-port))) 
+    ((bv port) (put-bytevector port bv))
+    ((bv port start) (write-bytevector (%subbytevector1 bv start) port))
+    ((bv port start end)
+     (write-bytevector (%subbytevector bv start end) port))))
 
 (define write-string
   (case-lambda
