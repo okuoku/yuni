@@ -88,6 +88,9 @@
 
   ;; VM core support
   ;; Codeflow
+  (define %require-mit-scheme-workaround?
+    (let ((x (values 10)))
+     (procedure? x)))
   (define (return-to-orig-ctx cont)
     (let ((current-current-code current-code)
           (current-current-block current-block))
@@ -95,7 +98,13 @@
         (set! current-code current-current-code)
         (set! current-block current-current-block)
         (set! jump-request #f)
-        (apply cont vals))))
+        ;; MIT/GNU Scheme workaround (it cannot take 2 or more values
+        ;; on continuation)
+        (if (= 1 (length vals))
+          (cont (car vals))
+          (if %require-mit-scheme-workaround?
+            (cont (apply values vals))
+            (apply cont vals))))))
 
   (define (%vm-callable obj) (cdr obj))
   (define (%conv-datum gencb datum)
