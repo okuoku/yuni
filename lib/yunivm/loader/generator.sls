@@ -1,7 +1,8 @@
 (library (yunivm loader generator)
          (export
            yuniloader-generate)
-         (import (yuni scheme))
+         (import (yuni scheme)
+                 (yuni miniread reader))
          
 ;; FIXME: Support non-standards ~ and :=
 ;;
@@ -254,15 +255,23 @@
                       obj)
             (newline (ERRPORT)))))))
 
+
+  (define BUFSIZ 4096)
+  (define (source->bv pth)
+    (define buf (make-bytevector BUFSIZ))
+    (define in (open-binary-input-file pth))
+    (define p (open-output-bytevector))
+    (define (rd)
+      (let ((r (read-bytevector! buf in)))
+       (cond
+         ((eof-object? r)
+          (get-output-bytevector p))
+         (else
+           (write-bytevector buf p 0 r)
+           (rd)))))
+    (rd))
   (define (file->sexp-list pth)
-    (define (itr p cur)
-      (let ((obj (read p)))
-       (if (eof-object? obj)
-         (reverse cur)
-         (itr p (cons obj cur)))))
-    (call-with-input-file
-      pth
-      (lambda (p) (itr p '()))))
+    (utf8-read (source->bv pth)))
 
   (define (make-library-path base nam)
     ;(PCK 'make-library-path: base nam)
