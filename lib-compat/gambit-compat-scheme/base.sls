@@ -271,6 +271,31 @@
     ((str start) (%string->utf8 (substring str start (string-length str))))
     ((str start end) (%string->utf8 (substring str start end)))))
 
+;; Bytevector I/O
+
+(define write-bytevector
+  (case-lambda 
+    ((bv) (write-bytevector bv (current-output-port)))
+    ((bv port) (write-bytevector bv port 0))
+    ((bv port start) (write-bytevector bv port 0 (bytevector-length bv)))
+    ((bv port start end)
+     (write-subu8vector bv start end port))))
+
+(define read-bytevector!
+  (case-lambda
+    ((bv) (read-bytevector! bv (current-input-port)))
+    ((bv port) (read-bytevector! bv port 0))
+    ((bv port start) (read-bytevector! 
+                       bv port start (- (bytevector-length bv) start)))
+    ((bv port start end)
+     (let ((r (read-subu8vector bv start end port)))
+      (cond
+        ((= r 0) (eof-object))
+        (else r))))))
+
+(define open-output-bytevector open-output-u8vector)
+(define get-output-bytevector get-output-u8vector)
+
 ;; define-record-type
 
 (define-syntax define-record-type
@@ -479,6 +504,7 @@
   )
 
 ;; Unimpl
+
 (define binary-port? 'YUNIFAKE-UNIMPLEMENTED)
 (define boolean=? 'YUNIFAKE-UNIMPLEMENTED)
 (define call-with-port 'YUNIFAKE-UNIMPLEMENTED)
@@ -492,19 +518,16 @@
 (define floor-quotient 'YUNIFAKE-UNIMPLEMENTED)
 (define floor-remainder 'YUNIFAKE-UNIMPLEMENTED)
 (define floor/ 'YUNIFAKE-UNIMPLEMENTED)
-(define get-output-bytevector 'YUNIFAKE-UNIMPLEMENTED)
 (define inexact 'YUNIFAKE-UNIMPLEMENTED)
 (define input-port-open? 'YUNIFAKE-UNIMPLEMENTED)
 (define list-copy 'YUNIFAKE-UNIMPLEMENTED)
 (define list-set! 'YUNIFAKE-UNIMPLEMENTED)
 (define make-list 'YUNIFAKE-UNIMPLEMENTED)
 (define open-input-bytevector 'YUNIFAKE-UNIMPLEMENTED)
-(define open-output-bytevector 'YUNIFAKE-UNIMPLEMENTED)
 (define output-port-open? 'YUNIFAKE-UNIMPLEMENTED)
 (define peek-u8 'YUNIFAKE-UNIMPLEMENTED)
 (define raise-continuable 'YUNIFAKE-UNIMPLEMENTED)
 (define read-bytevector 'YUNIFAKE-UNIMPLEMENTED)
-(define read-bytevector! 'YUNIFAKE-UNIMPLEMENTED)
 (define read-error? 'YUNIFAKE-UNIMPLEMENTED)
 (define read-string 'YUNIFAKE-UNIMPLEMENTED)
 (define string->vector 'YUNIFAKE-UNIMPLEMENTED)
@@ -520,8 +543,6 @@
 (define vector-copy! 'YUNIFAKE-UNIMPLEMENTED)
 (define vector-for-each 'YUNIFAKE-UNIMPLEMENTED)
 (define vector-map 'YUNIFAKE-UNIMPLEMENTED)
-(define write-bytevector 'YUNIFAKE-UNIMPLEMENTED)
 (define write-string 'YUNIFAKE-UNIMPLEMENTED)
 
-         
 )
