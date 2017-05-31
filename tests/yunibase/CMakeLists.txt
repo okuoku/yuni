@@ -154,7 +154,9 @@ test_with_all(_sanity.sps)
 # yuniVM
 test_with_all_except(tests/vm/vmtest.sps KAWA)
 test_with_all_except(tests/vm/vmtest2.sps KAWA)
-#test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE)
+if(NOT YUNI_TEST_SKIP_LONGRUN)
+    test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE)
+endif()
 
 # yunistub bootstraps
 test_yunistub_bootstrap(

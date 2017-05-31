@@ -2,6 +2,7 @@
 #
 #  VERBOSE: Verbose output
 #  CLEAN: CLEAN build dir on success
+#  SKIP_LONGRUN: YUNI_TEST_SKIP_LONGRUN
 #
 # Test yuni tree on root
 
@@ -57,12 +58,17 @@ file(COPY ${_mysrc}
 
 message(STATUS "Configure (${_myproject})...")
 
+set(_longrun)
+if(SKIP_LONGRUN)
+    set(_longrun "-DYUNI_TEST_SKIP_LONGRUN")
+endif()
 
 execute_step("Configure"
     ${CMAKE_COMMAND} 
     -DYUNI_WITH_YUNIBASE=${_yunibase} 
     -DYUNIBASE_YUNIFIED_PATH=${_yunified}
     -DYUNIBASE_VANILLA_PATH=${_vanilla}
+    ${_longrun}
     ${_myproject}
     WORKING_DIRECTORY ${_buildroot})
 
