@@ -60,7 +60,7 @@ message(STATUS "Configure (${_myproject})...")
 
 set(_longrun)
 if(SKIP_LONGRUN)
-    set(_longrun "-DYUNI_TEST_SKIP_LONGRUN")
+    set(_longrun "-DYUNI_TEST_SKIP_LONGRUN=ON")
 endif()
 
 execute_step("Configure"
