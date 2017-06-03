@@ -8,7 +8,7 @@ set(lib_runtime_GAUCHE
     gauche/yuni-runtime/gauche/macro-primitives.scm)
 
 set(lib_runtime_GUILE
-    guile/yuni-runtime/guile.guile.sls)
+    guile/yuni-runtime/guile.scm)
 
 set(lib_runtime_NMOSH
     nmosh/yuni-nmosh/primitives.sls)

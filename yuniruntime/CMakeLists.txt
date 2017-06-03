@@ -17,8 +17,7 @@ endfunction()
 
 set(deps
     generate.sps
-    yuniffistub.sps
-    guile-load.scm)
+    yuniffistub.sps)
 
 foreach(e ${deps})
     installdep(${e})

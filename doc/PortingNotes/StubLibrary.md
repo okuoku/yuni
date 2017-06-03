@@ -12,7 +12,7 @@ Since Yuni uses R6RS-lite format; R6RS library format with R7RS small libraries,
 |kawa        |R7RS|.sld            |none                 |Always use absolute paths     |
 |sagittarius |R7RS|.sagittarius.sls|Strip-Keywords       |R6RS Hybrid                   |
 |racket      |R6RS|.mzscheme.sls   |none                 |Require `#!r6rs`              |
-|guile       |R6RS|.guile.sls      |Strip-Stdaux         |Special file extension        |
+|guile       |R6RS|.scm            |Strip-Stdaux         |Special file extension        |
 |larceny     |-   |.sls            |none                 |                              |
 |ironscheme  |-   |.sls            |none                 |                              |
 |chez        |-   |.sls            |none                 |                              |

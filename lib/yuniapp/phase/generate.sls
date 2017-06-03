@@ -14,7 +14,7 @@
 (define (calc-libsuffix sym)
   (case sym
     ((racket) ".mzscheme.sls")
-    ((guile) ".guile.sls")
+    ((guile) ".scm")
     ((chibi-scheme gauche sagittarius) ".sld")
     ((chez vicare) ".sls")
     (else 

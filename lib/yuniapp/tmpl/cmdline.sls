@@ -63,7 +63,7 @@
 
   (case impl
     ((guile)
-     (string-append cmd " -l " loaderroot "/guile-load.scm "
+     (string-append cmd " "
                     (gen-libs "-L" all-libpaths)
                     " "
                     progpath
