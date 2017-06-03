@@ -1,5 +1,6 @@
 (import (yuni scheme)
         (yunivm expander expandcore)
+        (yunivm heap pass)
         (yunivm vm seq-treeir))
 
 (define test-counter 0)
@@ -39,18 +40,9 @@
 (define-syntax check-treeir
   (syntax-rules ()
     ((_ (global-variables ...) IR Expected)
-     (let* ((glovec (list->vector 
-                      (map (lambda (e)
-                             (if (procedure? e)
-                               (seq-treeir-make-primitive e)
-                               e))
-                           (list global-variables ...))))
-            (global (lambda (mod no)
-                      (unless (= mod 0)
-                        (error "Something wrong" mod no))
-                      (vector-ref glovec no))))
+     (let* ((heap (make-heap-pass (list global-variables ...))))
        (set! test-counter (+ 1 test-counter))
-       (call-with-values (lambda () (seq-treeir global IR))
+       (call-with-values (lambda () (seq-treeir heap IR))
                          (lambda vals
                            (cond
                              ((equal? vals 'Expected)

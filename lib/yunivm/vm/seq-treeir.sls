@@ -1,41 +1,11 @@
 (library (yunivm vm seq-treeir)
-         (export seq-treeir
-                 seq-treeir-make-primitive)
+         (export seq-treeir)
          (import (yuni scheme)
                  (yunivm vm vmcore))
 
 ;;
 
-(define *vmclosure-flag* (list '*vmclosure*))
-(define *primitive-flag* (list '*primitive*))
-
-;; Private
-(define (vmclosure? obj)
-  (and (pair? obj) (eq? *vmclosure-flag* (car obj))))
-(define (make-primitive proc)
-  (cons *primitive-flag* proc))
-
-;; VM core support libraries
-(define (constant imm) imm)
-(define (make-closure label env)
-  (cons *vmclosure-flag* (cons label env)))
-(define (make-unspecified) 'unspecified)
-(define (vm-args-compose . objs) objs)
-(define (vm-args-decompose obj cb) (apply cb obj))
-(define (vm-primitive? obj)
-  (and (pair? obj) (eq? *primitive-flag* (car obj))))
-(define (vm-call-env obj)
-  (cddr obj))
-(define (vm-call-label obj)
-  (cadr obj))
-
-
-
-;; The Sequencer for Tree-IR
-(define (seq-treeir-make-primitive proc)
-  (make-primitive proc))
-
-(define (seq-treeir global ir)
+(define (seq-treeir heap ir)
   ;; Globals
   (define current-block #f)
   (define current-code #f)
@@ -160,16 +130,16 @@
   ;; Core libraries
   (define (query sym)
     (case sym
-      ((CONSTANT)           constant)
-      ((GLOBAL)             global)
-      ((MAKE-CLOSURE)       make-closure)
-      ((MAKE-UNSPECIFIED)   make-unspecified)
-      ((VM-ARGS-COMPOSE)    vm-args-compose)
-      ((VM-ARGS-DECOMPOSE)  vm-args-decompose)
-      ((VM-PRIMITIVE?)      vm-primitive?)
+      ((CONSTANT GLOBAL MAKE-VMCLOSURE
+                 MAKE-UNSPECIFIED
+                 VM-ARGS-COMPOSE
+                 VM-ARGS-DECOMPOSE
+                 VM-PRIMITIVE?
+                 VM-CALL-ENV
+                 VM-CALL-LABEL) 
+       ;; Re-export heap
+       (heap sym))
       ((VM-RETURNPOINT)     vm-returnpoint)
-      ((VM-CALL-ENV)        vm-call-env)
-      ((VM-CALL-LABEL)      vm-call-label)
       ((VM-CALL-PRIMITIVE)  vm-call-primitive)
       ((JUMP)               jump)
       ((BRANCH)             branch)
@@ -184,6 +154,9 @@
           (walk (cddr code) (cadr code) cb-block))
        (walk (cdr ir) parent cb-block))))
 
+  (define vmclosure? (heap 'VMCLOSURE?))
+
+  ;; Import heap interfaces
   ;; Pass1: Scan for max-blockindex and allocate vector
   (let ((max-blockno 0))
    (walk ir #f

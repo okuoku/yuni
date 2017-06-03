@@ -12,6 +12,7 @@
                  (yunivm loader generator)
                  (yunivm expander corelangfilter)
                  (yunivm expander expandcore)
+                 (yunivm heap pass)
                  (yuni compat ident)
                  (yuniconfig build))
 
@@ -77,12 +78,7 @@
           (cons 'NEVERLAND libname))
          (else libname))))))
 
-(define libs-proc-vector-converted
-  (list->vector
-    (map (lambda (p) (seq-treeir-make-primitive p))
-         (vector->list libs-proc-vector))))
-
-(define (simplerunner/expand-program runner prog)
+(define (simplerunner/expand-program heap prog)
   (define (output code arg* modpath do-dump use-debugger)
     (corelangfilter (expand0 code)))
   (define arg*
@@ -92,17 +88,14 @@
                      (symbol->string (ident-impl)))))
   (yuniloader-generate arg* libmapper prog output))
 
-(define (simplerunner/treeir-compile runner frm)
+(define (simplerunner/treeir-compile heap frm)
   (call-with-values (lambda () (compile-core frm libs-name-vector))
                     (lambda (ir mx) ir)))
 
-(define (simplerunner/treeir-run runner ir)
-  (define (global mod no)
-    (unless (= mod 0)
-      (error "Something wrong" mod no))
-    (vector-ref libs-proc-vector-converted no))
-  (seq-treeir global ir))
+(define (simplerunner/treeir-run heap ir)
+  (seq-treeir heap ir))
 
-(define (new-simplerunner) #f)
+(define (new-simplerunner) 
+  (make-heap-pass (vector->list libs-proc-vector)))
 
 )

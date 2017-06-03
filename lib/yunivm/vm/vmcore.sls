@@ -17,7 +17,7 @@
   ;; Query(call-back)
   (define constant          (query 'CONSTANT))        ;; (imm)
   (define global            (query 'GLOBAL))          ;; (mod pos)
-  (define make-closure      (query 'MAKE-CLOSURE))    ;; (label env)
+  (define make-closure      (query 'MAKE-VMCLOSURE))  ;; (label env)
   (define make-unspecified  (query 'MAKE-UNSPECIFIED))
   (define vm-args-compose   (query 'VM-ARGS-COMPOSE))      ;; objs
   (define vm-args-decompose (query 'VM-ARGS-DECOMPOSE))    ;; (obj cb)
