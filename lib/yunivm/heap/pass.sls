@@ -26,6 +26,8 @@
   (cddr obj))
 (define (vm-call-label obj)
   (cadr obj))
+(define (vm-true? obj)
+  (if obj #t #f))
 
 (define (make-heap-pass global-vars)
   (define global-vec
@@ -51,6 +53,7 @@
       ((VM-PRIMITIVE?) vm-primitive?)
       ((VM-CALL-ENV) vm-call-env)
       ((VM-CALL-LABEL) vm-call-label)
+      ((VM-TRUE?) vm-true?)
       (else (error "Invalid symbol for query" sym)) ))
 
   query)

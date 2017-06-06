@@ -124,7 +124,7 @@
         (else
           (error "Invalid label type" label)))))
   (define (branch label obj)
-    (when obj
+    (when (vm-true? obj)
       (jump label)))
 
   ;; Core libraries
@@ -155,6 +155,7 @@
        (walk (cdr ir) parent cb-block))))
 
   (define vmclosure? (heap 'VMCLOSURE?))
+  (define vm-true? (heap 'VM-TRUE?))
 
   ;; Import heap interfaces
   ;; Pass1: Scan for max-blockindex and allocate vector
