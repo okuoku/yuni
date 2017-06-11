@@ -157,6 +157,7 @@ test_with_all_except(tests/vm/vmtest2.sps KAWA)
 if(NOT YUNI_TEST_SKIP_LONGRUN)
     test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE)
 endif()
+test_with_all(tests/vm/heaptest.sps)
 
 # yunistub bootstraps
 test_yunistub_bootstrap(
