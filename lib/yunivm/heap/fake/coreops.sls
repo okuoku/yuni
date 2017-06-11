@@ -1,9 +1,6 @@
 (library (yunivm heap fake coreops)
-         (export
-           make-coreops-fake
-           )
+         (export make-coreops-fake)
          (import (yuni scheme))
-
          
 ;;
 
@@ -250,28 +247,6 @@
          
 (define (make-coreops-fake)
 
-  (define-syntax define-query0
-    (syntax-rules ()
-      ((_ q (sym0 sym1) ...)
-       (define (q symbol)
-         (case symbol
-           ((sym0) sym1)
-           ...
-           (else
-             (error "Unknown symbol" symbol)))))))
-
-  (define-syntax define-query1
-    (syntax-rules ()
-      ((_ q (cur ...) (s1 s2 s3 ...))
-       (define-query1 q (cur ... (s1 s2)) (s3 ...)))
-      ((_ q (cur ...) ())
-       (define-query0 q cur ...))))
-
-  (define-syntax define-query
-    (syntax-rules ()
-      ((_ q . rest)
-       (define-query1 q () rest))))
-
   (define (query sym)
     (case sym
       ((null)                fake-null)
@@ -286,7 +261,6 @@
       ((boolean=?/2)         fake-boolean=?/2)
       ((true?)               fake-true?)
       ((false?)              fake-false?)
-
 
       ((char?)               fake-char?)
       ((char=?/2)            fake-char=?/2)
