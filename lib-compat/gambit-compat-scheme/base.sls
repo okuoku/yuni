@@ -138,6 +138,13 @@
 (define (eof-object) %%my-eof-object)
 (define (flush-output-port p) 'do-nothing)
 
+;; Numeric
+(define (exact v)
+  (cond
+    ((integer? v) v)
+    ((flonum? v) (fltruncate v))
+    (else (error "Number required" v))))
+
 ;; Bytevectors
 (define bytevector? u8vector?)
 (define bytevector u8vector)
@@ -511,7 +518,6 @@
 (define error-object-irritants 'YUNIFAKE-UNIMPLEMENTED)
 (define error-object-message 'YUNIFAKE-UNIMPLEMENTED)
 (define error-object? 'YUNIFAKE-UNIMPLEMENTED)
-(define exact 'YUNIFAKE-UNIMPLEMENTED)
 (define exact-integer-sqrt 'YUNIFAKE-UNIMPLEMENTED)
 (define exact-integer? 'YUNIFAKE-UNIMPLEMENTED)
 (define file-error? 'YUNIFAKE-UNIMPLEMENTED)
