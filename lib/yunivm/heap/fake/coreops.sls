@@ -243,6 +243,28 @@
   (unless (fake-simple-struct? obj)
     (error "Simple-struct required"))
   (vector-set! (object-datum obj) (%fixnum idx) x))
+
+(define (fake-eq? a b)
+  (or
+    ;; Short-cut: If eq? on host, eq? on target
+    (eq? a b)
+    ;; null, boolean, char, symbols needed to be compared more precisely
+    ;; ... boolean and null are not required do so though
+    ;; (they should be host-eq? if they are target-eq?)
+    ;; R7RS says nothing about eof-object
+    (and (fake-symbol? a) (fake-symbol? b) (fake-symbol=?/2 a b))
+    (and (fake-null? a) (fake-null? b))
+    (and (fake-boolean? a) (fake-boolean? b) (fake-boolean=?/2 a b))
+    (and (fake-char? a) (fake-char? b) (fake-char=?/2 a b))))
+
+(define (fake-eqv? a b)
+  (or
+    ;; Short-cut: if eq? then eqv?
+    (eq? a b)
+    ;; Short-cut: if fake-eq? then eqv?
+    (fake-eq? a b)
+    ;; we use host numbers and procedures
+    (eqv? a b)))
          
 (define (predicate proc)
   (lambda (obj) 
@@ -253,6 +275,8 @@
 ;; For every predicate procedures, we have 2 variants
 ;;  1. returns host boolean
 ;;  2. returns target boolean
+(define Pfake-eq?               (predicate fake-eq?))
+(define Pfake-eqv?              (predicate fake-eqv?))
 (define Pfake-null?             (predicate fake-null?))
 (define Pfake-eof-object?       (predicate fake-eof-object?))
 (define Pfake-boolean?          (predicate fake-boolean?))
@@ -273,6 +297,10 @@
 
   (define (query sym)
     (case sym
+      ((eq?)                 Pfake-eq?)
+      ((eqv?)                Pfake-eqv?)
+      ((Peq?)                fake-eq?)
+      ((Peqv?)               fake-eqv?)
       ((null)                fake-null)
       ((null?)               Pfake-null?)
       ((Pnull?)              fake-null?)
