@@ -1,10 +1,22 @@
 (library (yunivm util basiclibs)
          (export
+           basiclibs-zero-values
            basiclibs-proc-vector
            basiclibs-name-vector)
          (import (yuni scheme))
          
 ;;
+
+(define basiclibs-zero-values
+  '(;; FIXME: This list is incomplete. e.g. for-each etc
+    write
+    write-shared write-simple
+    newline
+    display
+    write-char write-string write-u8 write-bytevector
+    flush-output-port
+    delete-file
+    exit))
 
 (define basiclibs-proc-vector
   (vector
