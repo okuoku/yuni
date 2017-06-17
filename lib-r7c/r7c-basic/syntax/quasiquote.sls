@@ -3,6 +3,7 @@
          (import (r7c-system core)
                  (r7c heap pair)
                  (r7c heap list)
+                 (r7c heap listloop)
                  (r7c heap vector)
                  (r7c-system auxsyntax)
                  (r7c-system synrules))
@@ -14,7 +15,7 @@
     ((_ (unquote input)) input)
     ((_ ((unquote-splicing x) . y))
      ;; Reenter
-     (append x ($$yunifake-qq y)))
+     ($append x ($$yunifake-qq y)))
 
     ;; Outputmyself1
     ((_ (quasiquote x) . depth)

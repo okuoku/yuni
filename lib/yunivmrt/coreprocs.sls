@@ -24,6 +24,7 @@
            $undefined ;; for letrec
            ;; (r7c heap listloop)
            memv
+           $append
            $fx-length
            ;; (r7c heap fixnum)
            $fx>=
@@ -65,6 +66,10 @@
 (define-syntax $fx=
   (syntax-rules ()
     ((_ a b) (= a b))))
+
+(define-syntax $append
+  (syntax-rules ()
+    ((_ a b) (append a b))))
 
 (define-primitive-names/yunifake
   not
