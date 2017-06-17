@@ -3,8 +3,8 @@
            caaar caadr cadar caddr cdaar cdadr cddar cdddr
            caaaar caaadr caadar caaddr cadaar cadadr caddar cadddr 
            cdaaar cdaadr cdadar cdaddr cddaar cddadr cdddar cddddr )
-         (import (r7c-core syntax)
-                 (r7c-core runtime))
+         (import (r7c-basic syntax define)
+                 (r7c heap pair))
 
 ;; 3
 (define (caaar pair)
