@@ -62,7 +62,7 @@
       (co-false)
       (if (x-pair? lis)
         (let ((a (co-car lis))
-              (d (cd-cdr lis)))
+              (d (co-cdr lis)))
           (or (and (x-eqv? a obj) lis)
               (co-memv obj d)))
         (error "Pair required" lis))))
@@ -80,8 +80,8 @@
 
   (define ($append/itr! cur lis) ;; => cur
     (cond
-      ((co-null? lis) cur)
-      ((co-pair? lis)
+      ((x-null? lis) cur)
+      ((x-pair? lis)
        (let* ((a (co-car lis))
               (d (co-cdr lis))
               (p (co-cons a (co-null)))) 
@@ -108,6 +108,10 @@
       (let ((objs (map host args)))
        (apply proc objs)
        (co-unspecified))))
+
+  (define (forbidden sym)
+    (lambda args
+      (error "Forbidden API for this heap" sym)))
 
   ;; (r7c core error)
   (define co-error (func0 error))
