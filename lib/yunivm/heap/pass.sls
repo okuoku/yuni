@@ -14,6 +14,7 @@
   (cons *primitive-flag* obj))
 
 ;; VM core support libraries
+(define (identity imm) imm)
 (define (constant imm) imm)
 (define (make-vmclosure label env)
   (cons *vmclosure-flag* (cons label env)))
@@ -43,6 +44,7 @@
 
   (define (query sym)
     (case sym
+      ((HEAPIN HEAPOUT) identity)
       ((CONSTANT) constant)
       ((GLOBAL) global)
       ((MAKE-VMCLOSURE) make-vmclosure)

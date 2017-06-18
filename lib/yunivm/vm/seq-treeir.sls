@@ -130,7 +130,8 @@
   ;; Core libraries
   (define (query sym)
     (case sym
-      ((CONSTANT GLOBAL MAKE-VMCLOSURE
+      ((CONSTANT HEAPIN HEAPOUT
+                 GLOBAL MAKE-VMCLOSURE
                  MAKE-UNSPECIFIED
                  VM-ARGS-COMPOSE
                  VM-ARGS-DECOMPOSE

@@ -87,7 +87,9 @@
 
   (define co-unspecified (coreops 'unspecified))
 
-  (define (constant imm) (target imm))
+  (define (constant imm) 
+    (error "Constant??" imm)
+    (target imm))
   (define (vm-args-compose . objs) (targetargs objs))
   (define (vm-args-decompose obj cb) (apply cb (hostargs obj)))
   (define (make-unspecified) (co-unspecified))
@@ -100,6 +102,8 @@
   (define (query sym)
     (case sym
       ((CONSTANT) constant)
+      ((HEAPIN) target)
+      ((HEAPOUT) host)
       ((GLOBAL) global)
       ((MAKE-VMCLOSURE) make-vmclosure)
       ((VMCLOSURE?) vmclosure?)

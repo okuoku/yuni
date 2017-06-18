@@ -17,6 +17,8 @@
   ;; Query(call-back)
   (define constant          (query 'CONSTANT))        ;; (imm)
   (define global            (query 'GLOBAL))          ;; (mod pos)
+  (define heapin            (query 'HEAPIN))
+  (define heapout           (query 'HEAPOUT))
   (define make-closure      (query 'MAKE-VMCLOSURE))  ;; (label env)
   (define make-unspecified  (query 'MAKE-UNSPECIFIED))
   (define vm-args-compose   (query 'VM-ARGS-COMPOSE))      ;; objs
@@ -282,7 +284,7 @@
         (set! link 'values)))
     (pop-S!))
   (define (LDI imm)
-    (set-value! imm))
+    (set-value! (heapin imm)))
   (define (LDN)
     (set-value! (make-unspecified)))
   (define (LDNN)
@@ -379,8 +381,8 @@
     (case op
       ((RESULT)
        (case link
-         ((single) V)
-         ((values) (apply values (vector->list V)))
+         ((single) (heapout V))
+         ((values) (apply values (map heapout (vector->list V))))
          ((none) (values))
          (else
            (error "No result available" link V))))
