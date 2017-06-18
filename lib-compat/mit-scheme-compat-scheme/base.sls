@@ -140,6 +140,28 @@
 (define (eof-object) %%my-eof-object)
 (define (flush-output-port p) 'do-nothing)
 
+(define-syntax when
+  (syntax-rules ()
+    ((_ pred code ...)
+     (cond
+       (pred code ...)))))
+
+(define-syntax unless
+  (syntax-rules ()
+    ((_ pred code ...)
+     (cond
+       ((not pred)
+        code ...)))))
+
+(define (symbol=? first next . rest)
+  (unless (symbol? first)
+    (error "Symbol required" first))
+  (unless (symbol? next)
+    (error "Symbol required" next))
+  (and (eqv? first next)
+       (or (null? rest)
+           (apply symbol=? next rest))))
+
 
 #|
 ;; Bytevectors
@@ -224,18 +246,6 @@
        (define (setter obj v) ((record-modifier type 'field-name) obj v))
        (%define-record-type-fields pred? (field-name accessor))))))
 
-(define-syntax when
-  (syntax-rules ()
-    ((_ pred code ...)
-     (cond
-       (pred code ...)))))
-
-(define-syntax unless
-  (syntax-rules ()
-    ((_ pred code ...)
-     (cond
-       ((not pred)
-        code ...)))))
 
 ;; Aux
 (define-syntax-names/yunifake
@@ -409,7 +419,6 @@
 (define raise 'YUNIFAKE-UNIMPLEMENTED)
 (define raise-continuable 'YUNIFAKE-UNIMPLEMENTED)
 (define read-error? 'YUNIFAKE-UNIMPLEMENTED)
-(define symbol=? 'YUNIFAKE-UNIMPLEMENTED)
 (define with-exception-handler 'YUNIFAKE-UNIMPLEMENTED)
          
 )
