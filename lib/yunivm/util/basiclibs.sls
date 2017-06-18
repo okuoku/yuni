@@ -16,7 +16,10 @@
     write-char write-string write-u8 write-bytevector
     flush-output-port
     delete-file
-    exit))
+    exit
+    ;; stdlib
+    vector-set!
+    ))
 
 (define basiclibs-proc-vector
   (vector

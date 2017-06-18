@@ -12,12 +12,19 @@
     ((map string-map vector-map
           for-each string-for-each vector-for-each)
      'map-like)
+    ;; make-vector can return vectors contains #<unspecified>
+    ((make-vector) 'make-vector)
     (else #f)))
 (define (zero-valued? sym)
   (memv sym basiclibs-zero-values))
 
 (define basiclib/proc (vector->list basiclibs-proc-vector))
 (define basiclib/name (vector->list basiclibs-name-vector))
+
+(define make-vector/initf
+  (case-lambda
+    ((k) (make-vector k 'r7cf-unspec))
+    ((k init) (make-vector k init))))
 
 (define (make-r7cfallback coreops)
   (define co-unspecified (coreops 'unspecified))
@@ -30,6 +37,7 @@
   (define (func0 proc)
     (lambda args
       (let ((objs (map host args)))
+       ;(write (list 'Call0: proc objs)) (newline)
        (apply proc objs)
        (co-unspecified))))
 
@@ -38,6 +46,7 @@
     (lambda args
       (let ((objs (map host args)))
        (let ((r (apply proc objs)))
+        ;(write (list 'Call1: proc objs '=> r)) (newline)
         (target r)))))
   ; rfunc1 (callback: 1 return value)
   (define (rfunc1 proc)
@@ -62,6 +71,8 @@
            (case callback-type
              ((map-like)
               (map-like proc))
+             ((make-vector)
+              (func1 make-vector/initf))
              (else
                (cond
                  ((zero-valued? name) (func0 proc))

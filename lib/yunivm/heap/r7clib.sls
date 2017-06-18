@@ -145,6 +145,8 @@
         char? char->integer integer->char
         ;; (r7c heap string)
         string? string-length string-ref string-set!
+        ;; (r7c heap vector)
+        vector? vector-length vector-ref vector-set!
         ;; (r7c heap bytevector)
         bytevector? bytevector-length bytevector-u8-ref bytevector-u8-set!
         ;; (r7c heap symbol)
