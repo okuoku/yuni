@@ -10,6 +10,7 @@
                  (yunivm vm seq-treeir)
                  (yunivm util basiclibs)
                  (yunivm util compatlibs)
+                 (yunivm util r7cmapping)
                  (yunivm loader generator)
                  (yunivm expander corelangfilter)
                  (yunivm expander expandcore)
@@ -30,8 +31,25 @@
   (vector-append basiclibs-name-vector
                  compatlibs-name-vector))
 
+(define (r7c-noredirect? libname)
+  (cond
+    ((or (equal? libname '(r7c-basic lib cxr)))
+     #t)
+    (else #f)))
+
+(define r7c-libs (map car r7cmapping/stdlib))
+
+(define (r7c-want-fake? libname)
+  (and (not (r7c-noredirect? libname))
+       (let loop ((libs r7c-libs))
+        (and (pair? libs)
+             (or (equal? (car libs) libname)
+                 (loop (cdr libs)))))))
+
 (define (libmapper libname)
   (cond
+    ((r7c-want-fake? libname)
+     (cons 'yunifake libname))
     ((or (equal? libname '(r7c-system auxsyntax))
          (equal? libname '(r7c-system core))
          (equal? libname '(r7c-system let-syntax))
@@ -68,7 +86,7 @@
          (equal? libname '(r7c core error))
          (equal? libname '(r7c core callcc))
          (equal? libname '(r7c core exception)))
-     '(yunivmrt coreprocs))
+     (cons 'yunifake libname))
     ((equal? libname '(yuni scheme))
      '(yunivmrt scheme))
     ;; Compat

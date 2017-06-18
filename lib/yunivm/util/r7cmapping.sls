@@ -1,7 +1,139 @@
 (library (yunivm util r7cmapping)
          (export
+           r7cmapping/stdlib
            r7cmapping/coreproc)
          (import (yuni scheme))
+
+(define r7cmapping/stdlib
+  '(;; Standard libraries
+    ((r7c-basic lib boolean)
+     boolean=?)
+
+    ((r7c-basic lib char)
+     char=? char<? char>? char<=? char>=?)
+
+    ((r7c-basic lib cxr)
+     caaaar caaadr caaar caadar caaddr caadr 
+     cadaar cadadr cadar caddar cadddr caddr
+     cdaaar cdaadr cdaar cdadar cdaddr cdadr 
+     cddaar cddadr cddar cdddar cddddr cdddr)
+
+    ((r7c-basic lib lists)
+     list?
+     list append reverse
+     memq
+     assq assv
+     make-list length list-tail list-ref list-set! list-copy)
+
+    ((r7c-basic lib strings)
+     string substring
+     string-append string->list list->string
+     string-copy string-copy! string-fill!
+     make-string
+     string=?
+     string<? string>? string<=? string>=?)
+
+    ((r7c-basic lib vectors)
+     vector
+     vector->list list->vector
+     vector->string string->vector
+     vector-copy vector-copy! vector-append vector-fill!
+     make-vector)
+
+    ((r7c-basic lib bytevectors)
+     bytevector
+     bytevector-copy bytevector-copy! bytevector-append
+     utf8->string string->utf8
+     make-bytevector)
+
+    ((r7c-basic lib mapforeach)
+     map string-map vector-map
+     for-each string-for-each vector-for-each)
+
+    ((r7c-equiv std equal)
+     equal?)
+
+    ((r7c-equiv std lists)
+     member assoc)
+
+    ((r7c-numeric std generic)
+     = < > <= >=
+     max min + * - / abs
+     zero? positive? negative? odd? even?
+     number? complex? real? integer?
+     exact? inexact? exact-integer? finite?
+     nan?
+     floor/ floor-quotient floor-remainder
+     truncate/ truncate-quotient truncate-remainder
+     quotient remainder modulo
+     gcd lcm
+     floor ceiling truncate round
+     exp log sin cos tan asin acos atan
+     square sqrt exact-integer-sqrt
+     expt
+     inexact exact)
+
+    ((r7c-numeric std reader)
+     string->number)
+
+    ((r7c-numeric std writer)
+     number->string)
+
+    ((r7c-exceptions std error)
+     error-object? error-object-message error-object-irritants)
+
+    ((r7c-io port core)
+     port?
+     input-port? output-port? textual-port? binary-port?)
+
+    ((r7c-io port control)
+     flush-output-port
+     input-port-open? output-port-open?
+     close-port close-input-port close-output-port)
+
+    ((r7c-io port objects)
+     read-char peek-char read-line
+     read-string
+     read-u8 peek-u8
+     read-bytevector read-bytevector!
+     newline
+     write-char write-string write-u8 write-bytevector)
+
+    ((r7c-io port files)
+     open-input-file open-binary-input-file
+     open-output-file open-binary-output-file)
+
+    ((r7c-io port buffers)
+     open-input-string open-output-string get-output-string
+     open-input-bytevector open-output-bytevector get-output-bytevector)
+
+    ((r7c-io port defaults)
+     current-input-port current-output-port current-error-port
+     with-input-from-file with-output-to-file)
+
+    ((r7c-io port util)
+     call-with-port call-with-input-file call-with-output-file)
+
+    ((r7c-io port exceptions)
+     read-error? file-error?)
+
+    ((r7c-io reader datum)
+     read)
+
+    ((r7c-io writer datum)
+     write write-shared write-simple
+     display)
+
+    ((r7c-io system files)
+     file-exists? delete-file)
+
+    ((r7c-os std process)
+     exit
+     command-line
+     get-environment-variable)
+
+    ((r7c-xxx std unimplemented)
+     dynamic-wind make-parameter)))
 
 (define r7cmapping/coreproc
   '(;; Procedures required for R7RS standard syntaxes

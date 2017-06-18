@@ -5,8 +5,44 @@
          (import (yuni scheme)
                  (yuni compat simple-struct)) 
 
+(define ($undefined) (if #f #f))
+(define $append append)
+(define $fx-length length)
+(define $fx= =)
+(define $fx<= <=)
+(define $fx>= >=)
+(define $fx< <)
+(define $fx> >)
+(define $fx+ +)
+(define $fx- -)
+
+(define $make-string make-string)
+(define $make-bytevector make-bytevector)
+(define $make-vector make-vector)
+
+(define $boolean=? boolean=?)
+(define $char=? char=?)
+(define $symbol=? symbol=?)
+
 (define compatlibs-proc-vector
   (vector
+    ;; Non-standard core ops 
+    $undefined
+    $append
+    $fx-length
+    $fx=
+    $fx<=
+    $fx>=
+    $fx<
+    $fx>
+    $fx+
+    $fx-
+    $make-string
+    $make-bytevector
+    $boolean=?
+    $char=?
+    $symbol=?
+    ;; Simple-struct
     make-simple-struct
     simple-struct-name
     simple-struct-ref
@@ -17,6 +53,23 @@
 
 (define compatlibs-name-vector
   '#(
+    ;; Non-standard core ops 
+    $undefined
+    $append
+    $fx-length
+    $fx=
+    $fx<=
+    $fx>=
+    $fx<
+    $fx>
+    $fx+
+    $fx-
+    $make-string
+    $make-bytevector
+    $boolean=?
+    $char=?
+    $symbol=?
+    ;; Simple-struct
     make-simple-struct
     simple-struct-name
     simple-struct-ref
