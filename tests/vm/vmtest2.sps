@@ -35,10 +35,10 @@
               (else
                 (set! failed-forms (cons 'form failed-forms)))))))))
 
-(define-syntax check-scm
+(define-syntax check-scm0
   (syntax-rules ()
-    ((_ scm expected)
-     (let* ((runner (new-simplerunner))
+    ((_ sel scm expected)
+     (let* ((runner (if sel (new-simplerunner/fakeheap) (new-simplerunner)))
             (ir (simplerunner/treeir-compile runner 'scm)))
        (set! test-counter (+ 1 test-counter))
        ;(display (list 'IR: ir)) (newline)
@@ -50,11 +50,19 @@
                              (else
                                (set! failed-forms (cons
                                                     (list
+                                                      (list 'Sel: 'sel)
                                                       (list 'Scm: 'scm)
                                                       (list 'IR: ir)
                                                       (list 'Exp: 'expected)
                                                       (list 'Act: vals))
                                                     failed-forms))))))))))
+
+(define-syntax check-scm
+  (syntax-rules ()
+    ((_ scm expected)
+     (begin
+       (check-scm0 #t scm expected)
+       (check-scm0 #f scm expected)))))
 
 (check-scm
   (#f)
