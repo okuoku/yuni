@@ -38,6 +38,11 @@
   (define x-pair? (coreops 'Ppair?))
   (define x-eqv? (coreops 'Peqv?))
 
+  (define (co-not obj)
+    (if (x-eqv? (co-false) obj)
+      (co-true)
+      (co-false)))
+
   (define (argconv cur target-lis)
     (cond
       ((x-null? target-lis) (reverse cur))
@@ -135,7 +140,7 @@
         ;; (r7c heap eof-object)
         eof-object eof-object?
         ;; (r7c heap boolean)
-        not boolean?
+        boolean?
         ;; (r7c heap char)
         char? char->integer integer->char
         ;; (r7c heap string)
@@ -146,17 +151,23 @@
         symbol? symbol->string string->symbol
         ;; (r7c-ext simple-struct)
         simple-struct? simple-struct-ref simple-struct-set!
-        make-simple-struct)
+        ;make-simple-struct0 
+        simple-struct-name)
        ;; As-is
        (coreops sym))
+      ;; FIXME
+      ((make-simple-struct) (coreops 'make-simple-struct0))
       ;; Renames
       (($boolean=?) (coreops 'boolean=?/2))
       (($char=?) (coreops 'char=?/2))
       (($string=?) (coreops 'string=?/2))
       (($symbol=?) (coreops 'symbol=?/2))
       (($make-string) (coreops 'make-string0))
+      (($make-vector) (coreops 'make-vector0))
       (($make-bytevector) (coreops 'make-bytevector0))
       (($undefined) (coreops 'undefined))
+      ;; (r7c heap boolean)
+      ((not) co-not)
       ;; (r7c heap pair)
       ((caar) co-caar)
       ((cadr) co-cadr)

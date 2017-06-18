@@ -233,16 +233,22 @@
 (define (fake-simple-struct? obj)
   (and (object? obj)
        (eq? tag-simple-struct (object-tag obj))))
-(define (fake-make-simple-struct count)
-  (wrap-object tag-simple-struct (make-vector (%fixnum count))))
+(define (fake-make-simple-struct0 name count)
+  ;; This one does not support initialization
+  (wrap-object tag-simple-struct (cons name
+                                       (make-vector (%fixnum count))  )))
 (define (fake-simple-struct-ref obj idx)
   (unless (fake-simple-struct? obj)
     (error "Simple-struct required" obj))
-  (vector-ref (object-datum obj) (%fixnum idx)))
+  (vector-ref (cdr (object-datum obj)) (%fixnum idx)))
 (define (fake-simple-struct-set! obj idx x)
   (unless (fake-simple-struct? obj)
     (error "Simple-struct required"))
-  (vector-set! (object-datum obj) (%fixnum idx) x))
+  (vector-set! (cdr (object-datum obj)) (%fixnum idx) x))
+(define (fake-simple-struct-name obj)
+  (unless (fake-simple-struct? obj)
+    (error "Simple-struct required"))
+  (car (object-datum obj)))
 
 (define (fake-eq? a b)
   (or
@@ -368,9 +374,10 @@
 
       ((simple-struct?)      Pfake-simple-struct?)
       ((Psimple-struct?)     fake-simple-struct?)
-      ((make-simple-struct)  fake-make-simple-struct)
+      ((make-simple-struct0)  fake-make-simple-struct0)
       ((simple-struct-ref)   fake-simple-struct-ref)
       ((simple-struct-set!)  fake-simple-struct-set!)
+      ((simple-struct-name)  fake-simple-struct-name)
       (else (error "Unknown symbol" sym))))
 
   query)
