@@ -16,8 +16,8 @@
 (define (zero-valued? sym)
   (memv sym basiclibs-zero-values))
 
-(define basiclib/proc (vector->list basiclib-proc-vector))
-(define basiclib/name (vector->list basiclib-name-vector))
+(define basiclib/proc (vector->list basiclibs-proc-vector))
+(define basiclib/name (vector->list basiclibs-name-vector))
 
 (define (make-r7cfallback coreops)
   (define co-unspecified (coreops 'unspecified))
