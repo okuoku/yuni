@@ -25,7 +25,7 @@
      $char=?)
     ((r7c heap string)
      string? string-length string-ref string-set!
-     $string=? $make-string)
+     $make-string)
     ((r7c heap bytevector)
      bytevector? bytevector-length bytevector-u8-ref bytevector-u8-set!
      $make-bytevector)
