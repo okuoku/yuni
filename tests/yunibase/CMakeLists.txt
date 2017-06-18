@@ -153,9 +153,9 @@ test_with_all(_sanity.sps)
 
 # yuniVM
 test_with_all_except(tests/vm/vmtest.sps KAWA)
-test_with_all_except(tests/vm/vmtest2.sps KAWA)
+test_with_all_except(tests/vm/vmtest2.sps KAWA NMOSH)
 if(NOT YUNI_TEST_SKIP_LONGRUN)
-    test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE)
+    test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE NMOSH)
 endif()
 test_with_all(tests/vm/heaptest.sps)
 
