@@ -35,10 +35,10 @@
               (else
                 (set! failed-forms (cons 'form failed-forms)))))))))
 
-(define-syntax check-scm
+(define-syntax check-scm0
   (syntax-rules ()
-    ((_ src expected)
-     (let* ((runner (new-simplerunner))
+    ((_ sel src expected)
+     (let* ((runner (if sel (new-simplerunner/fakeheap) (new-simplerunner)))
             (code (simplerunner/expand-program runner 'src))
             (ir (begin
                   ;(pp code)
@@ -54,12 +54,21 @@
                              (else
                                (set! failed-forms (cons
                                                     (list
+                                                      (list 'Sel: 'sel)
                                                       (list 'Scm: 'code)
                                                       ;(list 'IR: ir)
                                                       (list 'Exp: 'expected)
                                                       (list 'Act: vals))
                                                     failed-forms))))))))))
 
+(define-syntax check-scm
+  (syntax-rules ()
+    ((_ src expected)
+     (begin
+       (check-scm0 #t src expected)
+       (check-scm0 #f src expected)))))
+
+#|
 (check-scm
   ((import (yuni scheme) (yuni core))
    (define* testtype (a b))
@@ -67,6 +76,7 @@
    (define obj0 (make testtype))
    #t)
   (#t))
+|#
 
 (check-scm
   ((import (yuni scheme))
