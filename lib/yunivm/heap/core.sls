@@ -11,7 +11,6 @@
                  (yunivm util compatlibs))
 
 ;; Tentative
-(define global-syms-vec (gen-core-syms-vec))
 (define (gen-core-syms-vec)
   ;; Merge r7cmapping/coreproc and basiclibs/compatlibs
   (let ((coresyms (apply append (map cdr r7cmapping/coreproc))))
@@ -55,7 +54,7 @@
 
   global)
 
-(define (make-heap-core coreops)
+(define (make-heap-core coreops global-syms-vec)
   (define hostbridge (make-hostbridge coreops))
   (define host (hostbridge 'HOST))
   (define target (hostbridge 'TARGET))

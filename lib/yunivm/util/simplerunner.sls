@@ -3,6 +3,7 @@
            simplerunner/expand-program
            simplerunner/treeir-compile
            simplerunner/treeir-run
+           new-simplerunner/fakeheap
            new-simplerunner)
          (import (yuni scheme)
                  (yunivm compiler compilercore)
@@ -13,6 +14,8 @@
                  (yunivm expander corelangfilter)
                  (yunivm expander expandcore)
                  (yunivm heap pass)
+                 (yunivm heap core)
+                 (yunivm heap fake coreops)
                  (yuni compat ident)
                  (yuniconfig build))
 
@@ -89,13 +92,20 @@
   (yuniloader-generate arg* libmapper prog output))
 
 (define (simplerunner/treeir-compile heap frm)
-  (call-with-values (lambda () (compile-core frm libs-name-vector))
+  (call-with-values (lambda () (compile-core frm (cdr heap)))
                     (lambda (ir mx) ir)))
 
 (define (simplerunner/treeir-run heap ir)
-  (seq-treeir heap ir))
+  (seq-treeir (car heap) ir))
 
 (define (new-simplerunner) 
-  (make-heap-pass (vector->list libs-proc-vector)))
+  (cons (make-heap-pass (vector->list libs-proc-vector))
+        libs-name-vector))
+
+(define (new-simplerunner/fakeheap)
+  (let ((name-vector (gen-core-syms-vec))
+        (coreops (make-coreops-fake)))
+    (cons (make-heap-core coreops name-vector)
+          name-vector)))
 
 )
