@@ -138,6 +138,38 @@
 (define (eof-object) %%my-eof-object)
 (define (flush-output-port p) 'do-nothing)
 
+(define-syntax when
+  (syntax-rules ()
+    ((_ pred code ...)
+     (cond
+       (pred code ...)))))
+
+(define-syntax unless
+  (syntax-rules ()
+    ((_ pred code ...)
+     (cond
+       ((not pred)
+        code ...)))))
+
+;; Boolean
+(define (boolean=? first next . rest)
+  (unless (boolean? first)
+    (error "Boolean required" first))
+  (unless (boolean? next)
+    (error "Boolean required" next))
+  (and (eqv? first next)
+       (or (null? rest)
+           (apply boolean=? next rest))))
+;; Symbols
+(define (symbol=? first next . rest)
+  (unless (symbol? first)
+    (error "Symbol required" first))
+  (unless (symbol? next)
+    (error "Symbol required" next))
+  (and (eqv? first next)
+       (or (null? rest)
+           (apply symbol=? next rest))))
+
 ;; Numeric
 (define (exact v)
   (cond
@@ -346,19 +378,6 @@
              (error "Unexpected object" pred? obj))))
        (%define-record-type-fields pred? (field-name accessor))))))
 
-(define-syntax when
-  (syntax-rules ()
-    ((_ pred code ...)
-     (cond
-       (pred code ...)))))
-
-(define-syntax unless
-  (syntax-rules ()
-    ((_ pred code ...)
-     (cond
-       ((not pred)
-        code ...)))))
-
 ;; Aux
 (define-syntax-names/yunifake
   ...
@@ -513,7 +532,6 @@
 ;; Unimpl
 
 (define binary-port? 'YUNIFAKE-UNIMPLEMENTED)
-(define boolean=? 'YUNIFAKE-UNIMPLEMENTED)
 (define call-with-port 'YUNIFAKE-UNIMPLEMENTED)
 (define error-object-irritants 'YUNIFAKE-UNIMPLEMENTED)
 (define error-object-message 'YUNIFAKE-UNIMPLEMENTED)
@@ -540,7 +558,6 @@
 (define string-copy! 'YUNIFAKE-UNIMPLEMENTED)
 (define string-for-each 'YUNIFAKE-UNIMPLEMENTED)
 (define string-map 'YUNIFAKE-UNIMPLEMENTED)
-(define symbol=? 'YUNIFAKE-UNIMPLEMENTED)
 (define textual-port? 'YUNIFAKE-UNIMPLEMENTED)
 (define truncate-quotient 'YUNIFAKE-UNIMPLEMENTED)
 (define truncate-remainder 'YUNIFAKE-UNIMPLEMENTED)
