@@ -65,8 +65,8 @@
   (syntax-rules ()
     ((_ src expected)
      (begin
-       (check-scm0 #t src expected)
-       (check-scm0 #f src expected)))))
+       (check-scm0 #f src expected)
+       (check-scm0 #t src expected)))))
 
 #|
 (check-scm
@@ -103,5 +103,26 @@
      ",()"
      ",(,abc)"))
   (((10) (hoge) ('abc) (,()) (,(,abc)))))
+
+(check-scm
+  ((import (yuni scheme))
+   (list
+     (append)
+     (append 'a)
+     (append '(10) '(20))
+     (append '(10) '(20) '())
+     (append '() '(10) '(20) '())
+     (append '(10) 'a)
+     )
+   )
+  ((
+    ;; (append)
+    ()
+    ;; (append 'a)
+    a
+    (10 20)
+    (10 20)
+    (10 20)
+    (10 . a))))
 
 (check-finish)
