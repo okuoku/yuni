@@ -61,8 +61,8 @@
   (syntax-rules ()
     ((_ scm expected)
      (begin
-       (check-scm0 #t scm expected)
-       (check-scm0 #f scm expected)))))
+       (check-scm0 #f scm expected)
+       (check-scm0 #t scm expected)))))
 
 (check-scm
   (#f)
@@ -103,6 +103,20 @@
 (check-scm
   ((if #f 123 456))
   (456))
+
+(check-scm
+  ((let ((g (lambda _ #t))) 
+    (letrec ((f (lambda a (p6)))
+             (p (lambda _ #f))
+             (p1 (lambda _ #f))
+             (p2 (lambda _ #f))
+             (p3 (lambda _ #f))
+             (p4 (lambda _ #f))
+             (p5 (lambda _ #f))
+             (p6 (lambda _ #f)))
+      (set! g f))
+    (g '(19) '(20) '(30) '(40))))
+  (#f))
 
 (check-scm
   ((let ((f (lambda (a b c) c)))

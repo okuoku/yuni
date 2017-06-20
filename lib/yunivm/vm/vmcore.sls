@@ -132,8 +132,8 @@
                (loop (+ idx 1)))))
          (vector-set! vec1 imm
                       (apply vm-args-compose
-                             (vector->list vec2)))
-         (push-E! vec1))))
+                             (vector->list vec2))))
+        (push-E! vec1)))
       ((multi)
        (cond
          ((= stack-len (+ imm 1))
