@@ -36,63 +36,41 @@
 
 (define (list . x) x)
 
-(define (append/itr! cur lis) ;; => cur
+(define (append/itr! cur lis queue)
   (cond
-    ((null? lis) cur)
-    ((pair? lis)
-     (let* ((a (car lis))
-            (d (cdr lis))
-            (p (cons a '())))
-       (set-cdr! cur p)
-       (append/itr! p d)))
+    ((null? lis)
+     (let ((a (car queue))
+           (d (cdr queue)))
+       (cond
+         ((null? d)
+          ;; Terminate
+          (set-cdr! cur a))
+         (else
+           ;; Go next
+           (append/itr! cur a d)))))
     (else
-      (error "List required" lis))))
+      (let ((c (cons (car lis) '())))
+       (set-cdr! cur c)
+       (append/itr! c (cdr lis) queue)) ))) 
 
-(define (append/2 p s)
+(define (append . args)
   (cond
-    ((null? p)
-     (unless (or (null? s) (list? s))
-       (error "List required" s)) 
-     s)
-    ((pair? p)
-     (let* ((a (car p))
-            (d (cdr p))
-            (x (cons a '())))
-       (let ((y (append/itr! x d)))
-        (append/itr! y s))
-       x))
+    ;; 0 args
+    ((null? args) '())
+    ;; 1 arg
+    ((null? (cdr args)) (car args))
+    ;; 2+ args: null?
+    ((null? (car args)) (apply append (cdr args)))
+    ;; 2 args
+    ((null? (cddr args)) ($append (car args) (cadr args)))
+    ;; 2+ args
     (else
-      (error "List required" p))))
-
-(define (append/Nitr! cur lis queue)
-  (let ((r (append/itr! cur lis)))
-   (cond
-     ((null? queue) r)
-     (else
-       (let ((a (car queue))
-             (d (cdr queue)))
-         (append/Nitr! r a d))))))
-
-(define (append/N p s . rest)
-  (cond
-    ((null? p)
-     (apply append s rest))
-    ((pair? p)
-     (let* ((a (car p))
-            (d (cdr p))
-            (x (cons a '())))
-       (let ((y (append/itr! x d)))
-        (append/Nitr! y s rest))
-       x))
-    (else
-      (error "List required" p))))
-
-(define (append a b . rest)
-  (cond
-    ((null? rest)
-     (append/2 a b))
-    (else
-      (apply append/N a b rest)))) 
+      (let* ((aa (caar args))
+             (da (cdar args))
+             (b (cdr args))
+             (c (cons aa '())))
+        (append/itr! c da b)
+        c))))
 
 (define (reverse/itr cur lis)
   (cond

@@ -103,7 +103,7 @@
               (d (co-cdr x))
               (n (co-cons a (co-null))))
          (let ((m ($append/itr! n d)))
-          ($append/itr! m y))
+          (co-set-cdr! m y))
          n))
       (else
         (error "Pair required" x))))
