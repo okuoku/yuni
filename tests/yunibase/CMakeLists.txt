@@ -99,12 +99,30 @@ function(test_with_impl prefix fil)
     endif()
 endfunction()
 
+function(test_yunivm_with_impl prefix fn)
+    if(YUNITEST_${prefix})
+        add_test(NAME "${prefix}-yunivm-${fn}"
+            COMMAND ${YUNITEST_${prefix}} 
+            _launcher.sps -PROG ${fn}
+            WORKING_DIRECTORY ${YUNI_BASEDIR}/tests/vm)
+    endif()
+endfunction()
+
 function(test_with_all_except fil)
     set(lis ${impls})
     list(REMOVE_ITEM lis ${ARGN})
 
     foreach(e ${lis})
         test_with_impl(${e} ${fil})
+    endforeach()
+endfunction()
+
+function(test_yunivm_with_all_except fil)
+    set(lis ${impls})
+    list(REMOVE_ITEM lis ${ARGN})
+
+    foreach(e ${lis})
+        test_yunivm_with_impl(${e} ${fil})
     endforeach()
 endfunction()
 
@@ -156,6 +174,7 @@ test_with_all_except(tests/vm/vmtest.sps KAWA)
 test_with_all_except(tests/vm/vmtest2.sps KAWA NMOSH)
 if(NOT YUNI_TEST_SKIP_LONGRUN)
     test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE NMOSH)
+    test_yunivm_with_all_except(vmtest4.sps KAWA GUILE NMOSH)
 endif()
 test_with_all(tests/vm/heaptest.sps)
 
