@@ -51,4 +51,4 @@
 
 (display "Should not reach here.")
 
-(exit #f)
+(exit 1)
