@@ -170,6 +170,7 @@ test_with_all(_sanity.sps)
 #test_with_allffi(_ncccsanity.sps)
 
 # yuniVM
+test_with_all(tests/vm/vmtest4.sps)
 test_with_all_except(tests/vm/vmtest.sps KAWA)
 test_with_all_except(tests/vm/vmtest2.sps KAWA NMOSH)
 if(NOT YUNI_TEST_SKIP_LONGRUN)

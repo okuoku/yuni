@@ -29,10 +29,9 @@
          
 
 (define (list? obj)
-  (and (pair? obj)
-       (let ((d (cdr obj)))
-        (or (null? d)
-            (list? d)))))
+  (or (null? obj)
+      (and (pair? obj)
+           (list? (cdr obj)))))
 
 (define (list . x) x)
 
@@ -159,8 +158,20 @@
 (define (list-set! lis k v)
   (set-car! (list-tail lis k) v))
 
+(define (list-copy/itr! cur lis)
+  (cond
+    ((pair? lis)
+     (let ((c (cons (car lis) '())))
+      (set-cdr! cur c)
+      (list-copy/itr! c (cdr lis))))
+    (else
+      (set-cdr! cur lis))))
+
 (define (list-copy obj)
-  ;; FIXME: oh...
-  (reverse (reverse obj)))
+  (if (pair? obj)
+    (let ((c (cons (car obj) '())))
+     (list-copy/itr! c (cdr obj))
+     c)
+    obj))
 
 )
