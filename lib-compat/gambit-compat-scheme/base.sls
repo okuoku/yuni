@@ -170,6 +170,36 @@
        (or (null? rest)
            (apply symbol=? next rest))))
 
+;; Lists
+(define (make-list/fill cur k fil)
+  (if (>= 0 k)
+    cur
+    (make-list/fill (cons fil cur) (- k 1) fil)))
+
+(define (make-list k . fill?)
+  (if (null? fill?)
+    (make-list/fill '() k #f)
+    (make-list/fill '() k (car fill?))))
+
+(define (list-set! lis k v)
+  (set-car! (list-tail lis k) v))
+
+(define (list-copy/itr! cur lis)
+  (cond
+    ((pair? lis)
+     (let ((c (cons (car lis) '())))
+      (set-cdr! cur c)
+      (list-copy/itr! c (cdr lis))))
+    (else
+      (set-cdr! cur lis))))
+
+(define (list-copy obj)
+  (if (pair? obj)
+    (let ((c (cons (car obj) '())))
+     (list-copy/itr! c (cdr obj))
+     c)
+    obj))
+
 ;; Numeric
 (define (exact v)
   (cond
@@ -544,9 +574,6 @@
 (define floor/ 'YUNIFAKE-UNIMPLEMENTED)
 (define inexact 'YUNIFAKE-UNIMPLEMENTED)
 (define input-port-open? 'YUNIFAKE-UNIMPLEMENTED)
-(define list-copy 'YUNIFAKE-UNIMPLEMENTED)
-(define list-set! 'YUNIFAKE-UNIMPLEMENTED)
-(define make-list 'YUNIFAKE-UNIMPLEMENTED)
 (define open-input-bytevector 'YUNIFAKE-UNIMPLEMENTED)
 (define output-port-open? 'YUNIFAKE-UNIMPLEMENTED)
 (define peek-u8 'YUNIFAKE-UNIMPLEMENTED)
