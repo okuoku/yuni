@@ -228,6 +228,41 @@
     ((to at from start end)
      (substring-move! from start end to at))))
 
+;; Vectors
+(define (string->vector str . args)
+  (list->vector (apply string->list str args)))
+
+(define vector->list
+  (case-lambda
+    ((vec) ($vector->list vec))
+    ((vec start) ($vector->list (subvector vec start (vector-length vec))))
+    ((vec start end) ($vector->list (subvector vec start end)))))
+
+(define (vector->string vec . args)
+  (list->string (apply vector->list vec args)))
+
+(define vector-copy
+  (case-lambda
+    ((vec) ($vector-copy vec))
+    ((vec start) (subvector vec start (vector-length vec)))
+    ((vec start end) (subvector vec start end))))
+
+(define vector-fill!
+  (case-lambda
+    ((vec fill) ($vector-fill! vec fill))
+    ((vec fill start) (subvector-fill! vec start (vector-length vec) fill))
+    ((vec fill start end) (subvector-fill! vec start end fill))))
+
+(define vector-copy!
+  (case-lambda
+    ((to at from) 
+     (subvector-move! from 0 (vector-length from) to at))
+    ((to at from start)
+     (subvector-move! from start (vector-length from) to at))
+    ((to at from start end)
+     (subvector-move! from start end to at))))
+
+
 ;; Numeric
 (define (exact v)
   (cond
@@ -609,15 +644,12 @@
 (define read-bytevector 'YUNIFAKE-UNIMPLEMENTED)
 (define read-error? 'YUNIFAKE-UNIMPLEMENTED)
 (define read-string 'YUNIFAKE-UNIMPLEMENTED)
-(define string->vector 'YUNIFAKE-UNIMPLEMENTED)
 (define string-for-each 'YUNIFAKE-UNIMPLEMENTED)
 (define string-map 'YUNIFAKE-UNIMPLEMENTED)
 (define textual-port? 'YUNIFAKE-UNIMPLEMENTED)
 (define truncate-quotient 'YUNIFAKE-UNIMPLEMENTED)
 (define truncate-remainder 'YUNIFAKE-UNIMPLEMENTED)
 (define truncate/ 'YUNIFAKE-UNIMPLEMENTED)
-(define vector->string 'YUNIFAKE-UNIMPLEMENTED)
-(define vector-copy! 'YUNIFAKE-UNIMPLEMENTED)
 (define vector-for-each 'YUNIFAKE-UNIMPLEMENTED)
 (define vector-map 'YUNIFAKE-UNIMPLEMENTED)
 (define write-string 'YUNIFAKE-UNIMPLEMENTED)

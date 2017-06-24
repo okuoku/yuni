@@ -51,6 +51,9 @@
 (define $string->list string->list)
 (define $string-copy string-copy)
 (define $string-fill! string-fill!)
+(define $vector->list vector->list)
+(define $vector-copy vector-copy)
+(define $vector-fill! vector-fill!)
 
 (let ()
  #|
