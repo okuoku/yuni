@@ -40,6 +40,7 @@
          (equal? libname '(r7c-basic lib strings)) 
          (equal? libname '(r7c-basic lib vectors)) 
          (equal? libname '(r7c-basic lib bytevectors)) 
+         (equal? libname '(r7c-basic lib mapforeach)) 
          )
      #t)
     (else #f)))
