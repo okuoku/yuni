@@ -262,7 +262,6 @@
     ((to at from start end)
      (subvector-move! from start end to at))))
 
-
 ;; Numeric
 (define (exact v)
   (cond
@@ -432,6 +431,21 @@
 
 (define open-output-bytevector open-output-u8vector)
 (define get-output-bytevector get-output-u8vector)
+
+;; MapForEach
+
+(define (string-map proc . strs)
+  (list->string (apply map proc (map $string->list strs)))) 
+
+(define (vector-map proc . args)
+  (list->vector (apply map proc (map $vector->list args))))
+
+(define (string-for-each proc . strs)
+  (apply for-each proc (map $string->list strs))) 
+
+(define (vector-for-each proc . args)
+  (apply for-each proc (map $vector->list args)))
+
 
 ;; define-record-type
 
@@ -649,14 +663,10 @@
 (define read-bytevector 'YUNIFAKE-UNIMPLEMENTED)
 (define read-error? 'YUNIFAKE-UNIMPLEMENTED)
 (define read-string 'YUNIFAKE-UNIMPLEMENTED)
-(define string-for-each 'YUNIFAKE-UNIMPLEMENTED)
-(define string-map 'YUNIFAKE-UNIMPLEMENTED)
 (define textual-port? 'YUNIFAKE-UNIMPLEMENTED)
 (define truncate-quotient 'YUNIFAKE-UNIMPLEMENTED)
 (define truncate-remainder 'YUNIFAKE-UNIMPLEMENTED)
 (define truncate/ 'YUNIFAKE-UNIMPLEMENTED)
-(define vector-for-each 'YUNIFAKE-UNIMPLEMENTED)
-(define vector-map 'YUNIFAKE-UNIMPLEMENTED)
 (define write-string 'YUNIFAKE-UNIMPLEMENTED)
 
 )
