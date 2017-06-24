@@ -78,9 +78,12 @@
 (define (tve-type! tve v)          (vector-set! tve 8 v))
 
 (define (make-tkn num)
-  (list->vector 
-    (map (lambda (e) (make-tve))
-         (vector->list (make-vector num)))))
+  (let ((v (make-vector num)))
+   (let loop ((pos 0))
+    (unless (= pos num)
+      (vector-set! v pos (make-tve))
+      (loop (+ 1 pos))))
+   v))
 
 (define (%tref vec idx proc)
   (proc (vector-ref vec idx)))
