@@ -274,11 +274,16 @@
 (define bytevector? u8vector?)
 (define bytevector u8vector)
 (define bytevector-append u8vector-append)
-(define bytevector-copy u8vector-copy)
 (define bytevector-length u8vector-length)
 (define bytevector-u8-ref u8vector-ref)
 (define bytevector-u8-set! u8vector-set!)
 (define make-bytevector make-u8vector)
+
+(define bytevector-copy
+  (case-lambda
+    ((bv) (u8vector-copy bv))
+    ((bv start) (subu8vector bv start (u8vector-length bv)))
+    ((bv start end) (subu8vector bv start end))))
 
 (define bytevector-copy!
   (case-lambda
