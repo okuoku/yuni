@@ -18,7 +18,7 @@
 
 (define $make-string make-string)
 (define $make-bytevector make-bytevector)
-(define $make-vector make-vector)
+(define ($make-vector len) (make-vector len #f))
 
 (define $boolean=? boolean=?)
 (define $char=? char=?)
@@ -39,6 +39,7 @@
     $fx-
     $make-string
     $make-bytevector
+    $make-vector
     $boolean=?
     $char=?
     $symbol=?
@@ -66,6 +67,7 @@
     $fx-
     $make-string
     $make-bytevector
+    $make-vector
     $boolean=?
     $char=?
     $symbol=?
