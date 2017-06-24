@@ -186,6 +186,7 @@
       (($fx>) co->)
       (($fx+) +)
       (($fx-) -)
+      (($fx*) *)
       ;; (r7c heap listloop)
       ((memv) co-memv)
       (($fx-length) $fx-length)

@@ -15,6 +15,7 @@
 (define $fx> >)
 (define $fx+ +)
 (define $fx- -)
+(define $fx* *)
 
 (define $make-string make-string)
 (define $make-bytevector make-bytevector)
@@ -37,6 +38,7 @@
     $fx>
     $fx+
     $fx-
+    $fx*
     $make-string
     $make-bytevector
     $make-vector
@@ -65,6 +67,7 @@
     $fx>
     $fx+
     $fx-
+    $fx*
     $make-string
     $make-bytevector
     $make-vector

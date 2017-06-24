@@ -39,6 +39,7 @@
          (equal? libname '(r7c-basic lib lists)) 
          (equal? libname '(r7c-basic lib strings)) 
          (equal? libname '(r7c-basic lib vectors)) 
+         (equal? libname '(r7c-basic lib bytevectors)) 
          )
      #t)
     (else #f)))

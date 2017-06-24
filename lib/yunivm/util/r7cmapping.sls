@@ -172,7 +172,7 @@
      $fx-length $append)
     ((r7c heap fixnum)
      $fx= $fx<= $fx>= $fx< $fx>
-     $fx+ $fx-)
+     $fx+ $fx- $fx*)
     ((r7c heap undefined)
      $undefined)
     ((r7c core error)
