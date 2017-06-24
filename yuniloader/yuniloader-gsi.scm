@@ -47,6 +47,11 @@
 
 (define %%yuniffi-gambit-modpath #f)
 
+;; Override
+(define $string->list string->list)
+(define $string-copy string-copy)
+(define $string-fill! string-fill!)
+
 (let ()
  #|
  ;; Slow runner (for debugging)

@@ -200,6 +200,34 @@
      c)
     obj))
 
+;; Strings
+(define string->list
+  (case-lambda
+    ((s) ($string->list s))
+    ((s start) ($string->list (substring s start (string-length s))))
+    ((s start end) ($string->list (substring s start end)))))
+
+(define string-copy
+  (case-lambda
+    ((s) ($string-copy s))
+    ((s start) (substring s start (string-length s)))
+    ((s start end) (substring s start end))))
+
+(define string-fill!
+  (case-lambda
+    ((s fill) ($string-fill! s fill))
+    ((s fill start) (substring-fill! s start (string-length s) fill))
+    ((s fill start end) (substring-fill! s start end fill))))
+
+(define string-copy!
+  (case-lambda
+    ((to at from) 
+     (substring-move! from 0 (string-length from) to at))
+    ((to at from start)
+     (substring-move! from start (string-length from) to at))
+    ((to at from start end)
+     (substring-move! from start end to at))))
+
 ;; Numeric
 (define (exact v)
   (cond
@@ -582,7 +610,6 @@
 (define read-error? 'YUNIFAKE-UNIMPLEMENTED)
 (define read-string 'YUNIFAKE-UNIMPLEMENTED)
 (define string->vector 'YUNIFAKE-UNIMPLEMENTED)
-(define string-copy! 'YUNIFAKE-UNIMPLEMENTED)
 (define string-for-each 'YUNIFAKE-UNIMPLEMENTED)
 (define string-map 'YUNIFAKE-UNIMPLEMENTED)
 (define textual-port? 'YUNIFAKE-UNIMPLEMENTED)
