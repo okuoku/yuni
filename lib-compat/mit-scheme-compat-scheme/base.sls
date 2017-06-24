@@ -162,6 +162,21 @@
        (or (null? rest)
            (apply symbol=? next rest))))
 
+;; Boolean
+(define (boolean=?/itr b queue)
+  (or (null? queue)
+      (let ((a (car queue)))
+       (and (boolean? a)
+            ($boolean=? b a)
+            (boolean=?/itr b (cdr queue))))))
+ 
+(define (boolean=? a b . queue)
+  (and (boolean? a)
+       (boolean? b)
+       ($boolean=? a b)
+       (or (null? queue)
+           (boolean=?/itr b queue))))         
+
 ;; Lists
 
 (define (list-copy/itr! cur lis)

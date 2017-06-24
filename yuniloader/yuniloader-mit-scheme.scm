@@ -32,6 +32,8 @@
      (else
        (receiver t)))))
 
+(define $boolean=? boolean=?)
+
 (define %%yunirootpath #f)
 
 (define (%%yuniroot str)
