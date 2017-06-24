@@ -18,6 +18,7 @@
                  (r7c syntax let)
                  (r7c syntax cond)
                  (r7c heap core)
+                 (r7c heap vector)
                  (r7c heap fixnum)
                  (r7c heap pair))
 

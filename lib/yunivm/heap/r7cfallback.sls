@@ -9,9 +9,10 @@
   ;;        callback-taking procedures such as 
   ;;        member, assoc, with-exception-handler...
   (case sym
-    ((map string-map vector-map
-          for-each string-for-each vector-for-each)
+    ((map string-map vector-map)
      'map-like)
+    ((for-each string-for-each vector-for-each)
+     'for-each-like)
     ;; make-vector can return vectors contains #<unspecified>
     ((make-vector) 'make-vector)
     (else #f)))
@@ -54,6 +55,12 @@
       (let ((objs (map target args)))
        (let ((r (apply proc objs)))
         (host r)))))
+  ; rfunc0 (callback: 0 return value)
+  (define (rfunc0 proc)
+    (lambda args
+      (let ((objs (map target args)))
+       (apply proc objs)
+       #f)))
   ; map-like ^(cb objs ...)
   (define (map-like proc)
     (lambda (cb . args)
@@ -61,6 +68,13 @@
             (xcb (rfunc1 cb)))
         (let ((r (apply proc xcb objs)))
          (target r)))))
+  ; for-each-like ^(cb objs ...)
+  (define (for-each-like proc)
+    (lambda (cb . args)
+      (let ((objs (map host args))
+            (xcb (rfunc0 cb)))
+        (apply proc xcb objs)
+        #f)))
 
   (define fallbackalist
     (map
@@ -71,6 +85,8 @@
            (case callback-type
              ((map-like)
               (map-like proc))
+             ((for-each-like)
+              (for-each-like proc))
              ((make-vector)
               (func1 make-vector/initf))
              (else
