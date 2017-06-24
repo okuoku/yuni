@@ -1,0 +1,23 @@
+(library (r7c-basic lib boolean)
+         (export boolean=?)
+         (import (r7c-basic syntax define)
+                 (r7c-system core)
+                 (r7c heap boolean)
+                 (r7c syntax and)
+                 (r7c syntax or))
+
+(define (boolean=?/itr b queue)
+  (or (null? queue)
+      (let ((a (car queue)))
+       (and (boolean? a)
+            ($boolean=? b a)
+            (boolean=?/itr b (cdr queue))))))
+
+(define (boolean=? a b . queue)
+  (and (boolean? a)
+       (boolean? b)
+       ($boolean=? a b)
+       (or (null? queue)
+           (boolean=?/itr b queue))))         
+         
+)

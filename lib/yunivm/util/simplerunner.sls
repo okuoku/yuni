@@ -33,7 +33,9 @@
 
 (define (r7c-noredirect? libname)
   (cond
-    ((or (equal? libname '(r7c-basic lib cxr))
+    ((or (equal? libname '(r7c-basic lib boolean))
+         (equal? libname '(r7c-basic lib char))
+         (equal? libname '(r7c-basic lib cxr))
          (equal? libname '(r7c-basic lib lists)) 
          (equal? libname '(r7c-basic lib strings)) 
          )

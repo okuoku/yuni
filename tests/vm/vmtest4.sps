@@ -36,6 +36,41 @@
               (else
                 (set! failed-forms (cons 'form failed-forms)))))))))
 
+;; boolean
+(check-equal #t (boolean=? #t #t))
+(check-equal #t (boolean=? #f #f))
+(check-equal #t (boolean=? #t #t #t))
+(check-equal #t (boolean=? #f #f #f))
+(check-equal #t (boolean=? #t #t #t #t))
+(check-equal #t (boolean=? #f #f #f #f))
+(check-equal #f (boolean=? #t #f))
+(check-equal #f (boolean=? #f #t))
+(check-equal #f (boolean=? #t #f #f #f))
+(check-equal #f (boolean=? #f #t #f #f))
+(check-equal #f (boolean=? #f #f #t #f))
+(check-equal #f (boolean=? #f #f #f #t))
+
+;; char
+(check-equal #t (char=? #\a #\a))
+(check-equal #t (char=? #\a (string-ref "abc" 0)))
+(check-equal #f (char=? #\b (string-ref "abc" 0)))
+(check-equal #t (char=? #\a #\a #\a))
+(check-equal #t (char=? #\a #\a #\a #\a))
+(check-equal #f (char=? #\b #\a #\a #\a))
+(check-equal #f (char=? #\a #\b #\a #\a))
+(check-equal #f (char=? #\a #\a #\b #\a))
+(check-equal #f (char=? #\a #\a #\a #\b))
+(check-equal #t (char<? #\a #\b))
+(check-equal #t (char<? #\a #\b #\c #\d))
+(check-equal #f (char<? #\a #\a #\c #\d))
+(check-equal #f (char<? #\a #\b #\a #\d))
+(check-equal #f (char<? #\a #\b #\c #\a))
+(check-equal #t (char<=? #\a #\b))
+(check-equal #t (char<=? #\a #\b #\c #\d))
+(check-equal #t (char>? #\b #\a))
+(check-equal #t (char>=? #\b #\a))
+(check-equal #t (char>=? #\b #\b))
+
 ;; lists
 
 ;; list?

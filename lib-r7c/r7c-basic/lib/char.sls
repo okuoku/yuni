@@ -1,0 +1,50 @@
+(library (r7c-basic lib char)
+         (export char=?
+                 char<?
+                 char>?
+                 char<=?
+                 char>=?)
+         (import (r7c-basic syntax define)
+                 (r7c-system core)
+                 (r7c heap fixnum)
+                 (r7c heap boolean)
+                 (r7c heap char)
+                 (r7c syntax and)
+                 (r7c syntax or))
+         
+(define (char-compare/itr comp bi queue)
+  (or (null? queue)
+      (let ((ai (char->integer (car queue))))
+       (and (comp bi ai)
+            (char-compare/itr comp ai (cdr queue))))))
+
+(define (char-compare/queue comp a b queue)
+  (let ((ai (char->integer a))
+        (bi (char->integer b)))
+    (and (comp ai bi)
+         (or (null? queue)
+             (char-compare/itr comp bi queue)))))
+
+(define (char>=? a b . queue)
+  (char-compare/queue $fx>= a b queue))
+(define (char<=? a b . queue)
+  (char-compare/queue $fx<= a b queue))
+(define (char>? a b . queue)
+  (char-compare/queue $fx> a b queue))
+(define (char<? a b . queue)
+  (char-compare/queue $fx< a b queue))
+
+(define (char=?/itr b queue)
+  (or (null? queue)
+      (let ((a (car queue)))
+       (and (char? a)
+            ($char=? b a)
+            (char=?/itr b (cdr queue))))))
+
+(define (char=? a b . queue)
+  (and (char? a)
+       (char? b)
+       ($char=? a b)
+       (or (null? queue)
+           (char=?/itr b queue))))
+)
