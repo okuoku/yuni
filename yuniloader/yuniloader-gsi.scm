@@ -54,6 +54,8 @@
 (define $vector->list vector->list)
 (define $vector-copy vector-copy)
 (define $vector-fill! vector-fill!)
+(define $assoc assoc)
+(define $member member)
 
 (let ()
  #|

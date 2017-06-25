@@ -171,6 +171,33 @@
            (apply symbol=? next rest))))
 
 ;; Lists
+(define assoc
+  (case-lambda
+    ((obj alist) ($assoc obj alist))
+    ((obj alist compare)
+     (let loop ((al alist))
+      (cond ((pair? al)
+             (let ((a (car al))
+                   (d (cdr al)))
+               (if (compare (car a) obj)
+                 a
+                 (loop d))))
+            ((null? al) #f)
+            (else (error "Alist required." al)))))))
+
+(define member 
+  (case-lambda
+    ((obj lis) ($member obj lis))
+    ((obj lis compare)
+     (let loop ((lis lis))
+      (cond
+        ((pair? lis)
+         (if (compare obj (car lis))
+           lis
+           (loop (cdr lis))))
+        ((null? lis) #f)
+        (else (error "List required.")))))))
+
 (define (make-list/fill cur k fil)
   (if (>= 0 k)
     cur
