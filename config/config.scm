@@ -9,7 +9,7 @@
   ;; Yuni
   (yuni yuni yuniffi yuniconfig yuniapp yunivm yuniexternal
         ;; YuniVM Runtimes
-        yunivmrt r7c-basic r7c-report r7c-system)
+        yunivmrt r7c-basic r7c-equiv r7c-report r7c-system)
   (yunifake yunifake-util)
   ;; FIXME: Hack. We don't have any convention for generated libraries yet.
   ;; R7RS

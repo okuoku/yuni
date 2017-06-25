@@ -41,6 +41,7 @@
          (equal? libname '(r7c-basic lib vectors)) 
          (equal? libname '(r7c-basic lib bytevectors)) 
          (equal? libname '(r7c-basic lib mapforeach)) 
+         (equal? libname '(r7c-equiv std equal)) 
          )
      #t)
     (else #f)))
