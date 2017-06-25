@@ -56,22 +56,32 @@
     ((r7c-equiv std lists)
      member assoc)
 
+    ((r7c-numeric std inexact)
+     acos asin atan cos
+     exp finite? infinite? log
+     nan? sin sqrt tan)
+
     ((r7c-numeric std generic)
      = < > <= >=
-     max min + * - / abs
-     zero? positive? negative? odd? even?
+     + * - / 
      number? complex? real? integer?
-     exact? inexact? exact-integer? finite?
-     nan?
-     floor/ floor-quotient floor-remainder
-     truncate/ truncate-quotient truncate-remainder
+     exact? inexact? exact-integer?
      quotient remainder modulo
-     gcd lcm
      floor ceiling truncate round
-     exp log sin cos tan asin acos atan
-     square sqrt exact-integer-sqrt
      expt
      inexact exact)
+
+    ((r7c-numeric std misc)
+     zero? positive? negative? odd? even?
+     square max min abs
+     gcd lcm)
+
+    ((r7c-numeric std division)
+     floor/ floor-quotient floor-remainder
+     truncate/ truncate-quotient truncate-remainder)
+
+    ((r7c-numeric std integer-sqrt)
+     exact-integer-sqrt)
 
     ((r7c-numeric std reader)
      string->number)
