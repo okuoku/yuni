@@ -595,4 +595,14 @@
   (check-equal "dot" (vector->string v1))
   (check-equal "ram" (vector->string v2)))
 
+;; assoc
+(check-equal '(2 4) (assoc 2.0 '((1 1) (2 4) (3 9)) =)) ;; From R7RS
+
+;; member
+(define (pick-b a b)
+  (or (and (string? a) (string=? a "b"))
+      (and (string? b) (string=? b "b"))))
+
+(check-equal '("b" "c") (member 'any '("a" "b" "c") pick-b))
+
 (check-finish)
