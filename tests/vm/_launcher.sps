@@ -41,13 +41,10 @@
 ;; Run
 (let ((src (file->sexp-list sourcefile)))
  (let ((r (new-simplerunner/fakeheap)))
-  (simplerunner/treeir-run
-    r
-    (simplerunner/treeir-compile
-      r
-      (simplerunner/expand-program
-        r
-        src)))))
+  (let ((prog (simplerunner/expand-program r src)))
+   (let ((ir (simplerunner/treeir-compile r prog)))
+    ;(pp ir)
+    (simplerunner/treeir-run r ir)))))
 
 (display "Should not reach here.")
 
