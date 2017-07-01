@@ -32,7 +32,9 @@
      (else
        (receiver t)))))
 
+;; Override
 (define $boolean=? boolean=?)
+(define $log log)
 
 (define %%yunirootpath #f)
 

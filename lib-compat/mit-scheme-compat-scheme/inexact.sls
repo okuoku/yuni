@@ -8,15 +8,19 @@
            sqrt tan)
          (import)
 
+(define log
+  (case-lambda ((a) ($log a))
+               ((a b) (inexact (/ ($log a) ($log b))))))
+
 (define-primitive-names/yunifake
   cos asin
   atan acos
   exp 
-  infinite? log
+  infinite?
   sin
   sqrt tan)
 
 (define nan? 'YUNIFAKE-UNIMPLEMENTED)
-(define finite? 'YUNIFAKE-UNIMPLEMENTED)
+(define finite? flo:finite?)
          
 )
