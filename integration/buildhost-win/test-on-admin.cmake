@@ -196,20 +196,20 @@ endfunction()
 function(install32)
     if(NOT SKIPINSTALL)
         install_gauche(Gauche-mingw-0.9.5-32bit.msi)
-        install_sagittarius(setup_sagittarius_0.7.10.exe) # 32bit
+        install_sagittarius(setup_sagittarius_0.8.5.exe) # 32bit
         install_ironscheme()
         install_larceny()
-        install_racket(32 racket-minimal-6.7-i386-win32.exe)
+        install_racket(32 racket-minimal-6.9-i386-win32.exe)
     endif()
 endfunction()
 
 function(install64)
     if(NOT SKIPINSTALL)
         install_gauche(Gauche-mingw-0.9.5-64bit.msi)
-        install_sagittarius(setup_sagittarius_0.7.10_x64.exe) # 64bit
+        install_sagittarius(setup_sagittarius_0.8.5_x64.exe) # 64bit
         install_ironscheme()
         install_kawa()
-        install_racket(64 racket-minimal-6.7-x86_64-win32.exe)
+        install_racket(64 racket-minimal-6.9-x86_64-win32.exe)
     endif()
 endfunction()
 
