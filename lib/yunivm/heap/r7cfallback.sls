@@ -97,7 +97,7 @@
                  ((zero-valued? name) (func0 proc))
                  (else (func1 proc))))))))
       (append basiclib/name compatlib/name)
-      (append basiclib/proc compatlib/name)))
+      (append basiclib/proc compatlib/proc)))
   (define (query sym)
     (let ((p (assq sym fallbackalist)))
      (unless p
