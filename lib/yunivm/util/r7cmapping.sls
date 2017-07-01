@@ -182,7 +182,25 @@
      $fx-length $append)
     ((r7c heap fixnum)
      $fx= $fx<= $fx>= $fx< $fx>
-     $fx+ $fx- $fx*)
+     $fx+ $fx- $fx* $fx/
+     $fx->fl
+     $fx-expt
+     ;; 2 values div+mod
+     $fx-floor/
+     $fx-truncate/)
+    ((r7c heap flonum)
+     $fl-nan? $fl-finite? $fl-infinite?
+     $fl= $fl<= $fl>= $fl< $fl>
+     $fl+ $fl- $fl* $fl/
+     $fl->fx
+     $fl-expt
+     $fl-floor $fl-ceiling $fl-truncate $fl-round
+     $fl-acos $fl-asin $fl-atan
+     $fl-cos  $fl-sin  $fl-tan
+     $fl-exp $fl-log $fl-sqrt
+     ;; 2 values div+mod
+     $fl-floor/
+     $fl-truncate/)
     ((r7c heap undefined)
      $undefined)
     ((r7c core error)

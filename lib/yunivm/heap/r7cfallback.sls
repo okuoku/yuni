@@ -2,6 +2,7 @@
          (export make-r7cfallback)
          (import (yuni scheme)
                  (yunivm heap hostbridge)
+                 (yunivm util compatlibs)
                  (yunivm util basiclibs))
 
 (define (special-callback-type sym)
@@ -21,6 +22,8 @@
 
 (define basiclib/proc (vector->list basiclibs-proc-vector))
 (define basiclib/name (vector->list basiclibs-name-vector))
+(define compatlib/proc (vector->list compatlibs-proc-vector))
+(define compatlib/name (vector->list compatlibs-name-vector))
 
 (define make-vector/initf
   (case-lambda
@@ -93,8 +96,8 @@
                (cond
                  ((zero-valued? name) (func0 proc))
                  (else (func1 proc))))))))
-      basiclib/name
-      basiclib/proc))
+      (append basiclib/name compatlib/name)
+      (append basiclib/proc compatlib/name)))
   (define (query sym)
     (let ((p (assq sym fallbackalist)))
      (unless p
