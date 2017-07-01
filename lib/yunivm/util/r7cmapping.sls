@@ -4,6 +4,20 @@
            r7cmapping/coreproc)
          (import (yuni scheme))
 
+(define r7cmapping/yunilib ;; Pseudo
+  '(;; Yunicore
+    ((yunicore files)
+     filehandle-init!  ;; Capture stdin/stdout/stderr
+     filehandle-open/input
+     filehandle-open/output
+     filehandle-close
+     filehandle-read!
+     filehandle-write
+     filehandle-flush
+     filehandle-stdin
+     filehandle-stdout
+     filehandle-stderr)))
+
 (define r7cmapping/stdlib
   '(;; Standard libraries
     ((r7c-basic lib boolean)

@@ -83,6 +83,73 @@
 (define $char=? char=?)
 (define $symbol=? symbol=?)
 
+;; Filehandle
+(define fh-stdin #f)
+(define fh-stdout #f)
+(define fh-stderr #f)
+
+(define fh-vec #f)
+
+(define (fh-alloc)
+  (unless fh-vec
+    (set! fh-vec (make-vector 10 #f)))
+  (let ((len (vector-length fh-vec)))
+   (let loop ((idx 0))
+    (cond
+      ((= idx len)
+       (set! fh-vec (vector-append fh-vec (make-vector 5 #f)))
+       idx)
+      ((vector-ref fh-vec idx)
+       (loop (+ idx 1)))
+      (else
+        idx)))))
+
+(define (fh-free! idx)
+  (vector-set! fh-vec idx #f))
+
+(define (fh-ref fh)
+  (vector-ref fh-vec fh))
+
+(define (fh-set! obj)
+  (let ((idx (fh-alloc)))
+   (vector-set! fh-vec idx obj)
+   idx))
+
+(define (filehandle-init!)
+  (let ((stdin (fh-set! (current-input-port)))
+        (stdout (fh-set! (current-output-port)))
+        (stderr (fh-set! (current-error-port))))
+    (set! fh-stdin stdin)
+    (set! fh-stdout stdout)
+    (set! fh-stderr stderr)))
+
+(define (filehandle-open/input filename)
+  (fh-set! (open-binary-input-file filename)))
+
+(define (filehandle-open/output filename)
+  (fh-set! (open-binary-output-file filename)))
+
+(define (filehandle-close fh)
+  (close-port (fh-ref fh))
+  (fh-free! fh))
+
+(define (filehandle-read! fh bv offs len) ;; => len
+  (let ((r (read-bytevector! bv (fh-ref fh) offs (+ offs len))))
+   (if (eof-object? r) 0 r)))
+
+(define (filehandle-write fh bv offs len)
+  ;; FIXME: Always success???
+  (write-bytevector bv (fh-ref fh) offs (+ offs len))  )
+
+(define (filehandle-flush fh)
+  (flush-output-port (fh-ref fh)))
+
+(define (filehandle-stdin) fh-stdin)
+(define (filehandle-stdout) fh-stdout)
+(define (filehandle-stderr) fh-stderr)
+
+
+
 (define compatlibs-proc-vector
   (vector
     ;; Non-standard core ops 
@@ -145,6 +212,17 @@
     simple-struct-ref
     simple-struct-set!
     simple-struct?
+    ;; Filehandle
+    filehandle-init!
+    filehandle-open/input
+    filehandle-open/output
+    filehandle-close
+    filehandle-read!
+    filehandle-write
+    filehandle-flush
+    filehandle-stdin
+    filehandle-stdout
+    filehandle-stderr
     )
   )         
 
@@ -210,6 +288,17 @@
     simple-struct-ref
     simple-struct-set!
     simple-struct?
+    ;; Filehandle
+    filehandle-init!
+    filehandle-open/input
+    filehandle-open/output
+    filehandle-close
+    filehandle-read!
+    filehandle-write
+    filehandle-flush
+    filehandle-stdin
+    filehandle-stdout
+    filehandle-stderr
      ))
          
          
