@@ -293,6 +293,18 @@
 (define exact inexact->exact)
 (define inexact exact->inexact)
 
+(define truncate-quotient quotient)
+(define truncate-remainder remainder)
+(define (truncate/ a b)
+  (values (quotient a b)
+          (remainder a b)))
+
+(define floor-remainder modulo)
+(define (floor-quotient a b) (floor (/ a b)))
+(define (floor/ a b)
+  (values (floor-quotient a b)
+          (modulo a b)))
+
 ;; Bytevectors
 (define bytevector? u8vector?)
 (define bytevector u8vector)
@@ -675,9 +687,6 @@
 (define exact-integer-sqrt 'YUNIFAKE-UNIMPLEMENTED)
 (define exact-integer? 'YUNIFAKE-UNIMPLEMENTED)
 (define file-error? 'YUNIFAKE-UNIMPLEMENTED)
-(define floor-quotient 'YUNIFAKE-UNIMPLEMENTED)
-(define floor-remainder 'YUNIFAKE-UNIMPLEMENTED)
-(define floor/ 'YUNIFAKE-UNIMPLEMENTED)
 (define input-port-open? 'YUNIFAKE-UNIMPLEMENTED)
 (define open-input-bytevector 'YUNIFAKE-UNIMPLEMENTED)
 (define output-port-open? 'YUNIFAKE-UNIMPLEMENTED)
@@ -687,9 +696,6 @@
 (define read-error? 'YUNIFAKE-UNIMPLEMENTED)
 (define read-string 'YUNIFAKE-UNIMPLEMENTED)
 (define textual-port? 'YUNIFAKE-UNIMPLEMENTED)
-(define truncate-quotient 'YUNIFAKE-UNIMPLEMENTED)
-(define truncate-remainder 'YUNIFAKE-UNIMPLEMENTED)
-(define truncate/ 'YUNIFAKE-UNIMPLEMENTED)
 (define write-string 'YUNIFAKE-UNIMPLEMENTED)
 
 )
