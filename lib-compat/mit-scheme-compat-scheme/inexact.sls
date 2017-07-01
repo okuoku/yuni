@@ -21,6 +21,7 @@
   sqrt tan)
 
 (define nan? 'YUNIFAKE-UNIMPLEMENTED)
-(define finite? flo:finite?)
+(define (finite? x) (or (and (number? x) (integer? x)) 
+                        (flo:finite? x)))
          
 )
