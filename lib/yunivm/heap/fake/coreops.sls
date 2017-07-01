@@ -9,7 +9,7 @@
 (define tag-boolean (list 'boolean))
 (define tag-char (list 'char))
 (define tag-bignum (list 'bignum)) ;; FIXME: implement me
-(define tag-flonum (list 'flonum)) ;; FIXME: implement me
+(define tag-flonum (list 'flonum))
 (define tag-string (list 'string))
 (define tag-bytevector (list 'bytevector))
 (define tag-symbol (list 'symbol))
@@ -221,6 +221,21 @@
 
 ;; yuni extension
 
+;; flonum
+;; FIXME: Currently, we lack "flonum cell" concept. 
+;;        There is some room to improve coreops I/F for it
+(define (fake-flonum? obj)
+  (and (object? obj)
+       (eq? tag-flonum (object-tag obj))))
+(define (fake-wrap-flonum obj)
+  (unless (and (number? obj) (inexact? obj))
+    (error "Inexact number required" obj))
+  (wrap-object tag-flonum obj))
+(define (fake-unwrap-flonum fl)
+  (unless (fake-flonum? fl)
+    (error "Flonum required" fl))
+  (object-datum fl))
+
 ;; undefined
 (define %fake-undefined-obj (wrap-object/zone0 tag-undefined))
 (define (fake-undefined) %fake-undefined-obj)
@@ -236,7 +251,7 @@
 (define (fake-make-simple-struct0 name count)
   ;; This one does not support initialization
   (wrap-object tag-simple-struct (cons name
-                                       (make-vector (%fixnum count))  )))
+                                       (make-vector (%fixnum count)))))
 (define (fake-simple-struct-ref obj idx)
   (unless (fake-simple-struct? obj)
     (error "Simple-struct required" obj))
@@ -304,6 +319,7 @@
 (define Pfake-pair?             (predicate1 fake-pair?))
 (define Pfake-vector?           (predicate1 fake-vector?))
 (define Pfake-simple-struct?    (predicate1 fake-simple-struct?))
+(define Pfake-flonum?           (predicate1 fake-flonum?))
          
 (define (make-coreops-fake)
 
@@ -374,6 +390,11 @@
       ((vector-ref)          fake-vector-ref)
       ((vector-set!)         fake-vector-set!)
       ((make-vector0)        fake-make-vector0)
+
+      ((Pflonum?)            fake-flonum?)
+      ((flonum?)             Pfake-flonum?)
+      ((wrap-flonum)         fake-wrap-flonum)
+      ((unwrap-flonum)       fake-unwrap-flonum)
 
       ((undefined)           fake-undefined)
       ((unspecified)         fake-unspecified)

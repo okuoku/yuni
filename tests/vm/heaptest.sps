@@ -57,6 +57,7 @@
 (checkheap "abcd")
 (checkheap '(a "c" 1 #\a))
 (checkheap '(#t #f "abc" "" #()))
+(checkheap '(0 0.0 0.5))
 (define theBv (bytevector 1 2 3 4))
 (define theBv0 (bytevector))
 (checkheap theBv)

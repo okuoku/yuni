@@ -43,6 +43,9 @@
   (define op-vector-set! (coreops 'vector-set!))
   (define op-make-vector0 (coreops 'make-vector0))
   (define op-simple-struct? (coreops 'Psimple-struct?))
+  (define op-flonum? (coreops 'Pflonum?))
+  (define op-wrap-flonum (coreops 'wrap-flonum))
+  (define op-unwrap-flonum (coreops 'unwrap-flonum))
 
   (define (hostcopy ref set len in out)
     (define (itr cur)
@@ -56,7 +59,7 @@
   (define (host obj)
     (cond
       ;; As-is
-      ((number? obj)
+      ((integer? obj)
        obj)
       ((port? obj)
        obj)
@@ -75,6 +78,8 @@
          (else (error "Huh?"))))
       ((op-symbol? obj)
        (string->symbol (host (op-symbol->string obj))))
+      ((op-flonum? obj)
+       (op-unwrap-flonum obj))
 
       ;; Convert structure
       ((op-pair? obj)
@@ -115,7 +120,7 @@
   (define (target obj)
     (cond
       ;; As-is
-      ((number? obj) obj)
+      ((integer? obj) obj)
       ((port? obj) obj)
       ((procedure? obj) obj)
 
@@ -132,6 +137,8 @@
          (op-false)))
       ((symbol? obj)
        (op-string->symbol (target (symbol->string obj))))
+      ((number? obj) ;; All numbers except integer
+       (op-wrap-flonum obj))
 
       ;; Convert structure
       ((pair? obj)
