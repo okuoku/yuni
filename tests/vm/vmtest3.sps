@@ -65,7 +65,7 @@
   (syntax-rules ()
     ((_ src expected)
      (begin
-       (check-scm0 #f src expected)
+       ;(check-scm0 #f src expected)
        (check-scm0 #t src expected)))))
 
 #|
