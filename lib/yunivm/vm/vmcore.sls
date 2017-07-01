@@ -190,7 +190,7 @@
       (else
         (error "Invalid call type" type))))
 
-  (define (call-primitive! type tail?)
+  (define (call-primitive! type)
     (let ((l (prepare-args type S)))
      (pop-S!)
      (call-with-values
@@ -205,9 +205,7 @@
                 (set! link 'single))
            (else (set! V (list->vector vals))
                  (set! link 'values)))
-         ;; Perform synthetic RET on tail-call
-         (when tail?
-           (restore-dump!))))))
+         (restore-dump!)))))
   (define (call-label! type)
     (set! link type)
     (apply-env! (vm-call-env V))
@@ -233,12 +231,12 @@
     (unless (eq? link 'single)
       (error "Invalid object for call" V))
     (let ((primitive? (vm-primitive? V)))
+     (unless tail?
+       (save-dump!))
      (cond
        (primitive?
-         (call-primitive! type tail?))
+         (call-primitive! type))
        (else
-         (unless tail?
-           (save-dump!))
          (call-label! type)))))
   (define (CALL)
     (call-dispatch! 'call #f))
