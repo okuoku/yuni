@@ -19,6 +19,11 @@
     (else #f)))
 (define (zero-valued? sym)
   (memv sym basiclibs-zero-values))
+(define (func2? sym)
+  (case sym
+    (($fl-floor/ $fl-truncate/ $fx-floor/ $fx-truncate/)
+     #t)
+    (else #f)))
 
 (define basiclib/proc (vector->list basiclibs-proc-vector))
 (define basiclib/name (vector->list basiclibs-name-vector))
@@ -52,6 +57,15 @@
        (let ((r (apply proc objs)))
         ;(write (list 'Call1: proc objs '=> r)) (newline)
         (target r)))))
+
+  ; func2 (2 return value)
+  (define (func2 proc)
+    (lambda args
+      (let ((objs (map host args)))
+       (call-with-values (lambda () (apply proc objs))
+                         (lambda (a b)
+                           ;(write (list 'Call2: proc objs '=> a b)) (newline)
+                           (values (target a) (target b)))))))
   ; rfunc1 (callback: 1 return value)
   (define (rfunc1 proc)
     (lambda args
@@ -95,6 +109,7 @@
              (else
                (cond
                  ((zero-valued? name) (func0 proc))
+                 ((func2? name) (func2 proc))
                  (else (func1 proc))))))))
       (append basiclib/name compatlib/name)
       (append basiclib/proc compatlib/proc)))
