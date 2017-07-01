@@ -44,6 +44,7 @@
          (equal? libname '(r7c-equiv std equal)) 
          (equal? libname '(r7c-equiv std lists)) 
          (equal? libname '(r7c-numeric std inexact)) 
+         (equal? libname '(r7c-numeric std division)) 
          )
      #t)
     (else #f)))

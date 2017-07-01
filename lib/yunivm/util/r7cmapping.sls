@@ -189,6 +189,7 @@
      $fx-floor/
      $fx-truncate/)
     ((r7c heap flonum)
+     $flonum? ;; special
      $fl-nan? $fl-finite? $fl-infinite?
      $fl= $fl<= $fl>= $fl< $fl>
      $fl+ $fl- $fl* $fl/

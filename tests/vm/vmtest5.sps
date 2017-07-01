@@ -58,6 +58,25 @@
               (else
                 (set! failed-forms (cons (cons e 'form) failed-forms)))))))))
 
+(define-syntax check-mod
+  (syntax-rules ()
+    ((_ / quot rem (q r) (a b))
+     (begin
+       ;(display (list '/ 'quot 'rem '(q r) '(a b))) (newline)
+       (call-with-values (lambda () (/ a b))
+                         (lambda (qq rr)
+                           (check-equal q qq)
+                           (check-equal r rr)
+                           (check-equal r (rem a b))
+                           (check-equal q (quot a b))))
+       
+       (call-with-values (lambda () (/ a (inexact b)))
+                         (lambda (qq rr)
+                           (check-eps q qq)
+                           (check-eps r rr)
+                           (check-eps r (rem a (inexact b)))
+                           (check-eps q (quot a (inexact b)))))))))
+
 ;; From chibi-scheme
 
 ;; MIT/GNU Scheme does not have NaN or Inf literal (!)
@@ -100,5 +119,15 @@
 
 (check-eps 3 (sqrt 9))
 (check-eps 1.4142135623731 (sqrt 2))
+
+
+(check-mod floor/ floor-quotient floor-remainder (2 1) (5 2))
+(check-mod floor/ floor-quotient floor-remainder (-3 1) (-5 2))
+(check-mod floor/ floor-quotient floor-remainder (-3 -1) (5 -2))
+(check-mod floor/ floor-quotient floor-remainder (2 -1) (-5 -2))
+(check-mod truncate/ truncate-quotient truncate-remainder (2 1) (5 2))
+(check-mod truncate/ truncate-quotient truncate-remainder (-2 -1) (-5 2))
+(check-mod truncate/ truncate-quotient truncate-remainder (-2 1) (5 -2))
+(check-mod truncate/ truncate-quotient truncate-remainder (2 -1) (-5 -2))
 
 (check-finish)

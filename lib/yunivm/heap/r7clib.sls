@@ -168,6 +168,7 @@
       (($make-vector) (coreops 'make-vector0))
       (($make-bytevector) (coreops 'make-bytevector0))
       (($undefined) (coreops 'undefined))
+      (($flonum?) (coreops 'flonum?))
       ;; (r7c heap boolean)
       ((not) co-not)
       ;; (r7c heap pair)
