@@ -171,7 +171,7 @@ test_with_all(_sanity.sps)
 
 # yuniVM
 test_with_all_except(tests/vm/vmtest4.sps 
-    NMOSH IRON_SCHEME VICARE LARCENY)
+    NMOSH IRON_SCHEME LARCENY)
 test_with_all_except(tests/vm/vmtest5.sps 
     NMOSH)
 test_with_all_except(tests/vm/vmtest.sps KAWA)
