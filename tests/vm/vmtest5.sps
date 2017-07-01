@@ -59,6 +59,15 @@
                 (set! failed-forms (cons (cons e 'form) failed-forms)))))))))
 
 ;; From chibi-scheme
+
+(check-equal #t (nan? +nan.0))
+(check-equal #f (nan? 0))
+(check-equal #f (nan? +inf.0))
+(check-equal #t (finite? 0))
+(check-equal #t (finite? 0.0))
+(check-equal #t (finite? 90))
+;(check-equal #t (infinite? +inf.0)) ;; (yuni scheme) lacks inifinite?
+
 (check-eps 1.0 (exp 0))
 (check-eps 20.0855369231877 (exp 3))
 (check-eps 0.0 (log 1))
