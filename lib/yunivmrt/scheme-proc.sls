@@ -95,6 +95,7 @@ display write write-simple
            (r7c-basic lib mapforeach)
            (r7c-equiv std equal)
            (r7c-equiv std lists)
+           (r7c-numeric std inexact)
            (r7c-numeric std generic)
            (r7c-numeric std misc)
            (r7c-numeric std division)

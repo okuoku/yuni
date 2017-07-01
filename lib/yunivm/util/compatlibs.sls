@@ -64,11 +64,13 @@
 (define $fl-acos acos)
 (define $fl-asin asin)
 (define $fl-atan atan)
+(define $fl-atan2 atan)
 (define $fl-cos cos)
 (define $fl-sin sin)
 (define $fl-tan tan)
 (define $fl-exp exp)
 (define $fl-log log)
+(define $fl-loge log)
 (define $fl-sqrt sqrt)
 (define $fl-floor/ (pinexact2 floor/))
 (define $fl-truncate/ (pinexact2 truncate/))
@@ -121,11 +123,13 @@
     $fl-acos
     $fl-asin
     $fl-atan
+    $fl-atan2
     $fl-cos
     $fl-sin
     $fl-tan
     $fl-exp
     $fl-log
+    $fl-loge
     $fl-sqrt
     $fl-floor/
     $fl-truncate/
@@ -184,11 +188,13 @@
     $fl-acos
     $fl-asin
     $fl-atan
+    $fl-atan2
     $fl-cos
     $fl-sin
     $fl-tan
     $fl-exp
     $fl-log
+    $fl-loge
     $fl-sqrt
     $fl-floor/
     $fl-truncate/

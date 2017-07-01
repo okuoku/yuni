@@ -195,9 +195,9 @@
      $fl->fx
      $fl-expt
      $fl-floor $fl-ceiling $fl-truncate $fl-round
-     $fl-acos $fl-asin $fl-atan
+     $fl-acos $fl-asin $fl-atan $fl-atan2
      $fl-cos  $fl-sin  $fl-tan
-     $fl-exp $fl-log $fl-sqrt
+     $fl-exp $fl-log $fl-loge $fl-sqrt
      ;; 2 values div+mod
      $fl-floor/
      $fl-truncate/)

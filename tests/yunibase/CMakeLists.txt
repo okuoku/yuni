@@ -172,11 +172,14 @@ test_with_all(_sanity.sps)
 # yuniVM
 test_with_all_except(tests/vm/vmtest4.sps 
     NMOSH IRON_SCHEME VICARE LARCENY)
+test_with_all_except(tests/vm/vmtest5.sps 
+    NMOSH)
 test_with_all_except(tests/vm/vmtest.sps KAWA)
 test_with_all_except(tests/vm/vmtest2.sps KAWA NMOSH)
 if(NOT YUNI_TEST_SKIP_LONGRUN)
     test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE NMOSH SAGITTARIUS)
     test_yunivm_with_all_except(vmtest4.sps KAWA GUILE NMOSH)
+    test_yunivm_with_all_except(vmtest5.sps KAWA GUILE NMOSH)
 endif()
 test_with_all(tests/vm/heaptest.sps)
 
