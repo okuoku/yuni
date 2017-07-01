@@ -290,11 +290,8 @@
      (subvector-move! from start end to at))))
 
 ;; Numeric
-(define (exact v)
-  (cond
-    ((integer? v) v)
-    ((flonum? v) (fltruncate v))
-    (else (error "Number required" v))))
+(define exact inexact->exact)
+(define inexact exact->inexact)
 
 ;; Bytevectors
 (define bytevector? u8vector?)
@@ -681,7 +678,6 @@
 (define floor-quotient 'YUNIFAKE-UNIMPLEMENTED)
 (define floor-remainder 'YUNIFAKE-UNIMPLEMENTED)
 (define floor/ 'YUNIFAKE-UNIMPLEMENTED)
-(define inexact 'YUNIFAKE-UNIMPLEMENTED)
 (define input-port-open? 'YUNIFAKE-UNIMPLEMENTED)
 (define open-input-bytevector 'YUNIFAKE-UNIMPLEMENTED)
 (define output-port-open? 'YUNIFAKE-UNIMPLEMENTED)

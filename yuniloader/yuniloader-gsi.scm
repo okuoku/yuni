@@ -56,6 +56,7 @@
 (define $vector-fill! vector-fill!)
 (define $assoc assoc)
 (define $member member)
+(define $log log)
 
 (let ()
  #|
