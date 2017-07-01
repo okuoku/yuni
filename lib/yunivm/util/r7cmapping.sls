@@ -181,6 +181,7 @@
      memv
      $fx-length $append)
     ((r7c heap fixnum)
+     $fixnum? ;; special
      $fx= $fx<= $fx>= $fx< $fx>
      $fx+ $fx- $fx* $fx/
      $fx->fl

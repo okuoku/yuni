@@ -103,6 +103,7 @@
            (error "Number required" tag datum)))))
     ((number? host) (exact host))
     (else (error "Number required" host))))
+(define (fake-fixnum? obj) (and (number? obj) (integer? obj)))
 
 ;; string
 (define (fake-string? obj)
@@ -320,6 +321,7 @@
 (define Pfake-vector?           (predicate1 fake-vector?))
 (define Pfake-simple-struct?    (predicate1 fake-simple-struct?))
 (define Pfake-flonum?           (predicate1 fake-flonum?))
+(define Pfake-fixnum?           (predicate1 fake-fixnum?))
          
 (define (make-coreops-fake)
 
@@ -391,6 +393,8 @@
       ((vector-set!)         fake-vector-set!)
       ((make-vector0)        fake-make-vector0)
 
+      ((Pfixnum?)            fake-fixnum?)
+      ((fixnum?)             Pfake-fixnum?)
       ((Pflonum?)            fake-flonum?)
       ((flonum?)             Pfake-flonum?)
       ((wrap-flonum)         fake-wrap-flonum)
