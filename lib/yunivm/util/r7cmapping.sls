@@ -228,6 +228,9 @@
     ((r7c core exception)
      raise raise-continuable with-exception-handler)
     ((r7c core callcc)
-     call-with-current-continuation call/cc)))
-         
+     call-with-current-continuation call/cc)
+    ((r7c-ext simple-struct)
+     $make-simple-struct
+     simple-struct? simple-struct-ref simple-struct-set!
+     simple-struct-name))) 
 )

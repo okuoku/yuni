@@ -504,7 +504,8 @@
     ;; FIXME: ... and every r7c-*
     (cond
       ((case (car libname)
-         ((r7c-basic r7c-equiv r7c-numeric r7c-exceptions r7c-io r7c-os r7c-xxx)
+         ((r7c-basic r7c-equiv r7c-numeric r7c-exceptions r7c-io r7c-os r7c-xxx
+                     r7c-yunicore)
           #t)
          (else #f)) 
        (set! has-macro-export? #t))

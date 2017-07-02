@@ -206,12 +206,6 @@
     $boolean=?
     $char=?
     $symbol=?
-    ;; Simple-struct
-    make-simple-struct
-    simple-struct-name
-    simple-struct-ref
-    simple-struct-set!
-    simple-struct?
     ;; Filehandle
     filehandle-init!
     filehandle-open/input
@@ -282,12 +276,6 @@
     $boolean=?
     $char=?
     $symbol=?
-    ;; Simple-struct
-    make-simple-struct
-    simple-struct-name
-    simple-struct-ref
-    simple-struct-set!
-    simple-struct?
     ;; Filehandle
     filehandle-init!
     filehandle-open/input

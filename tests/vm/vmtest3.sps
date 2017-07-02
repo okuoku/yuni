@@ -68,15 +68,12 @@
        ;(check-scm0 #f src expected)
        (check-scm0 #t src expected)))))
 
-#|
 (check-scm
   ((import (yuni scheme) (yuni core))
    (define* testtype (a b))
-   ;(define obj0 (make testtype (a 10)))
-   (define obj0 (make testtype))
-   #t)
-  (#t))
-|#
+   (define obj0 (make testtype (a 10)))
+   (~ obj0 'a))
+  (10))
 
 (check-scm
   ((import (yuni scheme))

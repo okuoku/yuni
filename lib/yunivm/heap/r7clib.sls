@@ -157,8 +157,7 @@
         simple-struct-name)
        ;; As-is
        (coreops sym))
-      ;; FIXME
-      ((make-simple-struct) (coreops 'make-simple-struct0))
+      (($make-simple-struct) (coreops 'make-simple-struct0))
       ;; Renames
       (($boolean=?) (coreops 'boolean=?/2))
       (($char=?) (coreops 'char=?/2))
