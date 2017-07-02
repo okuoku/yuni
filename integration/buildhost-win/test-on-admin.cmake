@@ -3,6 +3,7 @@
 # INPUTs:
 #  BOOTSTRAP: Which scheme to use with bootstrap and build yuni
 #  SKIPINSTALL: Skip installation phase for test
+#  SKIP_LONGRUN: Skip long-run tests(YUNI_TEST_SKIP_LONGRUN)
 #
 
 # Globals
@@ -40,6 +41,10 @@ function(do_build_and_test_yuni bitness bootstrapuse)
     else()
         set(kawa_arg)
     endif()
+    set(_longrun)
+    if(SKIP_LONGRUN)
+        set(_longrun "-DYUNI_TEST_SKIP_LONGRUN=ON")
+    endif()
     execute_process(
         COMMAND ${CMAKE_COMMAND}
         -G Ninja
@@ -48,6 +53,7 @@ function(do_build_and_test_yuni bitness bootstrapuse)
         -DYUNI_BOOTSTRAP_USE=${bootstrapuse}
         -DYUNI_IRON_SCHEME_ROOT=${workdir}/IronScheme
         -DYUNI_LARCENY_ROOT=${workdir}/${larceny_version}
+        ${_longrun}
         ${kawa_arg}
         ${_myroot}
         RESULT_VARIABLE rr
