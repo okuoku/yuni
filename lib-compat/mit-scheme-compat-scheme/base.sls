@@ -195,6 +195,41 @@
      c)
     obj))
 
+;; I/O
+(define (%%my-read-string! str port)
+  ;; FIXME: It seems read-string! does not work for buffer port
+  (define len (string-length str))
+  (let loop ((idx 0))
+   (cond
+     ((= idx len) len)
+     (else
+       (let ((c (read-char port)))
+        (cond
+          ((eof-object? c) len)
+          (else
+            (string-set! str idx c)
+            (loop (+ idx 1)))))))))
+
+(define (read-string k . port?)
+  (if (null? port?)
+    (read-string k (current-input-port))
+    (let ((str (make-string k)))
+     (let ((r (%%my-read-string! str (car port?))))
+      (cond
+        ((= r 0) (eof-object))
+        ((= r k) str)
+        (else (substring str 0 r)))))))
+
+(define (write-string str . port?)
+  (if (null? port?)
+    (write-substring str)
+    (let ((start? (cdr port?)))
+     (if (null? start?)
+       (write-substring str 0 (string-length str) (car port?))
+       (let ((end? (cdr start?)))
+        (if (null? end?)
+          (write-substring str (car start?) (string-length str) (car port?))
+          (write-substring str (car start?) (car end?) (car port?))))))))
 
 #|
 ;; Bytevectors
@@ -403,7 +438,7 @@
   rationalize read-bytevector
   read-bytevector! read-char
   read-line
-  read-string read-u8
+  read-u8
   real? remainder
   reverse round
   set-car!
@@ -436,7 +471,7 @@
   vector-ref vector-set!
   vector? 
   write-bytevector
-  write-char write-string
+  write-char 
   write-u8
   zero?
   )
