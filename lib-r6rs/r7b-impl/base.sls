@@ -177,8 +177,7 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
   (case-lambda
     ((str) (write-string str (current-output-port)))
     ((str port) (put-string port str))
-    ((str port start) (write-string str port start 
-                                    (- (string-length str) start)))
+    ((str port start) (write-string str port start (string-length str)))
     ((str port start end)
      (write-string (substring str start end) port))))
 
