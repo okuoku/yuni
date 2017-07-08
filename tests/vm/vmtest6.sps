@@ -39,8 +39,8 @@
 
 (let ((p (open-input-string "abcd")))
  (check-equal #t (port? p))
- (check-equal #t (textual-port? p))
- (check-equal #f (binary-port? p))
+ ;(check-equal #t (textual-port? p))
+ ;(check-equal #f (binary-port? p))
  (check-equal "abcd" (read-string 4 p))
  (check-equal #t (eof-object? (read-char p)))
  (check-equal #t (eof-object? (peek-char p))))
@@ -68,8 +68,8 @@
 
 (let ((p (open-input-bytevector (bytevector 1 2 3 4 5 6 7 8)))
       (buf (make-bytevector 3)))
-  (check-equal #f (textual-port? p))
-  (check-equal #t (binary-port? p))
+  ;(check-equal #f (textual-port? p))
+  ;(check-equal #t (binary-port? p))
   (check-equal (bytevector 1 2 3) (read-bytevector 3 p))
   (check-equal 3 (read-bytevector! buf p))
   (check-equal (bytevector 4 5 6) buf)
@@ -79,8 +79,8 @@
   (check-equal #t (eof-object? (read-u8 p))))
 
 (let ((p (open-output-string)))
- (check-equal #t (textual-port? p))
- (check-equal #f (binary-port? p))
+ ;(check-equal #t (textual-port? p))
+ ;(check-equal #f (binary-port? p))
  (write-char #\a p)
  (write-char #\b p)
  (write-char #\c p)
@@ -92,8 +92,8 @@
  (check-equal "abd" (get-output-string p)))
 
 (let ((p (open-output-bytevector)))
- (check-equal #f (textual-port? p))
- (check-equal #t (binary-port? p))
+ ;(check-equal #f (textual-port? p))
+ ;(check-equal #t (binary-port? p))
  (write-u8 1 p)
  (write-u8 2 p)
  (write-u8 3 p)
