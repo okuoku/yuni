@@ -444,12 +444,11 @@
     ((str start end) (%string->utf8 (substring str start end)))))
 
 ;; Bytevector I/O
-
 (define write-bytevector
   (case-lambda 
     ((bv) (write-bytevector bv (current-output-port)))
     ((bv port) (write-bytevector bv port 0))
-    ((bv port start) (write-bytevector bv port 0 (bytevector-length bv)))
+    ((bv port start) (write-bytevector bv port start (bytevector-length bv)))
     ((bv port start end)
      (write-subu8vector bv start end port))))
 
@@ -458,15 +457,47 @@
     ((bv) (read-bytevector! bv (current-input-port)))
     ((bv port) (read-bytevector! bv port 0))
     ((bv port start) (read-bytevector! 
-                       bv port start (- (bytevector-length bv) start)))
+                       bv port start (bytevector-length bv)))
     ((bv port start end)
      (let ((r (read-subu8vector bv start end port)))
       (cond
         ((= r 0) (eof-object))
         (else r))))))
 
+(define read-bytevector
+  (case-lambda
+    ((k) (read-bytevector k (current-input-port)))
+    ((k port) (let ((out (make-bytevector k)))
+               (let ((r (read-subu8vector out 0 k port)))
+                (cond
+                  ((= r 0) (eof-object))
+                  ((= r k) out)
+                  (else
+                    (subu8vector out 0 r))))))))
+
 (define open-output-bytevector open-output-u8vector)
+(define open-input-bytevector open-input-u8vector)
 (define get-output-bytevector get-output-u8vector)
+
+;; Textual I/O
+(define read-string
+  (case-lambda
+    ((k) (read-string k (current-input-port)))
+    ((k port)
+     (let ((out (make-string k)))
+      (let ((r (read-substring out 0 k port)))
+       (cond
+         ((= r 0) (eof-object))
+         ((= r k) out)
+         (else (substring out 0 r))))))))
+
+(define write-string
+  (case-lambda
+    ((str) (write-string str (current-input-port)))
+    ((str port) (write-string str port 0 (string-length str)))
+    ((str port start) (write-string str port start (string-length str)))
+    ((str port start end) (write-substring str start end port))))
+
 
 ;; MapForEach
 
@@ -678,7 +709,6 @@
   )
 
 ;; Unimpl
-
 (define binary-port? 'YUNIFAKE-UNIMPLEMENTED)
 (define call-with-port 'YUNIFAKE-UNIMPLEMENTED)
 (define error-object-irritants 'YUNIFAKE-UNIMPLEMENTED)
@@ -688,14 +718,11 @@
 (define exact-integer? 'YUNIFAKE-UNIMPLEMENTED)
 (define file-error? 'YUNIFAKE-UNIMPLEMENTED)
 (define input-port-open? 'YUNIFAKE-UNIMPLEMENTED)
-(define open-input-bytevector 'YUNIFAKE-UNIMPLEMENTED)
 (define output-port-open? 'YUNIFAKE-UNIMPLEMENTED)
-(define peek-u8 'YUNIFAKE-UNIMPLEMENTED)
 (define raise-continuable 'YUNIFAKE-UNIMPLEMENTED)
-(define read-bytevector 'YUNIFAKE-UNIMPLEMENTED)
 (define read-error? 'YUNIFAKE-UNIMPLEMENTED)
-(define read-string 'YUNIFAKE-UNIMPLEMENTED)
 (define textual-port? 'YUNIFAKE-UNIMPLEMENTED)
-(define write-string 'YUNIFAKE-UNIMPLEMENTED)
+
+(define (peek-u8 port) (error "peek-u8: Not supported"))
 
 )

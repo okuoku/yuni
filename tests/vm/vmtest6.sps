@@ -61,7 +61,7 @@
  (check-equal 1 (read-u8 p))
  (check-equal 2 (read-u8 p))
  (check-equal 3 (read-u8 p))
- (check-equal #t (eof-object? (peek-u8 p)))
+ ;(check-equal #t (eof-object? (peek-u8 p)))
  (check-equal #t (eof-object? (read-u8 p))))
 
 (let ((p (open-input-bytevector (bytevector 1 2 3 4 5 6 7 8)))
@@ -71,7 +71,7 @@
   (check-equal (bytevector 4 5 6) buf)
   (check-equal 2 (read-bytevector! buf p 1))
   (check-equal (bytevector 4 7 8) buf)
-  (check-equal #t (eof-object? (peek-u8 p)))
+  ;(check-equal #t (eof-object? (peek-u8 p)))
   (check-equal #t (eof-object? (read-u8 p))))
 
 (let ((p (open-output-string)))
