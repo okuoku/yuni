@@ -48,8 +48,6 @@
   (unless (yuniport? p)
     (error "Port required"))
   (let ((x (simple-struct-ref p idx)))
-   (display (list 'Method: idx x))
-   (display "\n")
    (if x
      x
      (cond

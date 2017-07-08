@@ -131,8 +131,8 @@
      r))
   (define (write-char c)
     (set! buf (string-append buf (make-string 1 c))))
-  (define (write-string str)
-    (set! buf (string-append buf str)))
+  (define (write-string str start end)
+    (set! buf (string-append buf (substring str start end))))
 
   (define (flush) 
     ;; Do nothing
@@ -181,9 +181,11 @@
          (let ((copylen2 ($fx- len ptr)))
           (cond
             (($fx= 0 copylen2)
+             (set! ptr len)
              (eof-object))
             (else
               (bytevector-copy! out start bv ptr len)
+              (set! ptr len)
               copylen2))))
         (else
           (bytevector-copy! out start bv ptr term)
@@ -241,5 +243,8 @@
       (else #f)))
 
   (make-yuniport query))
+
+(define get-output-string yuniport-get-buffer)
+(define get-output-bytevector yuniport-get-buffer)
 
 )
