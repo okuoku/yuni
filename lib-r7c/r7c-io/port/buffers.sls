@@ -1,8 +1,5 @@
 (library (r7c-io port buffers)
          (export
-           %skip-newline
-           %find-newline
-           
            open-input-string
            open-output-string
            get-output-string
@@ -99,11 +96,13 @@
            (set! ptr start)
            (make-string 0))))))
   (define (read-string k)
-    (let ((end? ($fx+ k ptr)))
-     (let ((start ptr)
-           (next (if ($fx< end? len) end? len)))
-      (set! ptr next)
-      (substring str start next))))
+    (if ($fx>= ptr len)
+      (eof-object)
+      (let ((end? ($fx+ k ptr)))
+       (let ((start ptr)
+             (next (if ($fx< end? len) end? len)))
+         (set! ptr next)
+         (substring str start next)))))
 
   (define (query sym)
     (case sym

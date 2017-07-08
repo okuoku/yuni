@@ -96,5 +96,12 @@
  (write-bytevector (bytevector 1 2 3 4) p 3)
  (check-equal (bytevector 1 2 4) (get-output-bytevector p)))
 
+(let ((p (open-input-string "")))
+ ;; FIXME: (read-string 0) case??
+ (check-equal #t (eof-object? (read-string 1 p))))
+
+(let ((p (open-input-string "abcd")))
+ (check-equal "" (read-string 0 p)))
+
 
 (check-finish)
