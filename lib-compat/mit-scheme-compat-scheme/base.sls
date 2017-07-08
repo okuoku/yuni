@@ -205,7 +205,7 @@
      (else
        (let ((c (read-char port)))
         (cond
-          ((eof-object? c) len)
+          ((eof-object? c) idx)
           (else
             (string-set! str idx c)
             (loop (+ idx 1)))))))))
@@ -216,7 +216,10 @@
     (let ((str (make-string k)))
      (let ((r (%%my-read-string! str (car port?))))
       (cond
-        ((= r 0) (eof-object))
+        ((= r 0) 
+         (if (eof-object? (peek-char (car port?)))
+           (eof-object)
+           (make-string 0)))
         ((= r k) str)
         (else (substring str 0 r)))))))
 

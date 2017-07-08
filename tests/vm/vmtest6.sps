@@ -111,5 +111,8 @@
 (let ((p (open-input-string "abcd")))
  (check-equal "" (read-string 0 p)))
 
+(let ((p (open-input-string "abcd")))
+ (check-equal "abcd" (read-string 99 p)))
+
 
 (check-finish)
