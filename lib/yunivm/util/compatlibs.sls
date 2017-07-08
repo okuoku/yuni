@@ -238,7 +238,6 @@
     $char=?
     $symbol=?
     ;; Filehandle
-    filehandle-init!
     filehandle-open/input
     filehandle-open/output
     filehandle-close
@@ -308,7 +307,6 @@
     $char=?
     $symbol=?
     ;; Filehandle
-    filehandle-init!
     filehandle-open/input
     filehandle-open/output
     filehandle-close
