@@ -76,7 +76,7 @@
             (cont (apply values vals))
             (apply cont vals))))))
 
-  (define (%vm-callable obj) (cdr obj))
+  (define (%vm-callable obj) (if (procedure? obj) obj (cdr obj)))
   (define (%conv-datum gencb datum)
     (cond
       ;; Procedure?
