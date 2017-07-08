@@ -150,6 +150,7 @@
                     (lambda (ir mx) ir)))
 
 (define (simplerunner/treeir-run heap ir)
+  (filehandle-init!)
   (seq-treeir (car heap) ir))
 
 (define (new-simplerunner) 

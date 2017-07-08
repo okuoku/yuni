@@ -1,9 +1,9 @@
 (library (yunivm util compatlibs)
          (export 
+           filehandle-init!
            compatlibs-proc-vector
            compatlibs-name-vector)
-         (import (yuni scheme)
-                 (yuni compat simple-struct)) 
+         (import (yuni scheme))
 
 (define (pexact proc)
   (lambda args (exact (apply proc args))))
