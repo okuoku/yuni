@@ -229,7 +229,7 @@
     #t)
   (define (query sym)
     (case sym
-      ((textual-port?) #t)
+      ((binary-port?) #t)
       ((buffer-port?) #t)
       ((output-port?) #t)
       ((flush) flush)
