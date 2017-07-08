@@ -10,19 +10,18 @@
   (display success-counter)
   (display "/")
   (display test-counter)
-  (display " passed.")(newline)
+  (display " passed.\n")
   (unless (null? failed-forms)
-    (newline)
-    (display "Failed: ")
-    (newline)
+    (display "\nFailed: \n")
     (for-each (lambda x
                 (display "    ")
                 (write x)
-                (newline) 
+                (display "\n")
                 ;; YuniVM: result convertion workaround
                 #t)
               (reverse failed-forms)))
-  (flush-output-port (current-output-port))
+  ;; FIXME: Restore this later
+  ;(flush-output-port (current-output-port))
   (exit (if (null? failed-forms) 0 1)))
 
 (define-syntax check-equal
