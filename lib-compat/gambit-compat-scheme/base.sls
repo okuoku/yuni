@@ -487,7 +487,11 @@
      (let ((out (make-string k)))
       (let ((r (read-substring out 0 k port)))
        (cond
-         ((= r 0) (eof-object))
+         ((= r 0) 
+          ;; Check if we reached the end-of-port
+          (if (eof-object? (peek-char port))
+            (eof-object) 
+            (make-string 0)))
          ((= r k) out)
          (else (substring out 0 r))))))))
 
