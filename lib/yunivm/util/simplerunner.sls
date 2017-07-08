@@ -52,6 +52,7 @@
          (equal? libname '(r7c-io port core)) 
          (equal? libname '(r7c-io port defaults)) 
          (equal? libname '(r7c-io port objects)) 
+         (equal? libname '(r7c-io port files)) 
          (equal? libname '(r7c-yunicore simple-struct)) 
          (equal? libname '(r7c-yunicore yuniport)) 
          )
