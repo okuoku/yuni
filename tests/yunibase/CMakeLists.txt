@@ -175,7 +175,7 @@ test_with_all_except(tests/vm/vmtest4.sps
 test_with_all_except(tests/vm/vmtest5.sps 
     NMOSH)
 test_with_all_except(tests/vm/vmtest6.sps 
-    NMOSH RACKET)
+    NMOSH RACKET LARCENY)
 test_with_all_except(tests/vm/vmtest.sps KAWA)
 test_with_all_except(tests/vm/vmtest2.sps KAWA NMOSH)
 if(NOT YUNI_TEST_SKIP_LONGRUN)
