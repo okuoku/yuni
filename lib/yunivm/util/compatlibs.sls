@@ -133,13 +133,44 @@
   (close-port (fh-ref fh))
   (fh-free! fh))
 
-(define (filehandle-read! fh bv offs len) ;; => len
+(define buf-stdin #f)
+(define (filehandle-read!/stdin fh bv offs len)
+  (unless buf-stdin
+    (let ((str (read-string 4096 (fh-ref fh))))
+     (set! buf-stdin
+       (if (eof-object? str) (eof-object) (open-input-bytevector 
+                                            (string->utf8 str))))))
+  (if (eof-object? buf-stdin)
+    0
+    (let ((r (read-bytevector! bv buf-stdin offs (+ offs len))))
+     (cond
+       ((eof-object? r)
+        (set! buf-stdin #f)
+        (filehandle-read!/stdin fh bv offs len))
+       (else r)))))
+
+(define (filehandle-write/stdout fh bv offs len)
+  (write-string
+    (utf8->string (bytevector-copy bv offs (+ offs len)))
+    (fh-ref fh)))
+
+(define (filehandle-read!/file fh bv offs len) ;; => len
   (let ((r (read-bytevector! bv (fh-ref fh) offs (+ offs len))))
    (if (eof-object? r) 0 r)))
 
-(define (filehandle-write fh bv offs len)
+(define (filehandle-write/file fh bv offs len)
   ;; FIXME: Always success???
-  (write-bytevector bv (fh-ref fh) offs (+ offs len))  )
+  (write-bytevector bv (fh-ref fh) offs (+ offs len)))
+
+(define (filehandle-read! fh bv offs len)
+  (if (= fh fh-stdin)
+    (filehandle-read!/stdin fh bv offs len)
+    (filehandle-read!/file fh bv offs len)))
+
+(define (filehandle-write fh bv offs len)
+  (if (or (= fh fh-stdout) (= fh fh-stderr))
+    (filehandle-write/stdout fh bv offs len)
+    (filehandle-write/file fh bv offs len)))
 
 (define (filehandle-flush fh)
   (flush-output-port (fh-ref fh)))
