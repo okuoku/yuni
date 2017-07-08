@@ -176,7 +176,7 @@
 (define (bytevector-copy!/itr+ to at from start end)
   (unless ($fx= start end)
     (bytevector-u8-set! to at (bytevector-u8-ref from start))
-    (bytevector-copy!/itr+ to ($fx+ at 1) from ($fx+ at 1) end)))
+    (bytevector-copy!/itr+ to ($fx+ at 1) from ($fx+ start 1) end)))
 
 (define (bytevector-copy!/itr- to to-end from start end)
   (unless ($fx= start end)

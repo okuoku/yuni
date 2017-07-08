@@ -301,6 +301,10 @@
 (check-equal '#() (copytest vector-copy
                             (vector-fill! (vector) 10)))
 
+(let ((v (make-vector 1)))
+ (vector-set! v 0 (lambda () 1234))
+ (check-equal 1234 ((vector-ref v 0))))
+
 ;; Bytevectors
 
 (check-equal (make-bytevector 0) (bytevector))
@@ -334,6 +338,11 @@
 (check-equal (bytevector 97 98 99) (string->utf8 "abc"))
 (check-equal "" (utf8->string (bytevector)))
 (check-equal (bytevector) (string->utf8 ""))
+
+(let ((bv1 (bytevector 1 2 3 4 5 6 7 8))
+      (bv2 (bytevector 99 99 99)))
+  (bytevector-copy! bv2 1 bv1 6)
+  (check-equal (bytevector 99 7 8) bv2))
 
 ;; map
 (check-equal '() (map (lambda _ (error "should not be called")) '()))
