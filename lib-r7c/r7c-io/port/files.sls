@@ -251,8 +251,8 @@
       ((output-port-open?) output-port-open?)
       ((close) close)
       ((close-output-port) close)
-      ((write-char) write-char)
-      ((write-string) write-string)
+      ((write-u8) write-u8)
+      ((write-bytevector) write-bytevector)
       (else #f))) 
 
   (make-yuniport query))

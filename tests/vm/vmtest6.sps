@@ -82,12 +82,32 @@
  (check-equal "g" (read-string 1 p))
  (check-equal "e" (read-line p))
  (check-equal "fuga" (read-line p))
- (check-equal #t (eof-object? (read-line p))))
+ (check-equal #t (eof-object? (read-line p)))
+ (close-port p))
 
 ;; Binary port
 (clear-file "testfile.bin")
 
+(let ((p (open-binary-output-file "testfile.bin")))
+ (check-equal #t (port? p))
+ (check-equal #t (binary-port? p))
+ (write-u8 1 p)
+ (write-u8 2 p)
+ (write-u8 3 p)
+ (write-u8 4 p)
+ (write-u8 5 p)
+ (close-port p))
 
+(let ((p (open-binary-input-file "testfile.bin"))
+      (bv1 (make-bytevector 3 0))
+      (bv2 (make-bytevector 3 0)))
+ (check-equal #t (port? p))
+ (check-equal #t (binary-port? p))
+ (check-equal 3 (read-bytevector! bv1 p))
+ (check-equal 2 (read-bytevector! bv2 p 0 3))
+ (check-equal (bytevector 1 2 3) bv1)
+ (check-equal (bytevector 4 5 0) bv2)
+ (close-port p))
 
 (testfiles-remove)
 
