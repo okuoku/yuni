@@ -479,6 +479,8 @@
 (define open-input-bytevector open-input-u8vector)
 (define get-output-bytevector get-output-u8vector)
 
+(define (binary-port? p) #t)
+
 ;; Textual I/O
 (define read-string
   (case-lambda
@@ -502,6 +504,7 @@
     ((str port start) (write-string str port start (string-length str)))
     ((str port start end) (write-substring str start end port))))
 
+(define (textual-port? p) #t)
 
 ;; MapForEach
 
@@ -713,7 +716,6 @@
   )
 
 ;; Unimpl
-(define binary-port? 'YUNIFAKE-UNIMPLEMENTED)
 (define call-with-port 'YUNIFAKE-UNIMPLEMENTED)
 (define error-object-irritants 'YUNIFAKE-UNIMPLEMENTED)
 (define error-object-message 'YUNIFAKE-UNIMPLEMENTED)
@@ -725,7 +727,6 @@
 (define output-port-open? 'YUNIFAKE-UNIMPLEMENTED)
 (define raise-continuable 'YUNIFAKE-UNIMPLEMENTED)
 (define read-error? 'YUNIFAKE-UNIMPLEMENTED)
-(define textual-port? 'YUNIFAKE-UNIMPLEMENTED)
 
 (define (peek-u8 port) (error "peek-u8: Not supported"))
 
