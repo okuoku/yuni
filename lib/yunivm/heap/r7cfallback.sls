@@ -16,6 +16,8 @@
      'for-each-like)
     ;; make-vector can return vectors contains #<unspecified>
     ((make-vector) 'make-vector)
+    ;; filehandle-read! passes mutable bytevector buffer 
+    ((filehandle-read!) 'writeback1-2)
     (else #f)))
 (define (zero-valued? sym)
   (memv sym basiclibs-zero-values))
@@ -37,6 +39,7 @@
 
 (define (make-r7cfallback coreops)
   (define co-unspecified (coreops 'unspecified))
+  (define bv-set! (coreops 'bytevector-u8-set!))
   (define hostbridge (make-hostbridge coreops))
   (define host (hostbridge 'HOST))
   (define target (hostbridge 'TARGET))
@@ -56,6 +59,22 @@
       (let ((objs (map host args)))
        (let ((r (apply proc objs)))
         ;(write (list 'Call1: proc objs '=> r)) (newline)
+        (target r)))))
+
+  ; writeback1 (1 return value, writeback arg2)
+  (define (writeback1-2 proc)
+    (lambda args
+      (let ((objs (map host args)))
+       (let ((r (apply proc objs)))
+        ;(write (list 'Call1: proc objs '=> r)) (newline)
+        (let* ((hostbv (cadr objs))
+               (len (bytevector-length hostbv))
+               (targetbv (cadr args)))
+          (let loop ((idx 0))
+           (unless (= idx len)
+             (let ((b (bytevector-u8-ref hostbv idx)))
+              (bv-set! targetbv idx b))
+             (loop (+ idx 1)))))
         (target r)))))
 
   ; func2 (2 return value)
@@ -106,6 +125,8 @@
               (for-each-like proc))
              ((make-vector)
               (func1 make-vector/initf))
+             ((writeback1-2)
+              (writeback1-2 proc))
              (else
                (cond
                  ((zero-valued? name) (func0 proc))
