@@ -36,6 +36,63 @@
               (else
                 (set! failed-forms (cons 'form failed-forms)))))))))
 
+;;; File port
+
+(define *testfiles*
+  '("testfile.bin" "testfile.txt"))
+
+(define (clear-file fil)
+  (when (file-exists? fil)
+    (delete-file fil)
+    (when (file-exists? fil)
+      (error "Testfile still there!" fil))) )
+
+(define (testfiles-check)
+  (for-each (lambda (fil) (when (file-exists? fil)
+                            (error "(Previous?) testfile still exists!"
+                                   fil)))
+            *testfiles*))
+
+(define (testfiles-remove)
+  (for-each (lambda (fil) (clear-file fil))
+            *testfiles*))
+
+
+(testfiles-check)
+
+;; Textual port
+
+(clear-file "testfile.txt")
+(let ((p (open-output-file "testfile.txt")))
+ (check-equal #t (port? p))
+ (check-equal #t (textual-port? p))
+ (write-char #\h p)
+ (write-char #\o p)
+ (write-string "ge\n" p)
+ (write-string "fuga" p)
+ (close-port p))
+
+(let ((p (open-input-file "testfile.txt")))
+ (check-equal #t (port? p))
+ (check-equal #t (textual-port? p))
+ (check-equal #\h (peek-char p))
+ (check-equal #\h (read-char p))
+ (check-equal #\o (peek-char p))
+ (check-equal #\o (read-char p))
+ (check-equal "g" (read-string 1 p))
+ (check-equal "e" (read-line p))
+ (check-equal "fuga" (read-line p))
+ (check-equal #t (eof-object? (read-line p))))
+
+;; Binary port
+(clear-file "testfile.bin")
+
+
+
+(testfiles-remove)
+
+;;; Buffer port 
+
 
 (let ((p (open-input-string "abcd")))
  (check-equal #t (port? p))
