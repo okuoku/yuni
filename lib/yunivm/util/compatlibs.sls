@@ -131,7 +131,8 @@
 
 (define (filehandle-close fh)
   (close-port (fh-ref fh))
-  (fh-free! fh))
+  (fh-free! fh)
+  #t)
 
 (define buf-stdin #f)
 (define (filehandle-read!/stdin fh bv offs len)
@@ -170,10 +171,12 @@
 (define (filehandle-write fh bv offs len)
   (if (or (= fh fh-stdout) (= fh fh-stderr))
     (filehandle-write/stdout fh bv offs len)
-    (filehandle-write/file fh bv offs len)))
+    (filehandle-write/file fh bv offs len))
+  #t)
 
 (define (filehandle-flush fh)
-  (flush-output-port (fh-ref fh)))
+  (flush-output-port (fh-ref fh))
+  #t)
 
 (define (filehandle-stdin) fh-stdin)
 (define (filehandle-stdout) fh-stdout)
