@@ -6,6 +6,8 @@
 #   PROG: Full path to program
 #   DIRNAME: Directory name
 #   ARG: Argument (single)
+#   LAUNCH: Launch script for yunivm
+#   SCRIPT: Script for yunivm
 
 if(NOT PROG)
     message(FATAL_ERROR "Oh.")
@@ -25,10 +27,17 @@ file(REMOVE_RECURSE ${DIRNAME})
 
 file(MAKE_DIRECTORY ${DIRNAME})
 
-execute_process(
-    COMMAND ${PROG} ${ARG}
-    RESULT_VARIABLE rr
-    WORKING_DIRECTORY ${DIRNAME})
+if(LAUNCH)
+    execute_process(
+        COMMAND ${PROG} ${LAUNCH} -PROG ${SCRIPT} ${ARG}
+        RESULT_VARIABLE rr
+        WORKING_DIRECTORY ${DIRNAME})
+else()
+    execute_process(
+        COMMAND ${PROG} ${ARG}
+        RESULT_VARIABLE rr
+        WORKING_DIRECTORY ${DIRNAME})
+endif()
 
 if(rr)
     message(FATAL_ERROR "Unexpected: ${rr}")

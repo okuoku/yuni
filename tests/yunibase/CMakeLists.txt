@@ -78,6 +78,27 @@ function(test_with_cleandir prefix nam prog)
     endif()
 endfunction()
 
+function(test_with_cleandir2 prefix nam prog) # For std tests
+    if(YUNITEST_${prefix})
+        add_test(NAME ${nam}
+            COMMAND ${CMAKE_COMMAND} -DPROG=${YUNITEST_${prefix}}
+            -DARG=${YUNI_BASEDIR}/tests/vm/${prog}
+            -DDIRNAME=${CMAKE_CURRENT_BINARY_DIR}/testdir-${prefix}-${prog}
+            -P ${CMAKE_CURRENT_LIST_DIR}/runwithcleandir.cmake)
+    endif()
+endfunction()
+
+function(test_with_cleandir2_yunivm prefix nam prog) # For yunivm tests
+    if(YUNITEST_${prefix})
+        add_test(NAME ${nam}
+            COMMAND ${CMAKE_COMMAND} -DPROG=${YUNITEST_${prefix}}
+            -DLAUNCH=${YUNI_BASEDIR}/tests/vm/_launcher.sps
+            -DSCRIPT=${YUNI_BASEDIR}/tests/vm/${prog}
+            -DDIRNAME=${CMAKE_CURRENT_BINARY_DIR}/testdir-${prefix}-${prog}
+            -P ${CMAKE_CURRENT_LIST_DIR}/runwithcleandir.cmake)
+    endif()
+endfunction()
+
 function(test_negative prefix)
     if(YUNITEST_${prefix})
         add_test(NAME "SanityNegative-${prefix}"
@@ -117,12 +138,30 @@ function(test_with_all_except fil)
     endforeach()
 endfunction()
 
+function(test_with_allcleandir_except fil)
+    set(lis ${impls})
+    list(REMOVE_ITEM lis ${ARGN})
+
+    foreach(e ${lis})
+        test_with_cleandir2(${e} "${e}-${fil}" ${fil})
+    endforeach()
+endfunction()
+
 function(test_yunivm_with_all_except fil)
     set(lis ${impls})
     list(REMOVE_ITEM lis ${ARGN})
 
     foreach(e ${lis})
         test_yunivm_with_impl(${e} ${fil})
+    endforeach()
+endfunction()
+
+function(test_yunivm_with_allcleandir_except fil)
+    set(lis ${impls})
+    list(REMOVE_ITEM lis ${ARGN})
+
+    foreach(e ${lis})
+        test_with_cleandir2_yunivm(${e} "${e}-yunivm-${fil}" ${fil})
     endforeach()
 endfunction()
 
@@ -170,19 +209,19 @@ test_with_all(_sanity.sps)
 #test_with_allffi(_ncccsanity.sps)
 
 # yuniVM
+test_with_all_except(tests/vm/vmtest.sps KAWA)
+test_with_all_except(tests/vm/vmtest2.sps KAWA NMOSH)
 test_with_all_except(tests/vm/vmtest4.sps 
     NMOSH IRON_SCHEME LARCENY)
 test_with_all_except(tests/vm/vmtest5.sps 
     NMOSH)
-test_with_all_except(tests/vm/vmtest6.sps 
+test_with_allcleandir_except(vmtest6.sps 
     NMOSH RACKET LARCENY IRON_SCHEME)
-test_with_all_except(tests/vm/vmtest.sps KAWA)
-test_with_all_except(tests/vm/vmtest2.sps KAWA NMOSH)
 if(NOT YUNI_TEST_SKIP_LONGRUN)
     test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE NMOSH MIT_SCHEME)
     test_yunivm_with_all_except(vmtest4.sps KAWA GUILE NMOSH MIT_SCHEME)
     test_yunivm_with_all_except(vmtest5.sps KAWA GUILE NMOSH MIT_SCHEME)
-    test_yunivm_with_all_except(vmtest6.sps KAWA GUILE NMOSH MIT_SCHEME)
+    test_yunivm_with_allcleandir_except(vmtest6.sps KAWA GUILE NMOSH MIT_SCHEME)
 endif()
 test_with_all(tests/vm/heaptest.sps)
 
