@@ -53,7 +53,7 @@
         ((#xd) (write-string "\\d" port))
         ((#x22) (write-string "\\\"" port))
         ((#x5c) (write-string "\\\\" port))
-        ((#x7c) (write-string "\\\|" port))
+        ;((#x7c) (write-string "\\\|" port)) ;; Not compatible with R6RS
         (else (write-char c port))))
     (%out-string port obj ($fx+ start 1) end)))
 
