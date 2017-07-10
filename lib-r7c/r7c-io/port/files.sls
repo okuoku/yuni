@@ -19,7 +19,10 @@
   (define eof? #f)
   (define buf #f)
   (define open? #t)
-  (define fh (filehandle-open/input fn))
+  (define fh 
+    (if (eq? 'stdin fn)
+      (filehandle-stdin)
+      (filehandle-open/input fn)))
   (define (close)
     (set! open? #f)
     (filehandle-close fh))
@@ -193,7 +196,13 @@
 (define (open-output-file fn)
   (define buf #f)
   (define open? #t)
-  (define fh (filehandle-open/output fn))
+  (define fh 
+    (cond
+      ((eq? 'stdout fn)
+       (filehandle-stdout))
+      ((eq? 'stderr fn)
+       (filehandle-stderr))
+      (else (filehandle-open/output fn))))
   (define (close)
     (set! open? #f)
     (filehandle-close fh))
