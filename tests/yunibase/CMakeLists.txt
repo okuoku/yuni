@@ -221,7 +221,8 @@ if(NOT YUNI_TEST_SKIP_LONGRUN)
     test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE NMOSH MIT_SCHEME)
     test_yunivm_with_all_except(vmtest4.sps KAWA GUILE NMOSH MIT_SCHEME)
     test_yunivm_with_all_except(vmtest5.sps KAWA GUILE NMOSH MIT_SCHEME)
-    test_yunivm_with_allcleandir_except(vmtest6.sps KAWA GUILE NMOSH MIT_SCHEME)
+    test_yunivm_with_allcleandir_except(vmtest6.sps 
+        LARCENY KAWA GUILE NMOSH MIT_SCHEME)
 endif()
 test_with_all(tests/vm/heaptest.sps)
 
