@@ -19,6 +19,7 @@
 (define tag-unspecified (list 'unspecified))
 (define tag-undefined (list 'undefined))
 (define tag-simple-struct (list 'simple-struct))
+(define tag-primitive (list 'primitive))
 
 ;; OBJECT
 (define (object? obj)
@@ -266,6 +267,17 @@
     (error "Simple-struct required"))
   (car (object-datum obj)))
 
+;; Primitive (callable)
+(define (fake-primitive? obj)
+  (and (object? obj)
+       (eq? tag-primitive (object-tag obj))))
+(define (fake-primitive-id obj)
+  (object-datum obj))
+(define (fake-make-primitive id)
+  (wrap-object/zone1 tag-primitive (%fixnum id)))
+
+
+;; Corelib
 (define (fake-eq? a b)
   (or
     ;; Short-cut: If eq? on host, eq? on target
@@ -322,6 +334,7 @@
 (define Pfake-simple-struct?    (predicate1 fake-simple-struct?))
 (define Pfake-flonum?           (predicate1 fake-flonum?))
 (define Pfake-fixnum?           (predicate1 fake-fixnum?))
+(define Pfake-primitive?        (predicate1 fake-primitive?))
          
 (define (make-coreops-fake)
 
@@ -405,10 +418,16 @@
 
       ((simple-struct?)      Pfake-simple-struct?)
       ((Psimple-struct?)     fake-simple-struct?)
-      ((make-simple-struct0)  fake-make-simple-struct0)
+      ((make-simple-struct0) fake-make-simple-struct0)
       ((simple-struct-ref)   fake-simple-struct-ref)
       ((simple-struct-set!)  fake-simple-struct-set!)
       ((simple-struct-name)  fake-simple-struct-name)
+
+      ((primitive?)          Pfake-primitive?)
+      ((Pprimitive?)         fake-primitive?)
+      ((make-primitive)      fake-make-primitive)
+      ((primitive-id)        fake-primitive-id)
+
       (else (error "Unknown symbol" sym))))
 
   query)
