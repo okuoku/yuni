@@ -24,10 +24,11 @@
   (define vm-args-compose   (query 'VM-ARGS-COMPOSE))      ;; objs
   (define vm-args-decompose (query 'VM-ARGS-DECOMPOSE))    ;; (obj cb)
   (define vm-primitive?     (query 'VM-PRIMITIVE?))        ;; (obj)
+  (define vm-primitive-id   (query 'VM-PRIMITIVE-ID))
+  (define vm-primitive-proc (query 'VM-PRIMITIVE-PROC))
   (define vm-returnpoint    (query 'VM-RETURNPOINT))
   (define vm-call-env       (query 'VM-CALL-ENV))          ;; (obj)
   (define vm-call-label     (query 'VM-CALL-LABEL))        ;; (obj)
-  (define vm-call-primitive (query 'VM-CALL-PRIMITIVE))    ;; (gencb obj lis)
   (define jump              (query 'JUMP))            ;; (label)
   (define branch            (query 'BRANCH))          ;; (label obj)
 
@@ -195,7 +196,7 @@
      (pop-S!)
      (call-with-values
        (lambda () 
-         (vm-call-primitive gen-callback V l))
+         (apply (vm-primitive-proc V) l))
        (lambda vals
          ;(pp (list 'RESULT: vals))
          (case (length vals)
@@ -336,6 +337,7 @@
       (else
         (error "Invalid opcode" (list op arg0 arg1)))))
 
+  #|
   (define (launch-callback procobj args cb)
     (let ((save-S*   S*)
           (save-S    S)
@@ -373,6 +375,7 @@
   (define (gen-callback obj cb)
     (lambda args
       (launch-callback obj args cb)))
+  |#
 
   ;; Extra query
   (define (extra op arg0 arg1)

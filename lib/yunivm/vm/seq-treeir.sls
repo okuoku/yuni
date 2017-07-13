@@ -58,51 +58,6 @@
 
   ;; VM core support
   ;; Codeflow
-  (define %require-mit-scheme-workaround?
-    (let ((x (values 10)))
-     (procedure? x)))
-  (define (return-to-orig-ctx cont)
-    (let ((current-current-code current-code)
-          (current-current-block current-block))
-      (lambda vals
-        (set! current-code current-current-code)
-        (set! current-block current-current-block)
-        (set! jump-request #f)
-        ;; MIT/GNU Scheme workaround (it cannot take 2 or more values
-        ;; on continuation)
-        (if (= 1 (length vals))
-          (cont (car vals))
-          (if %require-mit-scheme-workaround?
-            (cont (apply values vals))
-            (apply cont vals))))))
-
-  (define (%vm-callable obj) (if (procedure? obj) obj (cdr obj)))
-  (define (%conv-datum gencb datum)
-    (cond
-      ;; Procedure?
-      ((vmclosure? datum)
-       (lambda args
-         (call-with-current-continuation
-           (lambda (c)
-             (let ((launch (gencb datum (return-to-orig-ctx c))))
-              (apply launch args)
-              (unless jump-request
-                (error "launch did not invoked jump request"))
-              (do-cycle))))))
-      ;; As-is
-      (else datum)))
-  (define (%itr-prim-args gencb cur rest)
-    (if (pair? rest)
-      (let ((a (car rest))
-            (d (cdr rest)))
-        (%itr-prim-args gencb (cons (%conv-datum gencb a)
-                                    cur) d))
-      (reverse cur)))
-
-  (define (vm-call-primitive gencb prim lis)
-    (let ((proc (%vm-callable prim))
-          (args (%itr-prim-args gencb '() lis)))
-      (apply proc args)))
   (define (vm-returnpoint) ;; => ('jump currentblock . target)
     (cons 'jump (cons current-block (cdr current-code))))
   (define (jump label)
@@ -136,12 +91,13 @@
                  VM-ARGS-COMPOSE
                  VM-ARGS-DECOMPOSE
                  VM-PRIMITIVE?
+                 VM-PRIMITIVE-ID
+                 VM-PRIMITIVE-PROC
                  VM-CALL-ENV
                  VM-CALL-LABEL) 
        ;; Re-export heap
        (heap sym))
       ((VM-RETURNPOINT)     vm-returnpoint)
-      ((VM-CALL-PRIMITIVE)  vm-call-primitive)
       ((JUMP)               jump)
       ((BRANCH)             branch)
       (else (error "Invalid symbol for query" sym))))

@@ -20,6 +20,7 @@
 (define tag-undefined (list 'undefined))
 (define tag-simple-struct (list 'simple-struct))
 (define tag-primitive (list 'primitive))
+(define tag-vmclosure (list 'vmclosure))
 
 ;; OBJECT
 (define (object? obj)
@@ -276,6 +277,16 @@
 (define (fake-make-primitive id)
   (wrap-object/zone1 tag-primitive (%fixnum id)))
 
+;; VM closure (callable)
+(define (fake-vmclosure? obj)
+  (and (object? obj)
+       (eq? tag-vmclosure (object-tag obj))))
+(define (fake-vmclosure-env obj)
+  (cdr (object-datum obj)))
+(define (fake-vmclosure-label obj)
+  (car (object-datum obj)))
+(define (fake-make-vmclosure label env)
+  (wrap-object tag-vmclosure (cons label env)))
 
 ;; Corelib
 (define (fake-eq? a b)
@@ -335,6 +346,7 @@
 (define Pfake-flonum?           (predicate1 fake-flonum?))
 (define Pfake-fixnum?           (predicate1 fake-fixnum?))
 (define Pfake-primitive?        (predicate1 fake-primitive?))
+(define Pfake-vmclosure?        (predicate1 fake-vmclosure?))
          
 (define (make-coreops-fake)
 
@@ -427,6 +439,12 @@
       ((Pprimitive?)         fake-primitive?)
       ((make-primitive)      fake-make-primitive)
       ((primitive-id)        fake-primitive-id)
+
+      ((vmclosure?)          Pfake-vmclosure?)
+      ((Pvmclosure?)         fake-vmclosure?)
+      ((make-vmclosure)      fake-make-vmclosure)
+      ((vmclosure-env)       fake-vmclosure-env)
+      ((vmclosure-label)     fake-vmclosure-label)
 
       (else (error "Unknown symbol" sym))))
 

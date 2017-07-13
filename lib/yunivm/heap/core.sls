@@ -19,42 +19,6 @@
              (vector->list basiclibs-name-vector)
              (vector->list compatlibs-name-vector)))))
 
-;;
-(define *vmclosure-flag* (list '*vmclosure*))
-(define *primitive-flag* (list '*primitive*))
-
-;; Private
-(define (vmclosure? obj)
-  (and (pair? obj) (eq? *vmclosure-flag* (car obj))))
-(define (make-primitive obj)
-  (cons *primitive-flag* obj))
-
-;; VM core support libraries
-(define (make-vmclosure label env)
-  (cons *vmclosure-flag* (cons label env)))
-(define (vm-primitive? obj)
-  (or (procedure? obj)
-      (and (pair? obj) (eq? *primitive-flag* (car obj)))))
-(define (vm-call-env obj)
-  (cddr obj))
-(define (vm-call-label obj)
-  (cadr obj))
-
-(define (gen-global coreops global-syms-vec)
-  (define r7c (make-r7clib coreops))
-  (define symnames (vector->list global-syms-vec))
-  (define vec
-    (list->vector
-      (map (lambda (sym)
-             (make-primitive (r7c sym)))
-           symnames)))
-  (define (global mod idx)
-    (unless (= mod 0)
-      (error "Something wrong" mod idx))
-    (vector-ref vec idx))
-
-  global)
-
 (define (make-heap-core coreops global-syms-vec)
   (define hostbridge (make-hostbridge coreops))
   (define host (hostbridge 'HOST))
@@ -66,6 +30,23 @@
   (define co-cons (coreops 'cons))
   (define co-car (coreops 'car))
   (define co-cdr (coreops 'cdr))
+  (define vmclosure? (coreops 'Pvmclosure?))
+  (define make-primitive (coreops 'make-primitive))
+  (define vm-primitive? (coreops 'Pprimitive?))
+  (define vm-primitive-id (coreops 'primitive-id))
+  (define make-vmclosure (coreops 'make-vmclosure))
+  (define vm-call-env (coreops 'vmclosure-env))
+  (define vm-call-label (coreops 'vmclosure-label))
+  (define r7c (make-r7clib coreops))
+  (define vec (make-vector (vector-length global-syms-vec)))
+  (define procvec (make-vector (vector-length global-syms-vec)))
+
+  (define (global mod idx)
+    (unless (= mod 0)
+      (error "Something wrong" mod idx))
+    (vector-ref vec idx))
+  (define (vm-primitive-proc prim)
+    (vector-ref procvec (vm-primitive-id prim)))
 
   ;; Non-recursive converter
   (define (targetargs lis)
@@ -95,10 +76,7 @@
   (define (vm-args-decompose obj cb) (apply cb (hostargs obj)))
   (define (make-unspecified) (co-unspecified))
   (define (vm-true? obj)
-    ;; FIXME: Needs a bit more efficient way
-    (if (host obj) #t #f))
-
-  (define global (gen-global coreops global-syms-vec))
+    (if (or (vmclosure? obj) (host obj)) #t #f))
 
   (define (query sym)
     (case sym
@@ -112,10 +90,24 @@
       ((VM-ARGS-COMPOSE) vm-args-compose)
       ((VM-ARGS-DECOMPOSE) vm-args-decompose)
       ((VM-PRIMITIVE?) vm-primitive?)
+      ((VM-PRIMITIVE-ID) vm-primitive-id)
+      ((VM-PRIMITIVE-PROC) vm-primitive-proc)
       ((VM-CALL-ENV) vm-call-env)
       ((VM-CALL-LABEL) vm-call-label)
       ((VM-TRUE?) vm-true?)
       (else (error "Invalid symbol for query" sym)) ))
+
+  ;; Initialize globals
+  (let loop ((idx 0))
+   (unless (= idx (vector-length vec))
+     (let* ((sym (vector-ref global-syms-vec idx))
+            (id (case sym
+                  ((apply0) -1)
+                  ((call-with-values0) -2)
+                  (else idx))))
+       (vector-set! vec idx (make-primitive id))
+       (vector-set! procvec idx (r7c sym))
+       (loop (+ idx 1)))))
 
   query)         
          
