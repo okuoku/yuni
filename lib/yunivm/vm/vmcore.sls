@@ -385,46 +385,6 @@
       (else
         (error "Invalid opcode" (list op arg0 arg1)))))
 
-  #|
-  (define (launch-callback procobj args cb)
-    (let ((save-S*   S*)
-          (save-S    S)
-          (save-E*   E*)
-          (save-D*   D*)
-          (save-V    V)
-          (save-link link))
-      (let ((returncb 
-              (lambda ()
-                (let ((current-link link)
-                      (current-V V))
-                  (set! S* save-S*)
-                  (set! S  save-S)
-                  (set! E* save-E*)
-                  (set! D* save-D*)
-                  (set! V  save-V)
-                  (set! link save-link)
-                  (case current-link
-                    ((single) (cb current-V))
-                    ((values) (apply cb (vector->list current-V)))
-                    ((none) (cb))
-                    (else
-                      (error "Unknown link status for callback" link)))))))
-        ;; Drop current content of registers
-        (set! S* '())
-        (set! E* #f) ;; Should be overwritten in apply-env!
-        ;; Prepare arguments to S+link
-        (set! link 'call)
-        (set! S (list->vector args))
-        ;; D = (ex-S* ex-E ex-E* returnpoint)
-        (set! D* (list (list S* #f #f returncb)))
-        (apply-env! (vm-call-env procobj))
-        (jump (vm-call-label procobj)))))
-
-  (define (gen-callback obj cb)
-    (lambda args
-      (launch-callback obj args cb)))
-  |#
-
   ;; Extra query
   (define (extra op arg0 arg1)
     (case op
