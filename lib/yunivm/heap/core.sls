@@ -103,7 +103,7 @@
      (let* ((sym (vector-ref global-syms-vec idx))
             (id (case sym
                   ((apply0) -1)
-                  ((call-with-values0) -2)
+                  ((call-with-values) -2)
                   (else idx))))
        (vector-set! vec idx (make-primitive id))
        (vector-set! procvec idx (r7c sym))

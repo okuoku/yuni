@@ -192,27 +192,60 @@
         (error "Invalid call type" type))))
 
   (define (call-primitive! type)
-    (let ((l (prepare-args type S)))
-     (pop-S!)
-     (call-with-values
-       (lambda () 
-         (apply (vm-primitive-proc V) l))
-       (lambda vals
-         ;(pp (list 'RESULT: vals))
-         (case (length vals)
-           ((0) (set! V #f)
-                (set! link 'none))
-           ((1) (set! V (car vals))
-                (set! link 'single))
-           (else (set! V (list->vector vals))
-                 (set! link 'values)))
-         (restore-dump!)))))
+    (let ((l (prepare-args type S))
+          (id (vm-primitive-id V)))
+      (pop-S!)
+      (case id
+        ((-2) ;; call-with-values
+         (unless (= (length l) 2)
+           (error "Invalid parameter for call-with-values" l))
+         (let ((send (car l))
+               (recv (cadr l)))
+           (save-dump-obj!
+             (lambda ()
+               ;; Load values
+               (case link
+                 ((values) 
+                  (push-S! V))
+                 ((single)
+                  (FRAME 1)
+                  (MOV 0))
+                 ((none)
+                  (FRAME 0))
+                 (else
+                   (error "Invalid link state for call-with-values" link)))
+               ;; Load receiver
+               (set-value! recv)
+               ;; Call receiver
+               (TCALL)))
+           ;; Push nothing
+           (FRAME 0)
+           ;; Load sender
+           (set-value! send)
+           ;; Call sender
+           (TCALL)))
+        (else ;; Standard primitives
+          (call-with-values
+            (lambda () 
+              (apply (vm-primitive-proc V) l))
+            (lambda vals
+              ;(pp (list 'RESULT: vals))
+              (case (length vals)
+                ((0) (set! V #f)
+                     (set! link 'none))
+                ((1) (set! V (car vals))
+                     (set! link 'single))
+                (else (set! V (list->vector vals))
+                      (set! link 'values)))
+              (restore-dump!)))))))
   (define (call-label! type)
     (set! link type)
     (apply-env! (vm-call-env V))
     (jump (vm-call-label V)))
+  (define (save-dump-obj! obj)
+    (set! D* (cons (list S* E E* obj) D*)))
   (define (save-dump!)
-    (set! D* (cons (list S* E E* (vm-returnpoint)) D*)))
+    (save-dump-obj! (vm-returnpoint)))
   (define (restore-dump!)
     (let ((a (car D*))
           (d (cdr D*)))
