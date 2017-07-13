@@ -43,25 +43,6 @@
       (co-true)
       (co-false)))
 
-  (define (argconv cur target-lis)
-    (cond
-      ((x-null? target-lis) (reverse cur))
-      (else
-        (let ((a (co-car target-lis))
-              (d (co-cdr target-lis)))
-          (argconv (cons a cur) d)))))
-
-  (define (co-apply proc . args)
-    (cond
-      ((null? args)
-       ;; short-cut
-       (proc))
-      (else
-        (let ((r (reverse args)))
-         (let ((a (argconv '() (car r)))
-               (d (reverse (cdr r))))
-           (apply proc (append d a)))))))
-
   (define (co-memv obj lis)
     (if (x-null? lis)
       (co-false)
@@ -196,10 +177,10 @@
       ((raise-continuable) co-raise-continuable)
       ((with-exception-handler) co-with-exception-handler)
       ;; (r7c core apply)
-      ((apply) co-apply)
+      ((apply) apply) ;; Dummy(-1)
       ;; (r7c core values)
       ((values) values)
-      ((call-with-values) call-with-values)
+      ((call-with-values) call-with-values) ;; Dummy(-2)
       (else
         (fallback sym))))
 

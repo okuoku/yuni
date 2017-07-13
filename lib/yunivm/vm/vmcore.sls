@@ -196,6 +196,21 @@
           (id (vm-primitive-id V)))
       (pop-S!)
       (case id
+        ((-1) ;; apply
+         (unless (< 0 (length l))
+           (error "Invalid parameter for apply" l))
+         (let ((proc (car l))
+               (args (cdr l)))
+           (let ((flen (length args)))
+            (FRAME flen)
+            (let loop ((idx 0)
+                       (x args))
+             (unless (= idx flen)
+               (set-value! (car x))
+               (MOV idx)
+               (loop (+ idx 1) (cdr x))))
+            (set-value! proc)
+            (TCALLM))))
         ((-2) ;; call-with-values
          (unless (= (length l) 2)
            (error "Invalid parameter for call-with-values" l))

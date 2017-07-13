@@ -102,7 +102,7 @@
    (unless (= idx (vector-length vec))
      (let* ((sym (vector-ref global-syms-vec idx))
             (id (case sym
-                  ((apply0) -1)
+                  ((apply) -1)
                   ((call-with-values) -2)
                   (else idx))))
        (vector-set! vec idx (make-primitive id))
