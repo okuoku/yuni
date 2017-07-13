@@ -61,7 +61,7 @@
   (syntax-rules ()
     ((_ scm expected)
      (begin
-       (check-scm0 #f scm expected)
+       ;(check-scm0 #f scm expected)
        (check-scm0 #t scm expected)))))
 
 (check-scm
