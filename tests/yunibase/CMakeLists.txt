@@ -218,11 +218,11 @@ test_with_all_except(tests/vm/vmtest5.sps
 test_with_allcleandir_except(vmtest6.sps 
     NMOSH RACKET LARCENY IRON_SCHEME KAWA)
 if(NOT YUNI_TEST_SKIP_LONGRUN)
-    test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE NMOSH MIT_SCHEME)
-    test_yunivm_with_all_except(vmtest4.sps KAWA GUILE NMOSH MIT_SCHEME)
-    test_yunivm_with_all_except(vmtest5.sps KAWA GUILE NMOSH MIT_SCHEME)
+    test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE NMOSH)
+    test_yunivm_with_all_except(vmtest4.sps KAWA GUILE NMOSH)
+    test_yunivm_with_all_except(vmtest5.sps KAWA GUILE NMOSH)
     test_yunivm_with_allcleandir_except(vmtest6.sps 
-        LARCENY KAWA GUILE NMOSH MIT_SCHEME)
+        LARCENY KAWA GUILE NMOSH)
 endif()
 test_with_all(tests/vm/heaptest.sps)
 
