@@ -83,7 +83,7 @@ function(test_with_cleandir2 prefix nam prog) # For std tests
         add_test(NAME ${nam}
             COMMAND ${CMAKE_COMMAND} -DPROG=${YUNITEST_${prefix}}
             -DARG=${YUNI_BASEDIR}/tests/vm/${prog}
-            -DDIRNAME=${CMAKE_CURRENT_BINARY_DIR}/testdir-${prefix}-${prog}
+            -DDIRNAME=${CMAKE_CURRENT_BINARY_DIR}/testdir2-${prefix}-${prog}
             -P ${CMAKE_CURRENT_LIST_DIR}/runwithcleandir.cmake)
     endif()
 endfunction()
@@ -94,7 +94,7 @@ function(test_with_cleandir2_yunivm prefix nam prog) # For yunivm tests
             COMMAND ${CMAKE_COMMAND} -DPROG=${YUNITEST_${prefix}}
             -DLAUNCH=${YUNI_BASEDIR}/tests/vm/_launcher.sps
             -DSCRIPT=${YUNI_BASEDIR}/tests/vm/${prog}
-            -DDIRNAME=${CMAKE_CURRENT_BINARY_DIR}/testdir-${prefix}-${prog}
+            -DDIRNAME=${CMAKE_CURRENT_BINARY_DIR}/testdir2yunivm-${prefix}-${prog}
             -P ${CMAKE_CURRENT_LIST_DIR}/runwithcleandir.cmake)
     endif()
 endfunction()
