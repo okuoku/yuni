@@ -37,21 +37,28 @@
       ((pair? current-code)
        (let ((opline (car current-code))
              (nextcode (cdr current-code)))
-         (let* ((op (car opline))
-                (arg0 (and (pair? (cdr opline)) (cadr opline)))
-                (arg1 (and (pair? (cdr opline))
-                           (pair? (cddr opline))
-                           (caddr opline))))
-           (cond
-             ((eq? 'block op)
-              (set! current-block arg0)
-              (set! current-code (cddr opline)))
-             (else
-               (set! jump-request #f)
-               (vmcycle op arg0 arg1)
-               (unless jump-request
-                 ;; Go to the next inst
-                 (set! current-code nextcode))))))
+         (cond
+           ((pair? opline)
+            (let* ((op (car opline))
+                   (arg0 (and (pair? (cdr opline)) (cadr opline)))
+                   (arg1 (and (pair? (cdr opline))
+                              (pair? (cddr opline))
+                              (caddr opline))))
+              (cond
+                ((eq? 'block op)
+                 (set! current-block arg0)
+                 (set! current-code (cddr opline)))
+                (else
+                  (set! jump-request #f)
+                  (vmcycle op arg0 arg1)
+                  (unless jump-request
+                    ;; Go to the next inst
+                    (set! current-code nextcode))))))
+           ((vector? opline)
+            ;; Debuginfo. Ignore.
+            (set! current-code nextcode))
+           (else
+             (error "Unexpected opline" opline))))
        (do-cycle))
       (else
         (error "Invalid code fragment" current-code current-block))))
