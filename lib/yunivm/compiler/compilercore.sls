@@ -2,12 +2,9 @@
          (export compile-core)
          (import (yuni scheme))
 
-         
-;;
-
 ;; Compiler supports following syntaxes
 ;; 
-;; let let* letrec letrec* --- no named-lambda support
+;; let let* letrec letrec* --- no named-let support
 ;; if
 ;; when
 ;; lambda
@@ -15,6 +12,14 @@
 ;; define -------------------- special handling for global-define
 ;; set!
 ;; (standard procedure call)
+
+;; Debug info
+;;  #(sym) -- symbolic name for current block
+
+;; Lambda-naming:
+;; 
+;;  (set! <sym> (lambda ...)) --------- for globals
+;;  (let ((<sym> (lambda ...))) ...) -- internal defines will become letrec*
 
 (define (compile-core scm vec-global0) ;; => treeir max-block
   (define max-blockid 0)
@@ -125,7 +130,7 @@
     (let ((target (cadr seq))
           (val (caddr seq)))
       (compile-form
-        #f env val
+        #f #f env val
         (lambda ()
           (cons (sym->set!inst env target)
                 (k))))))
@@ -143,12 +148,12 @@
           'block 
           (cons blkno0
                 (compile-form
-                  #f 
+                  #f #f
                   env check
                   (lambda ()
                     (cons (list 'BRV (list 'enter blkno1))
                           (compile-form
-                            tail?
+                            tail? #f
                             env else-body
                             (lambda ()
                               (cons (list 'JMP (list 'break blkno0))
@@ -157,7 +162,7 @@
                                             (cons 
                                               blkno1
                                               (compile-form
-                                                tail?
+                                                tail? #f
                                                 env then-body
                                                 (lambda () '())))))))))))))
         (k))))
@@ -174,7 +179,7 @@
           'block 
           (cons blkno0
                 (compile-form
-                  #f 
+                  #f #f
                   env check
                   (lambda ()
                     (cons (list 'BRV (list 'enter blkno1))
@@ -185,7 +190,7 @@
                                               (cons 
                                                 blkno1
                                                 (compile-form
-                                                  tail?
+                                                  tail? #f
                                                   env body
                                                   (lambda () '()))))))))))))
             (k))))
@@ -200,7 +205,7 @@
            (callinst (if tail? 'TCALL 'CALL)))
       (define (call-proc)
         ;; Never be a tail 
-        (compile-form #f env proc 
+        (compile-form #f #f env proc 
                       (lambda ()
                         (cons (list callinst)
                               (k)))))
@@ -212,7 +217,7 @@
             (let ((var (car args))
                   (next (cdr args))
                   (nextnum (+ 1 num)))
-              (compile-form #f env var
+              (compile-form #f #f env var
                             (lambda ()
                               (cons (list 'MOV num)
                                     (load-args nextnum next))))))))
@@ -243,7 +248,7 @@
               (unless (and (list? vv) (= (length vv) 2))
                 (error "Malformed let" vv))
               ;(display (list 'LETVAR: varname 'FRM: varbody)) (newline)
-              (compile-form #f current-env varbody
+              (compile-form #f #f current-env varbody
                             (lambda ()
                               (cons (sym->set!inst current-env varname)
                                     (set-vars (cdr v*)))))))))
@@ -284,7 +289,7 @@
 
   ;;; 
   ;;
-  (define (compile-form tail? env frm k)
+  (define (compile-form tail? context? env frm k)
     (cond
       ((pair? frm)
        ;(display (list 'FRM: frm)) (newline)
@@ -316,19 +321,19 @@
   (define (compile-sequence tail? env seq k)
     (cond
       ((pair? seq)
-       ;; Assume define was stripped macro-expander
+       ;; Assume define was stripped within macro-expander
        (let ((frm (car seq))
              (next (cdr seq)))
          (cond
            ((null? next)
             ;; Tail form
-            (compile-form tail? env frm k))
+            (compile-form tail? #f env frm k))
            (else
              ;; Non-tail form
-             (compile-form #f env frm
+             (compile-form #f #f env frm
                            (lambda ()
                              (compile-sequence tail? env next k)))))) )
-      (else (compile-form #f env seq k))))
+      (else (compile-form #f #f env seq k))))
 
   (define (compile-lambda-body tail? env seq k)
     (define (gen-letrec* defs seq)
@@ -350,7 +355,7 @@
     (define (exit defs seq)
       (if (null? defs)
         (compile-sequence tail? env seq k)
-        (compile-form tail? env (gen-letrec* (reverse defs) seq) k)))
+        (compile-form tail? #f env (gen-letrec* (reverse defs) seq) k)))
     (define (scan defs seq)
       (cond
         ((pair? seq)
