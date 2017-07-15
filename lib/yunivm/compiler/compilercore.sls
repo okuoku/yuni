@@ -130,7 +130,7 @@
     (let ((target (cadr seq))
           (val (caddr seq)))
       (compile-form
-        #f #f env val
+        #f target env val
         (lambda ()
           (cons (sym->set!inst env target)
                 (k))))))
@@ -248,7 +248,7 @@
               (unless (and (list? vv) (= (length vv) 2))
                 (error "Malformed let" vv))
               ;(display (list 'LETVAR: varname 'FRM: varbody)) (newline)
-              (compile-form #f #f current-env varbody
+              (compile-form #f varname current-env varbody
                             (lambda ()
                               (cons (sym->set!inst current-env varname)
                                     (set-vars (cdr v*)))))))))
@@ -256,7 +256,7 @@
             (cons (list 'BIND)
                   (set-vars vars)))))
 
-  (define (compile-lambda env seq k)
+  (define (compile-lambda context? env seq k)
     (unless (and (list? seq) (>= (length seq) 3))
       (error "Malformed lambda" seq))
     (let* ((frms (cadr seq))
@@ -283,8 +283,11 @@
                   (list 'LDF (list 'enter blkno1))
                   (list 'JMP (list 'break blkno0))
                   (cons 'block 
-                        (cons  blkno1
-                               (lambda-main))))
+                        (cons blkno1
+                              (append (if context? 
+                                        (list (vector context?))
+                                        '())
+                                      (lambda-main)))))
             (k))))
 
   ;;; 
@@ -297,7 +300,7 @@
          ((quote)
           (cons (list 'LDI (cadr frm))
                 (k)))
-         ((lambda) (compile-lambda env frm k))
+         ((lambda) (compile-lambda context? env frm k))
          ((let let* letrec letrec*)
           (compile-let tail? env frm k))
          ((set!)
