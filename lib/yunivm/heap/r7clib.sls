@@ -121,32 +121,28 @@
         ;; (r7c heap eof-object)
         eof-object eof-object?
         ;; (r7c heap boolean)
-        boolean?
+        boolean? $boolean=?
         ;; (r7c heap char)
-        char? char->integer integer->char
+        char? char->integer integer->char $char=?
         ;; (r7c heap string)
         string? string-length string-ref string-set!
+        $string=? $make-string
         ;; (r7c heap vector)
         vector? vector-length vector-ref vector-set!
+        $make-vector
         ;; (r7c heap bytevector)
         bytevector? bytevector-length bytevector-u8-ref bytevector-u8-set!
+        $make-bytevector
         ;; (r7c heap symbol)
         symbol? symbol->string string->symbol
+        $symbol=?
         ;; (r7c-ext simple-struct)
         simple-struct? simple-struct-ref simple-struct-set!
-        ;make-simple-struct0 
+        $make-simple-struct
         simple-struct-name)
        ;; As-is
        (coreops sym))
-      (($make-simple-struct) (coreops 'make-simple-struct0))
       ;; Renames
-      (($boolean=?) (coreops 'boolean=?/2))
-      (($char=?) (coreops 'char=?/2))
-      (($string=?) (coreops 'string=?/2))
-      (($symbol=?) (coreops 'symbol=?/2))
-      (($make-string) (coreops 'make-string0))
-      (($make-vector) (coreops 'make-vector0))
-      (($make-bytevector) (coreops 'make-bytevector0))
       (($undefined) (coreops 'undefined))
       (($fixnum?) (coreops 'fixnum?))
       (($flonum?) (coreops 'flonum?))
