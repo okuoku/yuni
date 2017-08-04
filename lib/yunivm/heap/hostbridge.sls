@@ -61,10 +61,6 @@
       ;; As-is
       ((integer? obj)
        obj)
-      ((port? obj)
-       obj)
-      ((procedure? obj)
-       obj)
 
       ;; Convert datum
       ((op-char? obj)
@@ -121,8 +117,6 @@
     (cond
       ;; As-is
       ((integer? obj) obj)
-      ((port? obj) obj)
-      ((procedure? obj) obj)
 
       ;; Convert datum
       ((char? obj)
