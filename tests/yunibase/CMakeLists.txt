@@ -223,7 +223,8 @@ if(NOT YUNI_TEST_SKIP_LONGRUN)
     test_yunivm_with_all_except(vmtest5.sps KAWA GUILE NMOSH)
     test_yunivm_with_allcleandir_except(vmtest6.sps 
         LARCENY KAWA GUILE NMOSH)
-    test_with_all_except(tests/vm/vmtest8.sps NMOSH PICRIN LARCENY)
+    test_with_all_except(tests/vm/vmtest8.sps 
+        GSI NMOSH PICRIN LARCENY)
 endif()
 test_with_all(tests/vm/heaptest.sps)
 
