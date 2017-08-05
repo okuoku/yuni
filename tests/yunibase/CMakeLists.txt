@@ -225,6 +225,7 @@ if(NOT YUNI_TEST_SKIP_LONGRUN)
         LARCENY KAWA GUILE NMOSH)
 endif()
 test_with_all(tests/vm/heaptest.sps)
+test_with_all_except(tests/vm/vmtest8.sps NMOSH)
 
 # yunistub bootstraps
 test_yunistub_bootstrap(
