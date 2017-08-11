@@ -159,7 +159,7 @@
     (error "Primitive required" obj))
   (let ((offs (- obj #x18000000)))
    (if (> offs #x1FFFFFF)
-     (- #x3fffffe offs)
+     (- offs #x3ffffff)
      offs)))
 (define (fixnum-make-primitive id)
   (let ((offs (if (< id 0) (+ #x3ffffff id) id)))
