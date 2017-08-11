@@ -226,7 +226,7 @@ if(NOT YUNI_TEST_SKIP_LONGRUN)
     test_with_all_except(tests/vm/vmtest8.sps 
         GSI NMOSH PICRIN LARCENY)
 endif()
-test_with_all(tests/vm/heaptest.sps)
+test_with_all_except(tests/vm/heaptest.sps CHIBI_SCHEME)
 
 # yunistub bootstraps
 test_yunistub_bootstrap(
