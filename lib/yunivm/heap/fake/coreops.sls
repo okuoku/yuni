@@ -308,6 +308,11 @@
     (eq? a b)
     ;; Short-cut: if fake-eq? then eqv?
     (fake-eq? a b)
+    ;; Numbers
+    (and (fake-flonum? a) (fake-flonum? b)
+         (let ((aa (fake-unwrap-flonum a))
+               (bb (fake-unwrap-flonum b)))
+           (= aa bb)))
     ;; we use host numbers and procedures
     (eqv? a b)))
          
