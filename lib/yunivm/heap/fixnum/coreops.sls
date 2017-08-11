@@ -219,7 +219,7 @@
       (define (fixnum-make-simple-struct0 name count)
         (let ((offs (alloc (+ count 4) name)))
          (heapset! (+ offs 2) count)
-         (heapset! (+ offs 3) count)
+         (heapset! (+ offs 3) name)
          (fixnum-idx->simple-struct offs)))
       (define (fixnum-simple-struct-ref obj idx)
         (let* ((offs (fixnum-simple-struct->idx obj))
@@ -234,7 +234,7 @@
             (error "Out of index" offs len idx))
           (heapset! (+ offs idx 4) x)))
       (define (fixnum-simple-struct-name obj)
-        (heapref (+ 4 (fixnum-simple-struct->idx obj))))
+        (heapref (+ 3 (fixnum-simple-struct->idx obj))))
 
       ;; vmclosure (tentative)
       (define (fixnum-vmclosure-env obj)
