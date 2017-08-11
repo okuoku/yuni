@@ -259,6 +259,44 @@
          (heapset! (+ idx 2) label)
          (fixnum-idx->vmclosure idx)))
 
+      ;; VM registers
+      (define (fixnum-frame-set! f loc v)
+        (fixnum-vector-set! f loc v))
+      (define (fixnum-frame-ref f loc)
+        (fixnum-vector-ref f loc))
+      (define (fixnum-make-frame count)
+        (fixnum-make-vector0 count))
+      (define (fixnum-frame-length f)
+        (fixnum-vector-length f))
+      (define (fixnum-frame->list f)
+        (let ((len (fixnum-frame-length f)))
+         (let loop ((idx 0)
+                    (cur '()))
+           (if (= idx len)
+             (reverse cur)
+             (loop (+ idx 1) (cons (fixnum-frame-ref f idx) cur))))))
+      (define (fixnum-list->frame l)
+        (let* ((len (length l))
+               (f (fixnum-make-frame len)))
+          (let loop ((idx 0))
+           (cond
+             ((= idx len)
+              f)
+             (else
+               (fixnum-frame-set! f idx (list-ref l idx))
+               (loop (+ idx 1)))))))
+      (define (fixnum-chain-last) (fixnum-null))
+      (define (fixnum-chain-last? x) (fixnum-null? x))
+      (define (fixnum-chain-next x) (fixnum-cdr x))
+      (define (fixnum-chain-current x) (fixnum-car x))
+      (define (fixnum-chain-cons a b) (fixnum-cons a b))
+      (define (fixnum-chain-ref c n)
+        (cond
+          ((= n 0)
+           (fixnum-chain-current c))
+          (else
+            (fixnum-chain-ref (fixnum-chain-next c) (- n 1)))))
+
       (define (query sym)
         (case sym
           ((eq?)                 Pfixnum-eq?)
@@ -353,6 +391,21 @@
           ((make-vmclosure)      fixnum-make-vmclosure)
           ((vmclosure-env)       fixnum-vmclosure-env)
           ((vmclosure-label)     fixnum-vmclosure-label)
+
+          ;; VM register implementations are here for performance
+          ((HEAP-FRAME-SET!)     fixnum-frame-set!)
+          ((HEAP-FRAME-REF)      fixnum-frame-ref)
+          ((HEAP-MAKE-FRAME)     fixnum-make-frame)
+          ((HEAP-FRAME-LENGTH)   fixnum-frame-length)
+          ((HEAP-FRAME->LIST)    fixnum-frame->list)
+          ((HEAP-LIST->FRAME)    fixnum-list->frame)
+          ((HEAP-CHAIN-LAST)     fixnum-chain-last)
+          ((HEAP-CHAIN-LAST?)    fixnum-chain-last?)
+          ((HEAP-CHAIN-CURRENT)  fixnum-chain-current)
+          ((HEAP-CHAIN-NEXT)     fixnum-chain-next)
+          ((HEAP-CHAIN-CONS)     fixnum-chain-cons)
+          ((HEAP-CHAIN-REF)      fixnum-chain-ref)
+
 
           (else (error "Unknown symbol" sym))))
 
