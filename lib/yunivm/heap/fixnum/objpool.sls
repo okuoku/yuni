@@ -1,8 +1,7 @@
 (library (yunivm heap fixnum objpool)
          (export make-objpool)
          (import (yuni scheme)
-                 (yunivm heap fixnum bitvector)
-                 )
+                 (yunivm heap fixnum bitvector))
 
          
 (define (make-objpool size)

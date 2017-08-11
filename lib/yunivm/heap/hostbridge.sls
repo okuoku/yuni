@@ -10,6 +10,7 @@
   ;; P prefix means predicates that returns *host* boolean
   (define op-null (coreops 'null))
   (define op-null? (coreops 'Pnull?))
+  (define op-fixnum? (coreops 'Pfixnum?))
   (define op-eof-object (coreops 'eof-object))
   (define op-eof-object? (coreops 'Peof-object?))
   (define op-true (coreops 'true))
@@ -59,7 +60,7 @@
   (define (host obj)
     (cond
       ;; As-is
-      ((integer? obj)
+      ((op-fixnum? obj)
        obj)
 
       ;; Convert datum

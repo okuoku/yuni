@@ -4,6 +4,7 @@
            simplerunner/treeir-compile
            simplerunner/treeir-run
            new-simplerunner/fakeheap
+           new-simplerunner/fixnumheap
            new-simplerunner)
          (import (yuni scheme)
                  (yunivm compiler compilercore)
@@ -17,6 +18,7 @@
                  (yunivm heap pass)
                  (yunivm heap core)
                  (yunivm heap fake coreops)
+                 (yunivm heap fixnum coreops)
                  (yuni compat ident)
                  (yuniconfig build))
 
@@ -161,6 +163,12 @@
 (define (new-simplerunner/fakeheap)
   (let ((name-vector (gen-core-syms-vec))
         (coreops (make-coreops-fake)))
+    (cons (make-heap-core coreops name-vector)
+          name-vector)))
+
+(define (new-simplerunner/fixnumheap)
+  (let ((name-vector (gen-core-syms-vec))
+        (coreops (make-coreops-fixnum)))
     (cons (make-heap-core coreops name-vector)
           name-vector)))
 
