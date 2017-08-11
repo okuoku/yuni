@@ -352,6 +352,20 @@
 (define Pfake-fixnum?           (predicate1 fake-fixnum?))
 (define Pfake-primitive?        (predicate1 fake-primitive?))
 (define Pfake-vmclosure?        (predicate1 fake-vmclosure?))
+
+;; VM registers
+(define (fake-frame-set! f loc v) (vector-set! f loc v))
+(define (fake-frame-ref f loc) (vector-ref f loc))
+(define (fake-make-frame count) (make-vector count))
+(define (fake-frame-length f) (vector-length f))
+(define (fake-frame->list f) (vector->list f))
+(define (fake-list->frame l) (list->vector l))
+(define (fake-chain-last) '())
+(define (fake-chain-last? x) (null? x))
+(define (fake-chain-next x) (cdr x))
+(define (fake-chain-current x) (car x))
+(define (fake-chain-cons a b) (cons a b))
+(define (fake-chain-ref c n) (list-ref c n))
          
 (define (make-coreops-fake)
 
@@ -450,6 +464,20 @@
       ((make-vmclosure)      fake-make-vmclosure)
       ((vmclosure-env)       fake-vmclosure-env)
       ((vmclosure-label)     fake-vmclosure-label)
+
+      ;; VM register implementations are here for performance
+      ((HEAP-FRAME-SET!)     fake-frame-set!)
+      ((HEAP-FRAME-REF)      fake-frame-ref)
+      ((HEAP-MAKE-FRAME)     fake-make-frame)
+      ((HEAP-FRAME-LENGTH)   fake-frame-length)
+      ((HEAP-FRAME->LIST)    fake-frame->list)
+      ((HEAP-LIST->FRAME)    fake-list->frame)
+      ((HEAP-CHAIN-LAST)     fake-chain-last)
+      ((HEAP-CHAIN-LAST?)    fake-chain-last?)
+      ((HEAP-CHAIN-CURRENT)  fake-chain-current)
+      ((HEAP-CHAIN-NEXT)     fake-chain-next)
+      ((HEAP-CHAIN-CONS)     fake-chain-cons)
+      ((HEAP-CHAIN-REF)      fake-chain-ref)
 
       (else (error "Unknown symbol" sym))))
 

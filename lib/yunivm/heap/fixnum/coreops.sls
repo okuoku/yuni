@@ -43,7 +43,10 @@
 (define (make-fixnumpool size)
   (define vec (make-vector size 0))
   (define (iref idx) (vector-ref vec idx))
-  (define (iset idx n) (vector-set! vec idx n))
+  (define (iset idx n) 
+    (unless (and (number? n) (exact? n))
+      (error "tryed to set invalid object" n))
+    (vector-set! vec idx n))
   (define (isize) size)
   (define (query sym)
     (case sym

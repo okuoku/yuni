@@ -101,7 +101,11 @@
                  VM-PRIMITIVE-ID
                  VM-PRIMITIVE-PROC
                  VM-CALL-ENV
-                 VM-CALL-LABEL) 
+                 VM-CALL-LABEL
+                 HEAP-FRAME-SET!  HEAP-FRAME-REF HEAP-MAKE-FRAME
+                 HEAP-FRAME-LENGTH HEAP-FRAME->LIST HEAP-LIST->FRAME
+                 HEAP-CHAIN-LAST HEAP-CHAIN-LAST?  HEAP-CHAIN-CURRENT
+                 HEAP-CHAIN-NEXT HEAP-CHAIN-CONS HEAP-CHAIN-REF) 
        ;; Re-export heap
        (heap sym))
       ((VM-RETURNPOINT)     vm-returnpoint)

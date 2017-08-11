@@ -95,6 +95,11 @@
       ((VM-CALL-ENV) vm-call-env)
       ((VM-CALL-LABEL) vm-call-label)
       ((VM-TRUE?) vm-true?)
+      ((HEAP-FRAME-SET!  HEAP-FRAME-REF HEAP-MAKE-FRAME
+         HEAP-FRAME-LENGTH HEAP-FRAME->LIST HEAP-LIST->FRAME
+         HEAP-CHAIN-LAST HEAP-CHAIN-LAST?  HEAP-CHAIN-CURRENT
+         HEAP-CHAIN-NEXT HEAP-CHAIN-CONS HEAP-CHAIN-REF) 
+       (coreops sym))
       (else (error "Invalid symbol for query" sym)) ))
 
   ;; Initialize globals

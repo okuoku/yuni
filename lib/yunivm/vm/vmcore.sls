@@ -32,43 +32,65 @@
   (define jump              (query 'JUMP))            ;; (label)
   (define branch            (query 'BRANCH))          ;; (label obj)
 
+  (define frame-set! (query 'HEAP-FRAME-SET!))
+  (define frame-ref (query 'HEAP-FRAME-REF))
+  (define make-frame (query 'HEAP-MAKE-FRAME))
+  (define frame-length (query 'HEAP-FRAME-LENGTH))
+  (define frame->list (query 'HEAP-FRAME->LIST))
+  (define list->frame (query 'HEAP-LIST->FRAME))
+  (define chain-last (query 'HEAP-CHAIN-LAST))
+  (define chain-last? (query 'HEAP-CHAIN-LAST?))
+  (define chain-current (query 'HEAP-CHAIN-CURRENT))
+  (define chain-next (query 'HEAP-CHAIN-NEXT))
+  (define chain-cons (query 'HEAP-CHAIN-CONS))
+  (define chain-ref (query 'HEAP-CHAIN-REF))
+
+  (define (reset-vm-state!)
+    (set! S #f)
+    (set! S* (chain-last))
+    (set! E #f)
+    (set! E* (chain-last))
+    (set! D* (chain-last))
+    (set! V #f)
+    (set! link 'none))
+
   ;; Register stack
   (define (push-S! vec)
     (when S
-      (set! S* (cons S S*)))
+      (set! S* (chain-cons S S*)))
     (set! S vec))
   (define (pop-S!)
     (cond
-      ((null? S*)
+      ((chain-last? S*)
        (unless S
          (error "Stack underflow(S)"))
        (set! S #f))
       (else
-        (let ((a (car S*))
-              (d (cdr S*)))
+        (let ((a (chain-current S*))
+              (d (chain-next S*)))
           (set! S a)
           (set! S* d)))))
   (define (push-E! vec)
     (when E
-      (set! E* (cons E E*)))
+      (set! E* (chain-cons E E*)))
     (set! E vec))
   (define (pop-E!)
     (cond
-      ((null? E*)
+      ((chain-last? E*)
        (unless E
          (error "Stack underflow(E)"))
        (set! E #f))
       (else
-        (let ((a (car E*))
-              (d (cdr E*)))
+        (let ((a (chain-current E*))
+              (d (chain-next E*)))
           (set! E a)
           (set! E* d)))))
   (define (apply-env! obj)
-    (let ((top (car obj))
-          (next (cdr obj)))
+    (let ((top (chain-current obj))
+          (next (chain-next obj)))
       (set! E top)
       (set! E* next)
-      (set! S* '())))
+      (set! S* (chain-last))))
 
   ;; OP macros
   (define (set-value! val)
@@ -78,10 +100,10 @@
   ;; OPs
   ;; Env frame
   (define (FRAME imm)
-    (let ((v (make-vector imm #f)))
+    (let ((v (make-frame imm)))
      (push-S! v)))
   (define (RECV imm)
-    (define stack-len (vector-length S))
+    (define stack-len (frame-length S))
     ;(pp (list 'RECV: S))
     (case link
       ((call)
@@ -93,8 +115,8 @@
          (error "Null stack?? (FIXME)"))
        (when (< imm stack-len)
          (error "Argument count unmatch" S imm))
-       (let ((vec1 (make-vector imm))
-             (rest (vector-ref S (- stack-len 1))))
+       (let ((vec1 (make-frame imm))
+             (rest (frame-ref S (- stack-len 1))))
          (vm-args-decompose 
            rest
            (lambda objs
@@ -102,38 +124,38 @@
                         (cur objs))
                (cond
                  ((< idx (- stack-len 1))
-                  (vector-set! vec1 idx (vector-ref S idx))
+                  (frame-set! vec1 idx (frame-ref S idx))
                   (loop (+ idx 1) cur))
                  (else
-                   (vector-set! vec1 idx (car cur))
+                   (frame-set! vec1 idx (car cur))
                    (unless (null? (cdr cur))
                      (loop (+ idx 1) (cdr cur))))))))
          (push-E! vec1)))
       (else
         (error "Invalid link status" link))))
   (define (RECVM imm)
-    (define stack-len (vector-length S))
+    (define stack-len (frame-length S))
     ;(pp (list 'RECVM: S))
     (case link
       ((call)
        (unless (<= imm stack-len)
          (error "Argument count unmatch" S imm))
-       (let ((vec1 (make-vector (+ 1 imm)))
-             (vec2 (make-vector (- stack-len imm))))
+       (let ((vec1 (make-frame (+ 1 imm)))
+             (vec2 (make-frame (- stack-len imm))))
         (let loop ((idx 0))
          (cond
            ((< idx imm)
-            (vector-set! vec1 idx 
-                         (vector-ref S idx))
+            (frame-set! vec1 idx 
+                         (frame-ref S idx))
             (loop (+ idx 1)))
            (else
              (unless (= stack-len idx)
-               (vector-set! vec2 (- idx imm)
-                            (vector-ref S idx))
+               (frame-set! vec2 (- idx imm)
+                            (frame-ref S idx))
                (loop (+ idx 1)))))
-         (vector-set! vec1 imm
+         (frame-set! vec1 imm
                       (apply vm-args-compose
-                             (vector->list vec2))))
+                             (frame->list vec2))))
         (push-E! vec1)))
       ((multi)
        (cond
@@ -142,8 +164,8 @@
           (push-E! S))
          (else
            ;; Slow path
-           (let* ((vec1 (make-vector (+ imm 1)))
-                  (l (reverse (vector->list S)))
+           (let* ((vec1 (make-frame (+ imm 1)))
+                  (l (reverse (frame->list S)))
                   (resto (car l))
                   (args0 (reverse (cdr l))))
              (vm-args-decompose
@@ -158,10 +180,10 @@
                       ((< idx imm)
                        (when (null? cur)
                          (error "Argument count unmatch??? (FIXME)"))
-                       (vector-set! vec1 idx (car cur))
+                       (frame-set! vec1 idx (car cur))
                        (loop (+ idx 1) (cdr cur)))
                       (else
-                        (vector-set! vec1 imm
+                        (frame-set! vec1 imm
                                      (apply vm-args-compose cur)))))
                   (push-E! vec1))))))))
       (else
@@ -175,9 +197,9 @@
   ;; Branch/Call
   (define (prepare-args type stack)
     (case type
-      ((call) (vector->list stack))
+      ((call) (frame->list stack))
       ((multi)
-       (let ((l (vector->list stack)))
+       (let ((l (frame->list stack)))
         (cond
           ((null? l) '())
           (else
@@ -250,7 +272,7 @@
                      (set! link 'none))
                 ((1) (set! V (car vals))
                      (set! link 'single))
-                (else (set! V (list->vector vals))
+                (else (set! V (list->frame vals))
                       (set! link 'values)))
               (restore-dump!)))))))
   (define (call-label! type)
@@ -258,12 +280,12 @@
     (apply-env! (vm-call-env V))
     (jump (vm-call-label V)))
   (define (save-dump-obj! obj)
-    (set! D* (cons (list S* E E* obj) D*)))
+    (set! D* (chain-cons (list S* E E* obj) D*)))
   (define (save-dump!)
     (save-dump-obj! (vm-returnpoint)))
   (define (restore-dump!)
-    (let ((a (car D*))
-          (d (cdr D*)))
+    (let ((a (chain-current D*))
+          (d (chain-next D*)))
       (apply (lambda (ex-S* ex-E ex-E* returnpoint)
                (set! S '())
                (set! S* ex-S*)
@@ -309,20 +331,20 @@
   (define (LD frm pos)
     (cond
       ((= frm 0)
-       (set-value! (vector-ref E pos)))
+       (set-value! (frame-ref E pos)))
       (else
         (let* ((offs (- frm 1))
-               (vec (list-ref E* offs)))
-          (set-value! (vector-ref vec pos))))))
+               (vec (chain-ref E* offs)))
+          (set-value! (frame-ref vec pos))))))
   (define (LDG mod pos)
     (set-value! (global mod pos)))
   (define (LDF label)
-    (set-value! (make-closure label (cons E E*))))
+    (set-value! (make-closure label (chain-cons E E*))))
   (define (LDC cnr)
     (set-value! (constant cnr)))
   (define (LDV)
-    (case (vector-length S)
-      ((1) (set! V (vector-ref S 0))
+    (case (frame-length S)
+      ((1) (set! V (frame-ref S 0))
            (set! link 'single))
       ((0) (set! V #f)
            (set! link 'none))
@@ -342,15 +364,15 @@
       (error "Invalid link status" link))
     (cond
       ((= frm 0)
-       (vector-set! E pos V))
+       (frame-set! E pos V))
       (else
         (let* ((offs (- frm 1))
-               (vec (list-ref E* offs)))
-          (vector-set! vec pos V)))))
+               (vec (chain-ref E* offs)))
+          (frame-set! vec pos V)))))
   (define (MOV loc)
     (unless (eq? link 'single)
       (error "Invalid link status" link))
-    (vector-set! S loc V))
+    (frame-set! S loc V))
   
   ;; Machine cycle
   (define (cycle op arg0 arg1)
@@ -391,13 +413,14 @@
       ((RESULT)
        (case link
          ((single) (heapout V))
-         ((values) (apply values (map heapout (vector->list V))))
+         ((values) (apply values (map heapout (frame->list V))))
          ((none) (values))
          (else
            (error "No result available" link V))))
       (else
         (error "Invalid extra request" (list op arg0 arg1)))) )
 
+  (reset-vm-state!)
   (values cycle extra))
          
 )
