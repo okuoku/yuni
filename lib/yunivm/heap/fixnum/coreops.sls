@@ -54,7 +54,6 @@
   query)
 
 (define (fixnum-eq? a b) (= a b))
-(define (fixnum-eqv? a b) (= a b))
 
 (define (predicate1 proc)
   (lambda (obj)
@@ -72,7 +71,6 @@
 ;;  1. returns host boolean
 ;;  2. returns target boolean
 (define Pfixnum-eq?               (predicate2 fixnum-eq?))
-(define Pfixnum-eqv?              (predicate2 fixnum-eqv?))
 (define Pfixnum-null?             (predicate1 fixnum-null?))
 (define Pfixnum-eof-object?       (predicate1 fixnum-eof-object?))
 (define Pfixnum-boolean?          (predicate1 fixnum-boolean?))
@@ -136,6 +134,17 @@
         (unless (fixnum-fixnum? x)
           (error "Overflow" x)) 
         x)
+
+      (define (fixnum-eqv? a b) 
+        (or (= a b)
+            ;; Numbers
+            (and (fixnum-flonum? a)
+                 (fixnum-flonum? b)
+                 (let ((aa (fixnum-unwrap-flonum a))
+                       (bb (fixnum-unwrap-flonum b)))
+                   (= aa bb)))))
+
+      (define Pfixnum-eqv? (predicate2 fixnum-eqv?))
 
       ;; string
       (define (%fixnum-string obj)
