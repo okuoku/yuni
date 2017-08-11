@@ -23,24 +23,36 @@
 (define (file->sexp-list pth)
   (utf8-read (source->bv pth)))
 
-(define (detectsource lis)
+(define (detectsource lis) (detectoption "-PROG" lis))
+(define (detectrunner lis) (detectoption "-RUNNER" lis))
+
+(define (makerunner runner)
+  (let ((sym (and runner (string->symbol runner))))
+   (if (eq? sym 'fixnum)
+     (new-simplerunner/fixnumheap)
+     (new-simplerunner/fakeheap))))
+
+(define (detectoption opt lis)
   (and (pair? lis)
        (or (and (string? (car lis))
-                (string=? "-PROG" (car lis))
+                (string=? opt (car lis))
                 (pair? (cdr lis))
                 (cadr lis))
-           (detectsource (cdr lis)))))
+           (detectoption opt (cdr lis)))))
 
 
 (define sourcefile (detectsource (command-line)))
+(define runner (detectrunner (command-line)))
 
 (unless (and (string? sourcefile) 
              (file-exists? sourcefile))
   (error "file not found" sourcefile))
 
+
+
 ;; Run
 (let ((src (file->sexp-list sourcefile)))
- (let ((r (new-simplerunner/fakeheap)))
+ (let ((r (makerunner runner)))
   (let ((prog (simplerunner/expand-program r src)))
    (let ((ir (simplerunner/treeir-compile r prog)))
     ;(pp ir)
