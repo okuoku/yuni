@@ -60,7 +60,7 @@
   (define (host obj)
     (cond
       ;; As-is
-      ((op-fixnum? obj)
+      ((and (number? obj) (exact? obj) (op-fixnum? obj))
        obj)
 
       ;; Convert datum
@@ -103,7 +103,7 @@
       ((op-simple-struct? obj)
        (error "Forbidden object" obj))
       (else
-        (error "Unknown object" obj))))
+        (error "Unknown target object" obj))))
 
   (define (targetcopy ref set len in out)
     (define (itr cur)
@@ -117,7 +117,7 @@
   (define (target obj)
     (cond
       ;; As-is
-      ((integer? obj) obj)
+      ((and (number? obj) (exact? obj)) obj)
 
       ;; Convert datum
       ((char? obj)
@@ -157,7 +157,7 @@
 
       ;; Forbidden
       (else
-        (error "Unknown object" obj))))
+        (error "Unknown host object" obj))))
 
   (define (query sym)
     (case sym
