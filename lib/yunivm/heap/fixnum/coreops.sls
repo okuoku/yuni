@@ -94,7 +94,7 @@
 (define Pfixnum-vmclosure?        (predicate1 fixnum-vmclosure?))
 
 (define (make-coreops-fixnum)
-  (define HEAPSIZE (* 4 1024 1024))
+  (define HEAPSIZE (* 2 1024 1024))
   (define theheapbase (make-fixnumpool HEAPSIZE))
 
   (let ((string-pool (make-objpool (* 16 1024)))
