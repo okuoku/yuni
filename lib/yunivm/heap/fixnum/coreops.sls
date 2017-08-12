@@ -296,6 +296,10 @@
            (fixnum-chain-current c))
           (else
             (fixnum-chain-ref (fixnum-chain-next c) (- n 1)))))
+      (define (fixnum-heap-host-key obj)
+        (fixnum-idx->string (string-register obj #f)))
+      (define (fixnum-heap-host-fetch obj)
+        (string-fetch (fixnum-string->idx obj)))
 
       (define (query sym)
         (case sym
@@ -405,6 +409,9 @@
           ((HEAP-CHAIN-NEXT)     fixnum-chain-next)
           ((HEAP-CHAIN-CONS)     fixnum-chain-cons)
           ((HEAP-CHAIN-REF)      fixnum-chain-ref)
+          ;; FIXME: Currently we (ab)use string type for it
+          ((HEAP-HOST-KEY)       fixnum-heap-host-key)
+          ((HEAP-HOST-FETCH)     fixnum-heap-host-fetch)
 
 
           (else (error "Unknown symbol" sym))))

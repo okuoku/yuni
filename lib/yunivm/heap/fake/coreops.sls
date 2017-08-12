@@ -366,6 +366,10 @@
 (define (fake-chain-current x) (car x))
 (define (fake-chain-cons a b) (cons a b))
 (define (fake-chain-ref c n) (list-ref c n))
+
+;; No-op for host objects
+(define (fake-heap-host-key k) k)
+(define (fake-heap-host-fetch k) k)
          
 (define (make-coreops-fake)
 
@@ -478,6 +482,8 @@
       ((HEAP-CHAIN-NEXT)     fake-chain-next)
       ((HEAP-CHAIN-CONS)     fake-chain-cons)
       ((HEAP-CHAIN-REF)      fake-chain-ref)
+      ((HEAP-HOST-KEY)       fake-heap-host-key)
+      ((HEAP-HOST-FETCH)     fake-heap-host-fetch)
 
       (else (error "Unknown symbol" sym))))
 

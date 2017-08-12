@@ -105,7 +105,8 @@
                  HEAP-FRAME-SET!  HEAP-FRAME-REF HEAP-MAKE-FRAME
                  HEAP-FRAME-LENGTH HEAP-FRAME->LIST HEAP-LIST->FRAME
                  HEAP-CHAIN-LAST HEAP-CHAIN-LAST?  HEAP-CHAIN-CURRENT
-                 HEAP-CHAIN-NEXT HEAP-CHAIN-CONS HEAP-CHAIN-REF) 
+                 HEAP-CHAIN-NEXT HEAP-CHAIN-CONS HEAP-CHAIN-REF
+                 HEAP-HOST-KEY HEAP-HOST-FETCH) 
        ;; Re-export heap
        (heap sym))
       ((VM-RETURNPOINT)     vm-returnpoint)
