@@ -44,7 +44,8 @@
            fixnum-make-primitive
            fixnum-vmclosure?
            fixnum-idx->vmclosure
-           fixnum-vmclosure->idx)
+           fixnum-vmclosure->idx
+           fixnum-heap-object?)
          (import (yuni scheme))
 
 ;;
@@ -82,6 +83,9 @@
 ;; fixnum
 (define (fixnum-fixnum? obj) (<= -268435456 obj #xFFFFFFF))
 
+(define (fixnum-heap-object? obj)
+  ;; Must match with highest possible heap object
+  (<= obj -268435457))
 ;; string
 (define (fixnum-string? obj) (<= -402653184 obj -268435457))
 (define (fixnum-idx->string idx)

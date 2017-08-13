@@ -56,6 +56,7 @@
   ; func1 (1 return value)
   (define (func1 proc)
     (lambda args
+      ;(write (list 'Call1: proc args)) (newline)
       (let ((objs (map host args)))
        (let ((r (apply proc objs)))
         ;(write (list 'Call1: proc objs '=> r)) (newline)

@@ -484,6 +484,8 @@
       ((HEAP-CHAIN-REF)      fake-chain-ref)
       ((HEAP-HOST-KEY)       fake-heap-host-key)
       ((HEAP-HOST-FETCH)     fake-heap-host-fetch)
+      ((HEAP-SET-GC-HOOK!)   (lambda (cb) 'do-nothing))
+      ((HEAP-GC-MARK!)       (lambda _ (error "Huh?")))
 
       (else (error "Unknown symbol" sym))))
 

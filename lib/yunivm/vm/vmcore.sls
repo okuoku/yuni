@@ -31,6 +31,8 @@
   (define vm-call-label     (query 'VM-CALL-LABEL))        ;; (obj)
   (define jump              (query 'JUMP))            ;; (label)
   (define branch            (query 'BRANCH))          ;; (label obj)
+  (define set-gc-hook!      (query 'HEAP-SET-GC-HOOK!))
+  (define gc-mark!          (query 'HEAP-GC-MARK!))
 
   (define frame-set! (query 'HEAP-FRAME-SET!))
   (define frame-ref (query 'HEAP-FRAME-REF))
@@ -54,13 +56,30 @@
     (set! E* (chain-last))
     (set! D* (chain-last))
     (set! V #f)
-    (set! link 'none))
+    (set! link 'none)
+    (set-gc-hook! gc-hook))
+  
+  (define (gc-enable) (set-gc-hook! #t))
+  (define (gc-disable) (set-gc-hook! #f))
+
+  (define (gc-hook)
+    (when S
+      (gc-mark! S))
+    (gc-mark! S*)
+    (when E
+      (gc-mark! E))
+    (gc-mark! E*)
+    (gc-mark! D*)
+    ;; FIXME: Assumes fixnum heap here....
+    (when V
+      (gc-mark! V)))
 
   ;; Register stack
   (define (push-S! vec)
-    (when S
-      (set! S* (chain-cons S S*)))
-    (set! S vec))
+    (let ((curS S))
+     (set! S vec)
+     (when curS
+       (set! S* (chain-cons curS S*)))))
   (define (pop-S!)
     (cond
       ((chain-last? S*)
@@ -73,9 +92,10 @@
           (set! S a)
           (set! S* d)))))
   (define (push-E! vec)
-    (when E
-      (set! E* (chain-cons E E*)))
-    (set! E vec))
+    (let ((curE E))
+     (set! E vec)
+     (when curE
+       (set! E* (chain-cons curE E*)))))
   (define (pop-E!)
     (cond
       ((chain-last? E*)
@@ -142,23 +162,23 @@
       ((call)
        (unless (<= imm stack-len)
          (error "Argument count unmatch" S imm))
-       (let ((vec1 (make-frame (+ 1 imm)))
-             (vec2 (make-frame (- stack-len imm))))
-        (let loop ((idx 0))
+       ;; We have to use native pair to hold temporal values
+       ;; Because we cannot hold values to VM register prevent GCs
+       (let loop ((idx 0)
+                  (cur1 '())
+                  (cur2 '()))
          (cond
            ((< idx imm)
-            (frame-set! vec1 idx 
-                         (frame-ref S idx))
-            (loop (+ idx 1)))
+            ;; Collect arg1
+            (loop (+ idx 1) (cons (frame-ref S idx) cur1) cur2))
+           ((= stack-len idx)
+            ;; Push to E
+            (push-E! (list->frame (reverse (cons (apply vm-args-compose
+                                                        (reverse cur2))
+                                                 cur1)))) )
            (else
-             (unless (= stack-len idx)
-               (frame-set! vec2 (- idx imm)
-                            (frame-ref S idx))
-               (loop (+ idx 1)))))
-         (frame-set! vec1 imm
-                      (apply vm-args-compose
-                             (frame->list vec2))))
-        (push-E! vec1)))
+             ;; Collect arg2
+             (loop (+ idx 1) cur1 (cons (frame-ref S idx) cur2))))))
       ((multi)
        (cond
          ((= stack-len (+ imm 1))
@@ -166,8 +186,7 @@
           (push-E! S))
          (else
            ;; Slow path
-           (let* ((vec1 (make-frame (+ imm 1)))
-                  (l (reverse (frame->list S)))
+           (let* ((l (reverse (frame->list S)))
                   (resto (car l))
                   (args0 (reverse (cdr l))))
              (vm-args-decompose
@@ -177,17 +196,17 @@
                   (unless (<= imm (length args))
                     (error "Argument count unmatch" S imm))
                   (let loop ((idx 0)
-                             (cur args))
+                             (cur '())
+                             (rest args))
                     (cond
                       ((< idx imm)
-                       (when (null? cur)
+                       (when (null? rest)
                          (error "Argument count unmatch??? (FIXME)"))
-                       (frame-set! vec1 idx (car cur))
-                       (loop (+ idx 1) (cdr cur)))
+                       (loop (+ idx 1) (cons (car rest) cur) (cdr rest)))
                       (else
-                        (frame-set! vec1 imm
-                                     (apply vm-args-compose cur)))))
-                  (push-E! vec1))))))))
+                        (push-E! (list->frame 
+                                   (reverse (cons (apply vm-args-compose rest)
+                                                  cur))))))))))))))
       (else
         (error "Invalid link status" link)))) 
   (define (BIND)
@@ -218,9 +237,11 @@
   (define (call-primitive! type)
     (let ((l (prepare-args type S))
           (id (vm-primitive-id V)))
-      (pop-S!)
+      ;; Save current stack content to V to prevent premature GC collection
       (case id
         ((-1) ;; apply
+         (set-value! S)
+         (pop-S!)
          (unless (< 0 (length l))
            (error "Invalid parameter for apply" l))
          (let ((proc (car l))
@@ -236,12 +257,15 @@
             (set-value! proc)
             (TCALLM))))
         ((-2) ;; call-with-values
+         (set-value! S)
+         (pop-S!)
          (unless (= (length l) 2)
            (error "Invalid parameter for call-with-values" l))
          (let ((send (car l))
                (recv (cadr l)))
            (save-dump-obj!
-             (lambda ()
+             recv
+             (lambda (ctx)
                ;; Load values
                (case link
                  ((values) 
@@ -254,7 +278,7 @@
                  (else
                    (error "Invalid link state for call-with-values" link)))
                ;; Load receiver
-               (set-value! recv)
+               (set-value! ctx)
                ;; Call receiver
                (TCALL)))
            ;; Push nothing
@@ -264,31 +288,39 @@
            ;; Call sender
            (TCALL)))
         (else ;; Standard primitives
-          (call-with-values
-            (lambda () 
-              (apply (vm-primitive-proc V) l))
-            (lambda vals
-              ;(pp (list 'RESULT: vals))
-              (case (length vals)
-                ((0) (set! V #f)
-                     (set! link 'none))
-                ((1) (set! V (car vals))
-                     (set! link 'single))
-                (else (set! V (list->frame vals))
-                      (set! link 'values)))
-              (restore-dump!)))))))
+          (let ((proc V)) ;; FIXME: We shouldn't need this as we 
+                          ;;        do not have callbacks any longer
+           (set-value! S)
+           (pop-S!)
+           (call-with-values
+             (lambda () 
+               (apply (vm-primitive-proc proc) l))
+             (lambda vals
+               ;(pp (list 'RESULT: vals))
+               (case (length vals)
+                 ((0) (set! V #f)
+                      (set! link 'none))
+                 ((1) (set! V (car vals))
+                      (set! link 'single))
+                 (else (set! V (list->frame vals))
+                       (set! link 'values)))
+               (restore-dump!))))))))
   (define (call-label! type)
     (set! link type)
     (apply-env! (vm-call-env V))
     (jump (hostfetch (vm-call-label V))))
-  (define (save-dump-obj! obj)
-    (set! D* (chain-cons (list->frame (list S* E E* (hostkey obj))) D*)))
+  (define (save-dump-obj! ctx obj)
+    (set! D* (chain-cons (list->frame 
+                           (if ctx
+                             (list S* E E* (hostkey obj) ctx)
+                             (list S* E E* (hostkey obj)))) 
+                         D*)))
   (define (save-dump!)
-    (save-dump-obj! (vm-returnpoint)))
+    (save-dump-obj! #f (vm-returnpoint)))
   (define (restore-dump!)
     (let ((a (chain-current D*))
           (d (chain-next D*)))
-      (apply (lambda (ex-S* ex-E ex-E* r)
+      (apply (lambda (ex-S* ex-E ex-E* r . ctx?)
                (let ((returnpoint (hostfetch r)))
                 (set! S '())
                 (set! S* ex-S*)
@@ -297,7 +329,7 @@
                 (set! E* ex-E*)
                 (cond
                   ;; Callbacks will use procedure as returnpoint
-                  ((procedure? returnpoint) (returnpoint))
+                  ((procedure? returnpoint) (returnpoint (car ctx?)))
                   (else (jump returnpoint)))))
              (frame->list a))
       (set! D* d)))
@@ -342,7 +374,10 @@
   (define (LDG mod pos)
     (set-value! (global mod pos)))
   (define (LDF label)
-    (set-value! (make-closure (hostkey label) (chain-cons E E*))))
+    (let* ((env (chain-cons E E*))
+           (key (hostkey label)))
+      ;; chain-cons can cause GC
+      (set-value! (make-closure key env))))
   (define (LDC cnr)
     (set-value! (constant cnr)))
   (define (LDV)
@@ -384,6 +419,7 @@
     ;    "pair-or-something..."
     ;    v))
     ;(write (list 'cycle: op arg0 arg1 (list 'V: (clean-V V)))) (newline)
+    ;(gc-disable)
     (case op
       ((FRAME)  (FRAME arg0))
       ((RECV)   (RECV  arg0))
@@ -408,7 +444,9 @@
       ((ST)     (ST    arg0 arg1))
       ((MOV)    (MOV   arg0))
       (else
-        (error "Invalid opcode" (list op arg0 arg1)))))
+        (error "Invalid opcode" (list op arg0 arg1))))
+    ;(gc-enable)
+    )
 
   ;; Extra query
   (define (extra op arg0 arg1)

@@ -3,6 +3,7 @@
          (import (yuni scheme)
                  (yunivm heap fixnum objtags)
                  (yunivm heap fixnum objpool)
+                 (yunivm heap fixnum bitvector)
                  (yunivm heap fixnum allocator))
 
 ;;
@@ -42,7 +43,10 @@
 
 (define (make-fixnumpool size)
   (define vec (make-vector size 0))
-  (define (iref idx) (vector-ref vec idx))
+  (define (iref idx) 
+    (unless (< -1 idx size)
+      (error "Invalid index" idx size))
+    (vector-ref vec idx))
   (define (iset idx n) 
     (unless (and (number? n) (exact? n))
       (error "tryed to set invalid object" n))
@@ -124,13 +128,136 @@
           (heap-init (theheap 'INIT))
           (alloc0 (theheap 'ALLOC))
           (free (theheap 'FREE))
+          (walk-regions (theheap 'WALK-REGIONS))
           (heapref (theheapbase 'REF))
-          (heapset! (theheapbase 'SET!)))
+          (heapset! (theheapbase 'SET!))
+          (alloccounter 0)
+          (gcverbose #f)
+          (gcinterval 1000)
+          (gc-gen 0)
+          (gc-enable #t)
+          (gc-hook #f)
+          (gc-mark #f))
 
+      (define (fixnum-heap-set-gc-hook! cb)
+        (cond
+          ((eqv? #t cb)
+           (set! gc-enable #t)
+           (when (>= alloccounter gcinterval)
+             (set! alloccounter 0)
+             (gc)))
+          ((eqv? #f cb)
+           (set! gc-enable #f))
+          (else (set! gc-hook cb))))
+
+      (define (fixnum-heap-gc-mark! obj)
+        (unless gc-mark
+          (error "Spurious call for gc-mark!" obj))
+        (gc-mark obj))
+
+      (define (gc . objs)
+        (let* ((markbits (make-bitvector HEAPSIZE))
+               (check (markbits 'CHECK))
+               (set (markbits 'SET))
+               ;; Counts are only for fixnumheap -- pool objects excluded
+               (markcount 0)
+               (freecount 0))
+          (define (markidx idx) ;; => recurse?
+            (cond
+              ((check idx) #f)
+              (else
+                ;(display (list 'MARK: idx)) (newline)
+                (set idx)
+                (set! markcount (+ markcount 1))
+                #t)))
+          (define (markvector start end)
+            (when (or (< HEAPSIZE end) (< end start))
+              (error "Too far" start end))
+            (unless (= start end)
+              (mark (heapref start))
+              (markvector (+ start 1) end)))
+          (define (mark obj)
+            (unless (number? obj) (display (list 'IGNORE-MARK: obj)) (newline))
+            (when (and (number? obj) (fixnum-heap-object? obj))
+              (cond
+                ;; Heap objects
+                ((fixnum-pair? obj)
+                 (when (markidx (fixnum-pair->idx obj))
+                   (mark (fixnum-car obj))
+                   (mark (fixnum-cdr obj))))
+                ((fixnum-vector? obj)
+                 (when (markidx (fixnum-vector->idx obj))
+                   (let ((idx (fixnum-vector->idx obj)))
+                    (markvector (+ idx 3) (+ 3 idx (heapref (+ 2 idx)))))))
+                ((fixnum-vmclosure? obj)
+                 (when (markidx (fixnum-vmclosure->idx obj))
+                   (mark (fixnum-vmclosure-label obj))
+                   (mark (fixnum-vmclosure-env obj))))
+                ((fixnum-simple-struct? obj)
+                 (when (markidx (fixnum-simple-struct->idx obj))
+                   (let ((idx (fixnum-simple-struct->idx obj)))
+                    (mark (heapref (+ 3 idx))) ;; name
+                    (markvector (+ idx 4) (+ 4 idx (heapref (+ 2 idx)))))))
+                ;; Pool objects
+                ((fixnum-string? obj)
+                 (string-mark (fixnum-string->idx obj)))
+                ((fixnum-bytevector? obj)
+                 (bytevector-mark (fixnum-bytevector->idx obj)))
+                ((fixnum-flonum? obj)
+                 (flonum-mark (fixnum-flonum->idx obj)))
+                (else
+                  (error "Unknown heap object type" obj)))))
+          (define (sweep-heap idx)
+            ;(display (list 'CHECK: idx)) (newline)
+            (unless (check idx)
+              ;(display (list 'FREE: idx)) (newline)
+              (set! freecount (+ freecount 1))
+              (free idx)))
+          (when gc-mark
+            (error "Reentered to the gc proc!" gc-mark))
+          (set! markcount 0)
+          (set! gc-mark mark)
+          (when gcverbose
+            (display "== GC ")
+            (display gc-gen)
+            (display " ==\n")
+            (display (list 'PREMARK: objs)) (newline))
+          ;; Mark phase
+          (for-each mark objs)
+          (when gc-hook
+            (gc-hook))
+          (when gcverbose
+            (display "Marked: ")
+            (display markcount)
+            (newline))
+          (set! gc-mark #f)
+
+          (set! freecount 0)
+          ;; Sweep phase
+          (walk-regions sweep-heap)
+          ;; Sweep pool objects (implys mark-bit clear)
+          (string-sweep)
+          (flonum-sweep)
+          (bytevector-sweep)
+          (when gcverbose
+            (display "Freed: ")
+            (display freecount)
+            (newline)
+            (display "== GC done ==\n"))
+          (set! gc-gen (+ 1 gc-gen))))
+
+      (define (alloccount++ . objs)
+        (set! alloccounter (+ 1 alloccounter))
+        (when gc-enable
+          (when (>= alloccounter gcinterval)
+            (set! alloccounter 0)
+            (apply gc objs))))
 
       (define (alloc size . objs)
         (let ((siz (* 8 (quotient (+ size 7) 8))))
-         (alloc0 siz)))
+         (apply alloccount++ objs)
+         (let ((idx (alloc0 siz)))
+          idx)))
 
       ;; Dummy fixnum converter
       (define (%fixnum x) 
@@ -218,6 +345,7 @@
           (heapset! (+ offs idx 3) x)))
       (define (fixnum-make-vector0 count)
         (let ((offs (alloc (+ count 3))))
+         ;(display (list 'VEC: offs)) (newline)
          (heapset! (+ offs 2) count)
          (fixnum-idx->vector offs)))
 
@@ -252,11 +380,13 @@
       (define (fixnum-vmclosure-env obj)
         (heapref (+ 3 (fixnum-vmclosure->idx obj))))
       (define (fixnum-vmclosure-label obj)
+        ;(display (list 'VMCLS-REFLABEL: obj '=> (heapref (+ 2 (fixnum-vmclosure->idx obj))))) (newline)
         (heapref (+ 2 (fixnum-vmclosure->idx obj))))
       (define (fixnum-make-vmclosure label env)
         (let ((idx (alloc 4 label env)))
          (heapset! (+ idx 3) env)
          (heapset! (+ idx 2) label)
+         ;(display (list 'VMCLS: idx label env '=> (fixnum-idx->vmclosure idx))) (newline)
          (fixnum-idx->vmclosure idx)))
 
       ;; VM registers
@@ -270,6 +400,8 @@
         (fixnum-vector-length f))
       (define (fixnum-frame->list f)
         (let ((len (fixnum-frame-length f)))
+         (unless (and (<= 0 len) (< len 4096))
+           (error "Invalid frame length" f (fixnum-vector->idx f) len))
          (let loop ((idx 0)
                     (cur '()))
            (if (= idx len)
@@ -277,13 +409,16 @@
              (loop (+ idx 1) (cons (fixnum-frame-ref f idx) cur))))))
       (define (fixnum-list->frame l)
         (let* ((len (length l))
-               (f (fixnum-make-frame len)))
+               (offs (apply alloc (+ 3 len) l)))
+          ;(display (list 'FRM: offs)) (newline)
+          (heapset! (+ offs 2) len)
           (let loop ((idx 0))
            (cond
              ((= idx len)
-              f)
+              ;(display (list 'FRV: (fixnum-idx->vector offs))) (newline)
+              (fixnum-idx->vector offs))
              (else
-               (fixnum-frame-set! f idx (list-ref l idx))
+               (heapset! (+ offs 3 idx) (list-ref l idx))
                (loop (+ idx 1)))))))
       (define (fixnum-chain-last) (fixnum-null))
       (define (fixnum-chain-last? x) (fixnum-null? x))
@@ -296,9 +431,15 @@
            (fixnum-chain-current c))
           (else
             (fixnum-chain-ref (fixnum-chain-next c) (- n 1)))))
+      (define (filt x)
+        (or (and (pair? x) (eq? (car x) 'jump) 'jump)
+            x))
       (define (fixnum-heap-host-key obj)
-        (fixnum-idx->string (string-register obj #f)))
+        (let ((k (fixnum-idx->string (string-register obj #f))))
+         ;(display (list 'HOSTKEY: (filt obj) '=> k (fixnum-string->idx k))) (newline)
+         k))
       (define (fixnum-heap-host-fetch obj)
+        ;(display (list 'HOSTKEY: obj '=> (filt (string-fetch (fixnum-string->idx obj))))) (newline)
         (string-fetch (fixnum-string->idx obj)))
 
       (define (query sym)
@@ -412,6 +553,8 @@
           ;; FIXME: Currently we (ab)use string type for it
           ((HEAP-HOST-KEY)       fixnum-heap-host-key)
           ((HEAP-HOST-FETCH)     fixnum-heap-host-fetch)
+          ((HEAP-SET-GC-HOOK!)   fixnum-heap-set-gc-hook!)
+          ((HEAP-GC-MARK!)       fixnum-heap-gc-mark!)
 
 
           (else (error "Unknown symbol" sym))))

@@ -129,11 +129,13 @@
   (define (%verifyloc tgt cls pos)
     (let* ((next (iref (+ tgt 1)))
            (size (- next tgt)))
+      (when (negative? size)
+        (error "Negative block size" tgt (iref tgt) next))
       (call-with-values
         (lambda () (insert size))
         (lambda (cls0 pos0)
           (unless (and (= cls0 cls) (= pos0 pos))
-            ;(display (list 'VERIF tgt size 'IN cls pos '=> 'ACTUAL cls0 pos0))
+            ;(display (list 'VERIF tgt next size 'IN cls pos '=> 'ACTUAL cls0 pos0))
             ;(newline)
             (error "Invalid class for target block" tgt))))))
 
@@ -203,6 +205,7 @@
       (lambda () (insert siz))
       (lambda (cls pos)
         (%verifyloc blk cls pos)
+        ;(display (list 'INSERT: blk cls pos)) (newline)
         (when (< (iref blk) -1)
           (error "Inserting non-free block!" blk (iref blk)))
         (let ((v (vector-ref freelist cls)))
@@ -254,6 +257,11 @@
             (insert-freeblock new-start new-size)))))
      (when (< 0 (iref tgt))
        (error "Returning free block" tgt (iref tgt)))
+     ;; FIXME: Clear content -- Perhaps we don't have to clear entire region
+     (let loop ((idx (+ tgt 2)))
+      (unless (= idx (+ tgt siz))
+        (iset idx 0)
+        (loop (+ idx 1))))
      tgt))
 
   (define (decode-prev idx)
@@ -325,12 +333,36 @@
          (else
            (loop (cons (list (- hdr) next #t) cur) next))))))
 
+  (define (walk-regions cb)
+    (let loop ((idx 8))
+      (let ((hdr (iref idx))
+            (next (iref (+ 1 idx))))
+        (unless (= -1 next)
+          (cond
+            ((< hdr 0)
+             ;; cb might free the region:
+             ;; capture the next non-free block
+             (let loop2 ((x next))
+              (cond
+                ((= -1 next)
+                 ;; idx was the last in-use block
+                 (cb idx))
+                ((> (iref x) 0)
+                 ;; Skip free block
+                 (loop2 (iref (+ x 1))))
+                (else
+                  (cb idx)
+                  (loop x)))))
+            (else
+              (loop next)))))))
+
   (define (theAllocator sym)
     (case sym
       ((INIT) init)
       ((ALLOC) alloc)
       ((FREE) free)
       ((DUMP-REGIONS) dump-regions)
+      ((WALK-REGIONS) walk-regions)
       (else (error "Unknown symbol" sym))))
 
   (unless (< HEAPMAX (* 1024 1024 128))
