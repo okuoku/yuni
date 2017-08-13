@@ -343,7 +343,7 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
      (string-copy! to at from start (string-length from)))
     ((to at from start end)
      (if (eq? to from) ;; FIXME: Handle overlap..
-       (string-copy! to at (substring from start end))
+       (%string-copy!-neq to at (substring from start end) 0 (- end start))
        (%string-copy!-neq to at from start end)))))
 
 (define (%vector-copy!-neq to at from start end)
@@ -362,7 +362,7 @@ with-exception-handler write-bytevector write-char write-string write-u8 zero?
      (vector-copy! to at from start (vector-length from)))
     ((to at from start end)
      (if (eq? to from)
-       (vector-copy! to at (%subvector from start end))
+       (%vector-copy!-neq to at (%subvector from start end) 0 (- end start))
        (%vector-copy!-neq to at from start end)))))
 
 ;; From division library
