@@ -4,7 +4,7 @@
          
 ;;
 
-(define (vmcore-new query) ;; => cycle extra
+(define (vmcore-new imm-tbl query) ;; => cycle extra
   ;; Machine state
   (define S* '())
   (define S #f)
@@ -12,6 +12,7 @@
   (define E #f)
   (define D* '())
   (define V '())
+  (define IMMFRAME #f)
   (define link 'none) ;; none | single | values | call | multi
 
   ;; Query(call-back)
@@ -57,7 +58,15 @@
     (set! D* (chain-last))
     (set! V #f)
     (set! link 'none)
-    (set-gc-hook! gc-hook))
+    (set! IMMFRAME (make-frame (vector-length imm-tbl)))
+    (set-gc-hook! gc-hook)
+    (gc-disable)
+    ;; Fill imm table
+    (let loop ((idx 0))
+     (unless (= idx (vector-length imm-tbl))
+       (frame-set! IMMFRAME idx (heapin (vector-ref imm-tbl idx)))
+       (loop (+ idx 1))))
+    (gc-enable))
   
   (define (gc-enable) (set-gc-hook! #t))
   (define (gc-disable) (set-gc-hook! #f))
@@ -70,6 +79,7 @@
       (gc-mark! E))
     (gc-mark! E*)
     (gc-mark! D*)
+    (gc-mark! IMMFRAME)
     ;; FIXME: Assumes fixnum heap here....
     (when V
       (gc-mark! V)))
@@ -391,7 +401,7 @@
         (set! link 'values)))
     (pop-S!))
   (define (LDI imm)
-    (set-value! (heapin imm)))
+    (set-value! (frame-ref IMMFRAME imm)))
   (define (LDN)
     (set-value! (make-unspecified)))
   (define (LDNN)

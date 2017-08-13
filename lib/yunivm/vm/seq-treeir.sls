@@ -13,6 +13,7 @@
   (define block-breaks #f)
   (define block-siblings #f)
   (define jump-request #f)
+  (define imm-tbl #f)
 
   ;; Current VM
   (define vmcycle #f)
@@ -115,41 +116,57 @@
       (else (error "Invalid symbol for query" sym))))
 
   ; IR Tree walk helper
-  (define (walk ir parent cb-block)
+  (define (walk ir parent cb-block cb-ldi)
     (unless (null? ir)
       (let ((code (car ir)))
-        (when (and (pair? code) (eq? 'block (car code)))
-          (cb-block code parent (cdr ir))
-          (walk (cddr code) (cadr code) cb-block))
-       (walk (cdr ir) parent cb-block))))
+        (when (pair? code)
+          (cond
+            ((eq? 'block (car code))
+             (cb-block code parent (cdr ir))
+             (walk (cddr code) (cadr code) cb-block cb-ldi))
+            ((eq? 'LDI (car code))
+             (cb-ldi code))
+            (else 'do-nothing)))
+       (walk (cdr ir) parent cb-block cb-ldi))))
 
   (define vmclosure? (heap 'VMCLOSURE?))
   (define vm-true? (heap 'VM-TRUE?))
 
   ;; Import heap interfaces
-  ;; Pass1: Scan for max-blockindex and allocate vector
-  (let ((max-blockno 0))
+  ;; Pass1: Scan for LDI, max-blockindex and allocate vector
+  (let ((max-blockno 0)
+        (immcount 0))
    (walk ir #f
          (lambda (block parent next)
            (let ((no (cadr block)))
             (when (< max-blockno no)
-              (set! max-blockno no)))))
+              (set! max-blockno no))))
+         (lambda (_) (set! immcount (+ 1 immcount))))
    (let ((blockcount (+ 1 max-blockno)))
     (set! block-enters (make-vector blockcount #f))
     (set! block-breaks (make-vector blockcount #f))
-    (set! block-siblings (make-vector blockcount #f))))
+    (set! block-siblings (make-vector blockcount #f))
+    (set! imm-tbl (make-vector immcount #f))))
   ;; Pass2: Fill block pointers
-  (walk ir #f
-        (lambda (block parent next)
-          (let ((no (cadr block)))
-           (vector-set! block-enters no (cddr block))
-           (vector-set! block-breaks no next)
-           (vector-set! block-siblings no parent))))
+  (let ((immidx 0))
+   (walk ir #f
+         (lambda (block parent next)
+           (let ((no (cadr block)))
+            (vector-set! block-enters no (cddr block))
+            (vector-set! block-breaks no next)
+            (vector-set! block-siblings no parent)))
+         (lambda (code) 
+           (let ((m (cdr code)))
+            (unless (= 1 (length m))
+              (error "Malformed LDI instruction" code))
+            (vector-set! imm-tbl immidx (car m))
+            (set-car! m immidx))
+           (set! immidx (+ 1 immidx)))))
   ;; Execute
   (set! current-code ir)
   (set! current-block #f)
   
-  (call-with-values (lambda () (vmcore-new query))
+  (call-with-values (lambda () (vmcore-new imm-tbl query))
                     (lambda (cycle extra) 
                       (let ((xvmterm (lambda () (extra 'RESULT #f #f))))
                        (set! vmcycle cycle)
