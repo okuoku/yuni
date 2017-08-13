@@ -107,22 +107,25 @@
     ($make-string len)
     (let ((fill (car fill?))
           (s ($make-string len)))
-      (string-fill!/itr s fill 0 len)
+      ($string-fill! s fill 0 len)
       s)))
 
+#|
+;; Now $string-fill coreop
 (define (string-fill!/itr str fill start end)
   (unless ($fx= start end)
     (string-set! str start fill)
     (string-fill!/itr str fill ($fx+ start 1) end)))
+|#
 
 (define (string-fill! str fill . args)
   (if (null? args)
-    (string-fill!/itr str fill 0 (string-length str))
+    ($string-fill! str fill 0 (string-length str))
     (let ((start (car args))
           (d (cdr args)))
       (if (null? d)
-        (string-fill!/itr str fill start (string-length str))
-        (string-fill!/itr str fill start (car d))))))
+        ($string-fill! str fill start (string-length str))
+        ($string-fill! str fill start (car d))))))
 
 (define (string->list/itr+! str cur start end)
   (unless ($fx= start end)
@@ -176,14 +179,14 @@
 (define (string . c*) (list->string c*))
 (define (substring str start end)
   (let ((s ($make-string ($fx- end start))))
-   (string-copy!/4+ s 0 str start end)
+   ($string-copy! s 0 str start end)
    s))
 
 (define (string-append/paste s cur queue)
   (unless (null? queue)
     (let* ((x (car queue))
            (l (string-length x)))
-     (string-copy!/4+ s cur x 0 l)
+     ($string-copy! s cur x 0 l)
      (string-append/paste s ($fx+ cur l) (cdr queue)))))
 
 (define (string-append/calctotal cur queue q)
@@ -205,6 +208,7 @@
     (else
       (string-append/calctotal 0 queue queue))))
 
+#|
 (define (string-copy! to at from . rest)
   (cond
     ((null? rest)
@@ -240,6 +244,18 @@
        (if ($fx< start to-end)
          (string-copy!/4- to ($fx- to-end 1) from ($fx- start 1) ($fx- end 1))
          (string-copy!/4+ to at from start end))))))
+|#
+
+(define (string-copy! to at from . rest)
+  (cond
+    ((null? rest)
+     ($string-copy! to at from 0 (string-length from)))
+    (else
+      (cond
+        ((null? (cdr rest))
+         ($string-copy! to at from (car rest) (string-length from)))
+        (else
+          ($string-copy! to at from (car rest) (cadr rest)))))) )
 
          
 )

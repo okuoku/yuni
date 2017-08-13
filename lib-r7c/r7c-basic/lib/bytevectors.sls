@@ -26,11 +26,8 @@
     ($make-bytevector len)
     (let ((bv ($make-bytevector len))
           (fill (car fill?)))
-     (let loop ((pos 0))
-       (unless ($fx= pos len)
-         (bytevector-u8-set! bv pos fill)
-         (loop ($fx+ pos 1))))
-     bv)))
+      ($bytevector-fill! bv fill 0 len)
+      bv)))
 
 (define (string->utf8/itr! str bv cur start end)
   ;; FIXME: Not quite utf8
@@ -160,7 +157,7 @@
   (unless (null? queue)
     (let* ((a (car queue))
            (len (bytevector-length a)))
-      (bytevector-copy!/pick bv pos a 0 len)
+      ($bytevector-copy! bv pos a 0 len)
       (bytevector-append/itr! bv ($fx+ pos len) (cdr queue)))))
 
 (define (bytevector-append/totallen cur queue)
@@ -173,6 +170,7 @@
    (bytevector-append/itr! bv 0 queue)
    bv))
          
+#|
 (define (bytevector-copy!/itr+ to at from start end)
   (unless ($fx= start end)
     (bytevector-u8-set! to at (bytevector-u8-ref from start))
@@ -208,6 +206,30 @@
 (define (bytevector-copy/pick bv start end)
   (let ((dest ($make-bytevector ($fx- end start))))
    (bytevector-copy/itr! bv dest 0 start end)
+   dest))
+
+(define (bytevector-copy bv . args)
+  (if (null? args)
+    (bytevector-copy/pick bv 0 (bytevector-length bv))
+    (let ((start (car args))
+          (d (cdr args)))
+      (if (null? d)
+        (bytevector-copy/pick bv start (bytevector-length bv))
+        (bytevector-copy/pick bv start (car d))))))
+|#
+
+(define (bytevector-copy! to at from . args)
+  (if (null? args)
+    ($bytevector-copy! to at from 0 (bytevector-length from))
+    (let ((start (car args))
+          (d (cdr args)))
+      (if (null? d)
+        ($bytevector-copy! to at from start (bytevector-length from))
+        ($bytevector-copy! to at from start (car d))))))
+
+(define (bytevector-copy/pick bv start end)
+  (let ((dest ($make-bytevector ($fx- end start))))
+   ($bytevector-copy! dest 0 bv start end)
    dest))
 
 (define (bytevector-copy bv . args)

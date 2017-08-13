@@ -181,16 +181,16 @@
      $char=?)
     ((r7c heap string)
      string? string-length string-ref string-set!
-     $make-string)
+     $make-string $string-fill! $string-copy!)
     ((r7c heap bytevector)
      bytevector? bytevector-length bytevector-u8-ref bytevector-u8-set!
-     $make-bytevector)
+     $make-bytevector $bytevector-fill! $bytevector-copy!)
     ((r7c heap symbol)
      symbol? symbol->string string->symbol
      $symbol=?)
     ((r7c heap vector)
      vector? vector-length vector-ref vector-set!
-     $make-vector)
+     $make-vector $vector-fill! $vector-copy!)
     ((r7c heap listloop)
      memv
      $fx-length $append)

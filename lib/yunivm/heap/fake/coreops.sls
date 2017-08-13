@@ -92,6 +92,7 @@
   (object-datum obj))
 
 ;; number = bignum flonum fixnum
+#|
 (define (%fixnum host)
   ;; Ensure specified object is a fixnum
   (cond
@@ -105,6 +106,9 @@
            (error "Number required" tag datum)))))
     ((number? host) (exact host))
     (else (error "Number required" host))))
+|#
+(define (%fixnum host) host)
+
 (define (fake-fixnum? obj) (and (number? obj) (integer? obj)))
 
 ;; string
@@ -132,6 +136,21 @@
 (define (fake-make-string0 count)
   (wrap-object tag-string
                (make-string (%fixnum count))))
+(define (fake-string-fill! obj c start end)
+  (unless (fake-string? obj)
+    (error "String required"))
+  (unless (fake-char? c)
+    (error "Char required"))
+  (string-fill! (object-datum obj) (integer->char (object-datum c))
+                (%fixnum start) (%fixnum end)))
+
+(define (fake-string-copy! to at from start end)
+  (unless (fake-string? to)
+    (error "String required"))
+  (unless (fake-string? from)
+    (error "String required"))
+  (string-copy! (object-datum to) (%fixnum at)
+                (object-datum from) (%fixnum start) (%fixnum end)))
 
 ;; bytevector
 (define (fake-bytevector? obj)
@@ -153,6 +172,25 @@
 (define (fake-make-bytevector0 count)
   (wrap-object tag-bytevector
                (make-bytevector (%fixnum count))))
+(define (fake-bytevector-fill! obj b start end)
+  ;; It is not in R7RS.
+  (unless (fake-bytevector? obj)
+    (error "Bytevector required"))
+  (let ((bv (object-datum obj))
+        (starti (%fixnum start))
+        (endi (%fixnum end))
+        (bi (%fixnum b)))
+    (let loop ((idx starti))
+     (unless (= idx endi)
+       (bytevector-u8-set! bv idx bi)
+       (loop (+ idx 1))))))
+(define (fake-bytevector-copy! to at from start end)
+  (unless (fake-bytevector? to)
+    (error "Bytevector required"))
+  (unless (fake-bytevector? from)
+    (error "Bytevector required"))
+  (bytevector-copy! (object-datum to) (%fixnum at)
+                    (object-datum from) (%fixnum start) (%fixnum end)))
 
 ;; symbol
 (define (fake-symbol? obj)
@@ -221,6 +259,17 @@
                x))
 (define (fake-make-vector0 count)
   (wrap-object tag-vector (make-vector (%fixnum count))))
+(define (fake-vector-fill! obj fill start end)
+  (unless (fake-vector? obj)
+    (error "Vector required"))
+  (vector-fill! (object-datum obj) fill (%fixnum start) (%fixnum end)))
+(define (fake-vector-copy! to at from start end)
+  (unless (fake-vector? to)
+    (error "Vector required"))
+  (unless (fake-vector? from)
+    (error "Vector required"))
+  (vector-copy! (object-datum to) (%fixnum at)
+                (object-datum from) (%fixnum start) (%fixnum end)))
 
 ;; yuni extension
 
@@ -411,6 +460,8 @@
       ((string-ref)          fake-string-ref)
       ((string-set!)         fake-string-set!)
       (($make-string)        fake-make-string0)
+      (($string-fill!)       fake-string-fill!) ;; extra
+      (($string-copy!)       fake-string-copy!) ;; extra
 
       ((bytevector?)         Pfake-bytevector?)
       ((Pbytevector?)        fake-bytevector?)
@@ -418,6 +469,8 @@
       ((bytevector-u8-ref)   fake-bytevector-u8-ref)
       ((bytevector-u8-set!)  fake-bytevector-u8-set!)
       (($make-bytevector)    fake-make-bytevector0)
+      (($bytevector-fill!)   fake-bytevector-fill!) ;; extra
+      (($bytevector-copy!)   fake-bytevector-copy!) ;; extra
 
       ((symbol?)             Pfake-symbol?)
       (($symbol=?)           Pfake-symbol=?/2)
@@ -440,6 +493,8 @@
       ((vector-ref)          fake-vector-ref)
       ((vector-set!)         fake-vector-set!)
       (($make-vector)        fake-make-vector0)
+      (($vector-fill!)       fake-vector-fill!) ;; extra
+      (($vector-copy!)       fake-vector-copy!) ;; extra
 
       ((Pfixnum?)            fake-fixnum?)
       ((fixnum?)             Pfake-fixnum?)

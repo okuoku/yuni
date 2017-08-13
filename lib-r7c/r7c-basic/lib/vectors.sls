@@ -26,28 +26,30 @@
   (if (null? fill?)
     ($make-vector len)
     (let ((v ($make-vector len)))
-     (vector-fill!/itr v (car fill?) 0 len)
+     ($vector-fill! v (car fill?) 0 len)
      v)))
 
+#|
 (define (vector-fill!/itr vec fill start end)
   (unless ($fx= start end)
     (vector-set! vec start fill)
     (vector-fill!/itr vec fill ($fx+ start 1) end))) 
+|#
 
 (define (vector-fill! vec fill . args)
   (if (null? args)
-    (vector-fill!/itr vec fill 0 (vector-length vec))
+    ($vector-fill! vec fill 0 (vector-length vec))
     (let ((start (car args))
           (d (cdr args)))
       (if (null? d)
-        (vector-fill!/itr vec fill start (vector-length vec))
-        (vector-fill!/itr vec fill start (car d))))))
+        ($vector-fill! vec fill start (vector-length vec))
+        ($vector-fill! vec fill start (car d))))))
 
 (define (vector-append/itr! vec pos queue)
   (unless (null? queue)
     (let* ((a (car queue))
            (len (vector-length a)))
-      (vector-copy!/pick vec pos a 0 len)
+      ($vector-copy! vec pos a 0 len)
       (vector-append/itr! vec ($fx+ pos len) (cdr queue)))))
 
 (define (vector-append/totallen cur queue)
@@ -61,6 +63,7 @@
    (vector-append/itr! v 0 queue)
    v))
 
+#|
 (define (vector-copy!/itr+ to at from start end)
   (unless ($fx= start end)
     (vector-set! to at (vector-ref from end))
@@ -92,10 +95,20 @@
   (unless ($fx= start end)
     (vector-set! v pos (vector-ref vec start))
     (vector-copy/itr! vec v ($fx+ pos 1) ($fx+ start 1) end)))
+|#
          
+(define (vector-copy! to at from . args)
+  (if (null? args)
+    ($vector-copy! to at from 0 (vector-length from))
+    (let ((start (car args))
+          (d (cdr args)))
+      (if (null? d)
+        ($vector-copy! to at from start (vector-length from))
+        ($vector-copy! to at from start (car d))))))
+
 (define (vector-copy/pick vec start end)
   (let ((v ($make-vector ($fx- end start))))
-   (vector-copy/itr! vec v 0 start end)
+   ($vector-copy! v 0 vec start end)
    v))
          
 (define (vector-copy vec . args)
