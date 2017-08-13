@@ -80,7 +80,6 @@
     (gc-mark! E*)
     (gc-mark! D*)
     (gc-mark! IMMFRAME)
-    ;; FIXME: Assumes fixnum heap here....
     (when V
       (gc-mark! V)))
 
@@ -330,18 +329,19 @@
   (define (restore-dump!)
     (let ((a (chain-current D*))
           (d (chain-next D*)))
-      (apply (lambda (ex-S* ex-E ex-E* r . ctx?)
-               (let ((returnpoint (hostfetch r)))
-                (set! S '())
-                (set! S* ex-S*)
-                (pop-S!)
-                (set! E ex-E)
-                (set! E* ex-E*)
-                (cond
-                  ;; Callbacks will use procedure as returnpoint
-                  ((procedure? returnpoint) (returnpoint (car ctx?)))
-                  (else (jump returnpoint)))))
-             (frame->list a))
+      (let ((ex-S* (frame-ref a 0))
+            (ex-E (frame-ref a 1))
+            (ex-E* (frame-ref a 2))
+            (returnpoint (hostfetch (frame-ref a 3))))
+        (set! S '())
+        (set! S* ex-S*)
+        (pop-S!)
+        (set! E ex-E)
+        (set! E* ex-E*)
+        (cond
+          ;; Callbacks will use procedure as returnpoint
+          ((procedure? returnpoint) (returnpoint (frame-ref a 4)))
+          (else (jump returnpoint))))
       (set! D* d)))
   (define (call-dispatch! type tail?)
     (unless (eq? link 'single)
