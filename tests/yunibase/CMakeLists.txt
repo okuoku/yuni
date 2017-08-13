@@ -120,11 +120,11 @@ function(test_with_impl prefix fil)
     endif()
 endfunction()
 
-function(test_yunivm_with_impl prefix fn)
+function(test_yunivm_with_impl prefix runner fn)
     if(YUNITEST_${prefix})
-        add_test(NAME "${prefix}-yunivm-${fn}"
+        add_test(NAME "${prefix}-yunivm-${runner}-${fn}"
             COMMAND ${YUNITEST_${prefix}} 
-            _launcher.sps -PROG ${fn}
+            _launcher.sps -RUNNER ${runner} -PROG ${fn}
             WORKING_DIRECTORY ${YUNI_BASEDIR}/tests/vm)
     endif()
 endfunction()
@@ -152,7 +152,16 @@ function(test_yunivm_with_all_except fil)
     list(REMOVE_ITEM lis ${ARGN})
 
     foreach(e ${lis})
-        test_yunivm_with_impl(${e} ${fil})
+        test_yunivm_with_impl(${e} fake ${fil})
+    endforeach()
+endfunction()
+
+function(test_yunivm_fixnumheap_with_all_except fil)
+    set(lis ${impls})
+    list(REMOVE_ITEM lis ${ARGN})
+
+    foreach(e ${lis})
+        test_yunivm_with_impl(${e} fixnum ${fil})
     endforeach()
 endfunction()
 
@@ -221,6 +230,8 @@ if(NOT YUNI_TEST_SKIP_LONGRUN)
     test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE NMOSH)
     test_yunivm_with_all_except(vmtest4.sps KAWA GUILE NMOSH)
     test_yunivm_with_all_except(vmtest5.sps KAWA GUILE NMOSH)
+    test_yunivm_fixnumheap_with_all_except(vmtest4.sps KAWA GUILE NMOSH)
+    test_yunivm_fixnumheap_with_all_except(vmtest5.sps KAWA GUILE NMOSH)
     test_yunivm_with_allcleandir_except(vmtest6.sps 
         LARCENY KAWA GUILE NMOSH)
     test_with_all_except(tests/vm/vmtest8.sps 
