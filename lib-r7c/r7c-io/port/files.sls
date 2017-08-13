@@ -31,7 +31,7 @@
   (define (fill!)
     (unless open?
       (error "Fatal: Tried to fill closed file"))
-    (unless buf
+    (when (or (not buf) (eof-object? (peek-char buf)))
       (let ((bv (make-bytevector 512)))
        (let ((r (filehandle-read! fh bv 0 512)))
         (cond
@@ -131,7 +131,7 @@
   (define (fill!)
     (unless open?
       (error "Fatal: Tried to fill closed file"))
-    (unless buf
+    (when (or (not buf) (eof-object? (peek-u8 buf)))
       (let ((bv (make-bytevector 512)))
        (let ((r (filehandle-read! fh bv 0 512)))
         (cond

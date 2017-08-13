@@ -191,5 +191,18 @@
 (let ((p (open-input-string "abcd")))
  (check-equal "abcd" (read-string 99 p)))
 
+(let ((p (open-output-string)))
+ (let ((s1 (make-string 4097 #\c))
+       (s2 (make-string 4099 #\c)))
+   (write-string s1 p)
+   (write-string s2 p)
+   (check-equal (+ 4097 4099) (string-length (get-output-string p)))))
+
+(let ((p (open-output-bytevector)))
+ (let ((b1 (make-bytevector 4097))
+       (b2 (make-bytevector 4099)))
+   (write-bytevector b1 p)
+   (write-bytevector b2 p)
+   (check-equal (+ 4097 4099) (bytevector-length (get-output-bytevector p)))))
 
 (check-finish)
