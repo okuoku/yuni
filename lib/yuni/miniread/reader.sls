@@ -111,6 +111,7 @@
     ((string=? "#(" s)
      'VECTOR_BEGIN)
     (else 
+      #|
       ;; Ignore every #! tokens
       (let ((head (and (<= 2 (string-length s))
                        (substring s 0 2))))
@@ -119,7 +120,27 @@
            'IGNORE)
           ((and head (string=? head "#\\"))
            'CHARLIT)
-          (else (and (string->number s) 'NUMBER)))))))
+          (else (and (string->number s) 'NUMBER))))
+      |#
+      (or (and (<= 2 (string-length s)) (char=? #\# (string-ref s 0))
+               (let ((h (string-ref s 1)))
+                 (or (and (char=? #\! h) 'IGNORE)
+                     (and (char=? #\\ h) 'CHARLIT)
+                     (and (char=? #\x h) 'NUMBER)
+                     (and (char=? #\e h) 'NUMBER)
+                     (and (char=? #\i h) 'NUMBER)
+                     (and (char=? #\b h) 'NUMBER)
+                     (and (char=? #\d h) 'NUMBER)
+                     (and (char=? #\o h) 'NUMBER))))
+          (and (<= 1 (string-length s)) 
+               (case (string-ref s 0)
+                 ((#\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
+                  'NUMBER)
+                 (else #f)))
+          (and (<= 2 (string-length s))
+               (let ((h (string-ref s 0)))
+                (or (and (char=? #\+ h) 'NUMBER)
+                    (and (char=? #\- h) 'NUMBER))))))))
 
 (define (%realize bv lst) ;; => eof-object when comment only
   (define (elem-type e) (vector-ref e 0))
