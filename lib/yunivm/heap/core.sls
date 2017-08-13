@@ -26,6 +26,7 @@
 
   (define x-null? (coreops 'Pnull?))
   (define x-pair? (coreops 'Ppair?))
+  (define x-false? (coreops 'Pfalse?))
   (define co-null (coreops 'null))
   (define co-cons (coreops 'cons))
   (define co-car (coreops 'car))
@@ -75,8 +76,9 @@
   (define (vm-args-compose . objs) (targetargs objs))
   (define (vm-args-decompose obj cb) (apply cb (hostargs obj)))
   (define (make-unspecified) (co-unspecified))
-  (define (vm-true? obj)
-    (if (or (vmclosure? obj) (host obj)) #t #f))
+  ;; Checking vm-true? was here -- it was too costly.
+  ;(define (vm-true? obj) (if (or (vmclosure? obj) (host obj)) #t #f))
+  (define (vm-true? obj) (not (x-false? obj)))
 
   (define (query sym)
     (case sym
