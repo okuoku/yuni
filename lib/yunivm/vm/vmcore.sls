@@ -243,6 +243,23 @@
       (else
         (error "Invalid call type" type))))
 
+  (define (restorectx ctx)
+    ;; Load values
+    (case link
+      ((values) 
+       (push-S! V))
+      ((single)
+       (FRAME 1)
+       (MOV 0))
+      ((none)
+       (FRAME 0))
+      (else
+        (error "Invalid link state for call-with-values" link)))
+    ;; Load receiver
+    (set-value! ctx)
+    ;; Call receiver
+    (TCALL))
+
   (define (call-primitive! type)
     (let ((l (prepare-args type S))
           (id (vm-primitive-id V)))
@@ -272,24 +289,7 @@
            (error "Invalid parameter for call-with-values" l))
          (let ((send (car l))
                (recv (cadr l)))
-           (save-dump-obj!
-             recv
-             (lambda (ctx)
-               ;; Load values
-               (case link
-                 ((values) 
-                  (push-S! V))
-                 ((single)
-                  (FRAME 1)
-                  (MOV 0))
-                 ((none)
-                  (FRAME 0))
-                 (else
-                   (error "Invalid link state for call-with-values" link)))
-               ;; Load receiver
-               (set-value! ctx)
-               ;; Call receiver
-               (TCALL)))
+           (save-dump-obj! recv restorectx)
            ;; Push nothing
            (FRAME 0)
            ;; Load sender
