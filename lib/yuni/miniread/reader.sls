@@ -17,15 +17,83 @@
    bv))
 
 (define (%realize-string-raw bv start end)
+  ;; FIXME: really confusing API..
   ;; R7RS
   (utf8->string bv start (+ 1 end)))
 
-(define (%realize-PLACEHOLDER bv start end)
-  (let ((s (%realize-string-raw bv start end)))
-   (read (open-input-string s))))
+(define (%realize-string-fastpath bv start cur end)
+  (cond
+    ((= cur end)
+     (%realize-string-raw bv (+ start 1) (- end 1)))
+    ((= 92 (bytevector-u8-ref bv cur))
+     #f)
+    (else
+      (%realize-string-fastpath bv start (+ 1 cur) end))))
 
-(define (%realize-string bv start end) (%realize-PLACEHOLDER bv start end))
-(define (%realize-charlit bv start end) (%realize-PLACEHOLDER bv start end))
+(define (%realize-string-slowpath p in-escape? bv segstart cur end)
+  ;; end points the last DQUOTE
+  (cond
+    ((> cur end)
+     (error "Something wrong" segstart cur end))
+    ((= cur end)
+     ;; Flush current segment
+     (write-string (%realize-string-raw bv segstart (- cur 1)) p)
+     (get-output-string p))
+    (in-escape?
+      (let ((b (bytevector-u8-ref bv cur)))
+       (case b
+         ((97) ;; \a = 7
+          (write-char (integer->char 7) p))
+         ((98) ;; \b = 8
+          (write-char (integer->char 8) p))
+         ((116) ;; \t = 9
+          (write-char (integer->char 9) p))
+         ((110) ;; \n = #xa
+          (write-char (integer->char #xa) p))
+         ((100) ;; \d = #xd ????
+          (write-char (integer->char #xd) p))
+         ((34)  ;; \" = DQUOTE
+          (write-char (integer->char 34) p))
+         ((92) ;; \\ = BSLASH
+          (write-char (integer->char 92) p))
+         (else
+           (error "Unknown escape in string" b))))
+      (let ((next (+ cur 1)))
+       (%realize-string-slowpath p #f bv next next end)))
+    (else
+      (cond
+        ((= 92 (bytevector-u8-ref bv cur))
+         ;; Flush current segment
+         (write-string (%realize-string-raw bv segstart (- cur 1)) p)
+         (let ((next (+ 1 cur)))
+          (%realize-string-slowpath p #t bv next next end)))
+        (else
+          (%realize-string-slowpath p #f bv segstart (+ cur 1) end))))))
+
+(define (%realize-string bv start end)
+  (let ((s (%realize-string-fastpath bv start start end)))
+   (or s
+       ;; Exclude DQUOTE on the both ends
+       (let ((start1 (+ start 1)))
+         (%realize-string-slowpath (open-output-string) #f
+                                   bv start1 start1 end)))))
+
+(define (%realize-charlit bv start end) 
+  (let* ((s (%realize-string-raw bv (+ start 2) end)))
+   (cond
+     ((= 1 (string-length s))
+      (car (string->list s)))
+     ((string=? "alarm" s) (integer->char 7))
+     ((string=? "backspace" s) (integer->char 8))
+     ((string=? "delete" s) (integer->char #x7f))
+     ((string=? "escape" s) (integer->char #x1b))
+     ((string=? "newline" s) (integer->char #xa))
+     ((string=? "null" s) (integer->char 0))
+     ((string=? "return" s) (integer->char #xd))
+     ((string=? "space" s) (integer->char #x20))
+     ((string=? "tab" s) (integer->char 9))
+     (else
+       (error "unknown char literal" s)))))
 
 (define (%realize-number bv start end)
   (string->number (%realize-string-raw bv start end)))
