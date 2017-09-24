@@ -1,5 +1,6 @@
 (library (guile-yuni compat ffi primitives)
          (export yuniffi-nccc-call
+                 yuniffi-nccc-ptr->callable
                  yuniffi-module-load
                  yuniffi-module-lookup
 
@@ -89,7 +90,9 @@
 (define yuniffi-module-load (make-simpleloader module-path module-load))
          
 (define (yuniffi-module-lookup handle str)
-  (define p (dynamic-func str handle))
-  (pointer->procedure void p (list '* int '* int)))
+  (yuniffi-nccc-ptr->callable (dynamic-func str handle)))
+
+(define (yuniffi-nccc-ptr->callable ptr)
+  (pointer->procedure void ptr (list '* int '* int)))
          
 )
