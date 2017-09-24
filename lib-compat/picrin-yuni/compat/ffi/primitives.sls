@@ -16,7 +16,8 @@
            bv-read/w64ptr
            bv-write/w64ptr!
 
-           yuniffi-nccc-call)
+           yuniffi-nccc-call
+           yuniffi-nccc-ptr->callable)
 
          (import
            (yuni scheme)
@@ -29,6 +30,7 @@
 
 (define (yuniffi-nccc-call func in in-offset in-len out out-offset out-len)
   (%%yuniffi_nccc_call func in in-offset in-len out out-offset out-len))
+(define (yuniffi-nccc-ptr->callable ptr) ptr)
 
 ;; Pointer handlers
 (define (ptr? x) 
