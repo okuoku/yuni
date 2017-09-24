@@ -1,5 +1,6 @@
 (library (vicare-yuni compat ffi primitives)
          (export yuniffi-nccc-call
+                 yuniffi-nccc-ptr->callable
                  yuniffi-module-load
                  yuniffi-module-lookup
  
@@ -86,6 +87,8 @@
 (define (module-path) (library-source-search-path))
 
 (define yuniffi-module-load (make-simpleloader module-path module-load))
+
+(define yuniffi-nccc-ptr->callable nccc-callout-maker)
          
 (define (yuniffi-module-lookup handle str)
   (nccc-callout-maker (dlsym handle str)))
