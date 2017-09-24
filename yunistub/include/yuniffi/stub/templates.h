@@ -38,34 +38,64 @@
 #define YUNIFFI_FUNC_END(name) \
     }
 
-/*  Forward stub template ::
+/*  
+ *  Forward stub template ::
  */
 
 
-/*  Export function template ::
+/*  
+ *  Export function template ::
  *
- *   Export functions are 2in-8out function exports a symbol metadata
+ *   Export functions are 4in-8out function exports a symbol metadata
  *   to client.
  *
- *       in[0] zero : Reserved as Zero
- *       in[1] selector : object offset
+ *       in[0] func      : function
+ *             0 : Import
+ *             1 : Configure
  *
- *       out[0] flags : Symbol flags <symflags.h> 
- *       out[1] name_pointer : Symbol name pointer
- *       out[2] name_size : Symbol name size
- *       out[3] value : Symbol value
- *       out[4] size : Symbol size YUNIFFI_SYMBOL__HAS_SIZE
- *       out[5] offset : Symbol offset YUNIFFI_SYMBOL__HAS_OFFSET 
- *       out[6] reserved0
- *       out[7] reserved1 */
+ *       in[1] selector  : object offset
+ *       in[2] pointer   : input
+ *       in[3] reserved0 :
+ *
+ *        Func 0 : Import
+ *         out[0] flags : Symbol flags <symflags.h> 
+ *         out[1] name_pointer : Symbol name pointer
+ *         out[2] name_size : Symbol name size
+ *         out[3] value : Symbol value
+ *         out[4] size : Symbol size YUNIFFI_SYMBOL__HAS_SIZE
+ *         out[5] offset : Symbol offset YUNIFFI_SYMBOL__HAS_OFFSET 
+ *         out[6] reserved0
+ *         out[7] reserved1 */
 
-    /* FIXME: Add error check... */
+
+typedef void(*yuni_nccc_proc_t)(uint64_t* in, int in_len,
+                                uint64_t* out, int out_len);
+/* Tentative */
+#define YUNIFFI_STUB_GENERIC_TRAMPOLINE(name) \
+    void name ## _generic_trampoline(uintptr_t unused, uintptr_t proc,\
+                                     uint64_t* in, int in_len,\
+                                     uint64_t* out, int out_len){\
+        const yuni_nccc_proc_t func = (yuni_nccc_proc_t)proc;\
+        func(in, in_len, out, out_len);\
+    }
+
+#define YUNIFFI_STUB_GLOBAL(name) \
+    YUNIFFI_STUB_GENERIC_TRAMPOLINE(name)\
+    static uintptr_t name ## _callback_ptr = \
+    (uintptr_t)name ## _generic_trampoline;
+
 #define YUNIFFI_EXPORTFUNC_BEGIN(name) \
+    YUNIFFI_STUB_GLOBAL(name) \
     YUNIFFI_STUB_EXPORT \
     YUNIFFI_FUNC_BEGIN(name,in,in_size,out,out_size) \
-    const int zero = (int)YUNIWORD_REF_UINT(in,0);\
+    const int func = (int)YUNIWORD_REF_UINT(in,0);\
     const int selector = (int)YUNIWORD_REF_UINT(in,1);\
-    if(zero != 0){\
+    const uintptr_t pointer = (uintptr_t)YUNIWORD_REF_UINT(in,2);\
+    if((func == 1) && (selector == 0)){\
+        name ## _callback_ptr = pointer;\
+        return;\
+    }\
+    if(func != 0){\
         YUNIWORD_SET_UINT(out,0,0);\
         return;\
     }\
@@ -181,6 +211,7 @@
 #define YUNIFFI_EXPORT_VALUE(m)        m(YUNIFFI_RAWEXPORT_R3)
 #define YUNIFFI_EXPORT_SIZE(m)         m(YUNIFFI_RAWEXPORT_R4)
 #define YUNIFFI_EXPORT_OFFSET(m)       m(YUNIFFI_RAWEXPORT_R5)
+
 
 
 #endif

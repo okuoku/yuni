@@ -1,9 +1,20 @@
 (import (yuni scheme)
         (yuni ffi abi abiv0-runtime)
         (yuni compat ffi primitives)
+        (yuni compat bitwise primitives)
 
         ;; Generated stubs
         (yunistub testing_trivial-constants))
+
+;; Tentative module runtime
+
+(define (lookup-forward0 obj)
+  (and (pair? obj)
+       (let ((a (car obj))
+             (d (cdr obj)))
+         (if (eq? (car a) 'forward-0)
+           (cdr a)
+           (lookup-forward0 d)))))
 
 (define test-counter 0)
 (define success-counter 0)
@@ -46,6 +57,7 @@
 ;; xmod should never be found
 (check-equal #f xmod)
 
+(check-equal #t (and trivial #t))
 (when trivial
   (let* ((tbl (yuniffi-abiv0-lookup/constants trivial
                                               "testing_trivial"))
@@ -58,6 +70,27 @@
     (check-equal 1234 CONST_2)
     (check-equal #f UNDEFINED)
     ;(for-each (lambda (e) (write e)(newline)) lis)
-    ))
+    (let* ((echo (lookup-forward0 testecho_intecho))
+           (in (make-bytevector (* 8 1)))
+           (out (make-bytevector (* 8 1))))
+      (check-equal #t (and echo #t))
+      (when echo
+        (let ((echofunc (yuniffi-nccc-ptr->callable echo)))
+         (let loop ((idx 0)
+                    (chk '())
+                    (cur '()))
+           (define (call1 num)
+             (bv-write/u64! in 0 num)
+             (bv-write/u64! out 0 9999)
+             (yuniffi-nccc-call echofunc in 0 1 out 0 1)
+             (bv-read/u64 out 0))
+           (cond
+             ((= idx 4096)
+              (check-equal chk cur))
+             (else
+               (let ((n (call1 idx)))
+                (loop (+ idx 1)
+                      (cons idx chk)
+                      (cons n cur)))))))))))
 
 (check-finish)

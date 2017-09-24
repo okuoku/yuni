@@ -13,3 +13,5 @@ YuniFFI
 -------
 
 YuniFFI support is incomplete. 
+
+* It seems `foreign-procedure-pointer` is undocumented

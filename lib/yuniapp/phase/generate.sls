@@ -146,8 +146,8 @@
                                    (if batchfile? ".bat" ".sh")))
 
   (define libpath (if rootrelative?
-                    (list applibpath runtimepath runtimemodpath)
-                    (list runtimepath runtimemodpath)))
+                    (list applibpath runtimepath runtimemodpath gendir)
+                    (list runtimepath runtimemodpath gendir)))
 
   (define libsuffix (calc-libsuffix impl))
   (define libgen (calc-generator impl))

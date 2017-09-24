@@ -25,7 +25,7 @@
   (lookupbody module (bridgestubs-name name)))
 
 (define (getrow func idx) ;; => ("name" flags value size offset)
-  (define in (make-bytevector (* 8 2) 0))
+  (define in (make-bytevector (* 8 4) 0))
   (define out (make-bytevector (* 8 8)))
   (define out3v (make-bytevector 8))
 
@@ -33,7 +33,7 @@
   (bv-write/u64! in 8 idx)
 
   ;; Query
-  (yuniffi-nccc-call func in 0 2 out 0 8)
+  (yuniffi-nccc-call func in 0 4 out 0 8)
 
   ;; Check for valid bit
   (let ((out0 (bv-read/u64 out 0))

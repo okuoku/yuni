@@ -11,10 +11,12 @@
 (define (try-transforms proc base str)
   (define (itr cur)
     (and (pair? cur)
-         (let ((a (car cur))
-               (d (cdr cur)))
+         (let* ((a (car cur))
+                (d (cdr cur))
+                (path (string-append base "/" (car a) str "." (cdr a))))
+           ;(display (list 'TRY: path)) (newline)
            ;; FIXME: Use path-append to support UNC paths on Win32
-           (or (proc (string-append base "/" (car a) str "." (cdr a)))
+           (or (proc path)
                (itr d)))))
   (itr prefix+suffix*))
 
