@@ -1,6 +1,7 @@
 (library (nmosh-yuni compat ffi primitives)
          (export yuniffi-nccc-call
                  yuniffi-nccc-patchcall
+                 yuniffi-nccc-ptr->callable
                  yuniffi-module-load
                  yuniffi-module-lookup
 
@@ -93,6 +94,8 @@
     func
     xin in-offset in-size
     xout out-offset out-size))
+
+(define (yuniffi-nccc-ptr->callable ptr) ptr)
 
 (define (y-bytevector->pointer bv offs)
   (let ((len (bytevector-length bv)))
