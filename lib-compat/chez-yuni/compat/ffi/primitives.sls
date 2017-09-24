@@ -1,5 +1,6 @@
 (library (chez-yuni compat ffi primitives)
          (export yuniffi-nccc-call
+                 yuniffi-nccc-ptr->callable
                  yuniffi-module-load
                  yuniffi-module-lookup
  
@@ -78,9 +79,13 @@
 
 (define yuniffi-module-load (make-simpleloader module-path module-load))
          
+(define (yuniffi-nccc-ptr->callable ptr)
+  (foreign-procedure ptr
+                     (u8* int u8* int)
+                     void))
+
 (define (yuniffi-module-lookup handle str)
   (foreign-procedure str 
                      (u8* int u8* int)
                      void))
-         
 )
