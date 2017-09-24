@@ -1,5 +1,6 @@
 (library (sagittarius-yuni compat ffi primitives)
          (export yuniffi-nccc-call
+                 yuniffi-nccc-ptr->callable
                  yuniffi-module-load
                  yuniffi-module-lookup
                  
@@ -71,6 +72,9 @@
 (define (yuniffi-module-lookup handle str)
   (define ptr (lookup-shared-library handle str))
   (pointer->c-function ptr 'void str '(void* int void* int)))
+
+(define (yuniffi-nccc-ptr->callable ptr)
+  (pointer->c-function ptr 'void 'nccc-func '(void* int void* int)))
 
 (define (module-path) (load-path))
 
