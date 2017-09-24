@@ -1,5 +1,6 @@
 (library (gambit-yuni compat ffi primitives-phase1)
          (export
+           yuniffi-nccc-ptr->callable
            yuniffi-nccc-call
            ;; for phase2
            dlopen
@@ -17,6 +18,8 @@
 (define (yuniffi-nccc-call . args)
   (ensure-yuniffi-loaded!)
   (apply %%yuniffi-nccc-call args))
+
+(define (yuniffi-nccc-ptr->callable ptr) ptr)
 
 (define (yuniffi-nccc-bootstrap)
   (ensure-yuniffi-loaded!)

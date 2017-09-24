@@ -3,6 +3,7 @@
            yuniffi-nccc-call
            yuniffi-module-load
            yuniffi-module-lookup
+           yuniffi-nccc-ptr->callable
 
            ;; Memory OPs (pointers)
            ptr? 
