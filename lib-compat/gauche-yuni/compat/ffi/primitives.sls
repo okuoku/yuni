@@ -1,6 +1,7 @@
 (library (gauche-yuni compat ffi primitives)
          (export
            yuniffi-nccc-call
+           yuniffi-nccc-ptr->callable
            yuniffi-module-load
            yuniffi-module-lookup
            yuniffi-module-path
@@ -76,6 +77,8 @@
                            in in-offset in-size
                            out out-offset out-size)
   (yuniffi-nccc-call/raw func in in-offset in-size out out-offset out-size))
+
+(define (yuniffi-nccc-ptr->callable ptr) ptr)
 
 (define-values (dlopen dlsym)
                (make-bootstraploader yuniffi-nccc-call
