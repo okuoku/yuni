@@ -1,6 +1,7 @@
 (library (larceny-yuni compat ffi primitives)
          (export
            yuniffi-nccc-call
+           yuniffi-nccc-ptr->callable
            yuniffi-module-load
            yuniffi-module-lookup
 
@@ -115,7 +116,11 @@
 (define (yuniffi-module-lookup handle str) ;; => procedure
   ;; FIXME: Wow, no pointer type! Seriously?
   ;;    NB: We cannot use boxed type because we have to offset pointer values
-  (foreign-procedure str '(boxed int boxed int) 'void))
+  (foreign-procedure str '(boxed int boxed int) 'void) 
+  )
+
+(define (yuniffi-nccc-ptr->callable ptr)
+  (foreign-procedure ptr '(boxed int boxed int) 'void))
 
 (define (module-path) (current-require-path))
 (define yuniffi-module-load (make-simpleloader module-path module-load))
