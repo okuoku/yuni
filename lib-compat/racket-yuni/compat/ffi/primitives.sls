@@ -1,5 +1,6 @@
 (library (racket-yuni compat ffi primitives)
          (export yuniffi-nccc-call
+                 yuniffi-nccc-ptr->callable
                  yuniffi-module-load
                  yuniffi-module-lookup
 
@@ -82,6 +83,9 @@
   (define inp (and in (ptr-add in (* in-offset 8))))
   (define outp (and out (ptr-add out (* out-offset 8))))
   (func inp in-size outp out-size))
+
+(define (yuniffi-nccc-ptr->callable ptr)
+  (cast ptr _pointer nccc-func))
 
 (define (yuniffi-module-lookup handle str)
   ;; nccc-func is defined in (yuni-runtime racket-ffi)
