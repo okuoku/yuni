@@ -1,6 +1,7 @@
 (c-include "yuniffi_stub.inc.c")
 
 (define-c (pointer void) yuniffi_nccc_bootstrap ())
+(define-c (pointer void) yuniffi_nccc_get_callback_bridge ())
 #|
 (define-c void yuniffi_nccc_call 
           ((pointer void)

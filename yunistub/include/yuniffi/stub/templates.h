@@ -72,7 +72,7 @@ typedef void(*yuni_nccc_proc_t)(uint64_t* in, int in_len,
                                 uint64_t* out, int out_len);
 /* Tentative */
 #define YUNIFFI_STUB_GENERIC_TRAMPOLINE(name) \
-    void name ## _generic_trampoline(uintptr_t unused, uintptr_t proc,\
+    static void name ## _generic_trampoline(uintptr_t proc,\
                                      uint64_t* in, int in_len,\
                                      uint64_t* out, int out_len){\
         const yuni_nccc_proc_t func = (yuni_nccc_proc_t)proc;\
@@ -81,7 +81,7 @@ typedef void(*yuni_nccc_proc_t)(uint64_t* in, int in_len,
 
 #define YUNIFFI_STUB_GLOBAL(name) \
     YUNIFFI_STUB_GENERIC_TRAMPOLINE(name)\
-    static uintptr_t name ## _callback_ptr = \
+    uintptr_t name ## _callback_ptr = \
     (uintptr_t)name ## _generic_trampoline;
 
 #define YUNIFFI_EXPORTFUNC_BEGIN(name) \

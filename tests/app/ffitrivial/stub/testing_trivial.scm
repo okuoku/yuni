@@ -154,7 +154,10 @@
     ;(int test_backword2_stub ((voidptr ctx context)) backward-2)
 
     ;; Test: out(1234)
-    (int test_outint ((int thevalue out)) forward-0))
+    (int test_outint ((int thevalue out)) forward-0)
+    (int test_callcallback ((voidptr cb) (int a) (int b))
+         forward-0)
+    )
 
   (exports
     ;; Constant 

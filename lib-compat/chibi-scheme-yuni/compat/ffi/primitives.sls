@@ -2,8 +2,11 @@
          (export
            yuniffi-nccc-call
            yuniffi-nccc-ptr->callable
+           yuniffi-nccc-proc-register
+           yuniffi-nccc-proc-release
            yuniffi-module-load
            yuniffi-module-lookup
+           yuniffi-callback-helper
 
            ;; Memory OPs (pointers)
            ptr?
@@ -81,6 +84,14 @@
                            in in-offset in-size
                            out out-offset out-size)
   (yuniffi_nccc_call func in in-offset in-size out out-offset out-size))
+
+(define (yuniffi-nccc-proc-register proc)
+  (yuniffi_nccc_proc_register proc))
+
+(define (yuniffi-nccc-proc-release obj)
+  (yuniffi_nccc_proc_release obj))
+
+(define (yuniffi-callback-helper) (yuniffi_nccc_get_callback_bridge))
 
 (define-values (dlopen dlsym) (make-bootstraploader yuniffi-nccc-call
                                                     yuniffi_nccc_bootstrap

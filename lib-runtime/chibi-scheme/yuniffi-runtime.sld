@@ -1,6 +1,9 @@
 (define-library (yuniffi-runtime)
                 (export yuniffi_nccc_call
                         yuniffi_nccc_bootstrap
+                        yuniffi_nccc_proc_register
+                        yuniffi_nccc_proc_release
+                        yuniffi_nccc_get_callback_bridge
                         yuniffi_offset_ptr
                         yuniffi_pointerp
                         yuniffi_fetch_s8

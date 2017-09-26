@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdio.h> /* For NULL */
 #define TESTING_H_INCLUDED /* Fake */
 #include "testinterface.h"
@@ -79,6 +80,28 @@ testecho_intecho(int a){
 int
 test_outint(int* thevalue){
     return 1;
+}
+
+typedef void (*the_trampoline_t)(uintptr_t proc,
+                                 uint64_t* in, int in_len,
+                                 uint64_t* out, int out_len);
+
+extern the_trampoline_t testing_trivial_export_constants_callback_ptr;
+
+int
+test_callcallback(void* cb, int a, int b){
+    uint64_t in[2];
+    uint64_t out[1];
+    in[0] = a;
+    in[1] = b;
+    out[0] = 0;
+
+    printf("Calling %p\n", testing_trivial_export_constants_callback_ptr);
+
+    testing_trivial_export_constants_callback_ptr((uintptr_t)cb, 
+                                                  in, 2, out, 1);
+
+    return out[0];
 }
 
 int CONST_1 = 1234;

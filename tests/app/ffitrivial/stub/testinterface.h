@@ -86,6 +86,7 @@ void* test_get_somestruct_1f_test(void);
 int testecho_intecho(int a);
 
 int test_outint(int* out);
+int test_callcallback(void* cb, int a, int b);
 
 /* Constants */
 

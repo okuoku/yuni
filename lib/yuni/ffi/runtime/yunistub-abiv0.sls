@@ -43,7 +43,11 @@
       ;(display (list 'CNAME: cname 'DLL: dll))(newline)
       (when dll
         (let ((const (yuniffi-abiv0-lookup/constants dll cname))
-              (funcs (yuniffi-abiv0-lookup/bridgestubs dll cname)))
+              (funcs (yuniffi-abiv0-lookup/bridgestubs dll cname))
+              (helper (yuniffi-callback-helper)))
+          (when helper
+            (yuniffi-abiv0-register-callback-helper! const helper)
+            (yuniffi-abiv0-register-callback-helper! funcs helper))
           (register-entries! libstate 
                              (yuniffi-abiv0-get-table const))
           (register-entries! libstate 

@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h>
 #include <chibi/eval.h>
 
 #include "../common/bootstrap.inc.c"
@@ -19,8 +20,44 @@ yuniffi_nccc_call(sexp ctx, void* func /* Cpointer */,
     callee(&in0[in_offset], in_len, &out0[out_offset], out_len);
 }
 
+static void
+do_call(sexp ctx, sexp proc, 
+        uint64_t* in, int in_len, uint64_t* out, int out_len){
+    sexp_gc_var1(args);
+    sexp_gc_preserve1(ctx, args);
+    args = sexp_list2(ctx, sexp_make_cpointer(ctx, SEXP_CPOINTER,
+                                              out, SEXP_FALSE, 0),
+                      sexp_make_fixnum(out_len));
+    args = sexp_cons(ctx, sexp_make_fixnum(in_len), args);
+    args = sexp_cons(ctx, sexp_make_cpointer(ctx, SEXP_CPOINTER,
+                                             in, SEXP_FALSE, 0), args);
+    sexp_apply(ctx, proc, args);
+    sexp_gc_release1(ctx);
+}
+
+static void
+call_nccc_proc(uintptr_t procobjptr,
+               uint64_t* in, int in_len,
+               uint64_t* out, int out_len){
+    sexp pair;
+    sexp ctx;
+    sexp proc;
+    pair = (sexp)procobjptr;
+    ctx = sexp_car(pair);
+    proc = sexp_cdr(pair);
+    do_call(ctx, proc, in, in_len, out, out_len);
+}
+
+static void*
+yuniffi_nccc_get_callback_bridge(void){
+    /* It's not ISO C compliant */
+    void* ptr = (void*)call_nccc_proc;
+    return ptr;
+}
+
 static void*
 yuniffi_nccc_bootstrap(void){
+    /* It's not ISO C compliant */
     void* ptr = (void*)yuniffi_bootstrap0;
     return ptr;
 }

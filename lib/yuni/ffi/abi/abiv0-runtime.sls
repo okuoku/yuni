@@ -2,7 +2,8 @@
          (export
            yuniffi-abiv0-lookup/constants
            yuniffi-abiv0-lookup/bridgestubs
-           yuniffi-abiv0-get-table)
+           yuniffi-abiv0-get-table
+           yuniffi-abiv0-register-callback-helper!)
          (import (yuni scheme)
                  (yuni ffi abi abiv0)
                  (yuni compat bitwise primitives)
@@ -23,6 +24,16 @@
 
 (define (yuniffi-abiv0-lookup/bridgestubs module name)
   (lookupbody module (bridgestubs-name name)))
+
+(define (yuniffi-abiv0-register-callback-helper! func ptr)
+  (define in (make-bytevector (* 8 4) 0))
+  (define out (make-bytevector (* 8 8)))
+  (bv-write/u64! in 0 1)
+  (bv-write/u64! in 8 0)
+  (bv-write/w64ptr! in 16 ptr)
+
+  (yuniffi-nccc-call func in 0 4 out 0 8)
+  #t)
 
 (define (getrow func idx) ;; => ("name" flags value size offset)
   (define in (make-bytevector (* 8 4) 0))

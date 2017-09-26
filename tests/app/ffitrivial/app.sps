@@ -91,6 +91,23 @@
                (let ((n (call1 idx)))
                 (loop (+ idx 1)
                       (cons idx chk)
-                      (cons n cur)))))))))))
+                      (cons n cur)))))))))
+    (let* ((callcallback (lookup-forward0 test_callcallback)))
+     (check-equal #t (and callcallback #t))
+     (when callcallback
+       (let ((proc (yuniffi-nccc-ptr->callable callcallback))
+             (in (make-bytevector (* 8 4)))
+             (out (make-bytevector (* 8 1)))
+             (func (yuniffi-nccc-proc-register
+                     (lambda ab
+                       (display "called.\n")
+                       (write ab)
+                       (newline)))))
+         (write (list 'CALLBACK func))
+         (newline)
+         (bv-write/w64ptr! in 0 func)
+         (bv-write/u64! in 8 10)
+         (bv-write/u64! in 16 20)
+         (yuniffi-nccc-call proc in 0 3 out 0 1))))))
 
 (check-finish)
