@@ -1,8 +1,11 @@
 (library (guile-yuni compat ffi primitives)
          (export yuniffi-nccc-call
                  yuniffi-nccc-ptr->callable
+                 yuniffi-nccc-proc-register
+                 yuniffi-nccc-proc-release
                  yuniffi-module-load
                  yuniffi-module-lookup
+                 yuniffi-callback-helper
 
                  ;; Memory OPs (pointers)
                  ptr?
@@ -28,6 +31,12 @@
                  (system foreign))
 
 ;; Guile requires bytevector to do byte-wise access. Whoa.
+
+(define (yuniffi-nccc-proc-register proc)
+  (procedure->pointer void proc
+                      (list '* int '* int)))
+(define (yuniffi-nccc-proc-release proc) #t)
+(define (yuniffi-callback-helper) #f)
 
 (define (ptr? x) (pointer? x))
 (define-syntax defreader
