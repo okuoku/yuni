@@ -1,8 +1,11 @@
 (library (racket-yuni compat ffi primitives)
          (export yuniffi-nccc-call
                  yuniffi-nccc-ptr->callable
+                 yuniffi-nccc-proc-register
+                 yuniffi-nccc-proc-release
                  yuniffi-module-load
                  yuniffi-module-lookup
+                 yuniffi-callback-helper
 
                  ;; Memory OPs (pointers)
                  ptr?
@@ -36,6 +39,13 @@
                  (ffi unsafe))
 
 ;;
+
+(define (yuniffi-nccc-proc-register proc)
+  (function-ptr proc nccc-func))
+
+(define (yuniffi-nccc-proc-release proc) #t)
+
+(define (yuniffi-callback-helper) #f)
 
 ;; Unfortunately, Racket also uses `ptr` prefix.
 (define (ptr? x) (and (cpointer? x)
