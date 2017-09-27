@@ -68,7 +68,7 @@
 (define (bv-read/w64ptr bv off)
   (let ((w (bv-read/u64 bv off)))
    (make-pointer w)))
-(define (bv-write/w64ptr bv off v)
+(define (bv-write/w64ptr! bv off v)
   (bv-write/u64! bv off (pointer-address v)))
 
 (define-read-asciiz ptr-read/asciiz ptr-read/u8)
