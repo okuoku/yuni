@@ -1,8 +1,11 @@
 (library (sagittarius-yuni compat ffi primitives)
          (export yuniffi-nccc-call
                  yuniffi-nccc-ptr->callable
+                 yuniffi-nccc-proc-register
+                 yuniffi-nccc-proc-release
                  yuniffi-module-load
                  yuniffi-module-lookup
+                 yuniffi-callback-helper
                  
                  ;; Memory OPs (pointers)
                  ptr? 
@@ -24,6 +27,11 @@
                  (sagittarius ffi)
                  (only (sagittarius) load-path))
          
+(define (yuniffi-callback-helper) #f)
+(define (yuniffi-nccc-proc-register proc)
+  (c-callback void (void* int void* int) proc))
+(define (yuniffi-nccc-proc-release proc)
+  (free-c-callback proc))
 (define (yuniffi-nccc-call func
                            in in-offset in-size
                            out out-offset out-size)
@@ -58,8 +66,17 @@
 
 (define (bv-read/w64ptr x off)
   (integer->pointer (bv-read/u64 x off)))
+
+(define-c-struct callbackbox
+                 (callback fn))
+
 (define (bv-write/w64ptr! x off v)
-  (bv-write/u64! x off (pointer->integer v)))
+  (cond
+    ((callback? v) ;; Undocumented
+     (c-struct-set! (bytevector->pointer x off) callbackbox 'fn v))
+    (else
+      ;; FIXME: Use pointer-set-... directly here.
+      (bv-write/u64! x off (pointer->integer v)))))
 
 (define-read-asciiz ptr-read/asciiz ptr-read/u8)
 (define-write-asciiz ptr-write/asciiz! ptr-write/u8!)
