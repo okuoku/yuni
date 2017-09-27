@@ -1,8 +1,11 @@
 (library (vicare-yuni compat ffi primitives)
          (export yuniffi-nccc-call
                  yuniffi-nccc-ptr->callable
+                 yuniffi-nccc-proc-register
+                 yuniffi-nccc-proc-release
                  yuniffi-module-load
                  yuniffi-module-lookup
+                 yuniffi-callback-helper
  
                  ;; Memory OPs (pointers)
                  ptr?
@@ -32,6 +35,14 @@
                  (yuni ffi runtime simpleloader)
                  (yuni ffi runtime simplestrings)
                  (vicare ffi))
+
+(define nccc-callback-maker
+  (make-c-callback-maker 'void '(pointer signed-int pointer signed-int)))
+(define (yuniffi-callback-helper) #f)
+(define (yuniffi-nccc-proc-register proc)
+  (nccc-callback-maker proc))
+(define (yuniffi-nccc-proc-release proc)
+  (free-c-callback proc))
 ;; A bit different from nmosh
 (define (ptr? x) (pointer? x))
  
