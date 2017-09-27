@@ -71,6 +71,45 @@ end:
 }
 
 ScmObj
+yuniffi_nccc_proc_register(ScmObj proc){
+    ScmObj* box;
+    if(!SCM_PROCEDUREP(proc)){
+        Scm_Error("proc: must be a procedure", proc);
+        return SCM_UNDEFINED;
+    }
+
+    box = GC_MALLOC_UNCOLLECTABLE(sizeof(ScmObj));
+    *box = proc;
+
+    return YUNIPTR_BOX(box);
+}
+
+ScmObj
+yuniffi_nccc_proc_release(ScmObj ptr){
+    if(!YUNIPTR_P(ptr)){
+        Scm_Error("ptr: must be a pointer", ptr);
+        return SCM_UNDEFINED;
+    }
+    GC_FREE(YUNIPTR_UNBOX(ptr));
+}
+
+void
+callback_bridge(uintptr_t procobjptr,
+                uint64_t* in, int in_len,
+                uint64_t* out, int out_len){
+    ScmObj* box = (ScmObj*)(void*)procobjptr;
+    Scm_ApplyRec4(*box, 
+                  YUNIPTR_BOX(in), Scm_MakeInteger(in_len),
+                  YUNIPTR_BOX(out), Scm_MakeInteger(out_len));
+}
+
+ScmObj
+yuniffi_nccc_get_callback_bridge(void){
+    uint64_t ptr = (uint64_t)(uintptr_t)callback_bridge;
+    return YUNIPTR_BOX((void*)(uintptr_t)ptr);
+}
+
+ScmObj
 yuniffi_pointer_fromint(ScmObj offset){
     if(!SCM_INTP(offset)){
         Scm_Error("offset: must be a fixnum", offset);

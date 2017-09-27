@@ -10,6 +10,12 @@
                                       out out-offset out-len) 
               yuniffi_nccc_call)
 (define-cproc yuniffi-nccc-bootstrap () yuniffi_nccc_bootstrap)
+(define-cproc yuniffi-nccc-get-callback-bridge () 
+              yuniffi_nccc_get_callback_bridge)
+(define-cproc yuniffi-nccc-proc-register (proc)
+              yuniffi_nccc_proc_register)
+(define-cproc yuniffi-nccc-proc-release (ptr)
+              yuniffi_nccc_proc_release)
 
 (define-cproc yuniffi-pointer-fetch-signed (ptr offset width)
               yuniffi_pointer_fetch_signed)

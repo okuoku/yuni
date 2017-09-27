@@ -22,6 +22,9 @@ extern ScmObj yuniffi_nccc_call(ScmObj func,
                                 ScmObj out, ScmObj out_offset, ScmObj out_len);
 
 extern ScmObj yuniffi_nccc_bootstrap(void);
+extern ScmObj yuniffi_nccc_get_callback_bridge(void);
+extern ScmObj yuniffi_nccc_proc_register(ScmObj proc);
+extern ScmObj yuniffi_nccc_proc_release(ScmObj ptr);
 
 extern ScmObj yuniffi_pointer_fetch_signed(ScmObj ptr, ScmObj offset, 
                                            ScmObj width);

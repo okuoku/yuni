@@ -2,8 +2,11 @@
          (export
            yuniffi-nccc-call
            yuniffi-nccc-ptr->callable
+           yuniffi-nccc-proc-register ;; reexport
+           yuniffi-nccc-proc-release ;; reexport
            yuniffi-module-load
            yuniffi-module-lookup
+           yuniffi-callback-helper
            yuniffi-module-path
 
            ;; Memory OPs (pointers)
@@ -27,6 +30,10 @@
                          (yuniffi-nccc-call yuniffi-nccc-call/raw)
                          ) ;; see yuni/yunistub/gauche
                  )
+
+;; Callback ops
+
+(define (yuniffi-callback-helper) (yuniffi-nccc-get-callback-bridge))
 
 ;; Memory ops
 

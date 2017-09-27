@@ -1,6 +1,9 @@
 (define-module yuniffi
   (export yuniffi-nccc-call
           yuniffi-nccc-bootstrap
+          yuniffi-nccc-proc-register
+          yuniffi-nccc-proc-release
+          yuniffi-nccc-get-callback-bridge
           yuniffi-pointer-fetch-signed
           yuniffi-pointer-fetch-unsigned
           yuniffi-pointer-store
