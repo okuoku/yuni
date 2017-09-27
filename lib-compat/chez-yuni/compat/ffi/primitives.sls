@@ -1,8 +1,11 @@
 (library (chez-yuni compat ffi primitives)
          (export yuniffi-nccc-call
                  yuniffi-nccc-ptr->callable
+                 yuniffi-nccc-proc-register
+                 yuniffi-nccc-proc-release
                  yuniffi-module-load
                  yuniffi-module-lookup
+                 yuniffi-callback-helper
  
                  ;; Memory OPs (pointers)
                  ptr?
@@ -26,9 +29,24 @@
                        foreign-ref
                        foreign-set!
                        foreign-procedure
-                       load-shared-object)
+                       load-shared-object
+                       lock-object
+                       unlock-object
+                       foreign-callable
+                       foreign-callable-entry-point
+                       foreign-callable-code-object)
                  (yuni ffi runtime simpleloader)
                  (yuni ffi runtime simplestrings))
+
+         
+(define (yuniffi-callback-helper) #f)
+(define (yuniffi-nccc-proc-register proc)
+  (let ((r (foreign-callable proc (void* int void* int) void)))
+   (lock-object r)
+   (foreign-callable-entry-point r)))
+(define (yuniffi-nccc-proc-release ptr)
+  (unlock-object (foreign-callable-code-object ptr)))
+
 ;; A bit different from nmosh
 (define (ptr? x) (integer? x))
  
