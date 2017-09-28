@@ -17,3 +17,5 @@ install:
 build_script:
     - cmd: cmake -DBOOTSTRAP=%BOOTSTRAP% -DSKIP_LONGRUN=ON -P %APPVEYOR_BUILD_FOLDER%/integration/buildhost-win/test-on-admin.cmake
 
+cache:
+    - c:/projects/yuni/work/pkgcache -> integration/buildhost-win/test-on-admin.cmake

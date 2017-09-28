@@ -17,13 +17,27 @@ set(ENV{CTEST_OUTPUT_ON_FAILURE} 1)
 
 message(STATUS "workdir = ${workdir}")
 
+file(MAKE_DIRECTORY ${workdir}/pkgcache)
+
 function(download_installer filename)
     set(base
         "http://storage.osdev.info/pub/proj/yuni/")
-    file(DOWNLOAD
-        ${base}/${filename}
+    if(NOT EXISTS ${workdir}/pkgcache/${filename})
+        message(STATUS 
+            "Downloading ${filename} => ${workdir}/pkgcache/${filename}")
+        file(DOWNLOAD
+            ${base}/${filename}
+            ${workdir}/pkgcache/${filename}
+            TLS_VERIFY OFF)
+    endif()
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} -E copy 
+        ${workdir}/pkgcache/${filename}
         ${workdir}/${filename}
-        TLS_VERIFY OFF)
+        RESULT_VARIABLE rr)
+    if(rr)
+        message(FATAL_ERROR "Copy error ${rr}")
+    endif()
 endfunction()
 
 function(do_build_and_test_yuni bitness bootstrapuse)
@@ -68,7 +82,6 @@ function(do_build_and_test_yuni bitness bootstrapuse)
     execute_process(
         COMMAND ${CMAKE_COMMAND}
         --build .
-        -- -j1
         RESULT_VARIABLE rr
         WORKING_DIRECTORY ${workdir})
 
@@ -91,8 +104,9 @@ function(do_build_and_test_yuni bitness bootstrapuse)
     # Test yuni
     message(STATUS "Test...")
     execute_process(
-        COMMAND ${CMAKE_COMMAND}
-        --build . --target test
+        COMMAND ctest -j8
+        #${CMAKE_COMMAND}
+        #--build . --target test
         RESULT_VARIABLE rr
         WORKING_DIRECTORY ${workdir})
 
