@@ -99,6 +99,7 @@ message(STATUS "Test...")
 
 execute_process(COMMAND
     ${CMAKE_CTEST_COMMAND} 
+    -j8
     --output-on-failure
     .
     RESULT_VARIABLE rr

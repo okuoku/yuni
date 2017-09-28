@@ -104,7 +104,9 @@ function(do_build_and_test_yuni bitness bootstrapuse)
     # Test yuni
     message(STATUS "Test...")
     execute_process(
-        COMMAND ctest -j8
+        COMMAND ${CMAKE_CTEST_COMMAND} -j8
+        --output-on-failure
+        .
         #${CMAKE_COMMAND}
         #--build . --target test
         RESULT_VARIABLE rr
