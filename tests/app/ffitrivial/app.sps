@@ -108,6 +108,7 @@
          (bv-write/w64ptr! in 0 func)
          (bv-write/u64! in 8 10)
          (bv-write/u64! in 16 20)
-         (yuniffi-nccc-call proc in 0 3 out 0 1))))))
+         (yuniffi-nccc-call proc in 0 3 out 0 1)
+         (yuniffi-nccc-proc-release func)))))) 
 
 (check-finish)

@@ -33,17 +33,31 @@
                    (map map:racket)
                    (list->vector list->vector:racket)
                    )
+                 (only (rnrs) 
+                       make-eqv-hashtable
+                       hashtable-set!
+                       hashtable-delete!)
                  (yuni-runtime racket-ffi)
                  (yuni ffi runtime simpleloader)
                  (yuni ffi runtime simplestrings)
+                 (yuni compat bitwise primitives)
                  (ffi unsafe))
 
 ;;
 
-(define (yuniffi-nccc-proc-register proc)
-  (function-ptr proc nccc-func))
+(define (callback->int c)
+  (let ((bv (make-bytevector 8)))
+   (bv-write/w64ptr! bv 0 c)
+   (bv-read/u64 bv 0)))
+(define callbacks-ht (make-eqv-hashtable))
 
-(define (yuniffi-nccc-proc-release proc) #t)
+(define (yuniffi-nccc-proc-register proc)
+  (let ((p (function-ptr proc nccc-func)))
+   (hashtable-set! callbacks-ht (callback->int p) p)
+   p))
+
+(define (yuniffi-nccc-proc-release proc) 
+  (hashtable-delete! callbacks-ht (callback->int proc)))
 
 (define (yuniffi-callback-helper) #f)
 

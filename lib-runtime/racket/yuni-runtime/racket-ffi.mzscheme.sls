@@ -5,6 +5,7 @@
                  ptr-set/cpointer!)
          (import (rnrs)
                  (ffi unsafe)) 
+
 (define nccc-func
   (_fun _gcpointer _int _gcpointer _int -> _void))
 
