@@ -58,5 +58,5 @@ add_custom_command(TARGET yunistub_testing_trivial
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
     $<TARGET_FILE:yunistub_testing_trivial>
-    ${yunilibroot})
+    ${yunilibdir})
 

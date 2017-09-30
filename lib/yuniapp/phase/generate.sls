@@ -146,8 +146,8 @@
                                    (if batchfile? ".bat" ".sh")))
 
   (define libpath (if rootrelative?
-                    (list applibpath runtimepath runtimemodpath gendir)
-                    (list runtimepath runtimemodpath gendir)))
+                    (list applibpath runtimepath runtimemodpath)
+                    (list runtimepath runtimemodpath)))
 
   (define libsuffix (calc-libsuffix impl))
   (define libgen (calc-generator impl))
@@ -177,10 +177,10 @@
   ;; Check stubdir
   (when (file-directory? stublibpath)
     (let ((stublibs (enumlibfiles stublibpath)))
+     (write (list 'stubs: stublibs)) (newline)
      (unless (null? stublibs)
        (set! libs (append libs stublibs))
-       (when rootrelative?
-         (set! libpath (append libpath (list stublibpath)))))))
+       (set! libpath (append libpath (list stublibpath))))))
 
   ;; Generate stub libraries
   (for-each (lambda (f) (gen libgen 
