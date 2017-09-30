@@ -31,6 +31,10 @@ set(ffi_impls # Impls which capable to yuniffi
     SAGITTARIUS
     CHEZ_SCHEME VICARE)
 
+if(YUNI_TEST_SKIP_FFI)
+    set(ffi_impls)
+endif()
+
 function(add_apptest0 dir is_ffi)
     set(dirname ${CMAKE_CURRENT_BINARY_DIR}/${dir})
     set(appdir ${CMAKE_CURRENT_LIST_DIR}/${dir})

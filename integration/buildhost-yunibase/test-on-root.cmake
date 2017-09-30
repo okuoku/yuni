@@ -62,6 +62,10 @@ set(_longrun)
 if(SKIP_LONGRUN)
     set(_longrun "-DYUNI_TEST_SKIP_LONGRUN=ON")
 endif()
+set(_ffitest)
+if(SKIP_FFITESTS)
+    set(_ffitest "-DYUNI_TEST_SKIP_FFI=ON")
+endif()
 
 execute_step("Configure"
     ${CMAKE_COMMAND} 
@@ -69,6 +73,7 @@ execute_step("Configure"
     -DYUNIBASE_YUNIFIED_PATH=${_yunified}
     -DYUNIBASE_VANILLA_PATH=${_vanilla}
     ${_longrun}
+    ${_ffitest}
     ${_myproject}
     WORKING_DIRECTORY ${_buildroot})
 
