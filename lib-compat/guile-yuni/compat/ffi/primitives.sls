@@ -28,14 +28,21 @@
                  (yuni ffi runtime simpleloader)
                  (yuni ffi runtime simplestrings)
                  (yuni compat bitwise primitives)
+                 (only (rnrs)
+                       make-eqv-hashtable
+                       hashtable-set!
+                       hashtable-delete!)
                  (system foreign))
 
 ;; Guile requires bytevector to do byte-wise access. Whoa.
 
+(define callbacks-ht (make-eqv-hashtable))
 (define (yuniffi-nccc-proc-register proc)
-  (procedure->pointer void proc
-                      (list '* int '* int)))
-(define (yuniffi-nccc-proc-release proc) #t)
+  (let ((ptr (procedure->pointer void proc (list '* int '* int))))
+   (hashtable-set! callbacks-ht (pointer-address ptr) ptr)
+   ptr))
+(define (yuniffi-nccc-proc-release proc) 
+  (hashtable-delete! callbacks-ht (pointer-address proc)))
 (define (yuniffi-callback-helper) #f)
 
 (define (ptr? x) (pointer? x))
