@@ -67,9 +67,12 @@
   (let ((p (open-output-bytevector)))
    (let loop ()
     (define bv (read-bytevector (* 1024 1024) port))
-    (if (eof-object? bv)
-      (get-output-bytevector p)
-      (loop)))))
+    (cond
+      ((eof-object? bv)
+       (get-output-bytevector p))
+      (else
+        (write-bytevector bv p)
+        (loop))))))
 
 (define (get-line port) ;; FIXME: Use R7RS name
   (read-line port))
