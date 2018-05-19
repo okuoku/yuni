@@ -85,7 +85,7 @@
        (runner0 code arg* modpath do-dump use-debugger))
      (runner0 code arg* modpath do-dump use-debugger)))
 
- (define cmd (command-line))
+ (define cmd (command-line-arguments)) ;; Changed from 9.2+
 
  (cond
    ((and (list? cmd) (string=? (car cmd) "-YUNIROOT"))
