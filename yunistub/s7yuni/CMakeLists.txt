@@ -30,11 +30,11 @@ add_executable(s7yuni
     )
 
 if(CYGWIN)
-    # FIXME: Generate implib here
+    # FIXME: Generate implib
     set_target_properties(
         s7yuni
         PROPERTIES LINK_FLAGS -Wl,--export-all-symbols)
-else(UNIX)
+elseif(UNIX)
     # Assume ELF platforms
     set_target_properties(
         s7yuni
