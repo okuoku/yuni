@@ -61,8 +61,10 @@
        (or (vector-ref cache idx)
            (fillcache! idx)))
       (else
-        (set! cache-index idx)
-        (set! cache (do-gensym idx)))))
+        (let ((s (do-gensym idx)))
+         (set! cache-index idx)
+         (set! cache s)
+         s))))
   (lambda (sym)
     (let ((i (yuni/reserved-underscore-index sym)))
      (or (and i (take i))
