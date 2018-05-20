@@ -29,6 +29,23 @@ add_executable(s7yuni
     ${S7YUNI_S7_ROOT}/s7.c
     )
 
+if(CYGWIN)
+    # FIXME: Generate implib here
+    set_target_properties(
+        s7yuni
+        PROPERTIES LINK_FLAGS -Wl,--export-all-symbols)
+else(UNIX)
+    # Assume ELF platforms
+    set_target_properties(
+        s7yuni
+        PROPERTIES LINK_FLAGS -Wl,--export-dynamic)
+endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    target_link_libraries(s7yuni
+        m dl)
+endif()
+
 set(s7yuni_libs
     s7yuniboot.scm)
 
@@ -60,5 +77,3 @@ install(TARGETS
 install(FILES
     ${libs} ${s7yuni_libs}
     DESTINATION share/s7yuni)
-
-
