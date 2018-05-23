@@ -27,7 +27,7 @@
         (_append (baselib 'append))      (_map (baselib 'map))
         (_vector? (baselib 'vector?))    (_list? (baselib 'list?))
         (_len (rename 'len))             (_length (baselib 'yuni/length*))
-        (_- (rename '-))   (_>= (baselib '>=))   (_error (baselib 'error))
+        (_- (baselib '-))   (_>= (baselib '>=))   (_error (baselib 'error))
         (_ls (rename 'ls)) (_res (rename 'res)) (_i (rename 'i))
         (_reverse (baselib 'reverse))
         (_vector->list (baselib 'vector->list))
