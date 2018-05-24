@@ -38,12 +38,13 @@
 ; Procedures
 (define (yuni/library-lookup-itr cur nam)
   (and (pair? cur)
-       (if (equal? (car (yuni/library-name cur)) nam)
+       (if (equal? (yuni/library-name (car cur)) nam)
          (car cur)
          (yuni/library-lookup-itr (cdr cur) nam))))
 
 (define (yuni/library-lookup nam)
-  (yuni/library-lookup-itr *yuni/libraries* nam))
+  (let ((truename (yuni/libalias nam)))
+   (yuni/library-lookup-itr *yuni/libraries* truename)))
 
 
 (define (yuni/library-scan-sequence-itr var* stx* libbody) ;; => (var* . stx*)
@@ -121,6 +122,7 @@
      ((not lib) 
       (loadlib libname)
       (set! lib (yuni/library-lookup libname))))
+   (PCK libname '=> lib)
    (yuni/library-realized?-set! lib #t)
    (cond
      ((and promote? (not (yuni/library-promoted? lib)))

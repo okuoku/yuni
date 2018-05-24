@@ -20,10 +20,12 @@
      (PCK 'SKIP: libname)
      '(begin))
     (else
-      (let ((pth (yuni/library-name->path (yuni/libalias libname))))
-       (PCK 'LOADING: pth)
-       (load pth)
-       '(begin)))))
+      (let ((loadlib (lambda (bogus) 
+                       (let ((pth (yuni/library-name->path
+                                    (yuni/libalias libname))))
+                         (PCK 'LOADING: pth)
+                         (load pth)))))
+        (yuni/realize-library! loadlib libname #t)))))
 
 (define-macro (import . import*)
   (cons 'begin
