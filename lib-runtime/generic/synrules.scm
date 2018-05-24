@@ -83,8 +83,8 @@
     `(define-macro (,name . ,args)
        (let ((,a (,tran (cons ',name ,args)
                         yuni/gensym (yuni/make-synrule-baselib) yuni/synrule-compare)))
-         (display (list 'OUT: ,a))
-         (newline)
+         ;(display (list 'OUT: ,a))
+         ;(newline)
          ,a))))
 
 (define (yuni/convert-let-syntax cur e)
