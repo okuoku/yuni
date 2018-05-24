@@ -20,5 +20,7 @@
    (set! (x 'name) name)
    (set! (x 'v) v)
    x))
+
+(define simple-struct? simple-struct0?)
          
 )
