@@ -87,3 +87,22 @@
          (newline)
          ,a))))
 
+(define (yuni/convert-let-syntax cur e)
+  (cond
+    ((pair? e)
+     (let* ((nam (caar e))
+            (tmpl (cadar e))
+            (temp (yuni/gensym nam)))
+       (yuni/convert-let-syntax
+         (cons
+           `(define-macro (,nam . args) (cons ,temp args))
+           (cons
+             `(define-syntax ,temp ,tmpl)
+             cur))
+         (cdr e))))
+    (else (reverse cur))))
+
+(define-macro (let-syntax frm . body)
+  `(let () 
+    ,@(yuni/convert-let-syntax '() frm)
+    . ,body))
