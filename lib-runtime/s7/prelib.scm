@@ -24,6 +24,21 @@
               choices))))
 
 ;; Bytevectors
-(define (string->utf8 str) str)
+(define (string->utf8 str) (string->byte-vector str))
+(define utf8->string
+  (case-lambda
+    ((str) str)
+    ((str start) (substring str (length str)))
+    ((str start end) (substring str start end))))
+(define (eof-object) #<eof>)
 (define bytevector-length length)
 (define (bytevector-u8-ref bv idx) (bv idx))
+(define bytevector byte-vector)
+(define make-bytevector make-byte-vector)
+(define (bytevector-u8-set! bv i x) (set! (bv i) x))
+
+(define (close-port p)
+  (if (input-port? p)
+    (close-input-port p)
+    (close-output-port p)))
+
