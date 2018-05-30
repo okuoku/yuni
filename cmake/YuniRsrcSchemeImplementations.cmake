@@ -127,3 +127,10 @@ set(YUNIIMPL_IRON_SCHEME_BOOTLIBS
     lib-r6rs
     lib-compat
     lib)
+
+##
+## S7
+##
+set(YUNIIMPL_S7_BOOTLIBS
+    lib-compat
+    lib)

@@ -71,6 +71,9 @@
   (compat-mit-scheme
     (mit-scheme-yuni => yuni)
     (mit-scheme-compat-scheme => scheme))
+  (compat-s7
+    (s7-yuni => yuni)
+    (s7-scheme => scheme))
   )
 
 (GenRacket
@@ -171,5 +174,9 @@
     yuni
     compat-mit-scheme
     yunifake
+    r7rs-common)
+  (s7
+    yuni
+    compat-s7
     r7rs-common)
   )

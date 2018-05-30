@@ -138,6 +138,11 @@ function(calc_impl_yuniboot_commandline outvar flav type runtimeprefix)
         gen_libopts(out "-I;" ${stub} ${ARGN})
         set(out ${runtimeprefix}/yuniloader/yuniloader-ironscheme.scm
             ${out})
+    elseif("${type}" STREQUAL S7)
+        gen_stubprefix(stub ${flav} s7)
+        gen_libopts(out "-I;" ${stub} ${ARGN})
+        set(out ${runtimeprefix}/yuniloader/yuniloader-s7.scm
+            ${out})
     else()
         message(FATAL_ERROR "Unknown scheme type ${type}")
     endif()

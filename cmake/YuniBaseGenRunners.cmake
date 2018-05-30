@@ -128,6 +128,10 @@ macro(yunibase_check_implementations)
     if(EXISTS ${YUNI_WITH_YUNIBASE}/current/mit-scheme/bin/mit-scheme)
         set(YUNIBASE_HAVE_MIT_SCHEME_CURRENT 1)
     endif()
+    # s7
+    if(EXISTS ${YUNI_WITH_YUNIBASE}/current/s7/bin/s7yuni)
+        set(YUNIBASE_HAVE_S7_CURRENT 1)
+    endif()
 endmacro()
 
 # Emit actual runners
@@ -184,7 +188,9 @@ function(emit_yunibase_runners)
         if(YUNIBASE_HAVE_MIT_SCHEME_CURRENT)
             emit_vanilla_runner_sh(current mit-scheme mit-scheme)
         endif()
-
+        if(YUNIBASE_HAVE_S7_CURRENT)
+            emit_vanilla_runner_sh(current s7 s7yuni)
+        endif()
     endif()
 endfunction()
 
@@ -355,5 +361,6 @@ function(emit_yuni_runners)
     emit_yuni_runner(GAMBIT       YUNI_GSI          gsi)
     emit_yuni_runner(MIT_SCHEME   YUNI_MIT_SCHEME   mit-scheme)
     emit_yuni_runner(IRON_SCHEME  YUNI_IRON_SCHEME  ironscheme)
+    emit_yuni_runner(S7           YUNI_S7           s7yuni)
     emit_yuniboot_kawa_runner()
 endfunction()

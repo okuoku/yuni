@@ -199,6 +199,9 @@ if(YUNI_KAWA_JAR)
     endif()
 endif()
 
+# s7 (yuni)
+detect_scheme(YUNI_S7 NAMES s7yuni)
+
 macro(yunidetectscheme_guess_bootstrap)
     # Detect bootstrap scheme
     if(NOT YUNI_BOOTSTRAP_USE)
