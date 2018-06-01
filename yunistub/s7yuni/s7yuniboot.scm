@@ -10,7 +10,12 @@
 (define yuni/script #f)
 (define yuni/args '())
 
-;; Command-line procedure
+;; Command-line procedures
+(define (yuni/update-command-line! lis) (set! yuni/args lis))
+(define (yuni/command-line) yuni/args)
+(define (command-line) yuni/args)
+
+;; Process command line
 
 (let loop ((cur (cdr *command-line*)))
  (when (pair? cur)
@@ -23,15 +28,18 @@
            (set! yuni/rawmode #t)
            (loop (cdr cur)))
           (else
-            (set! yuni/script arg)
-            (set! yuni/args (cdr cur)))))))
-
-(define (command-line) yuni/args)
+            (cond
+              (yuni/root
+                (set! yuni/args cur)
+                (set! yuni/script #f))
+              (else
+                (set! yuni/script arg)
+                (set! yuni/args (cdr cur)))))))))
 
 (cond
-  (yuni/rawmode 
+  ((or yuni/rawmode (not yuni/root)) 
     (load yuni/script))
   (else
-    (load yuni/script)))
+    (load yuni/root)))
 
 (exit 0)

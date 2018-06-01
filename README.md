@@ -60,6 +60,8 @@ Public domain (CC0-1.0). Yuni R6RS/R7RS runtime component is released into publi
 
 Yuni R5RS support uses Alexpander(BSD3/GPL2+).
 
+Yuni generic scheme support includes `syntax-rules` implementation from Chibi-scheme.
+
 NOTE: Following directories contain copyrighted materials from other projects.
 
  * `apidata`

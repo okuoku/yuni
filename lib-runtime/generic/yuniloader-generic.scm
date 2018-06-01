@@ -1,0 +1,35 @@
+(define (yuni/yuniloader)
+  (define (consume-runtime-args! args) ;; => (args ...)
+    (define state 'none)
+    (define (itr cur)
+      (if (null? cur)
+        '() ;; FIXME: check state here.
+        (case state
+          ((none)
+           (cond
+             ((string=? "-LIB" (car cur))
+              (set! state 'consume-library)
+              (itr (cdr cur)))
+             (else cur)))
+          ((consume-library)
+           (yuni/add-library-import-dir! (car cur))
+           (set! state 'none)
+           (itr (cdr cur)))
+          (else (error "?")))))
+    (itr args))
+  (let* ((cmdline (yuni/command-line))
+         (next (consume-runtime-args! cmdline)))
+    (write (list 'cmdline: cmdline))
+    (newline)
+    (write (list 'next: next))
+    (newline)
+    (cond
+      ((pair? next)
+       (let ((src (car next))
+             (args (cdr next)))
+         (yuni/update-command-line! args)
+         (load src)))
+      (else
+        (error "No script.")))))
+
+(yuni/yuniloader)

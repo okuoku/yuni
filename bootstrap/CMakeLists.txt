@@ -81,7 +81,7 @@ macro(setyuniconfigtarget nam)
 endmacro()
 foreach(e GAUCHE CHIBI_SCHEME PICRIN KAWA SAGITTARIUS RACKET GUILE
         CHICKEN
-        LARCENY IRON_SCHEME CHEZ_SCHEME VICARE NMOSH GAMBIT MIT_SCHEME)
+        LARCENY IRON_SCHEME CHEZ_SCHEME VICARE NMOSH GAMBIT MIT_SCHEME S7)
     setyuniconfigtarget(${e})
 endforeach()
 
@@ -340,4 +340,11 @@ set(YUNI_BOOTSTRAP_USE "${YUNI_BOOTSTRAP_USE}" PARENT_SCOPE)
 # Generate runner
 emit_yuni_runners()
 
+include(${CMAKE_CURRENT_LIST_DIR}/genericruntime.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/package.cmake)
+
+# Generate generic-runtime
+add_gen_generic_runtime(genruntime-s7 s7 
+    ${YUNIBASE_YUNIFIED_PATH}/runtime/s7/yuniruntime.scm)
+
+add_custom_target(genruntimes ALL DEPENDS genruntime-s7)

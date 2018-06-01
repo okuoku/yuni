@@ -140,8 +140,9 @@ function(calc_impl_yuniboot_commandline outvar flav type runtimeprefix)
             ${out})
     elseif("${type}" STREQUAL S7)
         gen_stubprefix(stub ${flav} s7)
-        gen_libopts(out "-I;" ${stub} ${ARGN})
-        set(out ${runtimeprefix}/yuniloader/yuniloader-s7.scm
+        gen_libopts(out "-LIB;" ${stub} ${ARGN})
+        set(out 
+            -YUNIROOT ${stub}/yuniruntime.scm
             ${out})
     else()
         message(FATAL_ERROR "Unknown scheme type ${type}")

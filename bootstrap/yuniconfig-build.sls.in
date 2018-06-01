@@ -51,5 +51,7 @@
      "@YUNICONFIGSAGITTARIUS@")
     ((vicare)
      "@YUNICONFIGVICARE@")
+    ((s7)
+     "@YUNICONFIGS7@")
     (else #f)))
 )
