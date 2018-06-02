@@ -143,8 +143,6 @@
 ;;------------------------------------------------
 ;; path handling
 ;;------------------------------------------------
-(define RUNPATH (pathfilter (current-directory)))
-
 (define (compose-rel-path l)
   (define (omit-dot l)
     (define (itr cur rest)
