@@ -36,6 +36,7 @@
 (define bytevector byte-vector)
 (define make-bytevector make-byte-vector)
 (define (bytevector-u8-set! bv i x) (set! (bv i) x))
+(define bytevector? byte-vector?)
 
 (define (close-port p)
   (if (input-port? p)

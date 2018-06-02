@@ -9,6 +9,10 @@ set(generic_runtime_impl_s7_pre
     lib-runtime/s7/prelib.scm
     )
 
+set(generic_runtime_impl_s7_runtime
+    lib-runtime/generic/std/vector-map.scm
+    )
+
 set(generic_runtime_pre
     lib-runtime/generic/synrules.scm
     external/yuni-synrules.scm
@@ -28,6 +32,7 @@ macro(gen_runtime_filelist out impl)
     foreach(e 
             ${generic_runtime_impl_${impl}_pre}
             ${generic_runtime_pre}
+            ${generic_runtime_impl_${impl}_runtime}
             ${generic_runtime_post}
             )
         list(APPEND ${out} ${yuniroot}/${e})
