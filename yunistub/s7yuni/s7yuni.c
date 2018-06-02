@@ -31,5 +31,7 @@ main(int ac, char** av){
     (void) s7_define_variable(s7, "*command-line*", cur);
 
     s7_load(s7, "s7yuniboot.scm");
-    return 0;
+
+    /* by-default, return unsuccessful */
+    return 1;
 }
