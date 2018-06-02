@@ -243,3 +243,5 @@
      (let ((dest (make-string (- end start))))
       (string-copy! dest 0 s start end)
       dest))))
+
+(define list? proper-list?)
