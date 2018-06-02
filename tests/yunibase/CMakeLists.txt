@@ -35,6 +35,7 @@ check_impl(RAPID_GAMBIT rapid-gambit)
 check_impl(PICRIN picrin)
 check_impl(MIT_SCHEME mit-scheme)
 check_impl(IRON_SCHEME ironscheme)
+check_impl(S7YUNI s7yuni)
 
 set(impls
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS 
@@ -44,7 +45,11 @@ set(impls
     LARCENY 
     RAPID_GAMBIT
     # PICRIN
-    GSI MIT_SCHEME IRON_SCHEME)
+    GSI MIT_SCHEME IRON_SCHEME
+    S7YUNI)
+
+set(impls_yunivm ${impls})
+list(REMOVE_ITEM impls_yunivm S7YUNI)
 
 set(ffi_impls # Exclude NMOSH KAWA
     CHIBI_SCHEME GOSH GUILE RACKET SAGITTARIUS VICARE
@@ -148,7 +153,7 @@ function(test_with_allcleandir_except fil)
 endfunction()
 
 function(test_yunivm_with_all_except fil)
-    set(lis ${impls})
+    set(lis ${impls_yunivm})
     list(REMOVE_ITEM lis ${ARGN})
 
     foreach(e ${lis})
@@ -157,7 +162,7 @@ function(test_yunivm_with_all_except fil)
 endfunction()
 
 function(test_yunivm_fixnumheap_with_all_except fil)
-    set(lis ${impls})
+    set(lis ${impls_yunivm})
     list(REMOVE_ITEM lis ${ARGN})
 
     foreach(e ${lis})
@@ -166,7 +171,7 @@ function(test_yunivm_fixnumheap_with_all_except fil)
 endfunction()
 
 function(test_yunivm_with_allcleandir_except fil)
-    set(lis ${impls})
+    set(lis ${impls_yunivm})
     list(REMOVE_ITEM lis ${ARGN})
 
     foreach(e ${lis})
@@ -214,7 +219,7 @@ foreach(e ${impls})
 endforeach()
 
 # Sanity
-test_with_all(_sanity.sps)
+test_with_all_except(_sanity.sps S7YUNI)
 #test_with_allffi(_ncccsanity.sps)
 
 # yuniVM
@@ -223,11 +228,11 @@ test_with_all_except(tests/vm/vmtest2.sps KAWA NMOSH)
 test_with_all_except(tests/vm/vmtest4.sps 
     NMOSH IRON_SCHEME LARCENY)
 test_with_all_except(tests/vm/vmtest5.sps 
-    NMOSH)
+    NMOSH S7YUNI)
 test_with_allcleandir_except(vmtest6.sps 
     NMOSH RACKET LARCENY IRON_SCHEME KAWA)
 if(NOT YUNI_TEST_SKIP_LONGRUN)
-    test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE NMOSH)
+    test_with_all_except(tests/vm/vmtest3.sps KAWA GUILE NMOSH S7YUNI)
     test_yunivm_with_all_except(vmtest4.sps KAWA GUILE NMOSH LARCENY)
     test_yunivm_fixnumheap_with_all_except(vmtest4.sps CHIBI_SCHEME KAWA GUILE NMOSH LARCENY)
     test_yunivm_with_all_except(vmtest5.sps KAWA GUILE NMOSH LARCENY)
