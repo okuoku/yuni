@@ -33,3 +33,4 @@
         (error "No script.")))))
 
 (yuni/yuniloader)
+(exit 0)
