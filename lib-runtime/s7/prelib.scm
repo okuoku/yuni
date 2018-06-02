@@ -203,18 +203,22 @@
 (define peek-u8 peek-char)
 (define (get-output-bytevector port) (string->byte-vector (get-output-string port)))
 
-(define ($read-bytevector! bv port start end)
-  (do ((i start (+ i 1))
-       (c (read-u8 port) (read-u8 port)))
-    ((or (= i end)
-         (eof-object? c)) bv)
-    (set! (bv i) c)))
+;; read-bytevector: Behaviour differs from r7rs.scm
+(define ($read-bytevector! bv port cur start end)
+  (if (= cur end)
+    (- cur start)
+    (let ((c (read-u8 port)))
+     (if (eof-object? c)
+       (- cur start)
+       (begin
+         (set! (bv cur) c)
+         ($read-bytevector! bv port (+ cur 1) start end))))))
 
 (define read-bytevector!
   (case-lambda
-    ((bv port) ($read-bytevector! bv port 0 (length bv)))
-    ((bv port start) ($read-bytevector! bv port start (length bv)))
-    ((bv port start end) ($read-bytevector! bv port start end))) )
+    ((bv port) ($read-bytevector! bv port 0 0 (length bv)))
+    ((bv port start) ($read-bytevector! bv port start start (length bv)))
+    ((bv port start end) ($read-bytevector! bv port start start end))) )
 
 (define ($read-bytevector k port)
   (let ((out (string->byte-vector (make-string k))))
