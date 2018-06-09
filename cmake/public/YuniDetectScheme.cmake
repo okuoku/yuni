@@ -202,6 +202,9 @@ endif()
 # s7 (yuni)
 detect_scheme(YUNI_S7 NAMES s7yuni)
 
+# BiwaScheme
+detect_scheme(YUNI_BIWAS NAMES biwas)
+
 macro(yunidetectscheme_guess_bootstrap)
     # Detect bootstrap scheme
     if(NOT YUNI_BOOTSTRAP_USE)

@@ -53,5 +53,7 @@
      "@YUNICONFIGVICARE@")
     ((s7)
      "@YUNICONFIGS7@")
+    ((biwascheme)
+     "@YUNICONFIGBIWASCHEME@")
     (else #f)))
 )

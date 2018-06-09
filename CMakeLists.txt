@@ -193,6 +193,7 @@ message(STATUS "RapidGambit:      ${YUNI_RAPID_GAMBIT}")
 message(STATUS "IronScheme:       ${YUNI_IRON_SCHEME}")
 message(STATUS "Kawa:             ${YUNI_KAWA_JAR}")
 message(STATUS "s7(yuni):         ${YUNI_S7}")
+message(STATUS "BiwaScheme:       ${YUNI_BIWAS}")
 
 if(YUNI_WITH_YUNIBASE)
     message(STATUS "YUNI_WITH_YUNIBASE = ${YUNI_WITH_YUNIBASE}")

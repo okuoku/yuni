@@ -81,7 +81,8 @@ macro(setyuniconfigtarget nam)
 endmacro()
 foreach(e GAUCHE CHIBI_SCHEME PICRIN KAWA SAGITTARIUS RACKET GUILE
         CHICKEN
-        LARCENY IRON_SCHEME CHEZ_SCHEME VICARE NMOSH GAMBIT MIT_SCHEME S7)
+        LARCENY IRON_SCHEME CHEZ_SCHEME VICARE NMOSH GAMBIT MIT_SCHEME S7
+        BIWASCHEME)
     setyuniconfigtarget(${e})
 endforeach()
 
@@ -347,4 +348,9 @@ include(${CMAKE_CURRENT_LIST_DIR}/package.cmake)
 add_gen_generic_runtime(genruntime-s7 s7 
     ${YUNIBASE_YUNIFIED_PATH}/runtime/s7/yuniruntime.scm)
 
-add_custom_target(genruntimes ALL DEPENDS genruntime-s7)
+add_gen_generic_runtime(genruntime-biwascheme biwascheme
+    ${YUNIBASE_YUNIFIED_PATH}/runtime/biwascheme/yuniruntime.scm)
+
+add_custom_target(genruntimes ALL DEPENDS 
+    genruntime-biwascheme
+    genruntime-s7)

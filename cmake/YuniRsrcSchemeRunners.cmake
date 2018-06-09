@@ -144,6 +144,11 @@ function(calc_impl_yuniboot_commandline outvar flav type runtimeprefix)
         set(out 
             -YUNIROOT ${stub}/yuniruntime.scm
             ${out})
+    elseif("${type}" STREQUAL BIWASCHEME)
+        gen_stubprefix(stub ${flav} biwascheme)
+        gen_libopts(out "-LIB;" ${stub} ${ARGN})
+        set(out ${stub}/yuniruntime.scm
+            ${out})
     else()
         message(FATAL_ERROR "Unknown scheme type ${type}")
     endif()

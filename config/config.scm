@@ -74,6 +74,9 @@
   (compat-s7
     (s7-yuni => yuni)
     (s7-scheme => scheme))
+  (compat-biwascheme
+    (biwascheme-yuni => yuni)
+    (biwascheme-compat-scheme => scheme))
   )
 
 (GenRacket
@@ -178,5 +181,9 @@
   (s7
     yuni
     compat-s7
+    r7rs-common)
+  (biwascheme
+    yuni
+    compat-biwascheme
     r7rs-common)
   )

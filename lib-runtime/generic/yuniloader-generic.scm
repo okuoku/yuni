@@ -28,6 +28,8 @@
        (let ((src (car next))
              (args (cdr next)))
          (yuni/update-command-line! args)
+         (write (list 'load: src))
+         (newline)
          (load src)))
       (else
         (error "No script.")))))

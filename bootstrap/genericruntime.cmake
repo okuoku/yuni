@@ -5,6 +5,7 @@
 #   yuniroot: Root 
 #
 
+## s7
 set(generic_runtime_impl_s7_pre
     lib-runtime/s7/prelib.scm
     )
@@ -13,6 +14,15 @@ set(generic_runtime_impl_s7_runtime
     lib-runtime/generic/std/vector-map.scm
     )
 
+## Biwascheme
+set(generic_runtime_impl_biwascheme_pre
+    lib-runtime/biwascheme/prelib.scm
+    )
+set(generic_runtime_impl_biwascheme_runtime
+    lib-runtime/generic/std/vector-map.scm
+    )
+
+## Generic
 set(generic_runtime_pre
     lib-runtime/generic/synrules.scm
     external/yuni-synrules.scm
@@ -25,7 +35,6 @@ set(generic_runtime_post
     lib-runtime/generic/libmgr-macro.scm
     lib-runtime/generic/yuniloader-generic.scm
     )
-
 
 macro(gen_runtime_filelist out impl)
     set(${out})
