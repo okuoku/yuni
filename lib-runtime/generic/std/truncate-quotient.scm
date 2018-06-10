@@ -1,0 +1,1 @@
+(define truncate-quotient quotient)
