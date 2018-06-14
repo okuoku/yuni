@@ -110,7 +110,7 @@
       (cons 'begin
             (list (yuni/xform-realize-library-hook-itr '() import*)
                   (cons 'begin libbody)
-                  (list 'yuni/register-library! (list quote libname)
+                  (list 'yuni/register-library! (list 'quote libname)
                         #f))))
     (else (error "FIXME: Implement this"))))
 
