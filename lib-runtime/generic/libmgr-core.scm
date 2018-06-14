@@ -43,8 +43,7 @@
          (yuni/library-lookup-itr (cdr cur) nam))))
 
 (define (yuni/library-lookup nam)
-  (let ((truename (yuni/libalias nam)))
-   (yuni/library-lookup-itr *yuni/libraries* truename)))
+  (yuni/library-lookup-itr *yuni/libraries* nam))
 
 
 (define (yuni/library-scan-sequence-itr var* stx* libbody) ;; => (var* . stx*)

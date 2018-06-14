@@ -1,14 +1,3 @@
-(define (yuni/libalias libname)
-  (cond
-    ((<= 2 (length libname))
-     (let ((p (car libname))
-           (s (cadr libname)))
-       (if (equal? '(yuni compat) (list p s))
-         (cons 's7-yuni (cdr libname))
-         libname)))
-    (else libname)))
-
-
 (define-macro (yuni/realize-library-hook libname)
   ;; FIXME: Implement this much more seriously
   ;; For s7
@@ -21,8 +10,7 @@
      '(begin))
     (else
       (let ((loadlib (lambda (bogus) 
-                       (let ((pth (yuni/library-name->path
-                                    (yuni/libalias libname))))
+                       (let ((pth (yuni/library-name->path libname)))
                          (PCK 'LOADING: pth)
                          (load pth)))))
         (yuni/realize-library! loadlib libname #t)))))
@@ -48,8 +36,9 @@
                  ((only except prefix rename)
                   (error "Unsupported op" i)))))
             (cdr imports))
-  (yuni/xform-library "FIXME: Rename procedure"
-                      libname
-                      (cdr exports)
-                      (cdr imports)
-                      body))
+  (let ((r (yuni/xform-library "FIXME: Rename procedure"
+                               libname
+                               (cdr exports)
+                               (cdr imports)
+                               body)))
+    r))
