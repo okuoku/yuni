@@ -203,7 +203,7 @@ endif()
 detect_scheme(YUNI_S7 NAMES s7yuni)
 
 # BiwaScheme
-detect_scheme(YUNI_BIWAS NAMES biwas)
+detect_scheme(YUNI_BIWASYUNI NAMES biwasyuni)
 
 macro(yunidetectscheme_guess_bootstrap)
     # Detect bootstrap scheme
