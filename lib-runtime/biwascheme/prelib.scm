@@ -19,6 +19,8 @@
 (define yuni/biwas/YuniBinaryFileOutput 
   (js-ref yuni/biwas/Port "YuniFileBinaryOutput"))
 
+;; R7RS Ports
+
 (define (yuni/fs-open fs path flags) ;; => (err . fd)
   (let ((x (yuni/js-invoke/async fs "open" path flags)))
    (write x) (newline)
@@ -46,3 +48,126 @@
   (yuni/openfile yuni/biwas/YuniBinaryFileInput "r" file))
 (define (open-binary-output-file file)
   (yuni/openfile yuni/biwas/YuniBinaryFileOutput "w+" file))
+
+;; R7RS substring-able procedures
+
+(define (%substring1 str start) (substring str start (string-length str)))
+
+(define string->list
+  (case-lambda
+    ((str) (r6:string->list str))
+    ((str start) (r6:string->list (%substring1 str start)))
+    ((str start end) (r6:string->list (substring str start end)))))
+
+(define string-copy
+  (case-lambda
+    ((str) (r6:string-copy str))
+    ((str start) (%substring1 str start))
+    ((str start end) (substring str start end))))
+
+(define string->vector
+  (case-lambda
+    ((str) (list->vector (string->list str)))
+    ((str start) (string->vector (%substring1 str start)))
+    ((str start end) (string->vector (substring str start end)))))
+
+;; R7RS vectors
+
+(define (%subvector v start end)
+  (define mlen (- end start))
+  (define out (make-vector (- end start)))
+  (define (itr r)
+    (if (= r mlen)
+      out
+      (begin
+        (vector-set! out r (vector-ref v (+ start r)))
+        (itr (+ r 1)))))
+  (itr 0))
+
+(define (%subvector1 v start) (%subvector v start (vector-length v)))
+
+(define vector->string
+  (case-lambda
+    ((v) (list->string (vector->list v)))
+    ((v start) (vector->string (%subvector1 v start)))
+    ((v start end) (vector->string (%subvector v start end)))))
+
+(define vector-copy
+  (case-lambda
+    ((v) (r6:vector-copy v))
+    ((v start) (%subvector1 v start))
+    ((v start end) (%subvector v start end))))
+
+(define (%vector-copy!-neq to at from start end)
+  (define term (+ at (- end start)))
+  (define (itr r)
+    (unless (= r term)
+      (vector-set! to r (vector-ref from (+ start (- r at))))
+      (itr (+ r 1))))
+  (itr at))
+
+(define vector-copy!
+  (case-lambda
+    ((to at from)
+     (vector-copy! to at from 0 (vector-length from)))
+    ((to at from start)
+     (vector-copy! to at from start (vector-length from)))
+    ((to at from start end)
+     (if (eq? to from)
+       (%vector-copy!-neq to at (%subvector from start end) 0 (- end start))
+       (%vector-copy!-neq to at from start end)))))
+
+(define vector-fill!
+  (case-lambda
+    ((vec fill) (r6:vector-fill! vec fill))
+    ((vec fill start) (vector-fill! vec fill start (vector-length vec)))
+    ((vec fill start end)
+     (define (itr r)
+       (unless (= r end)
+         (vector-set! vec r fill)
+         (itr (+ r 1))))
+     (itr start))))
+
+
+;; R7RS bytevectors
+(define (%subbytevector bv start end)
+  (define mlen (- end start))
+  (define out (make-bytevector mlen))
+  (r6:bytevector-copy! bv start out 0 mlen)
+  out)
+
+(define (%subbytevector1 bv start)
+  (%subbytevector bv start (bytevector-length bv)))
+
+(define bytevector-copy!
+  (case-lambda
+    ((to at from) (bytevector-copy! to at from 0))
+    ((to at from start)
+     (let ((flen (bytevector-length from))
+           (tlen (bytevector-length to)))
+       (let ((fmaxcopysize (- flen start))
+             (tmaxcopysize (- tlen at)))
+         (bytevector-copy! to at from start (+ start
+                                               (min fmaxcopysize
+                                                    tmaxcopysize))))))
+    ((to at from start end)
+     (r6:bytevector-copy! from start to at (- end start)))))
+
+(define bytevector-copy
+  (case-lambda
+    ((bv) (r6:bytevector-copy bv))
+    ((bv start) (%subbytevector1 bv start))
+    ((bv start end) (%subbytevector bv start end))))
+
+(define utf8->string
+  (case-lambda
+    ((bv) (r6:utf8->string bv))
+    ((bv start) (r6:utf8->string (%subbytevector1 bv start)))
+    ((bv start end) (r6:utf8->string (%subbytevector bv start end)))))
+
+(define string->utf8
+  (case-lambda
+    ((str) (r6:string->utf8 str))
+    ((str start) (r6:string->utf8 (%substring1 str start)))
+    ((str start end) (r6:string->utf8 (substring str start end)))))
+
