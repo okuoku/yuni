@@ -23,7 +23,6 @@
 
 (define (yuni/fs-open fs path flags) ;; => (err . fd)
   (let ((x (yuni/js-invoke/async fs "open" path flags)))
-   (write x) (newline)
    (let* ((err (vector-ref x 0))
           (fd (and (js-null? err) (vector-ref x 1))))
      (cons err fd))))
@@ -48,6 +47,30 @@
   (yuni/openfile yuni/biwas/YuniBinaryFileInput "r" file))
 (define (open-binary-output-file file)
   (yuni/openfile yuni/biwas/YuniBinaryFileOutput "w+" file))
+
+(define write-u8
+  (case-lambda
+    ((b) (write-u8 b (current-output-port)))
+    ((b port) (write-bytevector (bytevector b) port))))
+
+(define read-bytevector
+  (case-lambda
+    ((k) (read-bytevector k (current-input-port)))
+    ((k port)
+     (let ((bv (make-bytevector k)))
+      (let ((r (read-bytevector! bv port)))
+       (if (eof-object? r)
+         (eof-object)
+         bv))))))
+
+(define read-u8
+  (case-lambda
+    (() (read-u8 (current-input-port)))
+    ((port)
+     (let ((bv (read-bytevector 1 port)))
+      (if (eof-object? bv)
+        (eof-object)
+        (bytevector-u8-ref bv 0))))))
 
 ;; R7RS substring-able procedures
 
@@ -171,3 +194,6 @@
     ((str start) (r6:string->utf8 (%substring1 str start)))
     ((str start end) (r6:string->utf8 (substring str start end)))))
 
+;; R7RS errors
+(define (error . args)
+  (raise (list args)))
