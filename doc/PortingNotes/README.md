@@ -1,23 +1,25 @@
 Port Status
 ===========
 
-|impl            |Working?  |Bootstrap?|Win32?|YuniFFI?|YuniFFI impl|
-|:---------------|:--------:|:--------:|:----:|:------:|:-----------|
-|[chez][]        |X         |X         |      |X       |Native      |
-|[chibi-scheme][]|X         |X         |X     |X       |Module      |
-|[chicken][]     |X         |X         |      |X       |Module      |
-|[gambit][]      |Alexpander|          |Crash |X       |Module      |
-|[gauche][]      |X         |X         |X     |X       |Module      |
-|[guile][]       |X         |          |      |X       |Native      |
-|[ironscheme][]  |X         |X         |X     |        |            |
-|[kawa][]        |X         |          |      |        |            |
-|[larceny][]     |X         |          |X     |Partial |Native      |
-|[mit-scheme][]  |Alexpander|          |X     |        |            |
-|[nmosh][]       |X         |          |      |X       |Native      |
-|[picrin][]      |          |          |      |X       |Compile-in  |
-|[racket][]      |X         |X         |X     |X       |Native      |
-|[sagittarius][] |X         |X         |X     |X       |Native      |
-|[vicare][]      |Partial   |          |      |X       |Native      |
+|impl            |Working?   |Bootstrap?|Win32?|YuniFFI?|YuniFFI impl|
+|:---------------|:---------:|:--------:|:----:|:------:|:-----------|
+|[biwascheme][]  |[Generic][]|          |      |        |            |
+|[chez][]        |X          |X         |      |X       |Native      |
+|[chibi-scheme][]|X          |X         |X     |X       |Module      |
+|[chicken][]     |X          |X         |      |X       |Module      |
+|[gambit][]      |Alexpander |          |Crash |X       |Module      |
+|[gauche][]      |X          |X         |X     |X       |Module      |
+|[guile][]       |X          |          |      |X       |Native      |
+|[ironscheme][]  |X          |X         |X     |        |            |
+|[kawa][]        |X          |          |      |        |            |
+|[larceny][]     |X          |          |X     |Partial |Native      |
+|[mit-scheme][]  |Alexpander |          |X     |        |            |
+|[nmosh][]       |X          |          |      |X       |Native      |
+|[picrin][]      |           |          |      |X       |Compile-in  |
+|[racket][]      |X          |X         |X     |X       |Native      |
+|[s7][]          |[Generic][]|          |      |        |            |
+|[sagittarius][] |X          |X         |X     |X       |Native      |
+|[vicare][]      |Partial    |          |      |X       |Native      |
 
 * `Bootstrap?`: These implementations can be used to "bootstrap" yuni library ie.) when building Yuni from source, one of these implementation is required.
 * `Win32?`: For these implementations, Yuni can be bootstrapped/run with Win32 binary distributions.
@@ -33,6 +35,7 @@ Symbol mapping
 
 |impl        |CMake variable|CMake interp|CMake comp |CMake pkg     |
 |:-----------|:-------------|:-----------|:----------|:-------------|
+|biwascheme  |BIWASCHEME    |BIWASYUNI   |           |              |
 |chez        |CHEZ_SCHEME   |CHEZ_SCHEME |           |              |
 |chibi-scheme|CHIBI_SCHEME  |CHIBI_SCHEME|           |              |
 |chicken     |CHICKEN       |CHICKEN_CSI |CHICKEN_CSC|CHICKEN       |
@@ -46,6 +49,7 @@ Symbol mapping
 |nmosh       |NMOSH         |NMOSH       |           |              |
 |picrin      |PICRIN        |PICRIN      |           |              |
 |racket      |RACKET        |RACKET      |           |RACO          |
+|s7          |S7            |S7YUNI      |           |              |
 |sagittarius |SAGITTARIUS   |SAGITTARIUS |           |              |
 |vicare      |VICARE        |VICARE      |           |              |
 
@@ -65,6 +69,8 @@ Basic requirements are:
 - `SRFI-46` (Optional) Basic syntax-rules extensions - can use Alexpander 
 
 
+[Generic]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/Generic.md
+[biwascheme]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/biwascheme.md
 [chez]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/chez.md
 [chibi-scheme]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/chibi-scheme.md
 [chicken]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/chicken.md
@@ -78,5 +84,6 @@ Basic requirements are:
 [nmosh]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/nmosh.md
 [picrin]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/picrin.md
 [racket]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/racket.md
+[s7]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/s7.md
 [sagittarius]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/sagittarius.md
 [vicare]: https://github.com/okuoku/yuni/blob/master/doc/PortingNotes/vicare.md
