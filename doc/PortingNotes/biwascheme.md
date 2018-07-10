@@ -26,6 +26,8 @@ definition. Although Yuni still provide (limited -- as described in [Generic][]
 * `define-syntax` inside of any lexical scope (ie. inside of `let` or `lambda`)
 * `let-syntax` or `letrec-syntax`
 
+Library support is largely incomplete for now. 
+
 biwasyuni
 ---------
 
