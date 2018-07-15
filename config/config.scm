@@ -46,7 +46,8 @@
     (racket-r7b => r7b-compat))
   (compat-chez
     (chez-yuni => yuni)
-    (chez-r7b => r7b-compat))
+    (chez-r7b => r7b-compat)
+    (chez-r7b-util => r7b-util))
   (compat-ironscheme
     (ironscheme-yuni => yuni)
     (ironscheme-r7b => r7b-compat))
