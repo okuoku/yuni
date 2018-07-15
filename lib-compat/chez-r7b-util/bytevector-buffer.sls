@@ -2,20 +2,18 @@
          (export get-output-bytevector
                  open-output-bytevector)
          (import (chezscheme))
-
-(define theStore (make-weak-eq-hashtable))
          
 (define (open-output-bytevector)
   (call-with-values 
     (lambda () (open-bytevector-output-port))
-    (lambda (p proc)
-      (hashtable-set! theStore p proc)
-      p)))         
+    (lambda (p proc) p)))         
 
 (define (get-output-bytevector p)
-  (let ((proc (hashtable-ref theStore p #f)))
-   (unless proc
-     (error #f "???"))
-   (proc)))
+  ;; NB: Depends on implementation details
+  (let ((cur (binary-port-output-buffer p))
+        (curlen (port-length p)))
+    (let ((out (bytevector-truncate! (bytevector-copy cur) curlen)))
+     (set-port-length! p 0)
+     out)))
          
 )
