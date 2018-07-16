@@ -71,6 +71,6 @@
            (loop (proc cur 
                        (vector-ref kv idx)
                        (vector-ref ev idx))
-                 idx)))))))
+                 (+ idx 1))))))))
 
 )
