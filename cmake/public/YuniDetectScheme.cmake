@@ -14,7 +14,7 @@ set(detect_scheme_hint_paths)
 
 yuni_detect_platform(yds__PLATFORM)
 
-# Since host CMake can be a 32bit version, we use our own platform detection
+# Since host CMake can be 32bit version, we use our own platform detection
 if(WIN32)
     # Detect preferred "Program Files" path
     if(${yds__PLATFORM} STREQUAL WIN64)
@@ -27,10 +27,21 @@ if(WIN32)
             "$ENV{ProgramFiles}")
     endif()
 
-    # Append hint paths
+    # ChezScheme: Collect Chez Scheme installations
+    if(${yds__PLATFORM} STREQUAL WIN64)
+        set(yds__chez_variant ta6nt)
+    else()
+        set(yds__chez_variant ti3nt)
+    endif()
+    file(GLOB yds__chez_paths "${YUNI_WIN32_PROGRAM_PATH}/Chez Scheme *")
+    list(REVERSE yds__chez_paths)
+    foreach(e ${yds__chez_paths})
+        list(APPEND detect_scheme_hint_paths "${e}/bin/${yds__chez_variant}")
+    endforeach()
+
+    # Append hint paths for other implementations
     foreach(e "Racket" "Gauche/bin" "Sagittarius" "MIT-GNU Scheme/bin")
-        list(APPEND detect_scheme_hint_paths
-            "${YUNI_WIN32_PROGRAM_PATH}/${e}")
+        list(APPEND detect_scheme_hint_paths "${YUNI_WIN32_PROGRAM_PATH}/${e}")
     endforeach()
 endif()
 
@@ -152,7 +163,7 @@ if(YUNI_CHEZ_SCHEME)
         ERROR_VARIABLE err)
     set(not_a_chez)
     if(rr)
-        message(STATUS "Failed to evaluate ${YUNI_CHEZ_SCHEME} (${rr})")
+        message(STATUS "Failed to run ${YUNI_CHEZ_SCHEME} (${rr})")
         set(not_a_chez TRUE)
     else()
         # ChezScheme should have --verbose in the --help output
