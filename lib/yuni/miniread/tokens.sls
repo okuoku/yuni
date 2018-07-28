@@ -28,22 +28,22 @@
 
 (define-syntax %dispatch0
   (syntax-rules (=>)
-    ((_ byte (sym => clause ...) ...)
+    ((_ byte (sym => . clause)...)
      (let ((cls (ssplit-byte-class byte)))
       (case cls
         ((sym)
-         (%expand-clause clause ...))
+         (%expand-clause . clause))
         ...
         (else
           (values 'OTHERS #f)))))))
 
 (define-syntax %dispatch
   (syntax-rules (=>)
-    ((_ prev-sym byte (from to => clause ...) ...)
+    ((_ prev-sym byte (from to => . clause)...)
      (let ((cls (ssplit-byte-class byte)))
       (cond
         ((and (eq? prev-sym 'from) (eq? cls 'to))
-         (%expand-clause clause ...))
+         (%expand-clause . clause))
         ...
         (else (values 'OTHERS #f)))))))
          
