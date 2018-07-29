@@ -28,4 +28,6 @@
    "lib-runtime/generic/libmgr-file.scm"
    "lib-runtime/generic/libmgr-core.scm"
    "lib-runtime/generic/libmgr-macro.scm"
-   "lib-runtime/generic/yuniloader-generic.scm"))
+   ;; Do not include yuniloader-generic to runtime
+   ;"lib-runtime/generic/yuniloader-generic.scm"
+   ))
