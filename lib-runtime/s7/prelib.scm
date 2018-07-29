@@ -1,3 +1,6 @@
+(define *yuni/libalias*
+  '((yuni . s7-yuni)
+    (scheme . s7-scheme)))
 (require 'stuff.scm)
 (define (yuni/gensym bogus) (gensym (symbol->string bogus)))
 (define (yuni/identifier? x) (symbol? x))

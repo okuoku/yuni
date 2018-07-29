@@ -5,6 +5,8 @@
 #   yuniroot: Root 
 #
 
+# FIXME: Move this to config/generic-runtime.scm
+
 ## s7
 set(generic_runtime_impl_s7_pre
     lib-runtime/s7/prelib.scm

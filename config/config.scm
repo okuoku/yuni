@@ -73,9 +73,11 @@
     (mit-scheme-yuni => yuni)
     (mit-scheme-compat-scheme => scheme))
   (compat-s7
+    ;; Must sync. with *yuni/libalias*
     (s7-yuni => yuni)
     (s7-scheme => scheme))
   (compat-biwascheme
+    ;; Must sync. with *yuni/libalias*
     (biwascheme-yuni => yuni)
     (biwascheme-compat-scheme => scheme))
   )

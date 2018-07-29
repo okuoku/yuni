@@ -1,3 +1,7 @@
+(define *yuni/libalias*
+  '((yuni . biwascheme-yuni)
+    (scheme . biwascheme-compat-scheme)))
+
 (define (yuni/gensym bogus) (gensym))
 (define (yuni/identifier? x) (symbol? x))
 (define yuni/args (cdddr (command-line))) ;; Drop /usr/bin/node, biwas itself
