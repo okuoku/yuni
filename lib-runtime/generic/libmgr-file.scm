@@ -45,12 +45,16 @@
   (let ((a (car name))
         (d (cdr name)))
     (let ((m (assoc a *yuni/libalias*)))
-     (and m
-          (let ((aliasname (cons (cdr m) d)))
-           (yuni/library-name->path/core 
-             override? 
-             *yuni/library-override-prefixes*
-             aliasname))))))
+      (or (and m
+               (let ((aliasname (cons (cdr m) d)))
+                (yuni/library-name->path/core 
+                  override? 
+                  *yuni/library-override-prefixes*
+                  aliasname)))
+          (yuni/library-name->path/core
+            override?
+            *yuni/library-override-prefixes*
+            name)))))
 
 (define (yuni/library-name->path name)
   (if (null? *yuni/library-override-paths*)
