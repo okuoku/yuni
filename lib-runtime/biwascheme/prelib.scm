@@ -13,7 +13,7 @@
 (define (exact? x) (= x (truncate x)))
 
 ;; Extra libraries
-(define yuni/stdfs (js-eval "require('fs')"))
+(define yuni/stdfs (yuni/js-import "fs"))
 (define yuni/biwascheme (yuni/js-import "biwascheme"))
 (define yuni/biwas/Port (js-ref yuni/biwascheme "Port"))
 (define yuni/biwas/YuniFileInput (js-ref yuni/biwas/Port "YuniFileInput"))
