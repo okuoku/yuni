@@ -11,8 +11,12 @@
     (else
       (let ((loadlib (lambda (bogus) 
                        (let ((pth (yuni/library-name->path libname)))
-                        (PCK 'LOADING: pth)
-                        (load pth)))))
+                        (cond
+                          (pth
+                            (PCK 'LOADING: pth)
+                            (load pth))
+                          (else
+                            (PCK 'IGNORE libname)))))))
         (yuni/realize-library! loadlib libname #t)))))
 
 (define-macro (import . import*)
