@@ -1,4 +1,5 @@
 (define (%selfboot-gen-loadorder libread libcheck initial-dep)
+  ;; => (path libname ...)
   ;; (libread LIBNAME) => sexp
   ;; (libcheck LIBNAME) => LIBNAME(can be aliased) / #f(ignore)
   (define order '())
@@ -23,8 +24,11 @@
     (let ((truename (libcheck lib)))
      (when (and truename (not (is-loaded? truename)))
        (let* ((code (libread truename))
-              (deps (%selfboot-library-depends code)))
-         (set! order (cons truename order))
+              (deps (%selfboot-library-depends code))
+              (names (if (not (equal? truename lib))
+                       (list truename lib)
+                       (list lib))))
+         (set! order (cons names order))
          (for-each tryload! deps)))))
 
   (for-each tryload! initial-dep)

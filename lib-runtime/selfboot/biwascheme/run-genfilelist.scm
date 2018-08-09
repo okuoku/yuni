@@ -55,14 +55,17 @@
                         'biwascheme %selfboot-yuniroot)))
    (append
      (map (lambda (path)
-            (list #f %selfboot-yuniroot path))
+            (list #f %selfboot-yuniroot path #f))
           runtimefiles)
      ;; Resolve again..
-     (map (lambda (libname)
-          (let ((r (resolver libname)))
+     (map (lambda (names)
+          (let* ((libname (car names))
+                 (r (resolver libname)))
            (let ((dir (caddr r))
                  (pth (cadddr r)))
-             (list libname dir pth))))
+             (if (pair? (cdr names))
+               (list libname dir pth (cadr names))
+               (list libname dir pth #f)))))
         order))))
 
 (define (filelist->js-obj lis)
@@ -79,9 +82,11 @@
     (map (lambda (e)
            (let ((libname (car e))
                  (dir (cadr e))
-                 (pth (caddr e)))
+                 (pth (caddr e))
+                 (a (cadddr e)))
              (js-obj "libname" (and libname (libname->array libname))
-                     "dir" dir "pth" pth)))
+                     "dir" dir "pth" pth 
+                     "alias"  (and a (libname->array a)))))
          lis)))
 
 (define entrypoints* (js-array->list (yuni/js-import "entrypoints")))

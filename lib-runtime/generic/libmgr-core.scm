@@ -35,6 +35,11 @@
 
    (set! *yuni/libraries* (cons newlib *yuni/libraries*))))
 
+(define (yuni/register-library-alias! from to)
+  (let ((fromlib (yuni/library-lookup from)))
+   ;; FIXME: Copy more
+   (yuni/register-library! to (yuni/library-renamepair* fromlib))))
+
 ; Procedures
 (define (yuni/library-lookup-itr cur nam)
   (and (pair? cur)
