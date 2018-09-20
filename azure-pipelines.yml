@@ -1,0 +1,27 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+pool:
+  vmImage: 'win2016-vs2017'
+
+strategy:
+- matrix:
+  - BootStrapGauche32:
+    - BOOTSTRAP: gauche32
+  - BootStrapSash64:
+    - BOOTSTRAP: sagittarius64
+  - BootStrapRkt32:
+    - BOOTSTRAP: racket32
+  - BootStrapIscm64:
+    - BOOTSTRAP: ironscheme64
+
+steps:
+- script: cinst ninja
+  displayName: 'Installing Ninja'
+
+- script: |
+  cmake -DBOOTSTRAP=%BOOTSTRAP% -DSKIP_LONGRUN=ON -DSKIP_FFITESTS=ON -P integration/buildhost-win/test-on-admin.cmake
+  
+  displayName: 'Building'
