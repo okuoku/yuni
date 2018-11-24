@@ -15,8 +15,8 @@
 ;; 
 
 (define (yuni/library-name lib) (vector-ref lib 0))
-(define (yuni/library-realized? lib) (vector-ref lib 1))
-(define (yuni/library-realized?-set! lib x) (vector-set! lib 1 x))
+;(define (yuni/library-realized? lib) (vector-ref lib 1))
+;(define (yuni/library-realized?-set! lib x) (vector-set! lib 1 x))
 (define (yuni/library-promoted? lib) (vector-ref lib 2))
 (define (yuni/library-promoted?-set! lib x) (vector-set! lib 2 x))
 (define (yuni/library-import-lib* lib) (vector-ref lib 3))
@@ -27,12 +27,12 @@
    (vector-set! newlib 0 libname)
    (vector-set! newlib 1 #t)
    (cond
-     (renames (error "Implement me.")
-              (vector-set! newlib 2 #f)
+     (renames (vector-set! newlib 2 #f)
               (vector-set! newlib 4 renames))
      (else (vector-set! newlib 2 #t)
            (vector-set! newlib 4 #f))) 
 
+   (PCK 'REGLIB! libname)
    (set! *yuni/libraries* (cons newlib *yuni/libraries*))))
 
 (define (yuni/register-library-alias! from to)
@@ -80,13 +80,14 @@
                     (yuni/library-renamepair* lib))))
 
 (define yuni/FIXME-DEFAULT-MACROS '(~ :=))
-(define (yuni/xform-realize-library-hook-itr cur import*) 
+(define (yuni/xform-realize-library-hook-itr cur import* promote?) 
   ;; => (begin ...)
   (cond
     ((pair? import*)
      (yuni/xform-realize-library-hook-itr
-       (cons (list 'yuni/realize-library-hook (car import*)) cur)
-       (cdr import*)))
+       (cons (list 'yuni/realize-library-hook (car import*) promote?) cur)
+       (cdr import*)
+       promote?))
     (else (cons 'begin cur))))
 
 (define (yuni/xform-library rename libname export* import* libbody)
@@ -107,17 +108,37 @@
       (else #f)))
 
   (scan-stxs! global-stxs)
-  ;; FIXME: Implement this later
-  (set! promote-required? #t)
+  ;; FIXME: BiwaScheme requires every define-syntax top-level
+  ;;        Enforce promote if the library defined any syntax
+  (set! promote-required? (not (= (length global-stxs)
+                                  (length yuni/FIXME-DEFAULT-MACROS))))
+
   (cond
     (promote-required?
+      (PCK 'AUTOPROMOTE: libname)
+      ;; Paste library body into top-level
       (cons 'begin
-            (list (yuni/xform-realize-library-hook-itr '() import*)
+            (list (yuni/xform-realize-library-hook-itr '() import* #t)
                   (cons 'begin libbody)
                   (list 'yuni/register-library! (list 'quote libname)
                         #f))))
-    (else (error "FIXME: Implement this"))))
+    (else 
+      ;; Inject let-guard to protect global scope
+      (let* ((renames (map (lambda (e) (cons e (rename e))) export*))
+             (storages (map (lambda (e) (list 'define (cdr e) #f)) renames))
+             (setters (map (lambda (e) (list 'set! (cdr e) (car e))) renames)))
+        (PCK 'RENAMING: libname renames)
 
+        (cons 'begin
+              (list (yuni/xform-realize-library-hook-itr '() import* #f)
+                    (cons 'begin storages)
+                    (cons 'let 
+                          (cons '() (list (cons 'begin libbody)
+                                          (cons 'begin setters))))
+                    (list 'yuni/register-library! (list 'quote libname)
+                          (list 'quote renames))))
+        
+        ))))
 
 ;; Library runtimes
 (define (yuni/realize-library! loadlib libname promote?) ;; => code
@@ -127,10 +148,15 @@
       (loadlib libname)
       (set! lib (yuni/library-lookup libname))))
    (PCK libname '=> lib)
-   (yuni/library-realized?-set! lib #t)
+   ;(yuni/library-realized?-set! lib #t)
    (cond
-     ((and promote? (not (yuni/library-promoted? lib)))
-      (yuni/library-promoted?-set! lib #t)
+     ((not (yuni/library-promoted? lib))
+      (PCK 'DO-PROMOTE: lib)
+      (cond
+        ;; Set promoted? flag if we are expanding into global context
+        (promote? (yuni/library-promoted?-set! lib #t)))
       (yuni/xform-promote-library lib))
-     (else #t))))
+     (else 
+       ;; Do nothing
+       #t))))
 

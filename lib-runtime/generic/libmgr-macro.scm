@@ -1,4 +1,4 @@
-(define-macro (yuni/realize-library-hook libname)
+(define-macro (yuni/realize-library-hook libname promote?)
   ;; FIXME: Implement this much more seriously
   ;; For s7
   (cond
@@ -17,12 +17,12 @@
                             (load pth))
                           (else
                             (PCK 'IGNORE libname)))))))
-        (yuni/realize-library! loadlib libname #t)))))
+        (yuni/realize-library! loadlib libname promote?)))))
 
 (define-macro (import . import*)
   (cons 'begin
         (map (lambda (i) 
-               (list 'yuni/realize-library-hook i))
+               (list 'yuni/realize-library-hook i #t))
              import*)))
 
 (define-macro (library libname exports imports . body)
@@ -40,7 +40,7 @@
                  ((only except prefix rename)
                   (error "Unsupported op" i)))))
             (cdr imports))
-  (let ((r (yuni/xform-library "FIXME: Rename procedure"
+  (let ((r (yuni/xform-library yuni/gensym
                                libname
                                (cdr exports)
                                (cdr imports)
