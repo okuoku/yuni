@@ -3,7 +3,7 @@
   (define resolver
     (%selfboot-yuniconfig-gen-resolver 
       'biwascheme
-      %selfboot-yuniroot))
+      %%selfboot-yuniroot))
 
   (define (libread libname)
     (write (list 'libread: libname))
@@ -52,10 +52,10 @@
   ;; Generate liborder
   (let ((order (%selfboot-gen-loadorder libread libcheck deps*))
         (runtimefiles (%selfboot-yuniconfig-get-runtime-list 
-                        'biwascheme %selfboot-yuniroot)))
+                        'biwascheme %%selfboot-yuniroot)))
    (append
      (map (lambda (path)
-            (list #f %selfboot-yuniroot path #f))
+            (list #f %%selfboot-yuniroot path #f))
           runtimefiles)
      ;; Resolve again..
      (map (lambda (names)
