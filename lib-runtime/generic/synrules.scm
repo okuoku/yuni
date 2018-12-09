@@ -37,7 +37,8 @@
     ((__9) 9)
     (else #f)))
 
-(define (yuni/make-synrule-baselib) 
+;; Generate renamer for __1 literals and base-syntax hook
+(define (yuni/make-synrule-baselib)  ;; => ^(sym)
   (define cache #f)
   (define cache-index #f)
   (define (do-gensym idx)
@@ -73,11 +74,9 @@
 (define (yuni/synrule-compare x y) (eq? x y))
 
 (define-macro (define-syntax name synrule)
-  (let ((tran 
-          (cadr 
-            (yuni/syntax-rules-transformer 
-              synrule 
-              yuni/gensym (yuni/make-synrule-baselib) yuni/synrule-compare)))
+  (let ((tran (yuni/syntax-rules-transformer 
+                synrule 
+                yuni/gensym (yuni/make-synrule-baselib) yuni/synrule-compare))
         (args (yuni/gensym 'args))
         (a (yuni/gensym 'output)))
     `(define-macro (,name . ,args)
