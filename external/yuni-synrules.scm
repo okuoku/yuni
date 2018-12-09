@@ -45,13 +45,13 @@
     (define (next-symbol s)
       (set! count (+ count 1))
       (rename (string->symbol (string-append s (%number->string count)))))
-    (define (expand-pattern pat tmpl)
+    (define (expand-pattern pat tmpl temps)
       (let lp ((p (cdr pat))
                (x (list _cdr _expr))
                (dim 0)
                (vars '())
                (k (lambda (vars)
-                    (list _cons (expand-template tmpl vars) #f))))
+                    (list _cons (expand-template tmpl vars temps) #f))))
         (let ((v (next-symbol "v.")))
          (list
            _let (list (list v x))
@@ -194,7 +194,9 @@
          ((pair? x) (lp (car x) (lp (cdr x) free)))
          ((vector? x) (lp (vector->list x) free))
          (else free))))
-    (define (expand-template tmpl vars)
+    (define (expand-template tmpl vars temps)
+      (define tempbinds (map (lambda (e) (cons e (list _quote (rename e)))) 
+                             temps))
       (let lp ((t tmpl) (dim 0))
        (cond
          ((identifier? t)
@@ -212,7 +214,10 @@
              (if (<= (cdr cell) dim)
                t
                (error "two few ...'s"))
-             (list _baselib (list _quote t)))))
+             (let ((vn (find (lambda (v) (eq? t (car v))) tempbinds)))
+              (if vn
+                (cdr vn)
+                (list _baselib (list _quote t)))))))
          ((pair? t)
           (cond
             ((ellipsis-escape? t)
@@ -258,7 +263,13 @@
               _or
               (append
                 (map
-                  (lambda (clause) (expand-pattern (car clause) (cadr clause)))
+                  (lambda (clause) 
+                    (let* ((pat (car clause))
+                           (tmpl (cadr clause))
+                           (potential-binds (yuni/synrule-prescan-template 
+                                              ellipsis-mark?
+                                              tmpl)))
+                      (expand-pattern pat tmpl potential-binds)))
                   forms)
                 (list
                   (list _cons
