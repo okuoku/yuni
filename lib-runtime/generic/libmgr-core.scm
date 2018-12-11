@@ -150,11 +150,11 @@
    (PCK libname '=> lib)
    ;(yuni/library-realized?-set! lib #t)
    (cond
-     ((not (yuni/library-promoted? lib))
+     ((and promote? (not (yuni/library-promoted? lib)))
       (PCK 'DO-PROMOTE: lib)
-      (cond
-        ;; Set promoted? flag if we are expanding into global context
-        (promote? (yuni/library-promoted?-set! lib #t)))
+      ;; Set promoted? flag if we are expanding into global context
+      (yuni/library-promoted?-set! lib #t)
+      ;; Return promoted output
       (yuni/xform-promote-library lib))
      (else 
        ;; Do nothing
