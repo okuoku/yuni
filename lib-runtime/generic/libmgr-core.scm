@@ -126,15 +126,17 @@
       ;; Inject let-guard to protect global scope
       (let* ((renames (map (lambda (e) (cons e (rename e))) export*))
              (storages (map (lambda (e) (list 'define (cdr e) #f)) renames))
-             (setters (map (lambda (e) (list 'set! (cdr e) (car e))) renames)))
+             (setters (map (lambda (e) (list 'set! (cdr e) (car e))) renames))
+             (prefix (yuni/xform-realize-library-hook-itr '() import* #f))
+             (code (cons 'let (cons '() (list (cons 'begin libbody)
+                                              (cons 'begin setters))))))
         (PCK 'RENAMING: libname renames)
+        (PCK 'CODE: code)
 
         (cons 'begin
-              (list (yuni/xform-realize-library-hook-itr '() import* #f)
+              (list prefix
                     (cons 'begin storages)
-                    (cons 'let 
-                          (cons '() (list (cons 'begin libbody)
-                                          (cons 'begin setters))))
+                    code
                     (list 'yuni/register-library! (list 'quote libname)
                           (list 'quote renames))))
         
