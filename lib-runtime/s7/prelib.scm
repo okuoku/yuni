@@ -136,14 +136,22 @@
 (define make-bytevector make-byte-vector)
 (define (bytevector-u8-set! bv i x) (set! (bv i) x))
 (define bytevector? byte-vector?)
-(define (bytevector-append . args) (string->byte-vector (apply string-append args)))
+(define (bytevector-append . args) (string->byte-vector 
+                                     (apply string-append 
+                                            (map byte-vector->string args))))
 (define bytevector-copy
   (case-lambda
-    ((bv) (string->byte-vector bv))
-    ((bv start) (string->byte-vector (substring bv start)))
-    ((bv start end) (string->byte-vector (substring bv start end)))))
+    ((bv) (string->byte-vector (byte-vector->string bv)))
+    ((bv start) (string->byte-vector (substring (byte-vector->string bv) start)))
+    ((bv start end) (string->byte-vector (substring (byte-vector->string bv) 
+                                                    start end)))))
 (define bytevector-copy! vector-copy!)
-(define write-bytevector write-string)
+(define write-bytevector 
+  (case-lambda
+    ((s) (write-string (byte-vector->string s)))
+    ((s p) (write-string (byte-vector->string s) p))
+    ((s p b) (write-string (substring (byte-vector->string s) b (length s)) p))
+    ((s p b e) (write-string (substring (byte-vector->string s) b e) p))))
 
 ;; Typed Equivalence
 (define (eq=?-itr type? x l)
@@ -196,7 +204,7 @@
 (define (output-port-open? p) (not (port-closed? p)))
 (define binary-port? port?)
 (define textual-port? port?)
-(define open-input-bytevector open-input-string)
+(define (open-input-bytevector bv) (open-input-string (byte-vector->string bv)))
 (define open-output-bytevector open-output-string)
 (define open-binary-input-file open-input-file)
 (define open-binary-output-file open-output-file)
