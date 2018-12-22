@@ -68,7 +68,7 @@
                         %%selfboot-yuniroot)))
     (append
       (map (lambda (path)
-             (list #f %%selfboot-yuniroot path #f))
+             (list #f %%selfboot-yuniroot path #f #f))
            runtimefiles)
       (map (lambda (libinfo)
              (let ((names (car libinfo))

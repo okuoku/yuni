@@ -72,6 +72,7 @@
                                   %%selfboot-orig-command-line
                                   %%selfboot-mypath))
 (define %%selfboot-impl-type 'biwascheme)
+(define %%selfboot-core-libs '((yuni scheme)))
 
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/biwascheme/selfboot-runtime2.scm")) ;; tentative
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm"))

@@ -8,6 +8,9 @@
 (define %%selfboot-fs (yuni/js-import "fs"))
 ;(define %%selfboot-yuniroot (yuni/js-import "yuniroot"))
 
+(define (%%selfboot-load-aliaslib truename alias* export*)
+  'do-nothing)
+
 (define (%selfboot-file->sexp-list fn)
   (define (wrap-paren str)
     (string-append "(" str ")"))

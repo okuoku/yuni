@@ -73,6 +73,7 @@
                                   %%selfboot-orig-command-line
                                   %%selfboot-mypath))
 (define %%selfboot-impl-type 's7)
+(define %%selfboot-core-libs '((yuni scheme)))
 
 (when (string=? %%selfboot-yuniroot "")
   (set! %%selfboot-yuniroot "."))
