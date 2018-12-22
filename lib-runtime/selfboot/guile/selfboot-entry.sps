@@ -99,7 +99,7 @@
   (define (filter-exports exports)
     (filter (lambda (e)
               (case e
-                ((_ ... => else) #f)
+                ((_ ... => else unquote unquote-splicing) #f)
                 (else #t)))
             exports))
   (define (lib?)
