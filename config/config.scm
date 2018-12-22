@@ -96,7 +96,7 @@
   (guile
     r7b-r7rs-libs
     yuni
-    yunisrfi
+    ;yunisrfi
     compat-guile
     r7rs-bridge
     r6rs-common)) 
