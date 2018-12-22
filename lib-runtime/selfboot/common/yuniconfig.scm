@@ -82,9 +82,11 @@
   (let ((cfg (%selfboot-file->sexp-list cfgpath)))
    (let ((generic (assoc 'generic cfg))
          (additional (assoc impl cfg)))
-     (append
-       (cadr additional)
-       (cadr generic)
-       (caddr generic)
-       (caddr additional)))))
+     (if additional
+       (append
+         (cadr additional)
+         (cadr generic)
+         (caddr generic)
+         (caddr additional))
+       '()))))
 

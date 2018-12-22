@@ -3,10 +3,17 @@
 ;;  %%selfboot-program-args: (command-line) result
 ;;  %%selfboot-impl-type: `biwascheme` etc
 ;;  %%selfboot-yuniroot: yuniroot
+;;  %%selfboot-core-libs: Ignored library names
 ;;
 
 (define (%%selfboot-gen-filelist loadpath* entrypoint*)
   (define deps* '())
+  (define (ignore-lib? lib)
+    (define (itr rest)
+      (and (pair? rest)
+           (or (equal? (car rest) lib)
+               (itr (cdr rest)))))
+    (itr %%selfboot-core-libs))
   (define resolver
     (%selfboot-yuniconfig-gen-resolver
       %%selfboot-impl-type
@@ -36,9 +43,8 @@
 
   (define (libcheck libname)
     (write (list 'libcheck: libname))
-    (newline)
     (cond
-      ((equal? '(yuni scheme) libname) #f)
+      ((ignore-lib? libname) #f)
       (else (libcheck0 libname))))
 
   ;; Add loadpath
@@ -64,14 +70,16 @@
       (map (lambda (path)
              (list #f %%selfboot-yuniroot path #f))
            runtimefiles)
-      (map (lambda (names)
-             (let* ((libname (car names))
-                    (r (resolver libname)))
-               (let ((dir (caddr r))
-                     (pth (cadddr r)))
-                 (if (pair? (cdr names))
-                   (list libname dir pth (cadr names))
-                   (list libname dir pth #f)))))
+      (map (lambda (libinfo)
+             (let ((names (car libinfo))
+                   (exports (cdr libinfo)))
+              (let* ((libname (car names))
+                     (r (resolver libname)))
+                (let ((dir (caddr r))
+                      (pth (cadddr r)))
+                  (if (pair? (cdr names))
+                    (list libname dir pth (cdr names) exports)
+                    (list libname dir pth #f exports))))))
            order))))
 
 

@@ -1,3 +1,7 @@
+;;
+;; NB: To import "generic" part, the runtime require
+;;     impl-specific runtime field(even if it is an empty list)
+;;
 (biwascheme
   ;; Pre
   ("lib-runtime/biwascheme/prelib.scm")
