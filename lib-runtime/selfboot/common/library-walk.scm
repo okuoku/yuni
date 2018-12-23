@@ -44,7 +44,7 @@
                        (list truename usagename)
                        (list usagename))))
          (for-each tryload! deps)
-         (set! order (cons (cons names syms) order))))))
+         (set! order (cons (cons names (cons deps syms)) order))))))
 
   (for-each tryload! (map libnamestrip initial-dep))
   (set! order (reverse order))

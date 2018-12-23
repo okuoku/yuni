@@ -15,10 +15,11 @@
                      (pth (caddr e))
                      (truename (car e))
                      (aliasnames (cadddr e))
-                     (exports (car (cddddr e))))
+                     (raw-imports (car (car (cddddr e))))
+                     (exports (cdr (car (cddddr e)))))
                  (let ((filepth (string-append dir "/" pth)))
                   (write (list 'LOAD: filepth)) (newline)
-                  (load filepth)
+                  (%%selfboot-loadlib filepth truename raw-imports exports)
                   (when aliasnames
                     ;(write (list 'ALIAS: truename '=> aliasnames exports))
                     ;(newline)
