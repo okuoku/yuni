@@ -3,7 +3,9 @@
 ;;
 
 (define %%selfboot-fs (yuni/js-import "fs"))
-(define %%selfboot-yuniroot (yuni/js-import "yuniroot"))
+
+(define (%%selfboot-load-aliaslib truename alias* export*)
+  'do-nothing)
 
 (define (%selfboot-file->sexp-list fn)
   (define (wrap-paren str)
@@ -14,6 +16,9 @@
         (js-invoke %%selfboot-fs "readFileSync" fn "utf8")))))
 
 (define %selfboot-file-exists? file-exists?)
+
+(define (%%selfboot-loadlib pth libname imports exports)
+  (load pth))
 
 (define (%selfboot-load prefix files)
   (for-each (lambda (e)

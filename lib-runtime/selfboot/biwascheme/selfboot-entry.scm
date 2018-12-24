@@ -67,14 +67,18 @@
 
 (define %%selfboot-orig-command-line (command-line))
 (define %%selfboot-mypath (%%extract-entrypoint-path %%selfboot-orig-command-line))
-(define %%selfboot-yuniroot (%%locate-yuniroot-fromscmpath %%selfboot-mypath))
+(define %%selfboot-yuniroot 
+  (let ((c (yuni/js-import "yuniroot")))
+   (if (js-undefined? c)
+     (%%locate-yuniroot-fromscmpath %%selfboot-mypath) 
+     c)))
 (define %%selfboot-program-args (%%extract-program-args
                                   %%selfboot-orig-command-line
                                   %%selfboot-mypath))
 (define %%selfboot-impl-type 'biwascheme)
 (define %%selfboot-core-libs '((yuni scheme)))
 
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/biwascheme/selfboot-runtime2.scm")) ;; tentative
+(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/biwascheme/selfboot-runtime.scm"))
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm"))
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/run-program.scm"))
 
