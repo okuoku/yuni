@@ -87,7 +87,7 @@
   (racket
     r7b-r7rs-libs/racket
     yuni
-    yunisrfi
+    ;yunisrfi
     r7rs-bridge
     r6rs-common
     compat-racket

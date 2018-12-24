@@ -35,8 +35,11 @@
               (set! prefixes (cons (list e e) prefixes)))))))
 
      (for-each (lambda (group)
-                 (let ((lis (cdr (assoc group libgrps))))
-                  (for-each add-prefix! lis)))
+                 (let ((prefix (assoc group libgrps)))
+                  (unless prefix
+                    (error "Prefix not found!" group))
+                  (let ((lis (cdr prefix)))
+                   (for-each add-prefix! lis))))
                mygroups)
 
      (lambda (arg)
