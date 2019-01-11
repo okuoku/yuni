@@ -3,6 +3,19 @@
 (define (command-line) %%selfboot-current-command-line)
 
 ;; Scan arguments
+(let loop ((q %%selfboot-current-command-line))
+ (if (pair? q)
+   (let ((a (car q))
+         (d (cdr q)))
+     (cond
+       ((string=? "-LIBPATH" a)
+        (let ((dir (car d)))
+         (set! %%selfboot-current-libpath
+           (cons dir
+                 %%selfboot-current-libpath))
+         (loop (cdr d))))
+       (else
+         (set! %%selfboot-current-command-line q))))))
 
 ;; Collect deps and load
 (let ((r (command-line)))
