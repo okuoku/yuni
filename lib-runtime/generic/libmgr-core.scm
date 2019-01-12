@@ -106,6 +106,20 @@
                    (else (loop (cdr c))))))
        (scan-stxs! (cdr cur)))
       (else #f)))
+  (define (calcinrenames renames import*)
+    (define (filt e)
+      (list (car e) (cdr e)))
+    (let loop ((cur renames)
+               (q import*))
+      (if (pair? q)
+        (let ((libname (car q))
+              (d (cdr q)))
+          (let* ((lib (yuni/library-lookup libname))
+                 (needthis? (and lib (not (yuni/library-promoted? lib)))))
+            (if needthis?
+              (loop (append (map filt (yuni/library-renamepair* lib)) cur) d)
+              (loop cur d))))
+        cur)))
 
   (scan-stxs! global-stxs)
   ;; FIXME: BiwaScheme requires every define-syntax top-level
@@ -128,11 +142,14 @@
              (storages (map (lambda (e) (list 'define (cdr e) #f)) renames))
              (setters (map (lambda (e) (list 'set! (cdr e) (car e))) renames))
              (prefix (yuni/xform-realize-library-hook-itr '() import* #f))
-             (code (cons 'let (cons '() (append libbody
-                                                (cons (cons 'begin setters)
-                                                      '()))))))
+             (inrenames (calcinrenames '() import*))
+             (code (cons 'let (cons inrenames 
+                                    (append libbody
+                                            (cons (cons 'begin setters)
+                                                  '()))))))
         (PCK 'RENAMING: libname renames)
-        (PCK 'CODE: code)
+        ;(PCK 'CODE: code)
+        (PCK 'INRENAMES: inrenames)
 
         (cons 'begin
               (list prefix
