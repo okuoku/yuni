@@ -128,8 +128,9 @@
              (storages (map (lambda (e) (list 'define (cdr e) #f)) renames))
              (setters (map (lambda (e) (list 'set! (cdr e) (car e))) renames))
              (prefix (yuni/xform-realize-library-hook-itr '() import* #f))
-             (code (cons 'let (cons '() (list (cons 'begin libbody)
-                                              (cons 'begin setters))))))
+             (code (cons 'let (cons '() (append libbody
+                                                (cons (cons 'begin setters)
+                                                      '()))))))
         (PCK 'RENAMING: libname renames)
         (PCK 'CODE: code)
 
@@ -138,9 +139,7 @@
                     (cons 'begin storages)
                     code
                     (list 'yuni/register-library! (list 'quote libname)
-                          (list 'quote renames))))
-        
-        ))))
+                          (list 'quote renames))))))))
 
 ;; Library runtimes
 (define (yuni/realize-library! loadlib libname promote?) ;; => code
