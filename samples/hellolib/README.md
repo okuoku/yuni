@@ -43,6 +43,7 @@ repository on somewhere.
 
 - `chibi-scheme ../../lib-runtime/selfboot/chibi-scheme/selfboot-entry.scm -LIBPATH . app.sps`
 - `gosh ../../lib-runtime/selfboot/gauche/selfboot-entry.scm -LIBPATH . app.sps`
+- `sagittarius ../../lib-runtime/selfboot/sagittarius/selfboot-entry.sps -LIBPATH . app.sps`
 
 
 ### Docker images

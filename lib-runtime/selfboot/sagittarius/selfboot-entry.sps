@@ -39,9 +39,11 @@
     (if (pair? l)
       (pathcompose (if (string=? (car l) "")
                      acc
-                     (string-append acc "/" (car l))) 
+                     (string-append acc "/" (car l)))
                    (cdr l))
       acc))
+  (define (pathcompose-start acc l)
+    (pathcompose (car l) (cdr l)))
   (define (pathcomponent acc cur strq)
     (if (string=? strq "")
       (if (null? acc)
@@ -67,13 +69,16 @@
               (reverse next-cur)
               (simple next-cur (car d) (cdr d))))
           (simple (cons m cur) a d)))))
+  (define (start-simple cur m q)
+    ;; Protect relative ../../../ sequence at beginning
+    (if (string=? m "..")
+      (start-simple (cons m cur) (car q) (cdr q))
+      (simple cur m q)))
 
   (let ((r (pathcomponent '() '() pth)))
-   (pathcompose "" (simple '() (car r) (cdr r)))))
-
+   (pathcompose-start "" (start-simple '() (car r) (cdr r)))))
 
 (define (%%locate-yuniroot-fromscmpath scmpath)
-  (define MYNAME "selfboot-entry.scm")
   (write %%selfboot-orig-command-line) (newline)
   (write %%selfboot-mypath) (newline)
   (let ((npth (%%pathslashfy scmpath)))
@@ -85,6 +90,9 @@
 (define %%selfboot-program-args (%%extract-program-args
                                   %%selfboot-orig-command-line
                                   %%selfboot-mypath))
+
+(define (%%selfboot-loadlib pth libname imports exports)
+  (load pth (interaction-environment)))
 
 (define (%%selfboot-load-aliaslib truename alias* export*)
   (for-each (lambda (libname)
