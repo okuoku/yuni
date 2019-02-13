@@ -26,7 +26,7 @@
     (and (string? s) 
          (let ((len (string-length s)))
           (and (< 4 len)
-               (string=? (substring s (- len 4) len) ".sps")
+               (string=? (substring s (- len 4) len) ".scm")
                s))))
   (and (pair? args*)
        (or (checkone (car args*))
@@ -45,6 +45,8 @@
                      (string-append acc "/" (car l))) 
                    (cdr l))
       acc))
+  (define (pathcompose-start acc l)
+    (pathcompose (car l) (cdr l)))
   (define (pathcomponent acc cur strq)
     (if (string=? strq "")
       (if (null? acc)
@@ -56,6 +58,7 @@
           (pathcomponent '() (cons (list->string (reverse acc)) cur) r)
           (pathcomponent (cons c acc) cur r)))))
   (define (simple cur m q)
+    (write (list 'simple cur m q)) (newline)
     (if (null? q)
       (if (null? cur)
         (reverse (cons m cur))
@@ -70,9 +73,14 @@
               (reverse next-cur)
               (simple next-cur (car d) (cdr d))))
           (simple (cons m cur) a d)))))
+  (define (start-simple cur m q)
+    ;; Protect relative ../../../ sequence at beginning
+    (if (string=? m "..")
+      (start-simple (cons m cur) (car q) (cdr q))
+      (simple cur m q)))
 
   (let ((r (pathcomponent '() '() pth)))
-   (pathcompose "" (simple '() (car r) (cdr r)))))
+   (pathcompose-start "" (start-simple '() (car r) (cdr r)))))
 
 
 (define (%%locate-yuniroot-fromscmpath scmpath)
