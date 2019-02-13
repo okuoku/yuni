@@ -45,7 +45,7 @@ repository on somewhere.
 - `gosh ../../lib-runtime/selfboot/gauche/selfboot-entry.scm -LIBPATH . app.sps`
 - `sagittarius ../../lib-runtime/selfboot/sagittarius/selfboot-entry.sps -LIBPATH . app.sps`
 - (ChezScheme) `scheme --program ../../lib-runtime/selfboot/chez/selfboot-entry.sps -LIBPATH . app.sps`
-
+- `s7yuni ../../lib-runtime/selfboot/s7/selfboot-entry.scm -LIBPATH . app.sps`
 
 ### Docker images
 
