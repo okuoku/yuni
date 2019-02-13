@@ -41,7 +41,9 @@ This sample can run on the "selfboot" environment. Selfboot runtime is part of
 yuni buildsystem so we don't need to do anything except checking out this
 repository on somewhere.
 
-- `chibi-scheme /ABSOLUTE/PATH/TO/yuni/lib-runtime/selfboot/chibi-scheme/selfboot-entry.sps -LIBPATH . app.sps`
+- `chibi-scheme ../../lib-runtime/selfboot/chibi-scheme/selfboot-entry.scm -LIBPATH . app.sps`
+- `gosh ../../lib-runtime/selfboot/gauche/selfboot-entry.scm -LIBPATH . app.sps`
+
 
 ### Docker images
 
