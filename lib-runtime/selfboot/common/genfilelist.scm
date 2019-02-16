@@ -42,7 +42,7 @@
        aliasname)))
 
   (define (libcheck libname)
-    (write (list 'libcheck: libname))
+    (write (list 'libcheck: libname)) (newline)
     (cond
       ((ignore-lib? libname) #f)
       (else (libcheck0 libname))))
