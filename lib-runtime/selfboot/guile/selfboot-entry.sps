@@ -33,9 +33,11 @@
     (if (pair? l)
       (pathcompose (if (string=? (car l) "")
                      acc
-                     (string-append acc "/" (car l))) 
+                     (string-append acc "/" (car l)))
                    (cdr l))
       acc))
+  (define (pathcompose-start acc l)
+    (pathcompose (car l) (cdr l)))
   (define (pathcomponent acc cur strq)
     (if (string=? strq "")
       (if (null? acc)
@@ -61,10 +63,14 @@
               (reverse next-cur)
               (simple next-cur (car d) (cdr d))))
           (simple (cons m cur) a d)))))
+  (define (start-simple cur m q)
+    ;; Protect relative ../../../ sequence at beginning
+    (if (string=? m "..")
+      (start-simple (cons m cur) (car q) (cdr q))
+      (simple cur m q)))
 
   (let ((r (pathcomponent '() '() pth)))
-   (pathcompose "" (simple '() (car r) (cdr r)))))
-
+   (pathcompose-start "" (start-simple '() (car r) (cdr r)))))
 
 (define (%%locate-yuniroot-fromscmpath scmpath)
   (define MYNAME "selfboot-entry.scm")
@@ -119,6 +125,9 @@
                (eval/filt e myenv))
              prog)))
 
+(define (loadlib pth libname imports exports)
+  (xload pth))
+
 (define (load-libaliases truename alias* export*)
   (for-each (lambda (libname)
               (let ((code `(library ,libname
@@ -148,6 +157,7 @@
                                                 (guile))
                         myenv)
   (set-top-level-value! '%%selfboot-load-aliaslib load-libaliases myenv)
+  (set-top-level-value! '%%selfboot-loadlib loadlib myenv)
   (eval '(define load %%selfboot-tmp-xload) myenv)
   (xload (string-append yuniroot "/lib-runtime/selfboot/guile/selfboot-runtime.scm"))
   (xload (string-append yuniroot "/lib-runtime/selfboot/common/common.scm"))
