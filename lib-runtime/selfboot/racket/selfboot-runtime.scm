@@ -2,9 +2,6 @@
 ;; Runtime for selfboot
 ;;
 
-(define (%%selfboot-load-aliaslib truename alias* export*)
-  'do-nothing)
-
 (define (%selfboot-file->sexp-list fn)
   (call-with-input-file 
     fn

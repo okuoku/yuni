@@ -7,6 +7,8 @@
 
 #lang racket
 
+(require (prefix-in r6rs: r6rs/lang/reader))
+
 (define (command-line) (cons 
                          (path->string 
                            (path->complete-path (find-system-path 'run-file)))
@@ -38,9 +40,11 @@
     (if (pair? l)
       (pathcompose (if (string=? (car l) "")
                      acc
-                     (string-append acc "/" (car l))) 
+                     (string-append acc "/" (car l)))
                    (cdr l))
       acc))
+  (define (pathcompose-start acc l)
+    (pathcompose (car l) (cdr l)))
   (define (pathcomponent acc cur strq)
     (if (string=? strq "")
       (if (null? acc)
@@ -56,23 +60,19 @@
       (if (null? cur)
         (reverse (cons m cur))
         (reverse (cdr cur)))
-      (let ((a (car q))
-            (d (cdr q)))
-        (if (string=? ".." a)
-          (let ((next-cur (if (null? cur)
-                            (list "..")
-                            (cdr cur))))
-            (if (null? d)
-              (reverse next-cur)
-              (simple next-cur (car d) (cdr d))))
-          (simple (cons m cur) a d)))))
+      (if (string=? m "..")
+        (simple (cdr cur) (car q) (cdr q))  
+        (simple (cons m cur) (car q) (cdr q)))))
+  (define (start-simple cur m q)
+    ;; Protect relative ../../../ sequence at beginning
+    (if (string=? m "..")
+      (start-simple (cons m cur) (car q) (cdr q))
+      (simple cur m q)))
 
   (let ((r (pathcomponent '() '() pth)))
-   (pathcompose "" (simple '() (car r) (cdr r)))))
-
+   (pathcompose-start "" (start-simple '() (car r) (cdr r)))))
 
 (define (%%locate-yuniroot-fromscmpath scmpath)
-  (define MYNAME "selfboot-entry.scm")
   (write %%selfboot-orig-command-line) (newline)
   (write %%selfboot-mypath) (newline)
   (let ((npth (%%pathslashfy scmpath)))
@@ -88,10 +88,17 @@
 (define myenv (make-base-namespace))
         
 (define (xload pth) 
+  (define import-done? #f)
   (define (do-eval code)
     (for-each (lambda (e) 
-                (write (list 'EVAL: e)) (newline)
-                (eval e myenv))
+                (cond
+                  ((and (not import-done?) (pair? e) (eq? 'import (car e)))
+                   (let ((reqclause* (map convert-import (cdr e))))
+                    (eval-with-local-resolver `(require ,@reqclause*)))
+                   (set! import-done? #t))
+                  (else
+                    ;(write (list 'EVAL: e)) (newline)
+                    (eval e myenv))))
               code))
 
   (write (list 'XLOAD: pth)) (newline)       
@@ -104,13 +111,100 @@
           (do-eval (reverse code))
           (loop (cons c code))))))))
 
+(define (read-r6rs-source pth)
+  (call-with-input-file
+    pth
+    (lambda (p)
+      (r6rs:read-syntax (object-name p) p #'dummy 1 0 1))))
+
+(define h-libnames (make-hash))
+(define h-libsyms (make-hash))
+
+(define (eval-with-local-resolver frm)
+  (let ((rr (current-module-name-resolver)))
+   (define res
+     (case-lambda
+       ((r0 r1) 'ignored)
+       ((mod src-name relative? unknown)
+        (let* ((q (hash-ref h-libsyms mod #f)))
+         (if q
+           (make-resolved-module-path mod)
+           (rr mod src-name relative? unknown))))))
+   (parameterize ((current-module-name-resolver res))
+                 (eval frm myenv))))
+
+(define (libname->symbol name)
+  (let loop ((cur "")
+             (q name))
+   (if (null? q)
+     (string->symbol cur)
+     (loop (string-append cur 
+                          (if (string=? "" cur) "" "_")
+                          (symbol->string (car q))) 
+           (cdr q)))))
+
+(define (mlist->list x) (for/list ((y (in-mlist x))) y))
+
 (define (load-libaliases truename alias* export*)
-  (for-each (lambda (libname)
-              (let ((code `(library ,libname
-                                    (export ,@export*)
-                                    (import ,truename))))
-                (eval code myenv)))
-            alias*))
+  (let ((x (hash-ref h-libnames (mlist->list truename))))
+   (for-each (lambda (libname)
+               (write (list 'ALIAS x truename '=> libname)) (newline)
+               (hash-set! h-libnames (mlist->list libname) x))
+             (mlist->list alias*))))
+
+(define (dumpsy x)
+  (for-each
+    (lambda (e)
+      (cond
+        ((list? (syntax->datum e))
+         (dumpsy e))
+        (else
+          (write e) (newline) )))
+    (syntax->list x)))
+
+(define (symbolic-identifier=? x y) ;; From TSPL
+  (eq? (syntax->datum x)
+       (syntax->datum y)))
+
+(define (convert-import clause)
+  (let ((head (car clause)))
+   (case head
+     ((only) `(only-in ,(convert-import (cadr clause)) . ,(cddr clause)))
+     ((except) `(except-in ,(convert-import (cadr clause)) . ,(cddr clause)))
+     ((rename) `(rename-in ,(convert-import (cadr clause)) . ,(cddr clause)))
+     ;; FIXME: Implement multiple meta-levels
+     ((for) 
+      (unless (equal? '(run expand) (cddr clause))
+        (error 'xxx "Unknown phase level" clause))
+      `(for-syntax ,(convert-import (cadr clause))))
+     (else
+       (hash-ref h-libnames clause)))))
+
+(define (loadlib pth libname0 imports exports)
+  (let* ((libname (mlist->list libname0))
+         (libsym (libname->symbol libname)))
+    (hash-set! h-libnames libname libsym)
+    (hash-set! h-libsyms libsym #t)
+    (write (list 'LOAD libname '=> libsym)) (newline)
+    (let ((x (read-r6rs-source pth)))
+     (syntax-case* 
+       x (library export import) symbolic-identifier=?
+       ((_ xxx dummy (module-begin (library libname 
+                                           (export exports ...)
+                                           (import imports ...)
+                                           body ...)))
+        (let ((x-imports (syntax->datum #'(imports ...)))
+              (x-exports (syntax->datum #'(exports ...)))
+              (x-body (syntax->datum #'(body ...))))
+
+          (let ((code `(module ignored racket/base
+                               (require ,@(map convert-import x-imports))
+                               (provide ,@x-exports)
+                               ,@x-body)))
+            (parameterize 
+              ((current-namespace myenv)
+               (current-module-declare-name (make-resolved-module-path libsym)))
+              (eval-with-local-resolver code)))))))))
 
 (define (set-top-level-value! sym val env)
   ;; Chez scheme API
@@ -118,18 +212,42 @@
   (namespace-set-variable-value! sym val #f env #f))
         
 (define (launcher yuniroot program-args)
+  (parameterize ((current-namespace myenv))
+                (namespace-require 'rnrs)
+                (namespace-require 'rnrs/mutable-pairs-6))
   (set-top-level-value! '%%selfboot-tmp-xload xload myenv)
   (set-top-level-value! '%%selfboot-yuniroot yuniroot myenv)
-  (set-top-level-value! '%%selfboot-program-args program-args myenv)
+  ;; Define program-args as mpair
+  (eval `(define %%selfboot-program-args (quote ,program-args)) myenv)
+  ;; ... and same for core-libs
+  (eval '(define %%selfboot-core-libs (quote ((rnrs)
+                                              (rnrs mutable-pairs)
+                                              (rnrs mutable-strings)
+                                              (rnrs r5rs)
+                                              (racket base)
+                                              (srfi :1)
+                                              (srfi :9)
+                                              (srfi :39)
+                                              (srfi :98))))
+        myenv)
+  (for-each (lambda (e)
+              (let ((libname (car e))
+                    (libsym (cdr e)))
+                (hash-set! h-libnames libname libsym)))
+            '(((rnrs) . rnrs)
+              ((rnrs mutable-pairs) . rnrs/mutable-pairs-6)
+              ((rnrs mutable-strings) . rnrs/mutable-strings-6)
+              ((rnrs r5rs) . rnrs/r5rs-6)
+              ((racket base) . racket/base)
+              ((srfi :1) . srfi/%3a1)
+              ((srfi :9) . srfi/%3a9)
+              ((srfi :39) . srfi/%3a39)
+              ((srfi :98) . srfi/%3a98)))
   (set-top-level-value! '%%selfboot-impl-type 'racket myenv)
-  (set-top-level-value! '%%selfboot-core-libs '((rnrs)
-                                                (rnrs mutable-pairs)
-                                                (rnrs mutable-strings)
-                                                (rnrs r5rs))
-                        myenv)
   (set-top-level-value! '%%selfboot-load-aliaslib load-libaliases myenv)
+  (set-top-level-value! '%%selfboot-loadlib loadlib myenv)
   (eval '(define load %%selfboot-tmp-xload) myenv)
-  (xload (string-append yuniroot "/lib-runtime/selfboot/chez/selfboot-runtime.scm"))
+  (xload (string-append yuniroot "/lib-runtime/selfboot/racket/selfboot-runtime.scm"))
   (xload (string-append yuniroot "/lib-runtime/selfboot/common/common.scm"))
   (xload (string-append yuniroot "/lib-runtime/selfboot/common/run-program.scm")))
 
