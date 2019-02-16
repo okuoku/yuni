@@ -57,8 +57,7 @@
            (and (not (null? q))
                 (let ((prefix (car q))
                       (next (cdr q)))
-                  (write (list 'TRYLIB: libname prefix pth))
-                  (newline)
+                  ;(write (list 'TRYLIB: libname prefix pth)) (newline)
                   (if (%selfboot-file-exists? 
                         (string-append prefix "/" pth))
                     (list arg libname prefix pth)
