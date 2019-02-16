@@ -15,7 +15,8 @@
                  %%selfboot-current-libpath))
          (loop (cdr d))))
        (else
-         (set! %%selfboot-current-command-line q))))))
+         (set! %%selfboot-current-command-line q))))
+   #t))
 
 ;; Collect deps and load
 (let ((r (command-line)))
