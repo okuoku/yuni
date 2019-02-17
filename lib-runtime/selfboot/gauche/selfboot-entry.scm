@@ -123,7 +123,7 @@
 (set! *load-path* (cons "." *load-path*))
 
 (load (string-append %%selfboot-yuniroot "/lib-runtime/r7rs/yuni-runtime/r7rs.sld"))
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/chibi-scheme/selfboot-runtime.scm"))
+(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/gauche/selfboot-runtime.scm"))
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm"))
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/run-program.scm"))
 
