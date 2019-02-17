@@ -47,6 +47,7 @@ repository on somewhere.
 - (ChezScheme) `scheme --program ../../lib-runtime/selfboot/chez/selfboot-entry.sps -LIBPATH . app.sps`
 - `s7yuni ../../lib-runtime/selfboot/s7/selfboot-entry.scm -LIBPATH . app.sps`
 - `racket ../../lib-runtime/selfboot/racket/selfboot-entry.rkt -LIBPATH . app.sps`
+- `csi -script ../../lib-runtime/selfboot/chicken/selfboot-entry.scm -LIBPATH . app.sps`
 
 
 ### Docker images
