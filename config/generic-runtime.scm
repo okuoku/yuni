@@ -28,6 +28,11 @@
   ("lib-runtime/gambit/prelib.scm")
   ;; Runtime
   ())
+(mit-scheme
+  ;; Pre
+  ("lib-runtime/mit-scheme/prelib.scm")
+  ;; Runtime
+  ())
 (generic
   ;; Pre
   ("lib-runtime/generic/synrules.scm"
