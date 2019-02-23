@@ -10,7 +10,7 @@
 ; Library object
 ;;
 ;; LIB := #(<LIBNAME> <REALIZED?> <PROMOTED?>
-;;          <IMPORT-LIBS> <RENAMEPAIRS>)
+;;          <IMPORT-LIBS> <RENAMEPAIRS> <ALIASES>)
 ;; RENAMEPAIRS := ((source-name . global-sym) ...)
 ;; 
 
@@ -21,11 +21,16 @@
 (define (yuni/library-promoted?-set! lib x) (vector-set! lib 2 x))
 (define (yuni/library-import-lib* lib) (vector-ref lib 3))
 (define (yuni/library-renamepair* lib) (vector-ref lib 4))
+(define (yuni/library-aliasname* lib) (vector-ref lib 5))
+(define (yuni/library-add-alias! lib name)
+  (let ((x (yuni/library-aliasname* lib)))
+   (vector-set! lib 5 (cons name x))))
 
 (define (yuni/register-library! libname renames)
-  (let ((newlib (make-vector 5 #f)))
+  (let ((newlib (make-vector 6 #f)))
    (vector-set! newlib 0 libname)
    (vector-set! newlib 1 #t)
+   (vector-set! newlib 5 '())
    (cond
      (renames (vector-set! newlib 2 #f)
               (vector-set! newlib 4 renames))
@@ -41,11 +46,19 @@
    (yuni/register-library! to (yuni/library-renamepair* fromlib))))
 
 ; Procedures
+(define (yuni/library-lookup-check-alias orig q nam)
+  (and (pair? q)
+       (or (and (equal? (car q) nam) orig)
+           (yuni/library-lookup-check-alias orig (cdr q) nam))))
+
 (define (yuni/library-lookup-itr cur nam)
   (and (pair? cur)
-       (if (equal? (yuni/library-name (car cur)) nam)
-         (car cur)
-         (yuni/library-lookup-itr (cdr cur) nam))))
+       (or (yuni/library-lookup-check-alias 
+             (car cur)
+             (yuni/library-aliasname* (car cur)) nam)
+           (if (equal? (yuni/library-name (car cur)) nam)
+             (car cur)
+             (yuni/library-lookup-itr (cdr cur) nam)))))
 
 (define (yuni/library-lookup nam)
   (yuni/library-lookup-itr *yuni/libraries* nam))
