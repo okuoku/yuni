@@ -23,6 +23,11 @@
   ("lib-runtime/s7/prelib.scm")
   ;; Runtime
   ("lib-runtime/generic/std/vector-map.scm"))
+(gambit
+  ;; Pre
+  ("lib-runtime/gambit/prelib.scm")
+  ;; Runtime
+  ())
 (generic
   ;; Pre
   ("lib-runtime/generic/synrules.scm"
