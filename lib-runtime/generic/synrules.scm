@@ -105,7 +105,8 @@
              (itr d cur)))))
       (else cur)))
   (cond
-    ((and (yuni/identifier? (cadr frm)) (not (ellipsis? (cadr frm))))
+    ((and (yuni/identifier? (cadr frm)) (not (ellipsis? (cadr frm)))
+          (pair? (cddr frm)))
      (cons (cadr frm) 
            (itr (caddr frm) '())))
     (else
