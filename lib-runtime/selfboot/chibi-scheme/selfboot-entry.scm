@@ -126,6 +126,7 @@
                                (scheme read)
                                (scheme write)
                                (scheme eval)
+                               (srfi 69)
                                ))
 
 
