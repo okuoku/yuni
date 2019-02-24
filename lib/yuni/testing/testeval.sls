@@ -8,7 +8,7 @@
                  ;; failure-read-datum?
                  )
          (import (yuni scheme)
-                 (yuni eval))
+                 (yuni compat eval))
 
 (define failure-header (list "Yuni testing failure"))
 

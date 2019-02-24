@@ -7,8 +7,7 @@
            lighteval-env-set!)
          (import (yuni scheme)
                  (yuni hashtables)
-                 ;; for eval/yuni
-                 (yuni compat eval))
+                 (yuni compat lighteval))
 
 (define (make-lighteval-env)
   (make-symbol-hashtable))         

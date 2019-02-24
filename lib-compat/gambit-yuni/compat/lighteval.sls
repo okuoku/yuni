@@ -1,6 +1,5 @@
-(library (mit-scheme-yuni compat eval)
+(library (gambit-yuni compat lighteval)
          (export eval/yuni)
          (import)
-
 (define eval/yuni eval)
 )
