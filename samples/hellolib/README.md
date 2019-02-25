@@ -50,6 +50,7 @@ repository on somewhere.
 - `csi -script ../../lib-runtime/selfboot/chicken/selfboot-entry.scm -LIBPATH . app.sps`
 - `IronScheme.Console-v2.exe ../../lib-runtime/selfboot/ironscheme/selfboot-entry.sps -LIBPATH . app.sps`
 - `gsi ../../lib-runtime/selfboot/gambit/selfboot-entry.scm -LIBPATH . app.sps`
+- `kawa ../../lib-runtime/selboot/kawa/selfboot-entry0.scm -LIBPATH . app.sps`
 
 
 ### Docker images
