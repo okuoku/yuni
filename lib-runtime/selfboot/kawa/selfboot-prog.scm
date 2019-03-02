@@ -59,17 +59,17 @@
       (start-simple (cons m cur) (car q) (cdr q))
       (simple cur m q)))
 
-  (let ((r (pathcomponent '() '() pth))
-        (prefix "java kawa.repl "))
-   ;; Strip "java kawa.repl "
-   (let ((first (if (and (< (string-length prefix) (string-length (car r)))
-                         (string=? prefix 
-                                   (substring (car r) 
-                                              0 (string-length prefix))))
-                  (substring (car r) 
-                             (string-length prefix)
-                             (string-length (car r)))
-                  (car r))))
+  (define (strip-extra-words cur l)
+    (if (pair? l)
+      (let ((a (car l))
+            (d (cdr l)))
+        (if (char=? #\space a)
+          (list->string cur)
+          (strip-extra-words (cons a cur) d)))
+      (list->string cur)))
+
+  (let ((r (pathcomponent '() '() pth)))
+   (let ((first (strip-extra-words '() (reverse (string->list (car r))))))
      (pathcompose-start "" (start-simple '() first (cdr r))))))
 
 (define (%%locate-yuniroot-fromscmpath scmpath)
@@ -87,7 +87,7 @@
 
 (define (%%selfboot-loadlib pth libname imports exports)
   (let ((code (%selfboot-file->sexp-list pth)))
-   (write (list 'LAUNCH: pth)) (newline)
+   ;(write (list 'LAUNCH: pth)) (newline)
    (eval `(define-library ,libname
                           (export ,@exports)
                           (import (yuni-runtime r7rs) ,@imports)
