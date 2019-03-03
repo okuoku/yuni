@@ -51,6 +51,7 @@ macro(tests script)
 endmacro()
 
 tests(
+    ${tests}/lib/minitest0.sps
     ${tests}/lib/lighteval0.sps
     )
 
@@ -62,5 +63,6 @@ negative_tests(
     ${tests}/fail/fail4.sps
     ${tests}/fail/fail5.sps
     ${tests}/fail/fail6.sps
+    ${tests}/fail/fail7.sps
     )
 
