@@ -25,7 +25,7 @@
                            (obj (cdr p)))
                        (list name obj)))
                    alist)))
-    (let ((out (lighteval-bind env `(letrec* ,code (list ,@names)))))
+    (let ((out (lighteval-bind env (list 'letrec* code (cons 'list names)))))
       (for-each (lambda (name obj)
                   (lighteval-env-set! env name obj))
                 names
@@ -35,7 +35,8 @@
   (let-values (((k v) (hashtable-entries env)))
               (let* ((names (vector->list k))
                      (objs (vector->list v))
-                     (proc (eval/yuni `(lambda ,names ,frm))))
+                     (code (list 'lambda names frm))
+                     (proc (eval/yuni code)))
                 (apply proc objs))))
          
 )
