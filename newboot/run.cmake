@@ -55,6 +55,12 @@ execute_process(
     RESULT_VARIABLE rr
     )
 
-if(rr)
-    message(FATAL_ERROR "Err: ${rr}")
+if(NOT EXPECT_ERROR)
+    if(rr)
+        message(FATAL_ERROR "Err: ${rr}")
+    endif()
+else()
+    if(NOT rr)
+        message(FATAL_ERROR "Expected error: ${rr}")
+    endif()
 endif()

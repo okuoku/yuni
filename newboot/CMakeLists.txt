@@ -6,6 +6,8 @@
 cmake_minimum_required(VERSION 3.0)
 project(yuni NONE) # Only for selfboot scripts
 
+include(CTest)
+
 set(YUNIROOT ${CMAKE_CURRENT_LIST_DIR}/..)
 get_filename_component(YUNIROOT ${YUNIROOT} ABSOLUTE)
 set(BOOTDIR ${CMAKE_CURRENT_BINARY_DIR})
@@ -108,3 +110,9 @@ foreach(e ${impls})
 endforeach()
 
 file(APPEND ${VARFILE} ")\n")
+
+
+# Testing
+if(BUILD_TESTING)
+    include(${CMAKE_CURRENT_LIST_DIR}/tests.cmake)
+endif()
