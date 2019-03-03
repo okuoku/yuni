@@ -40,6 +40,13 @@ macro(checkimpl nam impl)
     if(YUNI_${impl})
         writevar(YUNI_${impl})
         list(APPEND impls ${impl})
+        if(UNIX)
+            set(_cmd "${CMAKE_CURRENT_BINARY_DIR}/run-${nam}.sh")
+            file(WRITE ${_cmd}
+                "#!/bin/sh\nexec ${CMAKE_COMMAND} -DIMPL=${impl} -P ${CMAKE_CURRENT_BINARY_DIR}/run.cmake $*\n")
+            execute_process(
+                COMMAND chmod +x ${_cmd})
+        endif()
     endif()
 endmacro()
 
@@ -53,9 +60,20 @@ macro(checkimpls nam cmd impl)
         endif()
     endif()
     checkimpl(${nam} ${impl})
+
     set(_test ${ARGN})
     if(_test)
+        # Call next
         checkimpls(${ARGN})
+    else()
+        # Term
+        if(UNIX)
+            set(_cmd "${CMAKE_CURRENT_BINARY_DIR}/run-all.sh")
+            file(WRITE ${_cmd}
+                "#!/bin/sh\nexec ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/run-all.cmake $*\n")
+            execute_process(
+                COMMAND chmod +x ${_cmd})
+        endif()
     endif()
 endmacro()
 
