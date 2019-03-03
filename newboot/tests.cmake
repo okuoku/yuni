@@ -46,11 +46,17 @@ macro(tests script)
     set(_rest ${ARGN})
     add_selfboot_test_all(${script})
     if(_rest)
-        negative_tests(${ARGN})
+        tests(${ARGN})
     endif()
 endmacro()
 
 tests(
+    ${tests}/scheme/core0.sps
+    ${tests}/scheme/core1.sps
+    ${tests}/scheme/iter0.sps
+    ${tests}/scheme/strings0.sps
+    ${tests}/scheme/vectors0.sps
+    ${tests}/scheme/bytevectors0.sps
     ${tests}/lib/minitest0.sps
     ${tests}/lib/lighteval0.sps
     )
