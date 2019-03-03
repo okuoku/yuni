@@ -27,9 +27,11 @@
     (if (pair? l)
       (pathcompose (if (string=? (car l) "")
                      acc
-                     (string-append acc "/" (car l))) 
+                     (string-append acc "/" (car l)))
                    (cdr l))
       acc))
+  (define (pathcompose-start acc l)
+    (pathcompose (car l) (cdr l)))
   (define (pathcomponent acc cur strq)
     (if (string=? strq "")
       (if (null? acc)
@@ -45,27 +47,23 @@
       (if (null? cur)
         (reverse (cons m cur))
         (reverse (cdr cur)))
-      (let ((a (car q))
-            (d (cdr q)))
-        (if (string=? ".." a)
-          (let ((next-cur (if (null? cur)
-                            (list "..")
-                            (cdr cur))))
-            (if (null? d)
-              (reverse next-cur)
-              (simple next-cur (car d) (cdr d))))
-          (simple (cons m cur) a d)))))
+      (if (string=? m "..")
+        (simple (cdr cur) (car q) (cdr q))
+        (simple (cons m cur) (car q) (cdr q)))))
+  (define (start-simple cur m q)
+    ;; Protect relative ../../../ sequence at beginning
+    (if (string=? m "..")
+      (start-simple (cons m cur) (car q) (cdr q))
+      (simple cur m q)))
 
   (let ((r (pathcomponent '() '() pth)))
-   (pathcompose "" (simple '() (car r) (cdr r)))))
-
+   (pathcompose-start "" (start-simple '() (car r) (cdr r)))))
 
 (define (%%locate-yuniroot-fromscmpath scmpath)
-  (define MYNAME "selfboot-entry.scm")
   (let ((npth (%%pathslashfy scmpath)))
    (%%pathsimplify (string-append npth "/../../../.."))))
 
-(define %%selfboot-orig-command-line (or (command-line) '()))
+(define %%selfboot-orig-command-line (command-line))
 (define %%selfboot-mypath (%%extract-entrypoint-path %%selfboot-orig-command-line))
 (define %%selfboot-yuniroot 
   (let ((c (yuni/js-import "yuniroot")))
@@ -80,14 +78,8 @@
 (define %%selfboot-impl-type 'biwascheme)
 (define %%selfboot-core-libs '((yuni scheme)))
 
-(define %%biwasyuni-load-runtime-only?
-  (let ((c (yuni/js-import "biwasyuni-load-runtime-only")))
-   (and (not (js-undefined? c))
-        c)))
-
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/biwascheme/selfboot-runtime.scm"))
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm"))
 
-(unless %%biwasyuni-load-runtime-only?
-  (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/run-program.scm")))
+(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/run-program.scm"))
 

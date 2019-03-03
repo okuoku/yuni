@@ -52,7 +52,7 @@ repository on somewhere.
 - `gsi ../../lib-runtime/selfboot/gambit/selfboot-entry.scm -LIBPATH . app.sps`
 - `kawa ../../lib-runtime/selboot/kawa/selfboot-entry.scm -LIBPATH . app.sps`
 - `guile ../../lib-runtime/selfboot/guile/selfboot-entry.sps -LIBPATH . app.sps`
-
+- `biwasyuni  ../../lib-runtime/selfboot/biwascheme/selfboot-entry.scm -LIBPATH . app.sps`
 
 ### Docker images
 
