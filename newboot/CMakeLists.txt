@@ -49,6 +49,8 @@ macro(checkimpl nam impl)
             execute_process(
                 COMMAND chmod +x ${_cmd})
         endif()
+    else()
+        message(STATUS "Skip: ${impl}")
     endif()
 endmacro()
 
@@ -70,6 +72,7 @@ macro(checkimpls nam cmd impl)
     else()
         # Term
         if(UNIX)
+            # FIXME: Generate direct-calling .sh...
             set(_cmd "${CMAKE_CURRENT_BINARY_DIR}/run-all.sh")
             file(WRITE ${_cmd}
                 "#!/bin/sh\nexec ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/run-all.cmake $*\n")
