@@ -103,6 +103,17 @@
          (apply map p 
                 (map string->list args))))
 
+;; R7RS iters
+(define assoc
+  (case-lambda
+    ((obj alist) (r6:assoc obj alist))
+    ((obj alist compare) (assp (lambda (x) (compare obj x)) alist))))
+
+(define member
+  (case-lambda
+    ((obj alist) (r6:member obj alist))
+    ((obj alist compare) (memp (lambda (x) (compare obj x)) alist))))
+
 ;; R7RS vectors
 
 (define (%subvector v start end)
