@@ -31,7 +31,7 @@ get_filename_component(VARFILE ${VARFILE} ABSOLUTE)
 
 function(writeproxy scriptname)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${scriptname}
-        "include(${VARFILE})\ninclude(${CMAKE_CURRENT_LIST_DIR}/${scriptname})\n")
+        "include(${CMAKE_CURRENT_LIST_DIR}/implinfo.cmake)\ninclude(${VARFILE})\ninclude(${CMAKE_CURRENT_LIST_DIR}/${scriptname})\n")
 endfunction()
 
 function(writevar varname)
