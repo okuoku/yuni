@@ -26,18 +26,28 @@
   ;(flush-output-port (current-output-port))
   (exit (if (null? %%yunitest-mini-failed-forms) 0 1)))
 
+(define (%%yunitest-mini-test-counter++)
+  (set! %%yunitest-mini-test-counter (+ 1 %%yunitest-mini-test-counter)))
+
+(define (%%yunitest-mini-success-counter++)
+  (set! %%yunitest-mini-success-counter
+    (+ 1 %%yunitest-mini-success-counter)))
+
+(define (%%yunitest-mini-proc-fail! frm)
+  (set! %%yunitest-mini-failed-forms 
+    (cons frm
+          %%yunitest-mini-failed-forms)))
+
 (define-syntax check-equal
   (syntax-rules ()
     ((_ obj form)
      (begin
        ;(display (list 'obj 'form)) (newline)
-       (set! %%yunitest-mini-test-counter (+ 1 %%yunitest-mini-test-counter))
+       (%%yunitest-mini-test-counter++)
        (let ((e form))
         (cond ((equal? obj e)
-               (set! %%yunitest-mini-success-counter 
-                 (+ 1 %%yunitest-mini-success-counter)))
+               (%%yunitest-mini-success-counter++))
               (else
-                (set! %%yunitest-mini-failed-forms 
-                  (cons 'form %%yunitest-mini-failed-forms)))))))))
+                (%%yunitest-mini-proc-fail! 'form))))))))
          
 )
