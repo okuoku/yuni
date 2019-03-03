@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.0)
 project(yuni NONE) # Only for selfboot scripts
 
 include(CTest)
+include(${CMAKE_CURRENT_LIST_DIR}/implinfo.cmake)
 
 set(YUNIROOT ${CMAKE_CURRENT_LIST_DIR}/..)
 get_filename_component(YUNIROOT ${YUNIROOT} ABSOLUTE)
@@ -45,7 +46,7 @@ macro(checkimpl nam impl)
         if(UNIX)
             set(_cmd "${CMAKE_CURRENT_BINARY_DIR}/run-${nam}.sh")
             file(WRITE ${_cmd}
-                "#!/bin/sh\nexec ${CMAKE_COMMAND} -DIMPL=${impl} -P ${CMAKE_CURRENT_BINARY_DIR}/run.cmake $*\n")
+                "#!/bin/sh\nexec ${YUNI_${impl}} ${arg_prog_${impl}} ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${impl}} $*\n")
             execute_process(
                 COMMAND chmod +x ${_cmd})
         endif()
@@ -76,7 +77,6 @@ macro(checkimpls nam cmd impl)
     else()
         # Term
         if(UNIX)
-            # FIXME: Generate direct-calling .sh...
             set(_cmd "${CMAKE_CURRENT_BINARY_DIR}/run-all.sh")
             file(WRITE ${_cmd}
                 "#!/bin/sh\nexec ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/run-all.cmake $*\n")
