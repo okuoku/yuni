@@ -98,6 +98,11 @@
     ((str start) (string->vector (%substring1 str start)))
     ((str start end) (string->vector (substring str start end)))))
 
+(define (string-map p . args) 
+  (apply string 
+         (apply map p 
+                (map string->list args))))
+
 ;; R7RS vectors
 
 (define (%subvector v start end)
