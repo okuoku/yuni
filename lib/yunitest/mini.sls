@@ -8,6 +8,17 @@
 (define %%yunitest-mini-failed-forms '())
 
 (define (check-finish)
+  (define (print-failed v)
+    (let ((expected (vector-ref v 0))
+          (actual (vector-ref v 1))
+          (frm (vector-ref v 2)))
+      (display "[")
+      (write frm)
+      (display "]")
+      (display "  Expected: ")
+      (write expected)
+      (display "  Actual: ")
+      (write actual)))
   (display "Test: ")
   (display %%yunitest-mini-success-counter)
   (display "/")
@@ -15,9 +26,9 @@
   (display " passed.\n")
   (unless (null? %%yunitest-mini-failed-forms)
     (display "\nFailed: \n")
-    (for-each (lambda x
+    (for-each (lambda (x)
                 (display "    ")
-                (write x)
+                (print-failed x)
                 (display "\n")
                 ;; YuniVM: result convertion workaround
                 #t)
@@ -33,10 +44,11 @@
   (set! %%yunitest-mini-success-counter
     (+ 1 %%yunitest-mini-success-counter)))
 
-(define (%%yunitest-mini-proc-fail! frm)
-  (set! %%yunitest-mini-failed-forms 
-    (cons frm
-          %%yunitest-mini-failed-forms)))
+(define (%%yunitest-mini-proc-fail! expected actual frm)
+  (let ((v (vector expected actual frm)))
+   (set! %%yunitest-mini-failed-forms 
+     (cons v
+           %%yunitest-mini-failed-forms))))
 
 (define-syntax check-equal
   (syntax-rules ()
@@ -48,6 +60,6 @@
         (cond ((equal? obj e)
                (%%yunitest-mini-success-counter++))
               (else
-                (%%yunitest-mini-proc-fail! 'form))))))))
+                (%%yunitest-mini-proc-fail! obj e 'form))))))))
          
 )

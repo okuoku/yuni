@@ -57,6 +57,7 @@ tests(
     ${tests}/scheme/strings0.sps
     ${tests}/scheme/vectors0.sps
     ${tests}/scheme/bytevectors0.sps
+    ${tests}/scheme/inexact0.sps
     ${tests}/lib/minitest0.sps
     ${tests}/lib/lighteval0.sps
     )
