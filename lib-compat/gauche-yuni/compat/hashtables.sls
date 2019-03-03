@@ -1,5 +1,7 @@
 (library (gauche-yuni compat hashtables)
          (export
+           ;; Yuni extension
+           make-symbol-hashtable
            ;; 13.1 Constructors
            make-eq-hashtable
            make-eqv-hashtable
@@ -47,6 +49,8 @@
 (define (make-eqv-hashtable)
   (make-hashtable 'USING-EQV-HASH eqv?))
 
+(define (make-symbol-hashtable) (make-eq-hashtable))
+
 (define hashtable? hash-table?)
 
 (define (hashtable-size h) (error "unimpl"))
@@ -62,7 +66,10 @@
 (define (hashtable-clear! . _) (error "unimpl"))
 (define (hashtable-keys h) 
   (list->vector (hash-table-keys h)))
-(define (hashtable-entries . _) (error "unimpl"))
+(define (hashtable-entries h)
+  (values
+    (list->vector (hash-table-keys h))
+    (list->vector (hash-table-values h))))
 (define (hashtable-equivalence-function . _) (error "unimpl"))
 (define (hashtable-hash-function . _) (error "unimpl"))
 (define (hashtable-mutable? . _) (error "unimpl"))

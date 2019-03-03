@@ -15,8 +15,8 @@
            ; Mutators
            hashtable-set!
            hashtable-update!
-           hashtable-entries
            ; Accessor
+           hashtable-entries
            hashtable-ref
            ; Query
            hashtable-size)

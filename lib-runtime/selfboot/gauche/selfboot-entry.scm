@@ -112,6 +112,7 @@
                                (scheme read)
                                (scheme write)
                                (scheme eval)
+                               (gauche base)
                                ))
 
 
