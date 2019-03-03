@@ -1,7 +1,7 @@
 ;;
 ;; Selfboot entrypoint for Guile
 ;; 
-;;  $ guile --program /path/to/selfboot-entry.sps ....
+;;  $ guile /path/to/selfboot-entry.sps ....
 ;;
 
 
