@@ -104,6 +104,10 @@
 
 (define %%selfboot-impl-type 'sagittarius)
 (define %%selfboot-core-libs '((rnrs)
+                               (rnrs base)
+                               (rnrs control)
+                               (rnrs hashtables)
+                               (rnrs eval)
                                (rnrs mutable-pairs)
                                (rnrs mutable-strings)
                                (rnrs r5rs)
