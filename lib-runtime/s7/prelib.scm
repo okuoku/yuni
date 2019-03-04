@@ -126,7 +126,7 @@
 (define (string->utf8 str) (string->byte-vector str))
 (define utf8->string
   (case-lambda
-    ((str) str)
+    ((str) (byte-vector->string str))
     ((str start) (substring str (length str)))
     ((str start end) (substring str start end))))
 (define (eof-object) #<eof>)
