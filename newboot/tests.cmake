@@ -61,6 +61,7 @@ tests(
     ${tests}/scheme/qq0.sps
     ${tests}/lib/minitest0.sps
     ${tests}/lib/lighteval0.sps
+    ${tests}/lib/hashtables0.sps
     )
 
 negative_tests(
