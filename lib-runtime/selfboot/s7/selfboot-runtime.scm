@@ -5,6 +5,13 @@
 ;; Runtime for selfboot
 ;;
 
+(define (%%selfboot-load-aliaslib truename alias* export*)
+  ;; Call library runtime
+  (let ((lib (yuni/library-lookup truename)))
+   (for-each (lambda (name)
+               (yuni/library-add-alias! lib name))
+             alias*)))
+
 (define (%selfboot-file->sexp-list fn)
   (call-with-input-file 
     fn
