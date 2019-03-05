@@ -1,5 +1,14 @@
 (library (gambit-yuni compat hashtables)
          (export
+           ;; Yuni extension
+           ; Constructors
+           make-integer-hashtable
+           make-string-hashtable
+           make-symbol-hashtable
+           
+           hashtable-for-each
+           hashtable-fold
+           
            ;; 13.1 Constructors
            make-eq-hashtable
            make-eqv-hashtable
@@ -56,6 +65,13 @@
   (make-hashtable eq?-hash eq?))
 (define (make-eqv-hashtable)
   (make-hashtable eqv?-hash eqv?))
+(define make-integer-hashtable make-eqv-hashtable)
+(define (make-string-hashtable)
+  (make-hashtable string=?-hash string=?))
+(define make-symbol-hashtable make-eq-hashtable)
+
+(define (hashtable-for-each . _) (error "unimpl"))
+(define (hashtable-fold . _) (error "unimpl"))
 
 (define hashtable? table?)
 
@@ -80,7 +96,19 @@
         (vector-set! v cnt k) 
         (set! cnt (+ 1 cnt))) h)
     v))
-(define (hashtable-entries . _) (error "unimpl"))
+(define (hashtable-entries h)
+  (let* ((len (table-length h))
+         (k (make-vector len))
+         (v (make-vector len))
+         (cnt 0))
+    (table-for-each
+      (lambda (kk vv)
+        (vector-set! k cnt kk)
+        (vector-set! v cnt vv)
+        (set! cnt (+ 1 cnt)))
+      h)
+    (values k v)))
+
 (define (hashtable-equivalence-function . _) (error "unimpl"))
 (define (hashtable-hash-function . _) (error "unimpl"))
 (define (hashtable-mutable? . _) (error "unimpl"))
