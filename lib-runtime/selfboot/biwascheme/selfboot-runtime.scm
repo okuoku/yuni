@@ -5,7 +5,11 @@
 (define %%selfboot-fs (yuni/js-import "fs"))
 
 (define (%%selfboot-load-aliaslib truename alias* export*)
-  'do-nothing)
+  ;; Call library runtime
+  (let ((lib (yuni/library-lookup truename)))
+   (for-each (lambda (name)
+               (yuni/library-add-alias! lib name))
+             alias*)))
 
 (define (%selfboot-file->sexp-list fn)
   (define (wrap-paren str)
