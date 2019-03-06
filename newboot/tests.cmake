@@ -62,6 +62,7 @@ tests(
     ${tests}/lib/minitest0.sps
     ${tests}/lib/lighteval0.sps
     ${tests}/lib/hashtables0.sps
+    ${tests}/app/basic/app.sps
     )
 
 negative_tests(
