@@ -1,5 +1,5 @@
 ;;
-;; Selfboot entrypoint for Racket (INCOMPLETE)
+;; Selfboot entrypoint for Racket
 ;; 
 ;;  $ racket /path/to/selfboot-entry.rkt ....
 ;;
@@ -94,7 +94,7 @@
                 (cond
                   ((and (not import-done?) (pair? e) (eq? 'import (car e)))
                    (let ((reqclause* (map convert-import (cdr e))))
-                    (eval-with-local-resolver `(require ,@reqclause*)))
+                    (eval-with-local-resolver `(local-require ,@reqclause*)))
                    (set! import-done? #t))
                   (else
                     ;(write (list 'EVAL: e)) (newline)
@@ -127,6 +127,7 @@
        ((r0 r1) 'ignored)
        ((mod src-name relative? unknown)
         (let* ((q (hash-ref h-libsyms mod #f)))
+         ;(write (list 'RESOLV: mod '=> q)) (newline)
          (if q
            (make-resolved-module-path mod)
            (rr mod src-name relative? unknown))))))
