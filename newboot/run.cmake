@@ -30,6 +30,9 @@ set(arg_prog ${arg_prog_${IMPL}})
 
 list(GET args 0 script)
 get_filename_component(appdir ${script} PATH)
+if(NOT appdir)
+    set(appdir .)
+endif()
 
 execute_process(
     COMMAND 
