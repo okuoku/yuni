@@ -112,9 +112,17 @@
     (and (pair? code)
          (eq? 'library (car code))))
   (if (lib?)
-    (let ((exports (cdr (caddr code))))
-     (eval `(library ,(cadr code) (export ,@(filter-exports exports))
-                     ,@(cdddr code)) env))
+    (let ((libname (cadr code))
+          (exports (cdr (caddr code)))
+          (imports (cdr (car (cdddr code))))
+          (prog (cdr (cdddr code))))
+     (eval `(library ,libname 
+                     (export ,@(filter-exports exports))
+                     (import 
+                       (except (rnrs) syntax-rules case)
+                       ,@imports)
+                     ,@prog) 
+           env))
     (eval code env)))
         
 (define (xload pth) 
