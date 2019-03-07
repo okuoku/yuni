@@ -5,7 +5,7 @@
 ;;
 
 
-(import (guile) (rnrs))
+(import (guile) (rnrs) (rnrs eval))
 
 (define (%%extract-program-args args* entrypth)
   (if (string=? (car args*) entrypth)
@@ -89,7 +89,7 @@
 (when (string=? %%selfboot-yuniroot "")
   (set! %%selfboot-yuniroot "."))
 
-(define myenv (interaction-environment))
+(define myenv (environment '(guile)))
 
 (define (file->sexp-list fn)
   (call-with-input-file 
@@ -119,7 +119,11 @@
      (eval `(library ,libname 
                      (export ,@(filter-exports exports))
                      (import 
-                       (except (rnrs) syntax-rules case)
+                       (except (rnrs) 
+                               syntax-rules case
+                               bytevector-copy
+                               bytevector-copy!
+                               vector-fill!)
                        ,@imports)
                      ,@prog) 
            env))
