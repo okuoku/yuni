@@ -22,10 +22,6 @@ if(NOT YUNI_${IMPL})
     message(FATAL_ERROR "Impl ${IMPL} did not found")
 endif()
 
-if(NOT selfboot_${IMPL})
-    message(FATAL_ERROR "Impl ${IMPL} is not configured")
-endif()
-
 set(arg_prog ${arg_prog_${IMPL}})
 
 list(GET args 0 script)
@@ -34,15 +30,31 @@ if(NOT appdir)
     set(appdir .)
 endif()
 
-execute_process(
-    COMMAND 
-    ${YUNI_${IMPL}} 
-    ${arg_prog}
-    ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${IMPL}}
-    -LIBPATH ${appdir}
-    ${args}
-    RESULT_VARIABLE rr
-    )
+if(${IMPL} STREQUAL KAWA_JAR)
+    execute_process(
+        COMMAND 
+        java -classpath
+        ${YUNI_${IMPL}} 
+        kawa.repl
+        ${YUNIROOT}/lib-runtime/selfboot/${selfboot_KAWA}
+        -LIBPATH ${appdir}
+        ${args}
+        RESULT_VARIABLE rr
+        )
+else()
+    if(NOT selfboot_${IMPL})
+        message(FATAL_ERROR "Impl ${IMPL} is not configured")
+    endif()
+    execute_process(
+        COMMAND 
+        ${YUNI_${IMPL}} 
+        ${arg_prog}
+        ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${IMPL}}
+        -LIBPATH ${appdir}
+        ${args}
+        RESULT_VARIABLE rr
+        )
+endif()
 
 if(NOT EXPECT_ERROR)
     if(rr)

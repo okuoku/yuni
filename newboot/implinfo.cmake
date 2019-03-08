@@ -1,3 +1,4 @@
+set(selfboot_KAWA "kawa/selfboot-entry.scm")
 set(selfboot_CHIBI_SCHEME "chibi-scheme/selfboot-entry.scm")
 set(selfboot_GOSH "gauche/selfboot-entry.scm")
 set(selfboot_SAGITTARIUS "sagittarius/selfboot-entry.sps")

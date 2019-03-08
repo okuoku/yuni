@@ -44,11 +44,19 @@ macro(checkimpl nam impl)
         writevar(YUNI_${impl})
         list(APPEND impls ${impl})
         if(UNIX)
-            set(_cmd "${CMAKE_CURRENT_BINARY_DIR}/run-${nam}.sh")
-            file(WRITE ${_cmd}
-                "#!/bin/sh\nexec ${YUNI_${impl}} ${arg_prog_${impl}} ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${impl}} $*\n")
-            execute_process(
-                COMMAND chmod +x ${_cmd})
+            if(${impl} STREQUAL KAWA_JAR)
+                set(_cmd "${CMAKE_CURRENT_BINARY_DIR}/run-kawa.sh")
+                file(WRITE ${_cmd}
+                    "#!/bin/sh\nexec java -classpath ${YUNI_KAWA_JAR} kawa.repl ${YUNIROOT}/lib-runtime/selfboot/${selfboot_KAWA} $*\n")
+                execute_process(
+                    COMMAND chmod +x ${_cmd})
+            else()
+                set(_cmd "${CMAKE_CURRENT_BINARY_DIR}/run-${nam}.sh")
+                file(WRITE ${_cmd}
+                    "#!/bin/sh\nexec ${YUNI_${impl}} ${arg_prog_${impl}} ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${impl}} $*\n")
+                execute_process(
+                    COMMAND chmod +x ${_cmd})
+            endif()
         endif()
     else()
         message(STATUS "Skip: ${impl}")
@@ -106,7 +114,7 @@ checkimpls(
     chez         chez-scheme  CHEZ_SCHEME
     gambit       gsi          GSI
     ironscheme   IRONSCHEME   IRON_SCHEME # FIXME:
-    kawa         KAWA_JAR     KAWA_JAR    # FIXME:
+    kawa         KAWA_JAR     KAWA_JAR
     s7           s7yuni       S7
     biwascheme   biwasyuni    BIWASYUNI)
 
