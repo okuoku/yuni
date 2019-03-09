@@ -111,6 +111,7 @@
                                (scheme read)
                                (scheme write)
                                (scheme eval)
+                               (rnrs hashtables)
                                ))
 
 
