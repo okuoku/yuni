@@ -125,6 +125,7 @@
                                (scheme write)
                                (scheme eval)
                                (srfi 69)
+                               (chicken eval)
                                ))
 
 

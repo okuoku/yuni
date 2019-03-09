@@ -116,8 +116,8 @@
     r7rs-common
     yuni)
   (chicken
-    compat-chicken
     r7rs-common
+    compat-chicken
     yuni)
   (kawa
     yuni
