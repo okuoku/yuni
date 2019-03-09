@@ -183,10 +183,10 @@
     r7rs-common)
   (s7
     yuni
-    compat-s7
-    r7rs-common)
+    r7rs-common
+    compat-s7)
   (biwascheme
     yuni
-    compat-biwascheme
-    r7rs-common)
+    r7rs-common
+    compat-biwascheme)
   )
