@@ -86,7 +86,9 @@
                                   %%selfboot-mypath))
 
 (define myenv (make-base-namespace))
-        
+
+(define-namespace-anchor %%yuni-selfboot)
+
 (define (xload pth) 
   (define import-done? #f)
   (define (do-eval code)
@@ -213,6 +215,15 @@
   (namespace-set-variable-value! sym val #f env #f))
         
 (define (launcher yuniroot program-args)
+  (define (eval/yuni code)
+    (define (conv p)
+      (cond
+        ((mpair? p) (cons (conv (mcar p))
+                          (conv (mcdr p))))
+        ((vector? p) (list->vector
+                       (map conv (vector->list p))))
+        (else p)))
+    (eval (conv code) myenv))
   (parameterize ((current-namespace myenv))
                 (namespace-require 'rnrs)
                 (namespace-require 'rnrs/mutable-pairs-6))
@@ -233,7 +244,9 @@
                                               (srfi :1)
                                               (srfi :9)
                                               (srfi :39)
-                                              (srfi :98))))
+                                              (srfi :98)
+                                              (yuniselfboot-internals)
+                                              )))
         myenv)
   (for-each (lambda (e)
               (let ((libname (car e))
@@ -251,15 +264,17 @@
               ((srfi :1) . srfi/%3a1)
               ((srfi :9) . srfi/%3a9)
               ((srfi :39) . srfi/%3a39)
-              ((srfi :98) . srfi/%3a98)))
+              ((srfi :98) . srfi/%3a98)
+              ((yuniselfboot-internals) . yuniselfboot-internals)))
   (set-top-level-value! '%%selfboot-impl-type 'racket myenv)
   (set-top-level-value! '%%selfboot-load-aliaslib load-libaliases myenv)
   (set-top-level-value! '%%selfboot-loadlib loadlib myenv)
+  (set-top-level-value! 'eval/yuni eval/yuni myenv)
   (eval '(define load %%selfboot-tmp-xload) myenv)
   (xload (string-append yuniroot "/lib-runtime/selfboot/racket/selfboot-runtime.scm"))
   (xload (string-append yuniroot "/lib-runtime/selfboot/common/common.scm"))
   (xload (string-append yuniroot "/lib-runtime/selfboot/common/run-program.scm")))
-
+        
 (when (string=? %%selfboot-yuniroot "")
   (set! %%selfboot-yuniroot "."))
                     
