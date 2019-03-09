@@ -172,9 +172,9 @@
   ;; Experimental Gambit R5RS
   (gambit
     yuni
+    r7rs-common
     compat-gambit
-    yunifake
-    r7rs-common)
+    yunifake)
   ;; Experimental MIT/GNU Scheme R5RS
   (mit-scheme
     yuni
