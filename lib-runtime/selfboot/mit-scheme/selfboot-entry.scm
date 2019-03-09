@@ -4,7 +4,7 @@
 ;;  $ mit-scheme /path/to/selfboot-entry.scm ....
 ;;
 
-(param:reader-fold-case? #f)
+(param:reader-fold-case? #f) ;; Requires 10.1.5
 
 (define (%%extract-program-args args* entrypth)
   (if (string=? (car args*) entrypth)
@@ -74,7 +74,6 @@
 
 
 (define (%%locate-yuniroot-fromscmpath scmpath)
-  (define MYNAME "selfboot-entry.scm")
   (write %%selfboot-orig-command-line) (newline)
   (write %%selfboot-mypath) (newline)
   (let ((npth (%%pathslashfy scmpath)))
@@ -107,16 +106,6 @@
 
 (define myenv (interaction-environment))
 
-(define (%%selfboot-loadlib pth libname imports exports)
-  (load pth))
-
-(define (%%selfboot-load-aliaslib truename alias* export*)
-  ;; Call library runtime
-  (let ((lib (yuni/library-lookup truename)))
-   (for-each (lambda (name)
-               (yuni/library-add-alias! lib name))
-             alias*)))
-
 (define %%selfboot-impl-type 'mit-scheme)
 (define %%selfboot-core-libs '((scheme base)
                                (scheme case-lambda)
@@ -127,7 +116,14 @@
                                (scheme read)
                                (scheme write)
                                (scheme eval)
+                               (scheme load)
                                ))
+
+(define (%%selfboot-error-hook c)
+  (display "ERROR!\n" (trace-output-port))
+  (write-condition-report c (trace-output-port))
+  (newline (trace-output-port))
+  (exit 1))
 
 
 (when (string=? %%selfboot-yuniroot "")
@@ -135,5 +131,105 @@
 
 ;(environment-assign! myenv '%selfboot-load %selfboot-load)
 
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm"))
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/run-program.scm")) 
+(define %%selfboot-current-command-line %%selfboot-program-args)
+(define %%selfboot-current-libpath (list %%selfboot-yuniroot))
+(define (command-line) %%selfboot-current-command-line)
+
+(define %%selfboot-mainprog #f)
+
+(define %%selfboot-yuni-scheme-replacements
+  '((scheme base)
+    (scheme case-lambda)
+    (scheme cxr)
+    (scheme file)
+    (scheme inexact)
+    (scheme process-context)
+    (scheme read)
+    (scheme write))) 
+
+(define (%%selfboot-filter-imports lis)
+  (let loop ((cur '())
+             (q lis))
+    (if (not (pair? q))
+      (reverse cur)
+      (let ((lib (car q))
+            (rest (cdr q)))
+        (cond
+          ((equal? lib '(yuni scheme))
+           (loop (append %%selfboot-yuni-scheme-replacements cur)
+                 rest))
+          (else (cons lib cur)))))))
+
+(define (%%selfboot-runcode temppath)
+  (define loadprog #f)
+  (set! temppath "out.scm")
+  ;; Scan arguments
+  (let loop ((q %%selfboot-current-command-line))
+   (if (pair? q)
+     (let ((a (car q))
+           (d (cdr q)))
+       (cond
+         ((string=? "-LIBPATH" a)
+          (let ((dir (car d)))
+           (set! %%selfboot-current-libpath
+             (cons dir
+                   %%selfboot-current-libpath))
+           (loop (cdr d))))
+         (else
+           (set! %%selfboot-current-command-line q))))
+     #t))
+
+  ;; Generate stub prog
+  (write (list 'Stubpath: temppath)) (newline)
+  (call-with-output-file
+    temppath
+    (lambda (p)
+      ;; Collect deps and load
+      (let ((r (command-line)))
+       (let* ((prog (car r))
+              (codetab (%%selfboot-gen-filelist
+                         %%selfboot-current-libpath
+                         (list prog))))
+         (for-each (lambda (e)
+                     (let ((dir (cadr e))
+                           (pth (caddr e))
+                           (truename (car e))
+                           (aliasnames (cadddr e))
+                           (raw-imports (car (car (cddddr e))))
+                           (exports (cdr (car (cddddr e)))))
+                       (let* ((filepth (string-append dir "/" pth))
+                              (raw-libcode (car (%selfboot-file->sexp-list
+                                                  filepth)))
+                              (imports* (%%selfboot-filter-imports
+                                          raw-imports)))
+                        (pp `(define-library ,truename
+                                                (export ,@exports)
+                                                (import 
+                                                  ,@imports*)
+                                                (begin ,@(cddddr raw-libcode)))
+                               p)
+                        (newline p)
+                        (when aliasnames
+                          (for-each (lambda (nam)
+                                      (pp `(define-library 
+                                                ,nam
+                                                (export ,@exports)
+                                                (import ,truename))
+                                               p)
+                                      (newline p))
+                                    aliasnames))
+                        (write (list 'LOAD: filepth)) (newline))))
+                   codetab)
+
+         (let ((progbody (%selfboot-file->sexp-list prog)))
+           (for-each (lambda (e) (pp e p))
+                     progbody))))))
+  (load temppath))
+
+(fluid-let ;; FIXME: Use parameterize
+  ((standard-error-hook %%selfboot-error-hook))
+  (load (string-append %%selfboot-yuniroot "/lib-runtime/r7rs/yuni-runtime/r7rs.sld"))
+  (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm"))
+  (call-with-temporary-file-pathname %%selfboot-runcode))
+
+(exit 0)
