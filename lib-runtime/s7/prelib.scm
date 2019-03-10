@@ -146,11 +146,16 @@
 
 ;; Bytevectors
 (define (string->utf8 str) (string->byte-vector str))
+(define string->utf8
+  (case-lambda
+    ((str) (string->byte-vector str))
+    ((str start) (string->byte-vector (substring str start (length str))))
+    ((str start end) (string->byte-vector (substring str start end)))))
 (define utf8->string
   (case-lambda
-    ((str) (byte-vector->string str))
-    ((str start) (substring str (length str)))
-    ((str start end) (substring str start end))))
+    ((bv) (byte-vector->string bv))
+    ((bv start) (byte-vector->string (bytevector-copy bv start)))
+    ((bv start end) (byte-vector->string (bytevector-copy bv start end)))))
 (define (eof-object) #<eof>)
 (define bytevector-length length)
 (define (bytevector-u8-ref bv idx) (bv idx))
