@@ -120,6 +120,10 @@
                      (export ,@(filter-exports exports))
                      (import 
                        (except (rnrs) 
+                               map
+                               string->utf8
+                               utf8->string
+                               define-record-type
                                syntax-rules case
                                bytevector-copy
                                bytevector-copy!
