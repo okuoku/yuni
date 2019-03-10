@@ -40,8 +40,18 @@
 
 (check-equal "abc" (utf8->string (bytevector 97 98 99)))
 (check-equal (bytevector 97 98 99) (string->utf8 "abc"))
+(check-equal (bytevector 99) (string->utf8 "abc" 2))
+(check-equal (bytevector 98) (string->utf8 "abc" 1 2))
+(check-equal (bytevector) (string->utf8 "abc" 1 1))
 (check-equal "" (utf8->string (bytevector)))
 (check-equal (bytevector) (string->utf8 ""))
+
+
+(check-equal "abc" (utf8->string (bytevector 97 98 99) 0))
+(check-equal "c" (utf8->string (bytevector 97 98 99) 2))
+(check-equal "b" (utf8->string (bytevector 97 98 99) 1 2))
+(check-equal "" (utf8->string (bytevector 97 98 99) 1 1))
+
 
 (let ((bv1 (bytevector 1 2 3 4 5 6 7 8))
       (bv2 (bytevector 99 99 99)))
