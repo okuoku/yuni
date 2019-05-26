@@ -3,7 +3,8 @@
   "lib"
   "lib-r7c"
   "lib-r6rs"
-  "lib-compat")
+  "lib-compat"
+  "external")
 
 (*library-groups*
   ;; Yuni
