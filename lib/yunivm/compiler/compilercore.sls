@@ -316,7 +316,7 @@
           (compile-if2 tail? env frm k))
          ((begin)
           (compile-sequence tail? env (cdr frm) k))
-         ((define global-define)
+         ((define global-define $define/core)
           (error "??" frm))
          (else (compile-procedure-call tail? env frm k))))
       (else (cons (obj->loadinst env frm)
@@ -367,7 +367,7 @@
            (cond
              ((pair? frm)
               (case (car frm)
-                ((define global-define)
+                ((define global-define $define/core)
                  (scan (cons (cdr frm) defs) next))
                 (else
                   (exit defs seq))))
