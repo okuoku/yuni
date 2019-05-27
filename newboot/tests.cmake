@@ -1,3 +1,5 @@
+include(CMakeParseArguments)
+
 set(tests ${YUNIROOT}/tests)
 
 function(add_selfboot_test0 impl expect_error script)
@@ -11,26 +13,27 @@ function(add_selfboot_test0 impl expect_error script)
         COMMAND ${CMAKE_COMMAND} -DIMPL=${impl}
         ${arg_experror}
         -P ${CMAKE_CURRENT_BINARY_DIR}/run.cmake
-        ${script})
+        ${script}
+        ${ARGN})
 endfunction()
 
 function(add_selfboot_test impl script)
-    add_selfboot_test0(${impl} OFF ${script})
+    add_selfboot_test0(${impl} OFF ${script} ${ARGN})
 endfunction()
 
 function(add_selfboot_test_negative impl script)
-    add_selfboot_test0(${impl} ON ${script})
+    add_selfboot_test0(${impl} ON ${script} ${ARGN})
 endfunction()
 
 function(add_selfboot_test_all script)
     foreach(impl ${impls})
-        add_selfboot_test(${impl} ${script})
+        add_selfboot_test(${impl} ${script} ${ARGN})
     endforeach()
 endfunction()
 
 function(add_selfboot_test_negative_all script)
     foreach(impl ${impls})
-        add_selfboot_test_negative(${impl} ${script})
+        add_selfboot_test_negative(${impl} ${script} ${ARGN})
     endforeach()
 endfunction()
 
@@ -49,6 +52,15 @@ macro(tests script)
         tests(${ARGN})
     endif()
 endmacro()
+
+function(runtest script)
+    cmake_parse_arguments(runtest
+        ""
+        ""
+        "ARGS"
+        ${ARGN})
+    add_selfboot_test_all(${script} ${runtest_ARGS})
+endfunction()
 
 tests(
     ${tests}/scheme/core0.sps
@@ -77,3 +89,5 @@ negative_tests(
     ${tests}/fail/fail7.sps
     )
 
+runtest(${tests}/newboot/testarg0.sps ARGS SPLITHERE)
+runtest(${tests}/newboot/testarg1.sps ARGS SPLITHERE a 1 c)
