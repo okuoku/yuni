@@ -19,6 +19,7 @@
            hashtable-entries
            hashtable-ref
            ; Query
+           hashtable-keys
            hashtable-size)
          (import (yuni scheme)
                  (rnrs hashtables))
