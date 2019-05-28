@@ -47,4 +47,18 @@
                 ((string->symbol "symbol with spaces") 123456)
                 ('mm (eof-object)))
 
+(define testht (make-symbol-hashtable))
+
+
+(hashtable-set! testht 'a 'a)
+(hashtable-set! testht 'b 'b)
+(hashtable-set! testht 'c 'c)
+
+(let ((v (hashtable-keys testht)))
+ (check-equal #t (vector? v))
+ (check-equal 3 (vector-length v))
+ (vector-for-each (lambda (k)
+                    (check-equal k (hashtable-ref testht k #f)))
+                  v))
+
 (check-finish)

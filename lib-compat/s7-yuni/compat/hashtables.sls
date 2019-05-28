@@ -19,6 +19,7 @@
            hashtable-entries
            hashtable-ref
            ; Query
+           hashtable-keys
            hashtable-size)
          (import (yuni scheme))
 
@@ -71,5 +72,13 @@
     (values k v)))
 
 (define (hashtable-size ht) (hash-table-entries ht))
-         
+(define (hashtable-keys ht)
+  (let* ((len (hash-table-entries ht))
+         (k (make-vector len))
+         (cnt 0))
+    (for-each (lambda (p)
+                (vector-set! k cnt (car p))
+                (set! cnt (+ 1 cnt)))
+              ht)
+    k))
 )
