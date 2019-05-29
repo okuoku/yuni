@@ -205,7 +205,7 @@
          (cdr e))))
     (else (reverse cur))))
 
-(define (let-syntax/macro frm . body)
+(define (yuni/let-syntax/macro frm . body)
   `(let () 
     ,@(yuni/convert-let-syntax '() frm)
     . ,body))
