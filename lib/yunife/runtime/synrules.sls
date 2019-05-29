@@ -9,7 +9,6 @@
            yuni/any1
            yuni/find1
            yuni/length*
-           yuni/identifier?
            yuni/synrule-prescan-template
 
            ;; For macro
