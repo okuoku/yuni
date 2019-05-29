@@ -3,11 +3,7 @@
            ;; Macro
            define-syntax/macro
            ;let-syntax/macro
-
-           ;; Runtime
-           yuni/gensym
-           yuni/make-synrule-baselib
-           yuni/synrule-compare)
+           )
          (import (yuni scheme)
                  (yunife runtime synrules)
                  (yuniexternal chibi-scheme synrules))
