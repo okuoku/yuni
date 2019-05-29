@@ -65,7 +65,7 @@
          (let ((v (hashtable-keys l)))
           (vector-for-each
             (lambda (nam) 
-              (let ((m (hashtable-ref l nam)))
+              (let ((m (hashtable-ref l nam #f)))
                (env-extend! env (car m) nam (cdr m))))
             v))))))
 
