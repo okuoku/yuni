@@ -5,6 +5,7 @@
            yunife-add-alias-map!
            ;; Libname #t used for program
            yunife-load!
+           yunife-load-sexp-list!
            yunife-get-libraries
            yunife-get-library-code
            yunife-get-library-macro)
@@ -235,6 +236,9 @@
       (else
         (do-load-program! code))))
 
+  (define (do-load-sexp-list! sexp)
+    (do-load-source! #f sexp))
+
   (define (do-load! pth)
     (do-load/name! #f pth))
 
@@ -251,6 +255,7 @@
     (case op
       ;; Actions
       ((load!) (apply do-load! args))
+      ((load-sexp-list!) (apply do-load-sexp-list! args))
       ((get-libraries) (apply get-libraries args))
       ((get-library-code) (apply get-library-code args))
       ((get-library-macro) (apply get-library-macro args))
@@ -304,6 +309,7 @@
 
 ;; actions
 (define (yunife-load! fe path) (fe 'load! path))
+(define (yunife-load-sexp-list! fe sexp) (fe 'load-sexp-list! sexp))
 (define (yunife-get-libraries fe) (fe 'get-libraries))
 (define (yunife-get-library-code fe libname) (fe 'get-library-code libname))
 (define (yunife-get-library-macro fe libname) (fe 'get-library-macro libname))

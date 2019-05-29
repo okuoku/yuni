@@ -7,8 +7,7 @@
            libmgr-resolve
            libmgr-read)
          (import (yuni scheme)
-                 (yunife debugging)
-                 (yuni util files))
+                 (yunife debugging))
 
 (define (make-libmgr)
   (define loadpath* '())
