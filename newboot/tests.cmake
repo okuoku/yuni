@@ -91,3 +91,8 @@ negative_tests(
 
 runtest(${tests}/newboot/testarg0.sps ARGS SPLITHERE)
 runtest(${tests}/newboot/testarg1.sps ARGS SPLITHERE a 1 c)
+
+# YUNIFE
+
+runtest(${tests}/yunife/fecore0.sps ARGS
+    ROOT ${YUNIROOT})
