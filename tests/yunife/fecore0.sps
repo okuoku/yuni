@@ -24,6 +24,14 @@
 
 (yunife-load-sexp-list! fe
                         '((import (yuni scheme)
-                                  (yunitest mini))))
+                                  (yunitest mini))
+                          
+                          (define-syntax stx
+                            (syntax-rules ()
+                              ((_ a b) (+ 1 a b))))
+
+                          (display (stx 4 5))))
+
+;(write (yunife-get-library-code fe #t)) (newline)
 
 (check-finish)
