@@ -7,6 +7,7 @@
            libmgr-resolve
            libmgr-read)
          (import (yuni scheme)
+                 (yunife sourcereader)
                  (yunife debugging))
 
 (define (make-libmgr)
