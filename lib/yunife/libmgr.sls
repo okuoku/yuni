@@ -63,7 +63,7 @@
   (define (do-read libname)
     (let ((pth (locate! libname)))
      (and pth
-          (let ((src (file->sexp-list pth)))
+          (let ((src (read-source pth)))
            (unless (= 1 (length src))
              (error "Malformed library" pth))
            (car src))))) 

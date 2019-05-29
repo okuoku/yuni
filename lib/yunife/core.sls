@@ -12,7 +12,7 @@
                  (yunife libmgr)
                  (yuni lighteval)
                  (yuni hashtables)
-                 (yuni util files)
+                 (yunife sourcereader)
                  (yunife runtime synrules)
                  (yunife debugging)
                  (yunife core-transformers))
@@ -239,7 +239,7 @@
     (do-load/name! #f pth))
 
   (define (do-load/name! libname-sym pth)
-    (let ((code (file->sexp-list pth)))
+    (let ((code (read-source pth)))
      (do-load-source! libname-sym code)))
 
   (define (get-library-code libname)
