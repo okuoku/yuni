@@ -204,8 +204,8 @@
 (define %%selfboot-mainprog #f)
 
 (fluid-let ;; FIXME: Use parameterize
-  ()
-  ;((standard-error-hook %%selfboot-error-hook))
+  ;()
+  ((standard-error-hook %%selfboot-error-hook))
   (myload (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm"))
   (myload (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/run-program.scm")))
 

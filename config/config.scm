@@ -179,9 +179,9 @@
   ;; Experimental MIT/GNU Scheme R5RS
   (mit-scheme
     yuni
-    compat-mit-scheme
     yunifake
-    r7rs-common)
+    r7rs-common
+    compat-mit-scheme)
   (s7
     yuni
     r7rs-common

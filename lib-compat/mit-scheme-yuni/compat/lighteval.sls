@@ -2,5 +2,5 @@
          (export eval/yuni)
          (import)
 
-(define eval/yuni eval)
+(define (eval/yuni sexp) (eval sexp (interaction-environment)))
 )
