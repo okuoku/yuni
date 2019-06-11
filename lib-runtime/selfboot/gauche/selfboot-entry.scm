@@ -94,6 +94,8 @@
                           (begin ,@code))
          (myenv))))
 
+(define (%%selfboot-load-program pth) (load pth))
+
 (define (%%selfboot-load-aliaslib truename alias* export*)
   (for-each (lambda (libname)
               (let ((code `(define-library ,libname

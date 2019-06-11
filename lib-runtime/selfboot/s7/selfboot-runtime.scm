@@ -27,6 +27,8 @@
 (define (%%selfboot-loadlib pth libname imports exports)
   (load pth))
 
+(define (%%selfboot-load-program pth) (load pth))
+
 (define (%selfboot-load prefix files)
   (for-each (lambda (e)
               (load (string-append %%selfboot-yuniroot "/" 

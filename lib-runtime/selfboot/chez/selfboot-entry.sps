@@ -96,6 +96,9 @@
 (define (loadlib pth libname imports exports)
   (xload pth))
 
+(define (loadprogram pth)
+  (xload pth))
+
 (define (load-libaliases truename alias* export*)
   (for-each (lambda (libname)
               ;(write (list 'ALIAS: truename '=> libname)) (newline)       
@@ -122,7 +125,9 @@
                         myenv)
   (set-top-level-value! '%%selfboot-load-aliaslib load-libaliases myenv)
   (set-top-level-value! '%%selfboot-loadlib loadlib myenv)
+  (set-top-level-value! '%%selfboot-load-program loadprogram myenv)
   (eval '(define load %%selfboot-tmp-xload) myenv)
+  (eval '(define %%selfboot-load-program %%selfboot-tmp-xload) myenv)
   (xload (string-append yuniroot "/lib-runtime/selfboot/chez/selfboot-runtime.scm"))
   (xload (string-append yuniroot "/lib-runtime/selfboot/common/common.scm"))
   (xload (string-append yuniroot "/lib-runtime/selfboot/common/run-program.scm")))

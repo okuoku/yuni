@@ -179,6 +179,7 @@
   (set-top-level-value! '%%selfboot-load-aliaslib load-libaliases myenv)
   (set-top-level-value! '%%selfboot-loadlib loadlib myenv)
   (eval '(define load %%selfboot-tmp-xload) myenv)
+  (eval '(define %%selfboot-load-program %%selfboot-tmp-xload) myenv)
   (xload (string-append yuniroot "/lib-runtime/selfboot/guile/selfboot-runtime.scm"))
   (xload (string-append yuniroot "/lib-runtime/selfboot/common/common.scm"))
   (xload (string-append yuniroot "/lib-runtime/selfboot/common/run-program.scm")))

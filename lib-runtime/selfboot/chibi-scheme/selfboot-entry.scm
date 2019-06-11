@@ -107,6 +107,7 @@
                           (import (yuni-runtime r7rs) ,@imports)
                           (begin ,@code))
          (metaenv))))
+(define (%%selfboot-load-program pth) (load pth))
 
 (define (%%selfboot-load-aliaslib truename alias* export*)
   (for-each (lambda (libname)

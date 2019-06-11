@@ -94,6 +94,10 @@
 (define (%%selfboot-loadlib pth libname imports exports)
   (load pth (interaction-environment)))
 
+
+(define (%%selfboot-load-program pth)
+  (load pth (interaction-environment)))
+
 (define (%%selfboot-load-aliaslib truename alias* export*)
   (for-each (lambda (libname)
               (let ((code `(library ,libname

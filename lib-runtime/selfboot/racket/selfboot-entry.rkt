@@ -209,6 +209,7 @@
                (current-module-declare-name (make-resolved-module-path libsym)))
               (eval-with-local-resolver code)))))))))
 
+
 (define (set-top-level-value! sym val env)
   ;; Chez scheme API
   ;; map? = #f, as-constant? = #f
@@ -271,6 +272,7 @@
   (set-top-level-value! '%%selfboot-loadlib loadlib myenv)
   (set-top-level-value! 'eval/yuni eval/yuni myenv)
   (eval '(define load %%selfboot-tmp-xload) myenv)
+  (eval '(define %%selfboot-load-program %%selfboot-tmp-xload) myenv)
   (xload (string-append yuniroot "/lib-runtime/selfboot/racket/selfboot-runtime.scm"))
   (xload (string-append yuniroot "/lib-runtime/selfboot/common/common.scm"))
   (xload (string-append yuniroot "/lib-runtime/selfboot/common/run-program.scm")))
