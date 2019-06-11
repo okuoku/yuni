@@ -112,7 +112,7 @@ checkimpls(
     sagittarius  sagittarius  SAGITTARIUS
     chicken      csi          CHICKEN_CSI
     chez         chez-scheme  CHEZ_SCHEME
-    #mit-scheme   mit-scheme   MIT_SCHEME
+    mit-scheme   mit-scheme   MIT_SCHEME
     gambit       gsi          GSI
     ironscheme   IRONSCHEME   IRON_SCHEME # FIXME:
     kawa         KAWA_JAR     KAWA_JAR
