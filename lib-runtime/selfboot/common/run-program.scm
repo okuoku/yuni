@@ -39,7 +39,7 @@
                     ;(newline)
                     (%%selfboot-load-aliaslib truename aliasnames exports)))))
              codetab)
-   (load prog)))
+   (%%selfboot-load-program prog)))
 
 ;; Exit successfully if the program does not have exit call
 (exit 0)

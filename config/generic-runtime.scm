@@ -28,10 +28,15 @@
   ("lib-runtime/gambit/prelib.scm")
   ;; Runtime
   ())
+(mit-scheme
+  ;; Pre
+  ("lib-runtime/mit-scheme/prelib.scm")
+  ;; Runtime
+  ())
 (generic
   ;; Pre
-  ("lib-runtime/generic/synrules.scm"
-   "external/yuni-synrules.scm")
+  ("external/yuni-synrules.scm"
+   "lib-runtime/generic/synrules.scm")
   ;; Runtime
   ("lib-runtime/generic/verboselib.scm"
    "lib-runtime/generic/libmgr-file.scm"
