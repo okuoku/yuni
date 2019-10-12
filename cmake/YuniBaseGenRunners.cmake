@@ -101,7 +101,10 @@ macro(yunibase_check_implementations)
         set(YUNIBASE_HAVE_NMOSH_STABLE 1)
     endif()
     # kawa
-    if(EXISTS ${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar)
+    if(EXISTS ${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar) # Legacy layout
+        set(YUNIBASE_HAVE_KAWA_CURRENT 1)
+    endif()
+    if(EXISTS ${YUNI_WITH_YUNIBASE}/current/kawa/share/kawa/lib/kawa.jar)
         set(YUNIBASE_HAVE_KAWA_CURRENT 1)
     endif()
     # Larceny

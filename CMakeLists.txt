@@ -91,9 +91,14 @@ if(YUNI_WITH_YUNIBASE)
 
     # Find kawa
     if(NOT YUNI_KAWA_JAR)
+        # Legacy layout
         if(EXISTS "${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar")
             set(YUNI_KAWA_JAR
                 "${YUNI_WITH_YUNIBASE}/current/kawa/kawa.jar")
+        endif()
+        if(EXISTS "${YUNI_WITH_YUNIBASE}/current/kawa/share/kawa/lib/kawa.jar")
+            set(YUNI_KAWA_JAR
+                "${YUNI_WITH_YUNIBASE}/current/kawa/share/kawa/lib/kawa.jar")
         endif()
     endif()
 
