@@ -13,7 +13,6 @@ env:
         - DOCKER_IMG=okuoku/yunibase:testing-ubuntu32
         - DOCKER_IMG=okuoku/yunibase:testing-alpine
         - DOCKER_IMG=okuoku/yunibase:testing-fedora
-        - DOCKER_IMG=okuoku/yunibase:testing-raspbian
 
 script:
     - sudo integration/buildhost-qemu-static/register.sh
