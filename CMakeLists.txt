@@ -7,10 +7,10 @@ cmake_minimum_required(VERSION 3.0)
 project(yuni NONE) # Only for selfboot scripts
 
 include(CTest)
-include(${CMAKE_CURRENT_LIST_DIR}/implinfo.cmake)
 
-set(YUNIROOT ${CMAKE_CURRENT_LIST_DIR}/..)
+set(YUNIROOT ${CMAKE_CURRENT_LIST_DIR})
 get_filename_component(YUNIROOT ${YUNIROOT} ABSOLUTE)
+include(${YUNIROOT}/config/implinfo.cmake)
 set(BOOTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
 list(APPEND CMAKE_MODULE_PATH
@@ -32,7 +32,7 @@ get_filename_component(VARFILE ${VARFILE} ABSOLUTE)
 
 function(writeproxy scriptname)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${scriptname}
-        "include(${CMAKE_CURRENT_LIST_DIR}/implinfo.cmake)\ninclude(${VARFILE})\ninclude(${CMAKE_CURRENT_LIST_DIR}/${scriptname})\n")
+        "include(${YUNIROOT}/config/implinfo.cmake)\ninclude(${VARFILE})\ninclude(${CMAKE_CURRENT_LIST_DIR}/${scriptname})\n")
 endfunction()
 
 function(writevar varname)
