@@ -228,7 +228,7 @@ test_with_all_except(tests/vm/vmtest2.sps KAWA NMOSH)
 test_with_all_except(tests/vm/vmtest4.sps 
     NMOSH IRON_SCHEME LARCENY MIT_SCHEME)
 test_with_all_except(tests/vm/vmtest5.sps 
-    NMOSH S7YUNI)
+    NMOSH S7YUNI GSI)
 test_with_allcleandir_except(vmtest6.sps 
     NMOSH RACKET LARCENY IRON_SCHEME KAWA)
 if(NOT YUNI_TEST_SKIP_LONGRUN)
