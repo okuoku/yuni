@@ -90,6 +90,7 @@ tests(
     ${tests}/scheme/inexact0.sps
     ${tests}/scheme/inexact1.sps
     ${tests}/scheme/qq0.sps
+    ${tests}/scheme/stx0.sps
     ${tests}/lib/minitest0.sps
     ${tests}/lib/lighteval0.sps
     ${tests}/lib/hashtables0.sps
