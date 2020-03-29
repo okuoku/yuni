@@ -85,6 +85,8 @@
     (biwascheme-compat-scheme => scheme))
   (compat-digamma
     (digamma-yuni => yuni))
+  (compat-cyclone
+    (cyclone-yuni => yuni))
   )
 
 (GenRacket
@@ -138,7 +140,12 @@
   (rapid-gambit
     yuni
     r7rs-common
-    compat-rapid-gambit)) 
+    compat-rapid-gambit)
+  (cyclone
+    yuni
+    r7rs-common
+    compat-cyclone)
+  ) 
 
 (GenR6RSCommon
   ;; R6RS-common assumes target can import R6RS-light libraries directly
