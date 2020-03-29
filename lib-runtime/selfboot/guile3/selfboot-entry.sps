@@ -80,8 +80,8 @@
 
 (define (%%locate-yuniroot-fromscmpath scmpath)
   (define MYNAME "selfboot-entry.scm")
-  (write %%selfboot-orig-command-line) (newline)
-  (write %%selfboot-mypath) (newline)
+  ;(write %%selfboot-orig-command-line) (newline)
+  ;(write %%selfboot-mypath) (newline)
   (let ((npth (%%pathslashfy scmpath)))
    (%%pathsimplify (string-append npth "/../../../.."))))
 
@@ -108,7 +108,7 @@
           (loop (cons r cur))))))))
         
 (define (xload pth) 
-  (write (list 'XLOAD: pth)) (newline)       
+  ;(write (list 'XLOAD: pth)) (newline)       
   (let ((prog (file->sexp-list pth)))
    (for-each (lambda (e) 
                ;(write (list 'EVAL: e)) (newline)

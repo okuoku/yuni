@@ -39,7 +39,7 @@
   (let ((sexp (%selfboot-file->sexp-list pth)))
    (for-each
      (lambda (exp) 
-       (write (list 'eval: exp)) (newline)
+       ;(write (list 'eval: exp)) (newline)
        (eval/filt exp myenv))
      sexp)))
 
@@ -131,7 +131,7 @@
           (pathcomponent '() (cons (list->string (reverse acc)) cur) r)
           (pathcomponent (cons c acc) cur r)))))
   (define (simple cur m q)
-    (write (list 'simple cur m q)) (newline)
+    ;(write (list 'simple cur m q)) (newline)
     (if (null? q)
       (if (null? cur)
         (reverse (cons m cur))
@@ -157,8 +157,8 @@
 
 
 (define (%%locate-yuniroot-fromscmpath scmpath)
-  (write %%selfboot-orig-command-line) (newline)
-  (write %%selfboot-mypath) (newline)
+  ;(write %%selfboot-orig-command-line) (newline)
+  ;(write %%selfboot-mypath) (newline)
   (let ((npth (%%pathslashfy scmpath)))
    (%%pathsimplify (string-append npth "/../../../.."))))
 

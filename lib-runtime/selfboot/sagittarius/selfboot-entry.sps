@@ -79,8 +79,8 @@
    (pathcompose-start "" (start-simple '() (car r) (cdr r)))))
 
 (define (%%locate-yuniroot-fromscmpath scmpath)
-  (write %%selfboot-orig-command-line) (newline)
-  (write %%selfboot-mypath) (newline)
+  ;(write %%selfboot-orig-command-line) (newline)
+  ;(write %%selfboot-mypath) (newline)
   (let ((npth (%%pathslashfy scmpath)))
    (%%pathsimplify (string-append npth "/../../../.."))))
 

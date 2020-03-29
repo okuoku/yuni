@@ -16,7 +16,7 @@
 
 (define (%selfboot-load prefix files)
   (for-each (lambda (e)
-              (write (list 'RUNTIME: e)) (newline)
+              ;(write (list 'RUNTIME: e)) (newline)
               (load (string-append %%selfboot-yuniroot "/" 
                                    prefix "/" e)))
             files))

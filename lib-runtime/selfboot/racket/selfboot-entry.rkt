@@ -73,8 +73,8 @@
    (pathcompose-start "" (start-simple '() (car r) (cdr r)))))
 
 (define (%%locate-yuniroot-fromscmpath scmpath)
-  (write %%selfboot-orig-command-line) (newline)
-  (write %%selfboot-mypath) (newline)
+  ;(write %%selfboot-orig-command-line) (newline)
+  ;(write %%selfboot-mypath) (newline)
   (let ((npth (%%pathslashfy scmpath)))
    (%%pathsimplify (string-append npth "/../../../.."))))
 
@@ -103,7 +103,7 @@
                     (eval e myenv))))
               code))
 
-  (write (list 'XLOAD: pth)) (newline)       
+  ;(write (list 'XLOAD: pth)) (newline)       
   (call-with-input-file
     pth
     (lambda (p)
@@ -151,7 +151,7 @@
 (define (load-libaliases truename alias* export*)
   (let ((x (hash-ref h-libnames (mlist->list truename))))
    (for-each (lambda (libname)
-               (write (list 'ALIAS x truename '=> libname)) (newline)
+               ;(write (list 'ALIAS x truename '=> libname)) (newline)
                (hash-set! h-libnames (mlist->list libname) x))
              (mlist->list alias*))))
 
@@ -188,7 +188,7 @@
          (libsym (libname->symbol libname)))
     (hash-set! h-libnames libname libsym)
     (hash-set! h-libsyms libsym #t)
-    (write (list 'LOAD libname '=> libsym)) (newline)
+    ;(write (list 'LOAD libname '=> libsym)) (newline)
     (let ((x (read-r6rs-source pth)))
      (syntax-case* 
        x (library export import) symbolic-identifier=?

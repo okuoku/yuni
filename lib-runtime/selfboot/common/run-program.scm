@@ -32,7 +32,7 @@
                      (raw-imports (car (car (cddddr e))))
                      (exports (cdr (car (cddddr e)))))
                  (let ((filepth (string-append dir "/" pth)))
-                  (write (list 'LOAD: filepth)) (newline)
+                  ;(write (list 'LOAD: filepth)) (newline)
                   (%%selfboot-loadlib filepth truename raw-imports exports)
                   (when aliasnames
                     ;(write (list 'ALIAS: truename '=> aliasnames exports))

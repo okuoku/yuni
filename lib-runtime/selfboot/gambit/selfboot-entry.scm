@@ -75,7 +75,7 @@
           (loop (cons r cur))))))))
 
 (define (xload fn)
-  (write (list 'XLOAD: fn)) (newline)
+  ;(write (list 'XLOAD: fn)) (newline)
   (let ((code (%selfboot-file->sexp-list fn)))
    (for-each (lambda (e) (eval e))
              code)))
@@ -102,8 +102,8 @@
 
 
 (define (%%locate-yuniroot-fromscmpath scmpath)
-  (write %%selfboot-orig-command-line) (newline)
-  (write %%selfboot-mypath) (newline)
+  ;(write %%selfboot-orig-command-line) (newline)
+  ;(write %%selfboot-mypath) (newline)
   (let ((npth (%%pathslashfy scmpath)))
    (%%pathsimplify (string-append npth "/../../../.."))))
 

@@ -20,8 +20,7 @@
       %%selfboot-yuniroot))
 
   (define (libread libname)
-    (write (list 'libread: libname))
-    (newline)
+    ;(write (list 'libread: libname)) (newline)
     (let ((r (resolver libname)))
      (unless r
        (error "cannot read" libname))
@@ -42,7 +41,7 @@
        aliasname)))
 
   (define (libcheck libname)
-    (write (list 'libcheck: libname)) (newline)
+    ;(write (list 'libcheck: libname)) (newline)
     (cond
       ((ignore-lib? libname) #f)
       (else (libcheck0 libname))))
