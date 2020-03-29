@@ -12,6 +12,7 @@ set(selfboot_GSI "gambit/selfboot-entry.scm")
 set(selfboot_GUILE "guile/selfboot-entry.sps")
 set(selfboot_GUILE3 "guile3/selfboot-entry.sps")
 set(selfboot_BIWASYUNI "biwascheme/selfboot-entry.scm")
+set(selfboot_DIGAMMA "digamma/selfboot-entry.sps")
 
 set(arg_prog_CHEZ_SCHEME "--program")
 set(arg_prog_CHICKEN_CSI "-script")

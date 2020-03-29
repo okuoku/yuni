@@ -113,7 +113,9 @@ checkimpls(
     ironscheme   IRONSCHEME   IRON_SCHEME # FIXME:
     kawa         kawa         KAWA
     s7           s7yuni       S7
-    biwascheme   biwasyuni    BIWASYUNI)
+    biwascheme   biwasyuni    BIWASYUNI
+    digamma      digamma      DIGAMMA
+    )
 
 file(APPEND ${VARFILE} "set(YUNIBOOT_IMPLS\n")
 

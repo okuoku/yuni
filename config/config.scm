@@ -83,6 +83,8 @@
     ;; Must sync. with *yuni/libalias*
     (biwascheme-yuni => yuni)
     (biwascheme-compat-scheme => scheme))
+  (compat-digamma
+    (digamma-yuni => yuni))
   )
 
 (GenRacket
@@ -194,6 +196,11 @@
     compat-biwascheme)
   (guile3
     compat-guile3
+    yuni
+    r6rs-common
+    r7rs-common)
+  (digamma
+    compat-digamma
     yuni
     r6rs-common
     r7rs-common)
