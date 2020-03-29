@@ -28,7 +28,7 @@ See also: [Basic library sample](https://github.com/okuoku/yuni/tree/master/samp
 
 Yuni is NOT designed for writing any benchmarks. Library wrapper can kill some form of optimizations which can be critical for performance.
 
-See also: [SIBR]() is Yuni's collection of Scheme implementation behaviour reports
+See also: [SIBR][] is Yuni's collection of Scheme implementation behaviour reports
 
 - FFI implementation is incomplete
 - No `rename` on `library` form, especially Generic Scheme does not support renaming syntax such as `let` or `define`
@@ -71,8 +71,6 @@ Bootstrapped, but no FFI yet:
 ## License
 
 Public domain (CC0-1.0). Yuni R6RS/R7RS runtime component is released into public domain by the author. See `COPYING.CC0` for full license text.
-
-Yuni R5RS support uses Alexpander(BSD3/GPL2+).
 
 Yuni generic scheme support includes `syntax-rules` implementation from Chibi-scheme.
 
