@@ -28,7 +28,7 @@ See also: [Basic library sample](https://github.com/okuoku/yuni/tree/master/samp
 
 Yuni is NOT designed for writing any benchmarks. Library wrapper can kill some form of optimizations which can be critical for performance.
 
-See also: [SIBR](); Yuni's collection of Scheme implementation behaviour reports
+See also: [SIBR]() is Yuni's collection of Scheme implementation behaviour reports
 
 - FFI implementation is incomplete
 - No `rename` on `library` form, especially Generic Scheme does not support renaming syntax such as `let` or `define`
@@ -50,16 +50,16 @@ Implementations with FFI compatibility layer:
  * [Gauche](http://practical-scheme.net/gauche/) 0.9.5 or later
  * [Guile](http://www.gnu.org/software/guile/) 2.0 or later
  * [Chicken](http://www.call-cc.org/) interpreter with `r7rs` egg
- * [Gambit](http://gambitscheme.org/) with experimental R5RS support(BSD3/GPL2+)
+ * [Gambit](http://gambitscheme.org/)
  * [ChezScheme](https://github.com/cisco/ChezScheme)
 
 Bootstrapped, but no FFI yet:
 
  * [IronScheme](https://github.com/leppie/IronScheme)
  * [Kawa](http://www.gnu.org/software/kawa/) 2.2 or later
- * [MIT/GNU Scheme](https://www.gnu.org/software/mit-scheme/) with experimental R5RS support(BSD3/GPL2+)
+ * [MIT/GNU Scheme](https://www.gnu.org/software/mit-scheme/) (experimental)
  * [BiwaScheme](https://github.com/biwascheme/biwascheme) (experimental)
- * [s7](https://ccrma.stanford.edu/software/snd/snd/s7.html) with experimental Generic Scheme support(BSD3)
+ * [s7](https://ccrma.stanford.edu/software/snd/snd/s7.html) (experimental)
 
 (Support was temporally removed for now):
 
