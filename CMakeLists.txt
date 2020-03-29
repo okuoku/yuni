@@ -103,6 +103,7 @@ checkimpls(
     chibi-scheme chibi-scheme CHIBI_SCHEME
     gauche       gosh         GOSH
     guile        guile        GUILE
+    guile3       guile3       GUILE3 # Currently yunibase only
     racket       racket       RACKET
     sagittarius  sagittarius  SAGITTARIUS
     chicken      csi          CHICKEN5_CSI

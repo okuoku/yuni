@@ -42,6 +42,8 @@
   (compat-guile
     (guile-yuni => yuni)
     (guile-r7b => r7b-compat))
+  (compat-guile3
+    (guile-yuni => yuni)) ;; same as Guile2
   (compat-racket
     (racket-yuni => yuni)
     (racket-r7b => r7b-compat))
@@ -190,4 +192,9 @@
     yuni
     r7rs-common
     compat-biwascheme)
+  (guile3
+    compat-guile3
+    yuni
+    r6rs-common
+    r7rs-common)
   )
