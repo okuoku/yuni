@@ -3,8 +3,8 @@ include(CMakeParseArguments)
 set(tests ${YUNIROOT}/tests)
 
 function(add_selfboot_test0 impl expect_error script)
-    set(testname ${nam}-${impl})
     get_filename_component(nam ${script} NAME_WE)
+    set(testname ${nam}-${impl})
     if(${expect_error} STREQUAL ON)
         set(arg_experror -DEXPECT_ERROR=ON)
     else()
@@ -70,6 +70,7 @@ endfunction()
 set(expected_failures
     core2-MIT_SCHEME
     inexact1-MIT_SCHEME
+    fail2-RACKET
     )
 
 foreach(e ${expected_failures})
