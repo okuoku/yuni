@@ -4,7 +4,6 @@
 #   YUNI_BASEDIR = repository top
 #   YUNI_WITH_YUNIBASE = basepath for yunibase build
 #   YUNIBASE_VANILLA_PATH = Output for "vanilla" runner
-#   YUNIBASE_YUNIFIED_PATH = Output for "yunified" runner (for post-bootstrap)
 
 
 include(YuniRsrcSchemeImplementations)
@@ -35,18 +34,6 @@ function(emit_vanilla_runner_sh0 flav impl cmd cmdname)
         ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin
         ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin/${cmd}
         "")
-endfunction()
-
-function(emit_vanilla_vicare_runner_sh flav impl cmd)
-    # WAR: Add --library-path ${libpath}/vicare-scheme
-    set(_argsstr "--library-path ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/lib/vicare-scheme")
-    file(MAKE_DIRECTORY ${YUNIBASE_VANILLA_PATH})
-    emit_tmpl_runner_sh(${YUNIBASE_VANILLA_PATH}/${cmd}
-        ${_ldpathname}
-        ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/lib
-        ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin
-        ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin/${cmd}
-        "${_argsstr}")
 endfunction()
 
 function(emit_vanilla_runner_sh flav impl cmd)
@@ -171,9 +158,6 @@ function(emit_yunibase_runners)
             emit_vanilla_runner_sh(current chicken5 csc)
             emit_vanilla_runner_sh(current chicken5 chicken)
         endif()
-        if(YUNIBASE_HAVE_VICARE_CURRENT)
-            emit_vanilla_vicare_runner_sh(current vicare vicare)
-        endif()
         if(YUNIBASE_HAVE_NMOSH_STABLE)
             emit_vanilla_runner_sh(stable nmosh nmosh)
         endif()
@@ -204,178 +188,4 @@ function(emit_yunibase_runners)
             emit_vanilla_runner_sh(current kawa kawa)
         endif()
     endif()
-endfunction()
-
-#
-# "Yunified" script generation
-#
-# FIXME: Move below outside of Yunibase
-#
-
-function(emit_tmpl_gen_cmd outpath execpath scriptpath)
-    file(WRITE "${outpath}.bat"
-        "@echo off\n\"${execpath}\" ${scriptpath} -CURRENTDIR %CD% -GENERATE %*\n")
-endfunction()
-
-function(emit_tmpl_gen_sh outpath execpath scriptpath)
-    file(WRITE "${outpath}"
-        "#!/bin/sh\n\nexec ${execpath} ${scriptpath} -CURRENTDIR $PWD -GENERATE $*\n")
-    execute_process(COMMAND chmod +x ${outpath})
-endfunction()
-
-function(emit_tmpl_runwitharg_cmd outpath execpath args)
-    file(WRITE "${outpath}.bat"
-        "@echo off\n\"${execpath}\" ${args} %*\n")
-endfunction()
-
-function(emit_tmpl_runwitharg_cmd_larceny outpath execpath args)
-    file(WRITE "${outpath}.bat"
-        "@echo off\n\nset XX_SEMICOLON=;\nset LARCENY_ROOT=${YUNI_LARCENY_ROOT}\n\"${execpath}\" ${args} %1 -- %*\n")
-endfunction()
-
-function(emit_tmpl_runwitharg_sh_larceny outpath execpath args)
-    if(YUNI_WITH_YUNIBASE)
-        set(larceny_root ${YUNI_WITH_YUNIBASE}/current/larceny/bin)
-    else()
-        get_filename_component(larceny_root ${YUNI_LARCENY} PATH)
-    endif()
-    file(WRITE "${outpath}"
-        "#!/bin/sh\n\nLARCENY_ROOT=${larceny_root}\nexport LARCENY_ROOT\nexec ${execpath} -heap \$LARCENY_ROOT/larceny.heap ${args} \$1 -- \$*\n")
-    execute_process(COMMAND chmod +x ${outpath})
-endfunction()
-
-function(emit_tmpl_runwitharg_sh_vicare outpath execpath args)
-    file(WRITE "${outpath}"
-        "#!/bin/sh\n\nexec ${execpath} ${args} --r6rs-script \$1 -- \$*\n")
-    execute_process(COMMAND chmod +x ${outpath})
-endfunction()
-
-function(emit_tmpl_runwitharg_sh outpath execpath args)
-    # args = a string for additional args
-    file(WRITE "${outpath}"
-        "#!/bin/sh\n\nexec ${execpath} ${args} \$*\n")
-    execute_process(COMMAND chmod +x ${outpath})
-endfunction()
-
-function(emit_yuniboot_kawa_runner)
-    if(YUNI_KAWA_JAR AND Java_JAVA_EXECUTABLE)
-        file(MAKE_DIRECTORY ${YUNI_YUNIBOOT_PATH})
-        gen_stubprefix(stub yuniboot kawa)
-        set(yuniloader ${YUNI_BASEDIR}/yuniloader/yuniloader-kawa.scm)
-        if(WIN32)
-            yuni_path_chop_drive(yuniloader ${yuniloader})
-            yuni_path_chop_drive(stub ${stub})
-        endif()
-
-        set(kawa_args
-            "-classpath ${YUNI_KAWA_JAR} kawa.repl --r7rs ${yuniloader} -I ${stub}")
-        if(WIN32)
-            emit_tmpl_runwitharg_cmd(
-                ${YUNI_YUNIBOOT_PATH}/kawa
-                ${Java_JAVA_EXECUTABLE} ${kawa_args})
-            emit_tmpl_runwitharg_cmd(
-                ${YUNIBASE_YUNIFIED_PATH}/kawa
-                ${Java_JAVA_EXECUTABLE} ${kawa_args})
-        else()
-            emit_tmpl_runwitharg_sh(
-                ${YUNI_YUNIBOOT_PATH}/kawa
-                ${Java_JAVA_EXECUTABLE} ${kawa_args})
-            emit_tmpl_runwitharg_sh(
-                ${YUNIBASE_YUNIFIED_PATH}/kawa
-                ${Java_JAVA_EXECUTABLE} ${kawa_args})
-        endif()
-    endif()
-endfunction()
-
-function(emit_yunirunner flav varname cmdvar cmdname)
-    if(${cmdvar}) # Check for vanilla Scheme
-        set(cmd ${${cmdvar}})
-        file(MAKE_DIRECTORY ${YUNI_YUNIBOOT_PATH})
-        if(${flav} STREQUAL yuniboot)
-            gen_yunilibpaths(_yunilibs ${YUNIIMPL_${varname}_BOOTLIBS})
-            set(out ${YUNI_YUNIBOOT_PATH}/${cmdname})
-        else()
-            set(_yunilibs)
-            set(out ${YUNIBASE_YUNIFIED_PATH}/${cmdname})
-        endif()
-        set(_libs ${YUNI_PLATFORM_LIBDIR} ${_yunilibs})
-        calc_impl_yuniboot_commandline(_args ${flav}
-            ${varname} ${YUNI_BASEDIR} ${_libs})
-        gen_string_args(_argsstr ${_args})
-        if(WIN32)
-            # Workaround for MIT_SCHEME Win32 executable
-            if(${cmdvar} STREQUAL YUNI_MIT_SCHEME)
-                get_filename_component(instdir
-                    "${YUNI_MIT_SCHEME}"
-                    PATH)
-                # https://savannah.gnu.org/bugs/?31710
-                set(_argsstr "--heap 512 --library \"${instdir}/../lib\" ${_argsstr}")
-            endif()
-            if(${cmdvar} STREQUAL YUNI_LARCENY)
-                emit_tmpl_runwitharg_cmd_larceny(${out}
-                    ${cmd}
-                    "${_argsstr}")
-            else()
-                emit_tmpl_runwitharg_cmd(${out}
-                    ${cmd}
-                    "${_argsstr}")
-            endif()
-        else()
-            if(${cmdvar} STREQUAL YUNI_LARCENY)
-                emit_tmpl_runwitharg_sh_larceny(${out}
-                    ${cmd}
-                    "${_argsstr}")
-            elseif(${cmdvar} STREQUAL YUNI_VICARE)
-                emit_tmpl_runwitharg_sh_vicare(${out}
-                    ${cmd}
-                    "${_argsstr}")
-            else()
-                emit_tmpl_runwitharg_sh(${out}
-                    ${cmd}
-                    "${_argsstr}")
-            endif()
-
-        endif()
-
-        if(${flav} STREQUAL yunified)
-            if(WIN32)
-                emit_tmpl_gen_cmd(${YUNIBASE_YUNIFIED_PATH}/gen-${cmdname}
-                    ${YUNIBASE_YUNIFIED_PATH}/${cmdname}
-                    ${YUNIBASE_YUNIFIED_PATH}/loader/generate.sps)
-            else()
-                emit_tmpl_gen_sh(${YUNIBASE_YUNIFIED_PATH}/gen-${cmdname}
-                    ${YUNIBASE_YUNIFIED_PATH}/${cmdname}
-                    ${YUNIBASE_YUNIFIED_PATH}/loader/generate.sps)
-            endif()
-        endif()
-    endif()
-endfunction()
-
-function(emit_yuni_runner)
-    emit_yunirunner(yuniboot ${ARGN})
-    emit_yunirunner(yunified ${ARGN})
-endfunction()
-
-function(emit_yuni_runners)
-    emit_yuni_runner(CHIBI_SCHEME YUNI_CHIBI_SCHEME chibi-scheme)
-    emit_yuni_runner(GAUCHE       YUNI_GOSH         gosh)
-    emit_yuni_runner(GUILE        YUNI_GUILE        guile)
-    emit_yuni_runner(RACKET       YUNI_RACKET       racket)
-    emit_yuni_runner(SAGITTARIUS  YUNI_SAGITTARIUS  sagittarius)
-    emit_yuni_runner(CHICKEN      YUNI_CHICKEN_CSI  csi)
-    emit_yuni_runner(CHICKEN5     YUNI_CHICKEN5_CSI csi)
-    emit_yuni_runner(VICARE       YUNI_VICARE       vicare)
-    emit_yuni_runner(NMOSH        YUNI_NMOSH        nmosh)
-    emit_yuni_runner(LARCENY      YUNI_LARCENY      larceny)
-    emit_yuni_runner(CHEZ_SCHEME  YUNI_CHEZ_SCHEME  chez-scheme)
-    emit_yuni_runner(CHEZ_SCHEME  YUNI_CHEZ_PETITE  petite-chez-scheme)
-    emit_yuni_runner(RAPID_GAMBIT YUNI_RAPID_GAMBIT rapid-gambit)
-    emit_yuni_runner(PICRIN       YUNI_PICRIN       picrin)
-    emit_yuni_runner(GAMBIT       YUNI_GSI          gsi)
-    emit_yuni_runner(MIT_SCHEME   YUNI_MIT_SCHEME   mit-scheme)
-    emit_yuni_runner(IRON_SCHEME  YUNI_IRON_SCHEME  ironscheme)
-    emit_yuni_runner(S7           YUNI_S7           s7yuni)
-    emit_yuni_runner(BIWASCHEME   YUNI_BIWASYUNI    biwasyuni)
-    emit_yuni_runner(KAWA         YUNI_KAWA         kawa)
-    emit_yuniboot_kawa_runner()
 endfunction()
