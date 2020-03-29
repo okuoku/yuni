@@ -42,22 +42,16 @@
 
 ;; From chibi-scheme
 
-;; MIT/GNU Scheme does not have NaN or Inf literal (!)
-(check-equal #t (nan? +nan.0))
 (check-equal #f (nan? 0))
-(check-equal #f (nan? +inf.0))
 (check-equal #t (finite? 0))
 (check-equal #t (finite? 0.0))
 (check-equal #t (finite? 90))
-;(check-equal #t (infinite? +inf.0)) ;; (yuni scheme) lacks inifinite?
 
 (check-eps 1.0 (exp 0))
 (check-eps 20.0855369231877 (exp 3))
 (check-eps 0.0 (log 1))
 (check-eps 1.0 (log (exp 1)))
 (check-eps 42 (log (exp 42)))
-(check-eps 2 (log 100 10))
-(check-eps 12 (log 4096 2))
 (check-eps 0 (sin 0))
 (check-eps 1 (sin 1.5707963267949))
 (check-eps 1 (cos 0))

@@ -3,18 +3,23 @@ include(CMakeParseArguments)
 set(tests ${YUNIROOT}/tests)
 
 function(add_selfboot_test0 impl expect_error script)
+    set(testname ${nam}-${impl})
     get_filename_component(nam ${script} NAME_WE)
     if(${expect_error} STREQUAL ON)
         set(arg_experror -DEXPECT_ERROR=ON)
     else()
         set(arg_experror)
     endif()
-    add_test(NAME ${nam}-${impl} 
+    add_test(NAME ${testname}
         COMMAND ${CMAKE_COMMAND} -DIMPL=${impl}
         ${arg_experror}
         -P ${CMAKE_CURRENT_BINARY_DIR}/run.cmake
         ${script}
         ${ARGN})
+    if(willfail_${testname})
+        set_tests_properties(${testname}
+            PROPERTIES WILL_FAIL TRUE)
+    endif()
 endfunction()
 
 function(add_selfboot_test impl script)
@@ -62,14 +67,25 @@ function(runtest script)
     add_selfboot_test_all(${script} ${runtest_ARGS})
 endfunction()
 
+set(expected_failures
+    core2-MIT_SCHEME
+    inexact1-MIT_SCHEME
+    )
+
+foreach(e ${expected_failures})
+    set(willfail_${e} ON)
+endforeach()
+
 tests(
     ${tests}/scheme/core0.sps
     ${tests}/scheme/core1.sps
+    ${tests}/scheme/core2.sps
     ${tests}/scheme/iter0.sps
     ${tests}/scheme/strings0.sps
     ${tests}/scheme/vectors0.sps
     ${tests}/scheme/bytevectors0.sps
     ${tests}/scheme/inexact0.sps
+    ${tests}/scheme/inexact1.sps
     ${tests}/scheme/qq0.sps
     ${tests}/lib/minitest0.sps
     ${tests}/lib/lighteval0.sps

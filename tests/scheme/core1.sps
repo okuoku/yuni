@@ -54,10 +54,7 @@
 (check-equal '(10 20 30) (list-set!/check (list 10 #f 30) 1 20))
 (check-equal '(10 20 30) (list-set!/check (list 10 20 #f) 2 30))
 ;; list-copy
-(check-equal 'a (list-copy 'a))
 (check-equal '(10) (list-copy '(10)))
-(check-equal '(10 . 20) (list-copy '(10 . 20)))
 (check-equal '(10 20 30) (list-copy '(10 20 30)))
-(check-equal '() (list-copy '()))
 
 (check-finish)
