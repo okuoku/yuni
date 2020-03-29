@@ -1,5 +1,7 @@
-Port Status
+Port Status (OUTDATED)
 ===========
+
+OUTDATED: Dropped/Added some, in-middle of project structure transformation.
 
 |impl            |Working?   |Bootstrap?|Win32?|YuniFFI?|YuniFFI impl|
 |:---------------|:---------:|:--------:|:----:|:------:|:-----------|

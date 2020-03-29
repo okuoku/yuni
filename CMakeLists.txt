@@ -99,22 +99,26 @@ writeproxy(run.cmake)
 set(impls)
 
 checkimpls(
-    # Impl name  Cmd name     CMake Varname
-    chibi-scheme chibi-scheme CHIBI_SCHEME
-    gauche       gosh         GOSH
-    guile        guile        GUILE
-    guile3       guile3       GUILE3 # Currently yunibase only
-    racket       racket       RACKET
-    sagittarius  sagittarius  SAGITTARIUS
-    chicken      csi          CHICKEN5_CSI
-    chez         chez-scheme  CHEZ_SCHEME
-    mit-scheme   mit-scheme   MIT_SCHEME
-    gambit       gsi          GSI
-    ironscheme   IRONSCHEME   IRON_SCHEME # FIXME:
-    kawa         kawa         KAWA
-    s7           s7yuni       S7
-    biwascheme   biwasyuni    BIWASYUNI
-    digamma      digamma      DIGAMMA
+    # Impl name   Cmd name      CMake Varname
+    ## R6RS+R7RS
+    digamma       digamma       DIGAMMA
+    guile3        guile3        GUILE3 # Currently yunibase only
+    sagittarius   sagittarius   SAGITTARIUS
+    ## R7RS
+    chibi-scheme  chibi-scheme  CHIBI_SCHEME
+    chicken       csi           CHICKEN5_CSI
+    gauche        gosh          GOSH
+    kawa          kawa          KAWA
+    ## R6RS
+    chez          chez-scheme   CHEZ_SCHEME
+    guile         guile         GUILE # Guile2(R6RS only)
+    ironscheme    IRONSCHEME    IRON_SCHEME # FIXME:
+    racket        racket        RACKET
+    ## Generic Scheme
+    biwascheme    biwasyuni     BIWASYUNI
+    gambit        gsi           GSI
+    mit-scheme    mit-scheme    MIT_SCHEME
+    s7            s7yuni        S7
     )
 
 file(APPEND ${VARFILE} "set(YUNIBOOT_IMPLS\n")
