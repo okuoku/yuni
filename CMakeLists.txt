@@ -32,7 +32,7 @@ get_filename_component(VARFILE ${VARFILE} ABSOLUTE)
 
 function(writeproxy scriptname)
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${scriptname}
-        "include(${YUNIROOT}/config/implinfo.cmake)\ninclude(${VARFILE})\ninclude(${CMAKE_CURRENT_LIST_DIR}/${scriptname})\n")
+        "include(${YUNIROOT}/config/implinfo.cmake)\ninclude(${VARFILE})\ninclude(${YUNIROOT}/scripts/${scriptname})\n")
 endfunction()
 
 function(writevar varname)
@@ -43,6 +43,9 @@ macro(checkimpl nam impl)
     if(YUNI_${impl})
         writevar(YUNI_${impl})
         list(APPEND impls ${impl})
+        if(NOT selfboot_${impl})
+            message(FATAL_ERROR "Unknown impl: ${impl}")
+        endif()
         if(UNIX)
             if(${impl} STREQUAL KAWA_JAR)
                 set(_cmd "${CMAKE_CURRENT_BINARY_DIR}/run-kawa.sh")
@@ -110,7 +113,7 @@ checkimpls(
     guile        guile        GUILE
     racket       racket       RACKET
     sagittarius  sagittarius  SAGITTARIUS
-    chicken      csi          CHICKEN_CSI
+    chicken      csi          CHICKEN5_CSI
     chez         chez-scheme  CHEZ_SCHEME
     mit-scheme   mit-scheme   MIT_SCHEME
     gambit       gsi          GSI
@@ -129,6 +132,4 @@ file(APPEND ${VARFILE} ")\n")
 
 
 # Testing
-if(BUILD_TESTING)
-    include(${CMAKE_CURRENT_LIST_DIR}/tests.cmake)
-endif()
+include(newboot/tests.cmake)
