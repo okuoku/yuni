@@ -72,18 +72,33 @@
    (let ((first (strip-extra-words '() (reverse (string->list (car r))))))
      (pathcompose-start "" (start-simple '() first (cdr r))))))
 
+(define (%%chop-first-arg lis)
+  (let ((a (car lis))
+        (d (cdr lis)))
+    (let loop ((sl '())
+               (q (string->list a)))
+      (if (pair? q)
+        (if (char=? #\space (car q))
+          (append (list (list->string (reverse sl)) 
+                        (list->string (cdr q)))
+                  d)
+          (loop (cons (car q) sl) (cdr q)))
+        ;; Something wrong
+        lis))))
+
+(define %%selfboot-orig-command-line (%%chop-first-arg (command-line)))
+(define %%selfboot-mypath (%%extract-entrypoint-path %%selfboot-orig-command-line))
+(define %%selfboot-program-args (%%extract-program-args
+                                  %%selfboot-orig-command-line
+                                  %%selfboot-mypath))
+
 (define (%%locate-yuniroot-fromscmpath scmpath)
   (write %%selfboot-orig-command-line) (newline)
   (write %%selfboot-mypath) (newline)
   (let ((npth (%%pathslashfy scmpath)))
    (%%pathsimplify (string-append npth "/../../../.."))))
 
-(define %%selfboot-orig-command-line (command-line))
-(define %%selfboot-mypath (%%extract-entrypoint-path %%selfboot-orig-command-line))
 (define %%selfboot-yuniroot (%%locate-yuniroot-fromscmpath %%selfboot-mypath))
-(define %%selfboot-program-args (%%extract-program-args
-                                  %%selfboot-orig-command-line
-                                  %%selfboot-mypath))
 
 (define (%%selfboot-loadlib pth libname imports exports)
   (let ((code (%selfboot-file->sexp-list pth)))

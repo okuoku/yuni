@@ -30,31 +30,18 @@ if(NOT appdir)
     set(appdir .)
 endif()
 
-if(${IMPL} STREQUAL KAWA_JAR)
-    execute_process(
-        COMMAND 
-        java -classpath
-        ${YUNI_${IMPL}} 
-        kawa.repl
-        ${YUNIROOT}/lib-runtime/selfboot/${selfboot_KAWA}
-        -LIBPATH ${appdir}
-        ${args}
-        RESULT_VARIABLE rr
-        )
-else()
-    if(NOT selfboot_${IMPL})
-        message(FATAL_ERROR "Impl ${IMPL} is not configured")
-    endif()
-    execute_process(
-        COMMAND 
-        ${YUNI_${IMPL}} 
-        ${arg_prog}
-        ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${IMPL}}
-        -LIBPATH ${appdir}
-        ${args}
-        RESULT_VARIABLE rr
-        )
+if(NOT selfboot_${IMPL})
+    message(FATAL_ERROR "Impl ${IMPL} is not configured")
 endif()
+execute_process(
+    COMMAND 
+    ${YUNI_${IMPL}} 
+    ${arg_prog}
+    ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${IMPL}}
+    -LIBPATH ${appdir}
+    ${args}
+    RESULT_VARIABLE rr
+    )
 
 if(NOT EXPECT_ERROR)
     if(rr)
