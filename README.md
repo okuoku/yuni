@@ -28,7 +28,7 @@ See also: [Basic library sample](https://github.com/okuoku/yuni/tree/master/samp
 
 Yuni is NOT designed for writing any benchmarks. Library wrapper can kill some form of optimizations which can be critical for performance.
 
-See also: [SIBR](); Yuni's collection of Scheme implementation behaviour reports
+See also: [SIBR](https://github.com/okuoku/yuni/tree/master/doc/sibr); Yuni's collection of Scheme implementation behaviour reports
 
 - FFI implementation is incomplete
 - No `rename` on `library` form, especially Generic Scheme does not support renaming syntax such as `let` or `define`
