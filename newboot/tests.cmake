@@ -71,6 +71,7 @@ set(expected_failures
     core2-MIT_SCHEME
     inexact1-MIT_SCHEME
     fail2-RACKET
+    fecore0-KAWA
     )
 
 foreach(e ${expected_failures})
