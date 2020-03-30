@@ -98,6 +98,7 @@ tests(
     ${tests}/app/basic/app.sps
     ${tests}/sibr/sibr0010vector.sps
     ${tests}/sibr/sibr0010string.sps
+    ${tests}/sibr/sibr0011.sps
     )
 
 negative_tests(
