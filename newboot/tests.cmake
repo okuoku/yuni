@@ -96,6 +96,8 @@ tests(
     ${tests}/lib/hashtables0.sps
     ${tests}/lib/miniread0.sps
     ${tests}/app/basic/app.sps
+    ${tests}/sibr/sibr0010vector.sps
+    ${tests}/sibr/sibr0010string.sps
     )
 
 negative_tests(
