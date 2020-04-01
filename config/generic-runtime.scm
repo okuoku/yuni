@@ -33,6 +33,11 @@
   ("lib-runtime/mit-scheme/prelib.scm")
   ;; Runtime
   ())
+(stklos
+  ;; Pre
+  ()
+  ;; Runtime
+  ())
 (generic
   ;; Pre
   ("external/yuni-synrules.scm"

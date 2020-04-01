@@ -73,6 +73,8 @@ set(expected_failures
     fail2-RACKET
     fecore0-KAWA
     iter0-GUILE3
+
+    inexact1-STKLOS # no 2 arg log
     )
 
 foreach(e ${expected_failures})

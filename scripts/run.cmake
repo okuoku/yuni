@@ -23,6 +23,7 @@ if(NOT YUNI_${IMPL})
 endif()
 
 set(arg_prog ${arg_prog_${IMPL}})
+set(arg_post ${arg_post_${IMPL}})
 
 list(GET args 0 script)
 get_filename_component(appdir ${script} PATH)
@@ -38,6 +39,7 @@ execute_process(
     ${YUNI_${IMPL}} 
     ${arg_prog}
     ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${IMPL}}
+    ${arg_post}
     -LIBPATH ${appdir}
     ${args}
     RESULT_VARIABLE rr

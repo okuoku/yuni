@@ -120,6 +120,7 @@ checkimpls(
     gambit        gsi           GSI
     mit-scheme    mit-scheme    MIT_SCHEME
     s7            s7yuni        S7
+    stklos        stklos        STKLOS
     )
 
 file(APPEND ${VARFILE} "set(YUNIBOOT_IMPLS\n")
