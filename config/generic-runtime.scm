@@ -38,6 +38,11 @@
   ()
   ;; Runtime
   ())
+(scm
+  ;; Pre
+  ()
+  ;; Runtime
+  ())
 (generic
   ;; Pre
   ("external/yuni-synrules.scm"

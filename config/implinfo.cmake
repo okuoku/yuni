@@ -15,6 +15,7 @@ set(selfboot_BIWASYUNI "biwascheme/selfboot-entry.scm")
 set(selfboot_DIGAMMA "digamma/selfboot-entry.sps")
 set(selfboot_ICYC "cyclone/selfboot-entry.scm")
 set(selfboot_STKLOS "stklos/selfboot-entry.scm")
+set(selfboot_SCM "scm/selfboot-entry.scm")
 
 set(arg_prog_CHEZ_SCHEME "--program")
 set(arg_prog_CHICKEN_CSI "-script")
@@ -23,4 +24,6 @@ set(arg_prog_MIT_SCHEME "--load")
 set(arg_prog_GUILE3 "--r7rs")
 set(arg_prog_ICYC "-s")
 set(arg_prog_STKLOS "-cf")
+set(arg_prog_SCM "-l") ## FIXME: Say --no-symbol-case-fold
+
 set(arg_post_STKLOS "--")

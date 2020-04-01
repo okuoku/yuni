@@ -76,6 +76,9 @@
     ;; Must sync. with *yuni/libalias*
     (s7-yuni => yuni)
     (s7-scheme => scheme))
+  (compat-scm
+    (scm-yuni => yuni)
+    (scm-scheme => scheme))
   (compat-stklos
     (stklos-yuni => yuni)
     (stklos-scheme => scheme))
@@ -219,6 +222,11 @@
     r6rs-common
     r7rs-common)
   (stklos
+    yuni
+    yunifake
+    r7rs-common
+    compat-stklos)
+  (scm
     yuni
     yunifake
     r7rs-common

@@ -120,6 +120,7 @@ checkimpls(
     gambit        gsi           GSI
     mit-scheme    mit-scheme    MIT_SCHEME
     s7            s7yuni        S7
+    scm           scm           SCM
     stklos        stklos        STKLOS
     )
 
