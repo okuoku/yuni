@@ -43,6 +43,7 @@
   ()
   ;; Runtime
   ("lib-runtime/generic/std/boolean_eqp.scm"
+   "lib-runtime/generic/std/list-set_x.scm"
    ))
 (generic
   ;; Pre
