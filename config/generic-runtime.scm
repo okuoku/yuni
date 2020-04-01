@@ -53,6 +53,7 @@
    "lib-runtime/generic/std/truncate-quotient.scm"
    "lib-runtime/generic/std/truncate-remainder.scm"
    "lib-runtime/generic/std/truncate_div.scm"
+   "lib-runtime/generic/std/string-map.scm"
    ))
 (generic
   ;; Pre
