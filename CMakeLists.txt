@@ -132,4 +132,4 @@ file(APPEND ${VARFILE} ")\n")
 
 
 # Testing
-include(newboot/tests.cmake)
+include(tests/tests.cmake)
