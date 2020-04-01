@@ -44,6 +44,15 @@
   ;; Runtime
   ("lib-runtime/generic/std/boolean_eqp.scm"
    "lib-runtime/generic/std/list-set_x.scm"
+   "lib-runtime/generic/std/quotient.scm"
+   "lib-runtime/generic/std/modulo.scm"
+   "lib-runtime/generic/std/remainder.scm"
+   "lib-runtime/generic/std/floor-quotient.scm"
+   "lib-runtime/generic/std/floor-remainder.scm"
+   "lib-runtime/generic/std/floor_div.scm"
+   "lib-runtime/generic/std/truncate-quotient.scm"
+   "lib-runtime/generic/std/truncate-remainder.scm"
+   "lib-runtime/generic/std/truncate_div.scm"
    ))
 (generic
   ;; Pre

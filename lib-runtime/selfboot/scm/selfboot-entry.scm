@@ -1,5 +1,12 @@
 (require 'eval)
 (require 'srfi-1)
+
+;; these should be in prelib >>
+(define (nan? x) (not (= x x))) ;; FIXME:
+(define (inexact x) (exact->inexact x))
+(define (exact x) (inexact->exact x))
+;; <<
+
 (defmacro (define-macro . args) 
   (cons 'defmacro args))
 
