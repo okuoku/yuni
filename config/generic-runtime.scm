@@ -42,7 +42,8 @@
   ;; Pre
   ()
   ;; Runtime
-  ())
+  ("lib-runtime/generic/std/boolean_eqp.scm"
+   ))
 (generic
   ;; Pre
   ("external/yuni-synrules.scm"
