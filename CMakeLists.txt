@@ -49,7 +49,7 @@ macro(checkimpl nam impl)
         if(UNIX)
             set(_cmd "${CMAKE_CURRENT_BINARY_DIR}/run-${nam}.sh")
             file(WRITE ${_cmd}
-                "#!/bin/sh\nexec ${YUNI_${impl}} ${arg_prog_${impl}} ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${impl}} $*\n")
+                "#!/bin/sh\nexec ${YUNI_${impl}} ${arg_ci_${impl}} ${arg_prog_${impl}} ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${impl}} $*\n")
             execute_process(
                 COMMAND chmod +x ${_cmd})
         endif()

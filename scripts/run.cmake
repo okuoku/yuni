@@ -23,6 +23,7 @@ if(NOT YUNI_${IMPL})
 endif()
 
 set(arg_prog ${arg_prog_${IMPL}})
+set(arg_ci ${arg_ci_${IMPL}})
 set(arg_post ${arg_post_${IMPL}})
 
 list(GET args 0 script)
@@ -37,6 +38,7 @@ endif()
 execute_process(
     COMMAND 
     ${YUNI_${IMPL}} 
+    ${arg_ci}
     ${arg_prog}
     ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${IMPL}}
     ${arg_post}

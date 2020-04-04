@@ -24,6 +24,7 @@ set(arg_prog_MIT_SCHEME "--load")
 set(arg_prog_GUILE3 "--r7rs")
 set(arg_prog_ICYC "-s")
 set(arg_prog_STKLOS "-cf")
-set(arg_prog_SCM "-l") ## FIXME: Say --no-symbol-case-fold
+set(arg_prog_SCM "-l")
+set(arg_ci_SCM "--no-symbol-case-fold")
 
 set(arg_post_STKLOS "--")
