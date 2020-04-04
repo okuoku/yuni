@@ -40,7 +40,7 @@
   ())
 (scm
   ;; Pre
-  ()
+  ("lib-runtime/scm/prelib.scm")
   ;; Runtime
   ("lib-runtime/generic/std/boolean_eqp.scm"
    "lib-runtime/generic/std/list-copy.scm"
@@ -55,6 +55,11 @@
    "lib-runtime/generic/std/truncate-remainder.scm"
    "lib-runtime/generic/std/truncate_div.scm"
    "lib-runtime/generic/std/string-map.scm"
+   "lib-runtime/generic/std/string-for-each.scm"
+   "lib-runtime/generic/std/string_to_vector.scm"
+   "lib-runtime/generic/std/vector_to_string.scm"
+   "lib-runtime/generic/std/vector-map.scm"
+   "lib-runtime/generic/std/vector-for-each.scm"
    ))
 (generic
   ;; Pre
