@@ -57,11 +57,16 @@
    "lib-runtime/generic/std/string-map.scm"
    "lib-runtime/generic/std/string-for-each.scm"
    "lib-runtime/generic/std/string_to_vector.scm"
+   "lib-runtime/generic/std/string_to_list.scm"
    "lib-runtime/generic/std/vector_to_string.scm"
    "lib-runtime/generic/std/vector-map.scm"
    "lib-runtime/generic/std/vector-for-each.scm"
-   "lib-runtime/generic/std/string_to_list.scm"
    "lib-runtime/generic/std/string-copy.scm"
+   "lib-runtime/generic/std/vector-copy.scm"
+   "lib-runtime/generic/std/vector_to_list.scm"
+   "lib-runtime/generic/std/vector-copy_x.scm"
+   "lib-runtime/generic/std/vector-append.scm"
+   "lib-runtime/generic/std/vector-fill_x.scm"
    ))
 (generic
   ;; Pre

@@ -1,7 +1,7 @@
-(define (string->vector/itr! v s cur start end)
+(define (string->vector/itr! v s off cur end)
   (unless (= end cur)
-    (vector-set! v cur (string-ref s cur))
-    (string->vector/itr! v s (+ 1 cur) start end)))
+    (vector-set! v off (string-ref s cur))
+    (string->vector/itr! v s (+ 1 off) (+ 1 cur) end)))
 
 (define string->vector
   (case-lambda

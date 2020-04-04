@@ -54,6 +54,10 @@
                                                     1
                                                     (vector 20 30 40))))
 
+(check-equal 10 (begin (let ((r (make-vector 3)))
+                        (vector-copy! r 0 '#(10))
+                        (vector-ref r 0))))
+
 (check-equal '#(10 20 30) (vector-append (vector 10) (vector 20 30)))
 (check-equal '#(10 20 30) (vector-append (vector 10 20 30)))
 (check-equal '#(10 20 30) (vector-append (vector) (vector) (vector 10 20 30)
