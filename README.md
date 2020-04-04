@@ -57,9 +57,12 @@ Bootstrapped, but no FFI yet:
 
  * [IronScheme](https://github.com/leppie/IronScheme)
  * [Kawa](http://www.gnu.org/software/kawa/) 2.2 or later
+ * [Digamma](https://github.com/fujita-y/digamma)
  * [MIT/GNU Scheme](https://www.gnu.org/software/mit-scheme/) (experimental)
  * [BiwaScheme](https://github.com/biwascheme/biwascheme) (experimental)
  * [s7](https://ccrma.stanford.edu/software/snd/snd/s7.html) (experimental)
+ * [STklos](https://stklos.net/) (experimental)
+ * [SCM](http://people.csail.mit.edu/jaffer/SCM) with slib (experimental)
 
 (Support was temporally removed for now):
 
