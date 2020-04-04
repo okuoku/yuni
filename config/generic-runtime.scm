@@ -60,6 +60,8 @@
    "lib-runtime/generic/std/vector_to_string.scm"
    "lib-runtime/generic/std/vector-map.scm"
    "lib-runtime/generic/std/vector-for-each.scm"
+   "lib-runtime/generic/std/string_to_list.scm"
+   "lib-runtime/generic/std/string-copy.scm"
    ))
 (generic
   ;; Pre
