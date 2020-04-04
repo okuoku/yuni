@@ -175,10 +175,6 @@
 (when (string=? %%selfboot-yuniroot "")
   (set! %%selfboot-yuniroot "."))
 
-(define %%selfboot-current-command-line %%selfboot-program-args)
-(define %%selfboot-current-libpath (list %%selfboot-yuniroot))
-(define (command-line) %%selfboot-current-command-line)
-
 (define %%selfboot-mainprog #f)
 
 (myload (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm"))

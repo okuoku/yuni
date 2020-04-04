@@ -197,10 +197,6 @@
 
 ;(environment-assign! myenv '%selfboot-load %selfboot-load)
 
-(define %%selfboot-current-command-line %%selfboot-program-args)
-(define %%selfboot-current-libpath (list %%selfboot-yuniroot))
-(define (command-line) %%selfboot-current-command-line)
-
 (define %%selfboot-mainprog #f)
 
 (fluid-let ;; FIXME: Use parameterize
