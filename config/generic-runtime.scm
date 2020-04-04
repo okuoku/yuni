@@ -43,6 +43,7 @@
   ()
   ;; Runtime
   ("lib-runtime/generic/std/boolean_eqp.scm"
+   "lib-runtime/generic/std/list-copy.scm"
    "lib-runtime/generic/std/list-set_x.scm"
    "lib-runtime/generic/std/quotient.scm"
    "lib-runtime/generic/std/modulo.scm"
