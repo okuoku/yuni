@@ -230,5 +230,5 @@
     yuni
     yunifake
     r7rs-common
-    compat-stklos)
+    compat-scm)
   )

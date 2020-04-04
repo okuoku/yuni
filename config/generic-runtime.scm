@@ -67,6 +67,8 @@
    "lib-runtime/generic/std/vector-copy_x.scm"
    "lib-runtime/generic/std/vector-append.scm"
    "lib-runtime/generic/std/vector-fill_x.scm"
+   "lib-runtime/scm/hashtable.scm"
+   "lib-runtime/scm/string-output-port.scm" ;; Depends hashtable
    ))
 (generic
   ;; Pre

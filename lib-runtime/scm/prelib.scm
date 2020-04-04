@@ -1,14 +1,11 @@
+(require 'define-record-type)
 (require 'srfi-1)
 (require 'byte)
+(require 'let-values)
 
 (define (nan? x) (not (= x x))) ;; FIXME:
 (define (inexact x) (exact->inexact x))
 (define (exact x) (inexact->exact x))
-
-;;; bytevectors
-(define bytevector bytes)
-(define make-bytevector make-bytes)
-(define bytevector-copy bytes-copy)
 
 ;; case-lambda (took from r7rs.scm)
 (define-macro (case-lambda . choices)
@@ -22,6 +19,48 @@
                     (apply (lambda ,(car choice) ,@(cdr choice)) args))))
               choices))))
 
+;; Core I/O
+(define %yuni-eof-object 
+  (let* ((p (open-file "/dev/null" "r"))
+         (e (read-char p)))
+    (close-port p)
+    e))
+
+(define (eof-object) %yuni-eof-object)
+
+(define (open-input-string str)
+  (define l (string->list str))
+  (make-soft-port
+    (vector
+      (lambda (c) (error "This is an input port"))
+      (lambda (s) (error "This is an input port"))
+      (lambda () 'do-nothing)
+      (lambda () (if (pair? l)
+                   (let ((c (car l))
+                         (d (cdr l)))
+                     (set! l d)
+                     c)  
+                   (eof-object)))
+      (lambda () 'do-nothing))
+    "r"))
+
+(define write-string
+  (case-lambda
+    ((str) (display str (current-output-port)))
+    ((str port) (display str port))
+    ((str port start) (write-string str port start (string-length str)))
+    ((str port start end) (display (substring str start end) port))))
+
+;; letrec*
+(define-macro (letrec* vals . body)
+  `(let () ,@(map (lambda (e) `(define . ,e)) vals) . ,body))
+
+;;; bytevectors
+(define bytevector bytes)
+(define make-bytevector make-bytes)
+(define bytevector-copy bytes-copy)
+
+
 (define bytevector-length bytes-length)
 
 (define bytevector-copy
@@ -30,8 +69,8 @@
     ((b start) (bytevector-copy b start (bytevector-length b)))
     ((b start end) (subbytes b start end))))
 
-(define bytevector-ref byte-ref)
-(define bytevector-set! byte-set!)
+(define bytevector-u8-ref byte-ref)
+(define bytevector-u8-set! byte-set!)
 
 (define bytevector-copy!
   (case-lambda
@@ -46,8 +85,8 @@
                                                     tmaxcopysize))))))
     ((to at from start end)
      (unless (= start end)
-       (let ((b (bytevector-ref from start)))
-        (bytevector-set! to at b)
+       (let ((b (bytevector-u8-ref from start)))
+        (bytevector-u8-set! to at b)
         (bytevector-copy!
           to
           (+ at 1)

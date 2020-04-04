@@ -58,4 +58,10 @@
   (bytevector-copy! bv2 1 bv1 6)
   (check-equal (bytevector 99 7 8) bv2))
 
+(let ((bv (bytevector 0 9 2)))
+ (check-equal 9 (bytevector-u8-ref bv 1))
+ (bytevector-u8-set! bv 1 30)
+ (check-equal 30 (bytevector-u8-ref bv 1))
+ (check-equal 0 (bytevector-u8-ref bv 0)))
+
 (check-finish)
