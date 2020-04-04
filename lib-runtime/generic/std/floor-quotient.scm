@@ -1,1 +1,1 @@
-(define (floor-quotient a b) (floor (/ a b)))
+(define (floor-quotient a b) (exact (floor (/ a b))))

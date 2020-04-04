@@ -77,6 +77,7 @@
 (check-eps 3 (sqrt 9))
 (check-eps 1.4142135623731 (sqrt 2))
 
+;; FIXME: Add inexact x inexact = inexact cases
 (check-mod floor/ floor-quotient floor-remainder (2 1) (5 2))
 (check-mod floor/ floor-quotient floor-remainder (-3 1) (-5 2))
 (check-mod floor/ floor-quotient floor-remainder (-3 -1) (5 -2))
