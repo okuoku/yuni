@@ -70,4 +70,9 @@
     ((s start) (string->utf8 s start (string-length s)))
     ((s start end) (string->bytes (substring s start end)))))
 
-
+(define string<=?/r5rs string<=?)
+(define (string<=? x . q)
+  (if (pair? q)
+    (and (string<=?/r5rs x (car q))
+         (apply string<=? q))
+    #t))

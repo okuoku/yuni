@@ -81,9 +81,15 @@
 ;; FIXME: string>?
 (check-equal #f (string>? "a" "b"))
 (check-equal #t (string>? "b" "a"))
+(check-equal #f (string>? "b" "b" "a"))
+(check-equal #t (string>? "c" "b" "a"))
+(check-equal #f (string>? "c" "b" "b"))
 ;; FIXME: string>=?
 (check-equal #f (string>=? "a" "b"))
 (check-equal #t (string>=? "b" "a"))
 (check-equal #t (string>=? "a" "a"))
+(check-equal #t (string>=? "b" "b" "a"))
+(check-equal #t (string>=? "c" "b" "a"))
+(check-equal #t (string>=? "c" "b" "b"))
 
 (check-finish)
