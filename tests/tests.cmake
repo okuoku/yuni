@@ -69,12 +69,13 @@ endfunction()
 
 set(expected_failures
     core2-MIT_SCHEME
-    inexact1-MIT_SCHEME
     fail2-RACKET
     fecore0-KAWA
     iter0-GUILE3
 
+    inexact1-MIT_SCHEME # no 2 arg log
     inexact1-STKLOS # no 2 arg log
+    inexact1-SCM # no 2 arg log
     )
 
 foreach(e ${expected_failures})
