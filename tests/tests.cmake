@@ -76,6 +76,10 @@ set(expected_failures
     inexact1-MIT_SCHEME # no 2 arg log
     inexact1-STKLOS # no 2 arg log
     inexact1-SCM # no 2 arg log
+
+    qq1-KAWA
+    qq1-S7
+    qq1-SCM
     )
 
 foreach(e ${expected_failures})
@@ -93,6 +97,7 @@ tests(
     ${tests}/scheme/inexact0.sps
     ${tests}/scheme/inexact1.sps
     ${tests}/scheme/qq0.sps
+    ${tests}/scheme/qq1.sps
     ${tests}/scheme/stx0.sps
     ${tests}/lib/minitest0.sps
     ${tests}/lib/lighteval0.sps
