@@ -91,27 +91,7 @@ function(runtest script)
     add_selfboot_test_all(${script} ${runtest_ARGS})
 endfunction()
 
-set(expected_failures
-    core2-MIT_SCHEME
-    fail2-RACKET
-    fecore0-KAWA
-    iter0-GUILE3
-
-    inexact1-MIT_SCHEME # no 2 arg log
-    inexact1-STKLOS # no 2 arg log
-    inexact1-SCM # no 2 arg log
-
-    # Quasi-quote incompatibility
-    qq1-KAWA
-    qq1-S7
-    qq1-SCM
-
-    # Racket: Broken bytevector I/O
-    io0-RACKET
-
-    # STKLOS: Bug [(read-bytevector! bv2 p 0 3)]  Expected: 2  Actual: 3
-    io0-STKLOS
-    )
+include(${CMAKE_CURRENT_LIST_DIR}/fails.cmake)
 
 foreach(e ${expected_failures})
     set(willfail_${e} ON)
