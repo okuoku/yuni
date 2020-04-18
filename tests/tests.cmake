@@ -125,14 +125,14 @@ io_tests( # Run on temporary/empty dir
     )
 
 negative_tests(
-    ${tests}/fail/fail0.sps
-    ${tests}/fail/fail1.sps
-    ${tests}/fail/fail2.sps
-    ${tests}/fail/fail3.sps
-    ${tests}/fail/fail4.sps
-    ${tests}/fail/fail5.sps
-    ${tests}/fail/fail6.sps
-    ${tests}/fail/fail7.sps
+    ${tests}/err/fail0.sps
+    ${tests}/err/fail1.sps
+    ${tests}/err/fail2.sps
+    ${tests}/err/fail3.sps
+    ${tests}/err/fail4.sps
+    ${tests}/err/fail5.sps
+    ${tests}/err/fail6.sps
+    ${tests}/err/fail7.sps
     )
 
 runtest(${tests}/newboot/testarg0.sps ARGS SPLITHERE)
