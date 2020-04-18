@@ -32,6 +32,25 @@ if(NOT appdir)
     set(appdir .)
 endif()
 
+if(EMPTYDIR)
+    if(EMPTYDIRBASE)
+        set(workdirbase ${EMPTYDIRBASE})
+    else()
+        set(workdirbase ${CMAKE_CURRENT_BINARY_DIR})
+    endif()
+    # Calc. randam pathname
+    string(RANDOM rnd)
+    set(workdir "${workdirbase}/${rnd}")
+    set(arg_workdir WORKING_DIRECTORY "${workdir}")
+else()
+    set(workdir)
+    set(arg_workdir)
+endif()
+
+if(workdir)
+    file(MAKE_DIRECTORY ${workdir})
+endif()
+
 if(NOT selfboot_${IMPL})
     message(FATAL_ERROR "Impl ${IMPL} is not configured")
 endif()
@@ -45,7 +64,12 @@ execute_process(
     -LIBPATH ${appdir}
     ${args}
     RESULT_VARIABLE rr
+    ${arg_workdir}
     )
+
+if(workdir)
+    file(REMOVE_RECURSE "${workdir}")
+endif()
 
 if(NOT EXPECT_ERROR)
     if(rr)

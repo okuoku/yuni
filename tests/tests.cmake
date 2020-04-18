@@ -2,7 +2,7 @@ include(CMakeParseArguments)
 
 set(tests ${YUNIROOT}/tests)
 
-function(add_selfboot_test0 impl expect_error script)
+function(add_selfboot_test0 impl expect_error iotest script)
     get_filename_component(nam ${script} NAME_WE)
     set(testname ${nam}-${impl})
     if(${expect_error} STREQUAL ON)
@@ -10,8 +10,14 @@ function(add_selfboot_test0 impl expect_error script)
     else()
         set(arg_experror)
     endif()
+    if(${iotest} STREQUAL ON)
+        set(arg_io -DEMPTYDIR=ON -DEMPTYDIRBASE=${CMAKE_CURRENT_BINARY_DIR}/tmp)
+    else()
+        set(arg_io)
+    endif()
     add_test(NAME ${testname}
         COMMAND ${CMAKE_COMMAND} -DIMPL=${impl}
+        ${arg_io}
         ${arg_experror}
         -P ${CMAKE_CURRENT_BINARY_DIR}/run.cmake
         ${script}
@@ -23,11 +29,15 @@ function(add_selfboot_test0 impl expect_error script)
 endfunction()
 
 function(add_selfboot_test impl script)
-    add_selfboot_test0(${impl} OFF ${script} ${ARGN})
+    add_selfboot_test0(${impl} OFF OFF ${script} ${ARGN})
+endfunction()
+
+function(add_selfboot_test_io impl script)
+    add_selfboot_test0(${impl} OFF ON ${script} ${ARGN})
 endfunction()
 
 function(add_selfboot_test_negative impl script)
-    add_selfboot_test0(${impl} ON ${script} ${ARGN})
+    add_selfboot_test0(${impl} ON OFF ${script} ${ARGN})
 endfunction()
 
 function(add_selfboot_test_all script)
@@ -42,6 +52,12 @@ function(add_selfboot_test_negative_all script)
     endforeach()
 endfunction()
 
+function(add_selfboot_test_io_all script)
+    foreach(impl ${impls})
+        add_selfboot_test_io(${impl} ${script} ${ARGN})
+    endforeach()
+endfunction()
+
 macro(negative_tests script)
     set(_rest ${ARGN})
     add_selfboot_test_negative_all(${script})
@@ -53,6 +69,14 @@ endmacro()
 macro(tests script)
     set(_rest ${ARGN})
     add_selfboot_test_all(${script})
+    if(_rest)
+        tests(${ARGN})
+    endif()
+endmacro()
+
+macro(io_tests script)
+    set(_rest ${ARGN})
+    add_selfboot_test_io_all(${script})
     if(_rest)
         tests(${ARGN})
     endif()
@@ -77,9 +101,16 @@ set(expected_failures
     inexact1-STKLOS # no 2 arg log
     inexact1-SCM # no 2 arg log
 
+    # Quasi-quote incompatibility
     qq1-KAWA
     qq1-S7
     qq1-SCM
+
+    # Racket: Broken bytevector I/O
+    io0-RACKET
+
+    # STKLOS: Bug [(read-bytevector! bv2 p 0 3)]  Expected: 2  Actual: 3
+    io0-STKLOS
     )
 
 foreach(e ${expected_failures})
@@ -107,6 +138,10 @@ tests(
     ${tests}/sibr/sibr0010vector.sps
     ${tests}/sibr/sibr0010string.sps
     ${tests}/sibr/sibr0011.sps
+    )
+
+io_tests( # Run on temporary/empty dir
+    ${tests}/scheme/io0.sps
     )
 
 negative_tests(
