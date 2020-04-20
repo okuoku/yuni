@@ -37,12 +37,14 @@
   (case-lambda
     ((k) (read-string k (current-input-port)))
     ((k port)
-     (let ((c (read-char port)))
-      (if (eof-object? c)
-        c
-        (if (= k 0)
-          ""
-          (%read-string/itr (list c) (- k 1) port)))))))
+     (if (= k 0)
+       ""
+       (let ((c (read-char port)))
+        (if (eof-object? c)
+          c
+          (if (= k 0)
+            ""
+            (%read-string/itr (list c) (- k 1) port))))))))
 
 (define %yuni-eof-object 
   (let* ((p (open-file "/dev/null" "r"))
