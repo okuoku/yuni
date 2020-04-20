@@ -118,6 +118,7 @@ tests(
     ${tests}/sibr/sibr0010vector.sps
     ${tests}/sibr/sibr0010string.sps
     ${tests}/sibr/sibr0011.sps
+    ${tests}/sibr/sibr0012gen.sps
     )
 
 io_tests( # Run on temporary/empty dir

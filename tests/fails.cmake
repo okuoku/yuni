@@ -12,6 +12,9 @@ set(expected_failures
     inexact1-STKLOS
     inexact1-SCM
 
+    # SIBR0012, not sure if it allowed
+    sibr0012gen-STKLOS
+
     #############################################
     ## Bugs
     #############################################
