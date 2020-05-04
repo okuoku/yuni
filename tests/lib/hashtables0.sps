@@ -64,6 +64,7 @@
 (test-hashtable make-eq-hashtable
                 'NEVERLAND
                 (0 1)
+                (-1 "m")
                 (1 2)
                 (3 4)
                 ("a" 6)
@@ -73,6 +74,7 @@
 (test-hashtable make-eqv-hashtable
                 'NEVERLAND
                 (0 1)
+                (-1 "m")
                 (1 2)
                 (3 4)
                 ("a" 5)
