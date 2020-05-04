@@ -2,6 +2,11 @@
 ;; Runtime for selfboot
 ;;
 
+(define-syntax library
+  (syntax-rules ()
+    ((_ name (export ...) (import ...) body ...)
+     (begin body ...))))
+
 (define (%selfboot-file->sexp-list fn)
   (call-with-input-file 
     fn
@@ -17,6 +22,7 @@
 (define (%selfboot-load prefix files)
   (for-each (lambda (e)
               (load (string-append %%selfboot-yuniroot "/" 
-                                   prefix "/" e)))
+                                   prefix "/" e)
+                    %%myenv))
             files))
 

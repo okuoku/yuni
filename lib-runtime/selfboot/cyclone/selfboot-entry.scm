@@ -1,12 +1,12 @@
-(import (scheme base)
+(import ;(scheme base)
         (scheme process-context)
         (scheme read)
-        (scheme cxr)
+        ;(scheme cxr)
         (scheme write)
-        (scheme repl)
+        ;(scheme repl)
         (scheme file)
         (scheme eval)
-        (scheme load)
+        ;(scheme load)
         (scheme inexact)
         )
 
@@ -91,24 +91,51 @@
                                   %%selfboot-orig-command-line
                                   %%selfboot-mypath))
 
-(define (metaenv) (environment '(meta)))
+(define myenv (interaction-environment))
 
 (define (%%selfboot-loadlib pth libname imports exports)
+  #|
   (eval `(define-library ,libname
                          (export ,@exports)
                          (import (yuni-runtime r7rs) ,@imports)
-                         (include ,pth))
-        (metaenv)))
+                         (include ,pth)))
+  |#
+  ;(write (list 'LOADLIB pth)) (newline)
+  (load pth myenv))
 
-(define (%%selfboot-load-program pth) (load pth))
+(define (%%selfboot-load-program pth) 
+  (define (readprog fn)
+    (call-with-input-file
+      fn
+      (lambda (p)
+        (let loop ((cur '()))
+         (let ((r (read p)))
+          (if (eof-object? r)
+            (reverse cur)
+            (loop (cons r cur))))))))
+  (write (list 'LOADPROG pth)) (newline)
+  (let ((sexp (readprog pth)))
+   (unless (and (pair? sexp) (pair? (car sexp))
+                (eq? 'import (caar sexp)))
+     (error "Program must start with (import ...)"))
+
+   (for-each
+     (lambda (exp)
+       (write (list 'eval: exp)) (newline)
+       (eval exp myenv))
+     (cdr sexp))))
+
 
 (define (%%selfboot-load-aliaslib truename alias* export*)
+  #|
   (for-each (lambda (libname)
               (let ((code `(define-library ,libname
                                     (export ,@export*)
                                     (import ,truename))))
-                (eval code (metaenv))))
-            alias*))
+                (eval code)))
+            alias*)
+  |#
+  'do-nothing)
 
 (define %%selfboot-impl-type 'cyclone)
 (define %%selfboot-core-libs '((scheme base)
@@ -127,7 +154,22 @@
 (when (string=? %%selfboot-yuniroot "")
   (set! %%selfboot-yuniroot "."))
 
-(load (string-append %%selfboot-yuniroot "/lib-runtime/r7rs/yuni-runtime/r7rs.sld") (metaenv))
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/cyclone/selfboot-runtime.scm"))
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm"))
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/run-program.scm")) 
+;; Setup environment
+(define (inject-var! sym obj)
+  ((eval `(begin (define ,sym #f) (lambda (obj) (set! ,sym obj))) myenv)
+   obj))
+
+(set! %%selfboot-program-args (list "vectors0.sps")) ;; DEBUG DEBUG
+(inject-var! '%%selfboot-yuniroot %%selfboot-yuniroot)
+(inject-var! '%%selfboot-program-args %%selfboot-program-args)
+(inject-var! '%%selfboot-impl-type %%selfboot-impl-type)
+(inject-var! '%%selfboot-core-libs %%selfboot-core-libs)
+(inject-var! '%%selfboot-loadlib %%selfboot-loadlib)
+(inject-var! '%%selfboot-load-aliaslib %%selfboot-load-aliaslib)
+(inject-var! '%%selfboot-load-program %%selfboot-load-program)
+(inject-var! '%%myenv myenv)
+
+;(load (string-append %%selfboot-yuniroot "/lib-runtime/r7rs/yuni-runtime/r7rs.sld"))
+(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/cyclone/selfboot-runtime.scm") myenv)
+(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm") myenv)
+(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/run-program.scm") myenv) 
