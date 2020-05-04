@@ -58,7 +58,9 @@ macro(checkimpl nam impl)
     endif()
 endmacro()
 
-macro(checkimpls nam cmd impl)
+macro(checkimpls nam cmd impl yuniname)
+    set(YUNI_IDENT_${impl} ${yuniname})
+
     if(YUNI_WITH_YUNIBASE)
         if(NOT YUNI_${impl})
             if(EXISTS ${YUNIBASE_VANILLA_PATH}/${cmd})
@@ -99,29 +101,29 @@ writeproxy(run.cmake)
 set(impls)
 
 checkimpls(
-    # Impl name   Cmd name      CMake Varname
+    # Impl name   Cmd name      CMake Varname   yuniname
     ## R6RS+R7RS
-    digamma       digamma       DIGAMMA
-    guile3        guile3        GUILE3 # Currently yunibase only
-    sagittarius   sagittarius   SAGITTARIUS
+    digamma       digamma       DIGAMMA         digamma
+    guile3        guile3        GUILE3          guile  # Currently yunibase only
+    sagittarius   sagittarius   SAGITTARIUS     sagittarius
     ## R7RS
-    chibi-scheme  chibi-scheme  CHIBI_SCHEME
-    chicken       csi           CHICKEN5_CSI
+    chibi-scheme  chibi-scheme  CHIBI_SCHEME    chibi-scheme
+    chicken       csi           CHICKEN5_CSI    chicken
     #cyclone       icyc          ICYC
-    gauche        gosh          GOSH
-    kawa          kawa          KAWA
+    gauche        gosh          GOSH            gauche
+    kawa          kawa          KAWA            kawa
     ## R6RS
-    chez          chez-scheme   CHEZ_SCHEME
-    guile         guile         GUILE # Guile2(R6RS only)
-    ironscheme    IRONSCHEME    IRON_SCHEME # FIXME:
-    racket        racket        RACKET
+    chez          chez-scheme   CHEZ_SCHEME     chez
+    guile         guile         GUILE           guile  # Guile2(R6RS only)
+    ironscheme    IRONSCHEME    IRON_SCHEME     ironscheme # FIXME:
+    racket        racket        RACKET          racket
     ## Generic Scheme
-    biwascheme    biwasyuni     BIWASYUNI
-    gambit        gsi           GSI
-    mit-scheme    mit-scheme    MIT_SCHEME
-    s7            s7yuni        S7
-    scm           scm           SCM
-    stklos        stklos        STKLOS
+    biwascheme    biwasyuni     BIWASYUNI       biwascheme
+    gambit        gsi           GSI             gambit
+    mit-scheme    mit-scheme    MIT_SCHEME      mit-scheme
+    s7            s7yuni        S7              s7
+    scm           scm           SCM             scm
+    stklos        stklos        STKLOS          stklos
     )
 
 file(APPEND ${VARFILE} "set(YUNIBOOT_IMPLS\n")

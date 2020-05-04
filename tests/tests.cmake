@@ -28,6 +28,15 @@ function(add_selfboot_test0 impl expect_error iotest script)
     endif()
 endfunction()
 
+function(add_selfboot_test_ident)
+    foreach(impl ${impls})
+        add_selfboot_test0(${impl} OFF OFF
+            ${tests}/lib/ident0.sps
+            -IMPLNAME
+            ${YUNI_IDENT_${impl}})
+    endforeach()
+endfunction()
+
 function(add_selfboot_test impl script)
     add_selfboot_test0(${impl} OFF OFF ${script} ${ARGN})
 endfunction()
@@ -138,6 +147,8 @@ negative_tests(
 
 runtest(${tests}/newboot/testarg0.sps ARGS SPLITHERE)
 runtest(${tests}/newboot/testarg1.sps ARGS SPLITHERE a 1 c)
+
+add_selfboot_test_ident()
 
 # YUNIFE
 
