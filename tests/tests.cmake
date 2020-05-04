@@ -123,6 +123,8 @@ tests(
     ${tests}/lib/lighteval0.sps
     ${tests}/lib/hashtables0.sps
     ${tests}/lib/miniread0.sps
+    ${tests}/lib/yuniio0.sps
+    ${tests}/lib/yuniio1.sps
     ${tests}/app/basic/app.sps
     ${tests}/sibr/sibr0010vector.sps
     ${tests}/sibr/sibr0010string.sps
