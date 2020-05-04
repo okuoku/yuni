@@ -12,6 +12,7 @@
            ;; R6RS
            ; Constructor
            make-eq-hashtable
+           make-eqv-hashtable
            ; Mutators
            hashtable-set!
            hashtable-update!
@@ -38,6 +39,8 @@
 
 (define (make-eq-hashtable)
   (make-hash-table 8 eq?))
+(define (make-eqv-hashtable)
+  (make-hash-table 8 eqv?))
 
 (define %%yuni-false-guard-obj (cons #f #f))
 (define (%%yuni-hashtable-result-filter v fallback)

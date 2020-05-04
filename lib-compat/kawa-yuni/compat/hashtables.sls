@@ -12,6 +12,7 @@
            ;; R6RS
            ; Constructor
            make-eq-hashtable
+           make-eqv-hashtable
            ; Mutators
            hashtable-set!
            hashtable-update!

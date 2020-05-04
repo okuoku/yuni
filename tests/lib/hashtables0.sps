@@ -2,9 +2,9 @@
         (yunitest mini)
         (yuni hashtables))
 
-;; FIXME: Currently it's only for lighteval
-;; 
 ;;   make-symbol-hashtable
+;;   make-eq-hashtable
+;;   make-eqv-hashtable
 ;;   hashtable-ref
 ;;   hashtable-set!
 ;;   hashtable-entries
@@ -60,5 +60,23 @@
  (vector-for-each (lambda (k)
                     (check-equal k (hashtable-ref testht k #f)))
                   v))
+
+(test-hashtable make-eq-hashtable
+                'NEVERLAND
+                (0 1)
+                (1 2)
+                (3 4)
+                ("a" 6)
+                ("b" 7)
+                (0.0 8))
+
+(test-hashtable make-eqv-hashtable
+                'NEVERLAND
+                (0 1)
+                (1 2)
+                (3 4)
+                ("a" 5)
+                ("b" 6)
+                (0.0 7))
 
 (check-finish)
