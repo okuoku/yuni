@@ -36,6 +36,17 @@ function(emit_vanilla_runner_sh0 flav impl cmd cmdname)
         "")
 endfunction()
 
+function(emit_vanilla_runner_sh_icyc flav impl cmd)
+    # flav = stable | current
+    file(MAKE_DIRECTORY ${YUNIBASE_VANILLA_PATH})
+    emit_tmpl_runner_sh(${YUNIBASE_VANILLA_PATH}/${cmd}
+        ${_ldpathname}
+        ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/lib
+        ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin
+        ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/bin/${cmd}
+        "-A ${YUNI_WITH_YUNIBASE}/${flav}/${impl}/share/cyclone")
+endfunction()
+
 function(emit_vanilla_runner_sh flav impl cmd)
     emit_vanilla_runner_sh0(${flav} ${impl} ${cmd} ${cmd})
 endfunction()
@@ -215,7 +226,7 @@ function(emit_yunibase_runners)
         endif()
         if(YUNIBASE_HAVE_CYCLONE_CURRENT)
             emit_vanilla_runner_sh(current cyclone cyclone)
-            emit_vanilla_runner_sh(current cyclone icyc)
+            emit_vanilla_runner_sh_icyc(current cyclone icyc)
         endif()
         if(YUNIBASE_HAVE_STKLOS_CURRENT)
             emit_vanilla_runner_sh(current stklos stklos)

@@ -84,7 +84,9 @@
   (let ((npth (%%pathslashfy scmpath)))
    (%%pathsimplify (string-append npth "/../../../.."))))
 
-(define %%selfboot-orig-command-line (command-line))
+(define (%%drop-last lis) (reverse (cdr (reverse lis))))
+
+(define %%selfboot-orig-command-line (%%drop-last (command-line)))
 (define %%selfboot-mypath (%%extract-entrypoint-path %%selfboot-orig-command-line))
 (define %%selfboot-yuniroot (%%locate-yuniroot-fromscmpath %%selfboot-mypath))
 (define %%selfboot-program-args (%%extract-program-args
@@ -159,7 +161,7 @@
   ((eval `(begin (define ,sym #f) (lambda (obj) (set! ,sym obj))) myenv)
    obj))
 
-(set! %%selfboot-program-args (list "vectors0.sps")) ;; DEBUG DEBUG
+;(set! %%selfboot-program-args (list "vectors0.sps")) ;; DEBUG DEBUG
 (inject-var! '%%selfboot-yuniroot %%selfboot-yuniroot)
 (inject-var! '%%selfboot-program-args %%selfboot-program-args)
 (inject-var! '%%selfboot-impl-type %%selfboot-impl-type)

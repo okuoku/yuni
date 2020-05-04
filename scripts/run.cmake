@@ -26,6 +26,13 @@ set(arg_prog ${arg_prog_${IMPL}})
 set(arg_ci ${arg_ci_${IMPL}})
 set(arg_post ${arg_post_${IMPL}})
 
+set(arg_runner ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${IMPL}})
+if(arg_WAR_LAST_RUNNER_${IMPL})
+    set(arg_runner2 ${arg_runner})
+else()
+    set(arg_runner2)
+endif()
+
 list(GET args 0 script)
 get_filename_component(appdir ${script} PATH)
 if(NOT appdir)
@@ -59,10 +66,11 @@ execute_process(
     ${YUNI_${IMPL}} 
     ${arg_ci}
     ${arg_prog}
-    ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${IMPL}}
+    ${arg_runner}
     ${arg_post}
     -LIBPATH ${appdir}
     ${args}
+    ${arg_runner2}
     RESULT_VARIABLE rr
     ${arg_workdir}
     )

@@ -48,8 +48,14 @@ macro(checkimpl nam impl)
         endif()
         if(UNIX)
             set(_cmd "${CMAKE_CURRENT_BINARY_DIR}/run-${nam}.sh")
+            set(_runner "${YUNIROOT}/lib-runtime/selfboot/${selfboot_${impl}}")
+            if(arg_WAR_LAST_RUNNER_${impl})
+                set(_war_runner "${_runner}")
+            else()
+                set(_war_runner)
+            endif()
             file(WRITE ${_cmd}
-                "#!/bin/sh\nexec ${YUNI_${impl}} ${arg_ci_${impl}} ${arg_prog_${impl}} ${YUNIROOT}/lib-runtime/selfboot/${selfboot_${impl}} $*\n")
+                "#!/bin/sh\nexec ${YUNI_${impl}} ${_arg_root} ${arg_ci_${impl}} ${arg_prog_${impl}} ${_runner} $* ${_war_runner}\n")
             execute_process(
                 COMMAND chmod +x ${_cmd})
         endif()
@@ -109,7 +115,7 @@ checkimpls(
     ## R7RS
     chibi-scheme  chibi-scheme  CHIBI_SCHEME    chibi-scheme
     chicken       csi           CHICKEN5_CSI    chicken
-    #cyclone       icyc          ICYC
+    cyclone       icyc          ICYC            cyclone
     gauche        gosh          GOSH            gauche
     kawa          kawa          KAWA            kawa
     ## R6RS

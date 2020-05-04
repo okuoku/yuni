@@ -28,3 +28,5 @@ set(arg_prog_SCM "-l")
 set(arg_ci_SCM "--no-symbol-case-fold")
 
 set(arg_post_STKLOS "--")
+
+set(arg_WAR_LAST_RUNNER_ICYC ON)
