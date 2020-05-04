@@ -52,6 +52,9 @@
 (check-equal "b" (utf8->string (bytevector 97 98 99) 1 2))
 (check-equal "" (utf8->string (bytevector 97 98 99) 1 1))
 
+(check-equal #t (bytevector? (bytevector)))
+(check-equal #t (bytevector? (bytevector 0)))
+(check-equal #f (bytevector? 0))
 
 (let ((bv1 (bytevector 1 2 3 4 5 6 7 8))
       (bv2 (bytevector 99 99 99)))

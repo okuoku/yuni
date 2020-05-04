@@ -215,6 +215,7 @@
   `(let () ,@(map (lambda (e) `(define . ,e)) vals) . ,body))
 
 ;;; bytevectors
+(define bytevector? array?)
 (define bytevector bytes)
 (define make-bytevector make-bytes)
 (define bytevector-copy bytes-copy)
