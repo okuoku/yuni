@@ -288,9 +288,10 @@
     ;; Pass1 create idx pair/vectors
     (runfill pairoff pairs
              (lambda (idx)
-               (vector-set! temp idx
-                            (cons (leb128-get port)
-                                  (leb128-get port)))))
+               (let ((a (leb128-get port)))
+                (let ((b (leb128-get port)))
+                  (vector-set! temp idx (cons a b))))))
+
     (runfill vectoroff vectors
              (lambda (idx)
                (let* ((len (leb128-get port))

@@ -60,6 +60,7 @@
 (loopback0 '(a))
 (loopback0 '(a . b))
 (loopback0 '(a . "x"))
+(loopback0 '(a b c d))
 
 (let ((p (cons #f #f)))
  (set-cdr! p p)
