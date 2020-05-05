@@ -8,6 +8,7 @@
         (scheme eval)
         ;(scheme load)
         (scheme inexact)
+        (scheme case-lambda)
         )
 
 (define (%%extract-program-args args* entrypth)
