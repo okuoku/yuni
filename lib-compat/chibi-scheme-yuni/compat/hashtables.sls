@@ -39,9 +39,9 @@
   (make-hash-table e h))
 
 (define (make-eq-hashtable)
-  (make-hashtable hash-by-identity eq?))         
+  (make-hashtable hash-by-identity eq?))
 (define (make-eqv-hashtable)
-  (make-hashtable hash-by-identity eqv?))
+  (make-hashtable hash eqv?))
 
 (define make-symbol-hashtable make-eq-hashtable)
 
