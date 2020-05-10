@@ -44,13 +44,13 @@
   (make-hash-table e h))
 
 (define (make-eq-hashtable)
-  (make-hashtable hash-by-identity eq?))         
+  (make-strong-eq-hash-table))         
 (define (make-eqv-hashtable)
-  (make-hashtable hash-by-identity eqv?))
+  (make-strong-eqv-hash-table))
 (define (make-integer-hashtable)
-  (make-hashtable hash-by-eqv =))
+  (make-strong-eqv-hash-table))
 (define (make-string-hashtable)
-  (make-hashtable hash-by-eqv string=?))
+  (make-string-hash-table))
 
 (define hashtable-for-each hash-table-walk)
 (define (hashtable-fold . arg) (error "unimpl"))
