@@ -81,4 +81,12 @@
                 ("b" 6)
                 (0.0 7))
 
+(let ((a 0.0)
+      (ht (make-eqv-hashtable)))
+  (hashtable-set! ht a 'a)
+  (check-equal 'a (hashtable-ref ht a #f))
+  (hashtable-set! ht 0.0 'b)
+  (check-equal 'b (hashtable-ref ht a #f))
+  (check-equal 'b (hashtable-ref ht 0.0 #f)))
+
 (check-finish)
