@@ -16,6 +16,7 @@ set(selfboot_DIGAMMA "digamma/selfboot-entry.sps")
 set(selfboot_ICYC "cyclone/selfboot-entry.scm")
 set(selfboot_STKLOS "stklos/selfboot-entry.scm")
 set(selfboot_SCM "scm/selfboot-entry.scm")
+set(selfboot_FOMENT "foment/selfboot-entry.scm")
 
 set(arg_prog_CHEZ_SCHEME "--program")
 set(arg_prog_CHICKEN_CSI "-script")

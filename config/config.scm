@@ -45,6 +45,8 @@
     (gauche-yuni => yuni))
   (compat-kawa
     (kawa-yuni => yuni))
+  (compat-foment
+    (foment-yuni => yuni))
 
   ;; R6RS
   (compat-chez
@@ -155,6 +157,10 @@
     yuni
     r7rs-common
     compat-cyclone)
+  (foment
+    yuni
+    r7rs-common
+    compat-foment)
   ) 
 
 (GenR6RSCommon

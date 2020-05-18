@@ -4,12 +4,12 @@
 
 (define (str-nonterm) 
   (case (ident-impl)
-    ((gambit) #t)
+    ((gambit foment) #t)
     (else #f)))
 
 (define (str-term) 
   (case (ident-impl)
-    ((gambit cyclone) #t)
+    ((gambit cyclone foment) #t)
     (else #f)))
 
 (define (checkans s)
