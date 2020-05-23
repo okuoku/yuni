@@ -84,6 +84,9 @@
   (compat-stklos
     (stklos-yuni => yuni)
     (stklos-scheme => scheme))
+  (compat-bigloo
+    (bigloo-yuni => yuni)
+    (bigloo-scheme => scheme))
 
   ;; Unsupported
   (compat-picrin
@@ -237,4 +240,9 @@
     yunifake
     r7rs-common
     compat-scm)
+  (bigloo
+    yuni
+    yunifake
+    r7rs-common
+    compat-bigloo)
   )

@@ -70,6 +70,36 @@
    "lib-runtime/scm/hashtable.scm"
    "lib-runtime/scm/string-output-port.scm" ;; Depends hashtable
    ))
+(bigloo
+  ;; Pre
+  ()
+  ;; Runtime
+  ("lib-runtime/generic/std/boolean_eqp.scm"
+   "lib-runtime/generic/std/list-copy.scm"
+   "lib-runtime/generic/std/list-set_x.scm"
+   "lib-runtime/generic/std/quotient.scm"
+   "lib-runtime/generic/std/modulo.scm"
+   "lib-runtime/generic/std/remainder.scm"
+   "lib-runtime/generic/std/floor-quotient.scm"
+   "lib-runtime/generic/std/floor-remainder.scm"
+   "lib-runtime/generic/std/floor_div.scm"
+   "lib-runtime/generic/std/truncate-quotient.scm"
+   "lib-runtime/generic/std/truncate-remainder.scm"
+   "lib-runtime/generic/std/truncate_div.scm"
+   "lib-runtime/generic/std/string-map.scm"
+   "lib-runtime/generic/std/string-for-each.scm"
+   "lib-runtime/generic/std/string_to_vector.scm"
+   "lib-runtime/generic/std/string_to_list.scm"
+   "lib-runtime/generic/std/vector_to_string.scm"
+   "lib-runtime/generic/std/vector-map.scm"
+   "lib-runtime/generic/std/vector-for-each.scm"
+   "lib-runtime/generic/std/string-copy.scm"
+   "lib-runtime/generic/std/vector-copy.scm"
+   "lib-runtime/generic/std/vector_to_list.scm"
+   "lib-runtime/generic/std/vector-copy_x.scm"
+   "lib-runtime/generic/std/vector-append.scm"
+   "lib-runtime/generic/std/vector-fill_x.scm"
+   ) )
 (generic
   ;; Pre
   ("external/yuni-synrules.scm"
