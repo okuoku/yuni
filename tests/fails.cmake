@@ -28,10 +28,6 @@ set(expected_failures
     # https://github.com/racket/r6rs/issues/3
     io0-RACKET
 
-    # STKLOS: Bug [(read-bytevector! bv2 p 0 3)]  Expected: 2  Actual: 3
-    # https://github.com/okuoku/yuni/issues/133
-    io0-STKLOS
-
     # https://github.com/okuoku/yuni/issues/128
     fecore0-KAWA
 
