@@ -44,9 +44,8 @@
 
 (define (make-eq-hashtable)
   (make-hash-table eq?))
-;; FIXME: Workaround
 (define (make-eqv-hashtable)
-  (make-hash-table equal?))
+  (make-hash-table eqv?))
 
 
 (define (make-integer-hashtable)
