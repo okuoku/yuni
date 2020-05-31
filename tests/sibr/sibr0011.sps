@@ -4,7 +4,7 @@
 
 (define (expected-result)
   (case (ident-impl)
-    ((racket) #f)
+    ((racket ironscheme) #f)
     (else #t)))
 
 (check-equal (expected-result) (file-exists? "."))

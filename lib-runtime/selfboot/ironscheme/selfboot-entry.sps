@@ -110,6 +110,9 @@
   ;(parameterize ((interaction-environment myenv)) (load pth)) 
   (xload pth))
 
+(define (loadprogram pth)
+  (xload pth))
+
 (define (set-top-level-value! sym obj env)
   (let ((setter (eval `(begin (define ,sym #f) 
                               (lambda (obj) (set! ,sym obj)))
@@ -131,6 +134,10 @@
   (set-top-level-value! '%%selfboot-program-args program-args myenv)
   (set-top-level-value! '%%selfboot-impl-type 'ironscheme myenv)
   (set-top-level-value! '%%selfboot-core-libs '((rnrs)
+                                                (rnrs base)
+                                                (rnrs control)
+                                                (rnrs hashtables)
+                                                (rnrs eval)
                                                 (rnrs mutable-pairs)
                                                 (rnrs mutable-strings)
                                                 (rnrs r5rs)
