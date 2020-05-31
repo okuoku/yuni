@@ -79,6 +79,12 @@ if(workdir)
     file(REMOVE_RECURSE "${workdir}")
 endif()
 
+if(UNIX)
+    # Restore TTY
+    execute_process(
+        COMMAND stty sane)
+endif()
+
 if(NOT EXPECT_ERROR)
     if(rr)
         message(FATAL_ERROR "Err: ${rr}")
