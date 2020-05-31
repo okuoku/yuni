@@ -34,6 +34,9 @@ set(expected_failures
     # https://github.com/okuoku/yuni/issues/118
     fail2-RACKET
 
+    # https://github.com/okuoku/yuni/issues/140
+    iter0-IRON_SCHEME
+
     #############################################
     ## Known limitation / Resolved as spec
     #############################################
