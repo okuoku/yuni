@@ -43,8 +43,5 @@ set(expected_failures
 
     # Quasi-quote incompatibility
     # https://github.com/okuoku/yuni/issues/117
-    qq1-KAWA
     qq1-S7
-    qq1-SCM
-
     )
