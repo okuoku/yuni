@@ -2,10 +2,14 @@
          (export
            ;; Yuni extensions
            make-symbol-hashtable
+           make-string-hashtable
+           make-integer-hashtable
+           ; Iter
+           hashtable-for-each
+           hashtable-fold
            ;; 13.1 Constructors
            make-eq-hashtable
            make-eqv-hashtable
-           make-hashtable
 
            ;; 13.2 Procedures
            hashtable?
@@ -44,6 +48,11 @@
   (make-hashtable hash eqv?))
 
 (define make-symbol-hashtable make-eq-hashtable)
+(define make-integer-hashtable make-eqv-hashtable)
+(define make-string-hashtable make-eqv-hashtable)
+
+(define (hashtable-for-each . _) (error "unimpl"))
+(define (hashtable-fold . _) (error "unimpl"))
 
 (define hashtable? hash-table?)
 

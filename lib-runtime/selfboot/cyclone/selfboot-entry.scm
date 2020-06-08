@@ -9,7 +9,10 @@
         ;(scheme load)
         (scheme inexact)
         (scheme case-lambda)
+        (scheme cyclone util)
         )
+
+(define (yuni/gensym sym) (gensym sym))
 
 (define (%%extract-program-args args* entrypth)
   (if (string=? (car args*) entrypth)
@@ -53,7 +56,7 @@
           (pathcomponent '() (cons (list->string (reverse acc)) cur) r)
           (pathcomponent (cons c acc) cur r)))))
   (define (simple cur m q)
-    (write (list 'simple cur m q)) (newline)
+    ;(write (list 'simple cur m q)) (newline)
     (if (null? q)
       (if (null? cur)
         (reverse (cons m cur))
@@ -97,13 +100,7 @@
 (define myenv (interaction-environment))
 
 (define (%%selfboot-loadlib pth libname imports exports)
-  #|
-  (eval `(define-library ,libname
-                         (export ,@exports)
-                         (import (yuni-runtime r7rs) ,@imports)
-                         (include ,pth)))
-  |#
-  ;(write (list 'LOADLIB pth)) (newline)
+  (write (list 'LOADLIB pth)) (newline)
   (load pth myenv))
 
 (define (%%selfboot-load-program pth) 
@@ -122,6 +119,12 @@
                 (eq? 'import (caar sexp)))
      (error "Program must start with (import ...)"))
 
+   ;; Perform import
+   (let* ((im (car sexp))
+          (libs (cdr im)))
+     (write (list 'import: libs)) (newline)
+     (eval (cons 'import0 libs) myenv))
+
    (for-each
      (lambda (exp)
        (write (list 'eval: exp)) (newline)
@@ -130,15 +133,13 @@
 
 
 (define (%%selfboot-load-aliaslib truename alias* export*)
-  #|
+  (write (list 'alias: truename '=> alias*)) (newline)
   (for-each (lambda (libname)
-              (let ((code `(define-library ,libname
-                                    (export ,@export*)
-                                    (import ,truename))))
-                (eval code)))
-            alias*)
-  |#
-  'do-nothing)
+              (eval `(library ,libname 
+                              (export ,@export*)
+                              (import ,truename))
+                    myenv))
+            alias*))
 
 (define %%selfboot-impl-type 'cyclone)
 (define %%selfboot-core-libs '((scheme base)
@@ -151,6 +152,7 @@
                                (scheme write)
                                (scheme eval)
                                (srfi 69)
+                               (yuni scheme)
                                ))
 
 
@@ -171,8 +173,16 @@
 (inject-var! '%%selfboot-load-aliaslib %%selfboot-load-aliaslib)
 (inject-var! '%%selfboot-load-program %%selfboot-load-program)
 (inject-var! '%%myenv myenv)
+(inject-var! 'yuni/gensym yuni/gensym)
 
 ;(load (string-append %%selfboot-yuniroot "/lib-runtime/r7rs/yuni-runtime/r7rs.sld"))
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/cyclone/selfboot-runtime.scm") myenv)
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm") myenv)
+
+;; Load generic libmgr runtime
+
+(load (string-append %%selfboot-yuniroot "/lib-runtime/generic/verboselib.scm") myenv) 
+(load (string-append %%selfboot-yuniroot "/lib-runtime/generic/libmgr-file.scm") myenv) 
+(load (string-append %%selfboot-yuniroot "/lib-runtime/generic/libmgr-core.scm") myenv) 
+(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/cyclone/libmgr-macro-cyclone.scm") myenv)
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/run-program.scm") myenv) 

@@ -115,7 +115,7 @@ checkimpls(
     ## R7RS
     chibi-scheme  chibi-scheme  CHIBI_SCHEME    chibi-scheme
     chicken       csi           CHICKEN5_CSI    chicken
-    #cyclone       icyc          ICYC            cyclone
+    cyclone       icyc          ICYC            cyclone
     foment        foment        FOMENT          foment
     gauche        gosh          GOSH            gauche
     kawa          kawa          KAWA            kawa
