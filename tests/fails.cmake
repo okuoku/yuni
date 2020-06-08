@@ -37,6 +37,16 @@ set(expected_failures
     # https://github.com/okuoku/yuni/issues/140
     iter0-IRON_SCHEME
 
+    # Syntax
+    miniread0-ICYC
+    app-ICYC
+
+    # https://github.com/justinethier/cyclone/issues/379
+    io0-ICYC
+
+    # hashtable
+    hashtables0-ICYC
+
     #############################################
     ## Known limitation / Resolved as spec
     #############################################
