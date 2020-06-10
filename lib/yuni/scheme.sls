@@ -44,7 +44,8 @@ read-char read-error?  read-line read-string read-u8 real? remainder reverse
 round set! set-car! set-cdr! square string string->list string->number
 string->symbol string->utf8 string->vector string-append string-copy
 string-copy! string-fill! string-for-each string-length string-map string-ref
-string-set! string<=? string<? string=? string>=? string>? string? substring
+;string-set! 
+string<=? string<? string=? string>=? string>? string? substring
 symbol->string symbol=? symbol? syntax-error syntax-rules textual-port? truncate
 truncate-quotient truncate-remainder truncate/ 
 ;u8-ready?
