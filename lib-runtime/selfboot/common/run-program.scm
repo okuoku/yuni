@@ -1,6 +1,6 @@
 (define %%selfboot-current-command-line %%selfboot-program-args)
 (define %%selfboot-current-libpath (list %%selfboot-yuniroot))
-(define (command-line) %%selfboot-current-command-line)
+(define (yuni/command-line) %%selfboot-current-command-line)
 
 ;; Scan arguments
 (let loop ((q %%selfboot-current-command-line))
@@ -19,7 +19,7 @@
    #t))
 
 ;; Collect deps and load
-(let ((r (command-line)))
+(let ((r (yuni/command-line)))
  (let* ((prog (car r))
         (codetab (%%selfboot-gen-filelist 
                    %%selfboot-current-libpath
@@ -29,15 +29,23 @@
                      (pth (caddr e))
                      (truename (car e))
                      (aliasnames (cadddr e))
-                     (raw-imports (car (car (cddddr e))))
-                     (exports (cdr (car (cddddr e)))))
-                 (let ((filepth (string-append dir "/" pth)))
-                  ;(write (list 'LOAD: filepth)) (newline)
-                  (%%selfboot-loadlib filepth truename raw-imports exports)
-                  (when aliasnames
-                    ;(write (list 'ALIAS: truename '=> aliasnames exports))
-                    ;(newline)
-                    (%%selfboot-load-aliaslib truename aliasnames exports)))))
+                     (libexports (car (cddddr e))))
+                 (cond
+                   ((pair? libexports)
+                    (let ((raw-imports (car libexports))
+                          (exports (cdr libexports))
+                          (filepth (string-append dir "/" pth)))
+                      ;(write (list 'LOAD: filepth)) (newline)
+                      (%%selfboot-loadlib filepth truename raw-imports exports)
+                      (when aliasnames
+                        ;(write (list 'ALIAS: truename '=> aliasnames exports))
+                        ;(newline)
+                        (%%selfboot-load-aliaslib 
+                          truename aliasnames exports))))
+                   (else ;; Polyfill
+                     (let ((filepth (string-append dir "/" pth)))
+                      ;; Special command to load polyfill
+                      (%%selfboot-loadlib filepth libexports #t #t))))))
              codetab)
    (%%selfboot-load-program prog)))
 

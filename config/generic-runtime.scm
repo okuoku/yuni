@@ -72,33 +72,36 @@
    ))
 (bigloo
   ;; Pre
-  ()
+  ("lib-runtime/bigloo/prelib.scm")
   ;; Runtime
-  ("lib-runtime/generic/std/boolean_eqp.scm"
-   "lib-runtime/generic/std/list-copy.scm"
-   "lib-runtime/generic/std/list-set_x.scm"
-   "lib-runtime/generic/std/quotient.scm"
-   "lib-runtime/generic/std/modulo.scm"
-   "lib-runtime/generic/std/remainder.scm"
-   "lib-runtime/generic/std/floor-quotient.scm"
-   "lib-runtime/generic/std/floor-remainder.scm"
-   "lib-runtime/generic/std/floor_div.scm"
-   "lib-runtime/generic/std/truncate-quotient.scm"
-   "lib-runtime/generic/std/truncate-remainder.scm"
-   "lib-runtime/generic/std/truncate_div.scm"
-   "lib-runtime/generic/std/string-map.scm"
-   "lib-runtime/generic/std/string-for-each.scm"
-   "lib-runtime/generic/std/string_to_vector.scm"
-   "lib-runtime/generic/std/string_to_list.scm"
-   "lib-runtime/generic/std/vector_to_string.scm"
-   "lib-runtime/generic/std/vector-map.scm"
-   "lib-runtime/generic/std/vector-for-each.scm"
-   "lib-runtime/generic/std/string-copy.scm"
-   "lib-runtime/generic/std/vector-copy.scm"
-   "lib-runtime/generic/std/vector_to_list.scm"
-   "lib-runtime/generic/std/vector-copy_x.scm"
-   "lib-runtime/generic/std/vector-append.scm"
-   "lib-runtime/generic/std/vector-fill_x.scm"
+  (;; Use polyfills
+   boolean=?
+   list-copy
+   list-set!
+   quotient
+   modulo
+   remainder
+   floor-quotient
+   floor-remainder
+   floor/
+   truncate-quotient
+   truncate-remainder
+   truncate/
+   string-map
+   string-for-each
+   string->vector
+   string->list
+   vector->string
+   vector-map
+   vector-for-each
+   string-copy
+   vector-copy
+   vector->list
+   vector-copy!
+   vector-append
+   vector-fill!
+   ;; Overrides
+   "lib-runtime/selfboot/bigloo/overrides.scm" ;; FIXME: Selfboot only
    ) )
 (generic
   ;; Pre

@@ -1,4 +1,4 @@
-(define command-line #f)
+;(define command-line #f)
 (define (yuni/gensym sym) (gensym sym))
 (define (yuni/identifier? sym) (symbol? sym))
 
@@ -32,7 +32,7 @@
   (let ((sexp (%selfboot-file->sexp-list pth)))
    (for-each
      (lambda (exp) 
-       ;(write (list 'eval: exp)) (newline)
+       (write (list 'eval: exp)) (newline)
        (eval/filt exp myenv))
      sexp)))
 
@@ -58,9 +58,28 @@
 (define %selfboot-file-exists? file-exists?)
 
 (define (%%selfboot-loadlib pth libname imports exports)
-  (myload pth))
+  (cond
+    ((and (eq? #t imports) (eq? #t exports))
+     ;; Load polyfill
+     (write (list 'POLYFILL: libname pth)) (newline)
+     (let ((src (%selfboot-file->sexp-list pth)))
+       (eval
+         (cons
+           'yuni/library-for-polyfill
+           (cons
+             libname
+             (cons
+               libname
+               src)))
+         myenv)))
+    (else
+      (myload pth))))
 
-(define (%%selfboot-load-program pth) (myload pth))
+(define (%%selfboot-load-program pth)
+  (let ((sexp (yuni/xform-top-level
+                (%selfboot-file->sexp-list pth))))
+    (write (list 'SEXP: sexp)) (newline)
+    (eval sexp myenv)))
 
 (define (%selfboot-load prefix files)
   (for-each (lambda (e)

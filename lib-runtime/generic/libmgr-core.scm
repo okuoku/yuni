@@ -26,6 +26,16 @@
   (let ((x (yuni/library-aliasname* lib)))
    (vector-set! lib 5 (cons name x))))
 
+(define *yuni/base-library*
+  (vector 
+    #f ;; name
+    #t ;; realized?
+    #t ;; promoted?
+    '() ;; Import-libs
+    '() ;; Rename-pairs
+    '() ;; Aliases
+    ))
+
 (define (yuni/register-library! libname renames)
   (let ((newlib (make-vector 6 #f)))
    (vector-set! newlib 0 libname)
@@ -119,9 +129,9 @@
                    (else (loop (cdr c))))))
        (scan-stxs! (cdr cur)))
       (else #f)))
+  (define (renamefilt e)
+    (list (car e) (cdr e)))
   (define (calcinrenames renames import*)
-    (define (filt e)
-      (list (car e) (cdr e)))
     (let loop ((cur renames)
                (q import*))
       (if (pair? q)
@@ -130,7 +140,7 @@
           (let* ((lib (yuni/library-lookup libname))
                  (needthis? (and lib (not (yuni/library-promoted? lib)))))
             (if needthis?
-              (loop (append (map filt (yuni/library-renamepair* lib)) cur) d)
+              (loop (append (map renamefilt (yuni/library-renamepair* lib)) cur) d)
               (loop cur d))))
         cur)))
 
@@ -155,7 +165,10 @@
              (storages (map (lambda (e) (list 'define (cdr e) #f)) renames))
              (setters (map (lambda (e) (list 'set! (cdr e) (car e))) renames))
              (prefix (yuni/xform-realize-library-hook-itr '() import* #f))
-             (inrenames (calcinrenames '() import*))
+             (inrenames (calcinrenames 
+                          ;; Start with base-library import
+                          (map renamefilt (yuni/library-renamepair* *yuni/base-library*)) 
+                          import*))
              (code (cons 'let (cons inrenames 
                                     (append libbody
                                             (cons (cons 'begin setters)
@@ -170,6 +183,27 @@
                     code
                     (list 'yuni/register-library! (list 'quote libname)
                           (list 'quote renames))))))))
+
+(define (yuni/xform-polyfill rename defsym exportsym body)
+  (let ((mysym (rename exportsym)))
+   (yuni/base-library-add-var! mysym exportsym)
+   ;; FIXME: Expand qq
+   `(begin 
+      (define ,mysym #f)
+      (let ()
+        ,@body
+        (set! ,mysym ,defsym)))))
+
+(define (yuni/xform-top-level body)
+  (define renames (map (lambda (p) (list (car p) (cdr p)))
+                       (yuni/library-renamepair* *yuni/base-library*)))
+  (let ((import-clause (car body))
+        (realbody (cdr body)))
+    ;; FIXME: Expand qq
+    `(begin
+       ,import-clause
+       (let ,renames
+        ,@realbody))))
 
 ;; Library runtimes
 (define (yuni/realize-library! loadlib libname promote?) ;; => code
@@ -190,4 +224,12 @@
      (else 
        ;; Do nothing
        #t))))
+
+(define (yuni/base-library-add-var! sym varname)
+  (PCK 'ADD-VAR: varname sym)
+  (vector-set! 
+    *yuni/base-library*
+    4 
+    (cons (cons varname sym) 
+          (yuni/library-renamepair* *yuni/base-library*))))
 

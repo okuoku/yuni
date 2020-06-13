@@ -67,7 +67,14 @@
                         %%selfboot-yuniroot)))
     (append
       (map (lambda (path)
-             (list #f %%selfboot-yuniroot path #f (cons #f #f)))
+             (cond
+               ((symbol? path)
+                ;; Polyfill
+                (let ((actual-path (%%selfboot-yuniconfig-get-polyfill-path
+                                     path)))
+                  (list #f %%selfboot-yuniroot actual-path #f path)))
+               (else
+                 (list #f %%selfboot-yuniroot path #f (cons #f #f)))))
            runtimefiles)
       (map (lambda (libinfo)
              (let ((names (car libinfo))

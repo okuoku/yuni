@@ -46,3 +46,6 @@
                                (cdr imports)
                                body)))
     r))
+
+(define-macro (yuni/library-for-polyfill exportsym defsym . body)
+  (yuni/xform-polyfill yuni/gensym defsym exportsym body))

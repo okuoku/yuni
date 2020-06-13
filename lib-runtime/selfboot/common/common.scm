@@ -2,5 +2,6 @@
                 '("pathname.scm"
                   "library-walk.scm"
                   "library-parser.scm"
+                  "polyfills.scm"
                   "yuniconfig.scm"
                   "genfilelist.scm"))
