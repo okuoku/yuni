@@ -184,5 +184,6 @@
 (load (string-append %%selfboot-yuniroot "/lib-runtime/generic/verboselib.scm") myenv) 
 (load (string-append %%selfboot-yuniroot "/lib-runtime/generic/libmgr-file.scm") myenv) 
 (load (string-append %%selfboot-yuniroot "/lib-runtime/generic/libmgr-core.scm") myenv) 
+(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/cyclone/command-line-cyclone.scm") myenv)
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/cyclone/libmgr-macro-cyclone.scm") myenv)
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/run-program.scm") myenv) 
