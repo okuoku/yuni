@@ -3,6 +3,8 @@
 (require 'byte)
 (require 'let-values)
 
+(define (command-line) (yuni/command-line))
+
 (define (nan? x) (not (= x x))) ;; FIXME:
 (define (inexact x) (exact->inexact x))
 (define (exact x) (inexact->exact x))
