@@ -35,6 +35,8 @@
                               (vector->list k)
                               (vector->list v)))))))))
 
+(define testht (make-symbol-hashtable))
+
 (test-hashtable make-symbol-hashtable 'NEVERLAND)
 
 (test-hashtable make-symbol-hashtable 'NEVERLAND
@@ -47,7 +49,6 @@
                 ((string->symbol "symbol with spaces") 123456)
                 ('mm (eof-object)))
 
-(define testht (make-symbol-hashtable))
 
 
 (hashtable-set! testht 'a 'a)
@@ -63,13 +64,13 @@
 
 (test-hashtable make-eq-hashtable
                 'NEVERLAND
-                (0 1)
-                (-1 "m")
-                (1 2)
-                (3 4)
+                ('a 1)
+                (#t "m")
+                (#f 2)
+                ('b 4)
                 ("a" 6)
                 ("b" 7)
-                (0.0 8))
+                ('x 8))
 
 (test-hashtable make-eqv-hashtable
                 'NEVERLAND
