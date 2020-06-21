@@ -64,3 +64,9 @@
 (yuni/base-library-add-var! '%%yunierror 'error)
 (yuni/base-library-add-var! 'yuni/command-line 'command-line)
 
+(define (log+ x . y?)
+  (if (null? y?)
+    (log x)
+    (/ (log x) (log (car y?)))))
+
+(yuni/base-library-add-var! 'log+ 'log)
