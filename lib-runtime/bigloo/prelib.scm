@@ -40,6 +40,15 @@
                     (apply (lambda ,(car choice) ,@(cdr choice)) args))))
               choices))))
 
+(define-syntax let-values
+  (syntax-rules ()
+    ((_ ((binds prod) cls ...) body ...)
+     (receive binds prod
+       (let-values (cls ...) body ...)))
+    ((_ () body ...)
+     (let ()
+      body ...))))
+
 (define textual-port? port?)
 
 (define (close-port p)
