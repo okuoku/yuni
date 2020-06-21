@@ -40,37 +40,10 @@
                     (apply (lambda ,(car choice) ,@(cdr choice)) args))))
               choices))))
 
-;; FIXME: Fake
+(define open-output-bytevector open-output-string)
+(define get-output-bytevector get-output-string)
 
-(define %yuni-bufports '())
-(define (%yuni-add-bufport! p out)
-  (warn "WARNING: Using fake bufport support!")
-  (set! %yuni-bufports (cons (cons p out) %yuni-bufports)))
-(define (%yuni-bufport-realize! p)
-  (let ((x (assq p %yuni-bufports)))
-   (and x
-        ((cdr x)))))
-
-(define (open-output-bytevector)
-  (define l '())
-  (define (out) 
-    (let ((s (list->bytes (reverse l))))
-     (set! l '())
-     s))
-  (let ((p (make-soft-port
-            (vector
-              (lambda (c) (set! l (cons (char->integer c) l)))
-              (lambda (s) (set! l (append 
-                                    (reverse (bytes->list (string->bytes s))) 
-                                    l)))
-              (lambda () 'do-nothing)
-              (lambda () (error "This is an output port"))
-              (lambda () 'do-nothing))
-            "w")))
-    (%yuni-add-bufport! p out)
-    p))
-
-(define get-output-bytevector %yuni-bufport-realize!)
+(define open-input-bytevector open-input-string)
 
 (define (%write-bytevector/itr bv port start end)
   (unless (= start end)
@@ -124,12 +97,12 @@
 
 (define (%read-bytevector/itr cur k port)
   (if (= k 0)
-    (list->bytes (reverse cur))
-    (let ((c (read-u8 port)))
+    (list->string (reverse cur))
+    (let ((c (read-char port)))
      (if (eof-object? c)
        (if (null? cur)
          c
-         (list->bytes (reverse cur)))
+         (list->string (reverse cur)))
        (%read-bytevector/itr (cons c cur) (- k 1) port)))))
 
 (define read-bytevector
