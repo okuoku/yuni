@@ -129,15 +129,15 @@
 
 (define bytevector-copy
   (case-lambda
-    ((b) (bytes-copy b))
+    ((b) (string-copy b))
     ((b start) (bytevector-copy b start (bytevector-length b)))
-    ((b start end) (subbytes b start end))))
+    ((b start end) (substring b start end))))
 
 (define (bytevector-u8-ref bv i) 
   (char->integer (string-ref bv i)))
 
 (define (bytevector-u8-set! bv i b) 
-  (string-set! bv i (integer->char i)))
+  (string-set! bv i (integer->char b)))
 
 (define bytevector-copy!
   (case-lambda
@@ -165,12 +165,8 @@
 
 (define utf8->string
   (case-lambda
-    ((b) (bytes->string b))
-    ((b start) (utf8->string b start (bytevector-length b)))
-    ((b start end) (bytes->string (bytevector-copy b start end)))))
+    ((b) b)
+    ((b start) (substring b start (string-length b)))
+    ((b start end) (substring b start end))))
 
-(define string->utf8
-  (case-lambda
-    ((s) (string->bytes s))
-    ((s start) (string->utf8 s start (string-length s)))
-    ((s start end) (string->bytes (substring s start end)))))
+(define string->utf8 utf8->string)
