@@ -14,10 +14,44 @@
 (%%yuni/define-compar char<? char<?+)
 (%%yuni/define-compar char>? char>?+)
 
+(define (%%assoc/compare key alist compare)
+  (cond
+    ((pair? alist)
+     (let ((a (car alist))
+           (d (cdr alist)))
+       (if (compare (car a) key)
+         a
+         (%%assoc/compare key d compare))))
+    ((null? alist) #f)
+    (else
+      (error 'assoc/compare "Unknown object" alist))))
+
+(define (assoc+ key alist . =?)
+  (if (null? =?)
+    (assoc key alist)
+    (%%assoc/compare key alist (car =?))))
+
+(define (%%member/compare key lis compare)
+  (cond
+    ((pair? lis)
+     (if (compare (car lis) key)
+       lis
+       (%%member/compare key (cdr lis) compare)))
+    ((null? lis) #f)
+    (else
+      (error 'member/compare "Unknown object" lis))))
+
+(define (member+ key lis . =?)
+  (if (null? =?)
+    (member key lis)
+    (%%member/compare key lis (car =?))))
+
+(yuni/base-library-add-var! 'assoc+ 'assoc)
+(yuni/base-library-add-var! 'member+ 'member)
+
 (define (%%yunierror msg irr)
   (error #f msg irr))
 
-(yuni/base-library-add-var! 'char=?+ 'char=?)
 (yuni/base-library-add-var! '%%yunierror 'error)
 (yuni/base-library-add-var! 'yuni/command-line 'command-line)
 
