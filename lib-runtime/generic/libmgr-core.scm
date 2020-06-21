@@ -70,8 +70,18 @@
              (car cur)
              (yuni/library-lookup-itr (cdr cur) nam)))))
 
+(define (yuni/library-check-core-libs-itr cur nam)
+  (and (pair? cur)
+       (let ((a (car cur))
+             (d (cdr cur)))
+         (or (and (equal? a nam) *yuni/base-library*)
+             (yuni/library-check-core-libs-itr d nam)))))
+
 (define (yuni/library-lookup nam)
-  (yuni/library-lookup-itr *yuni/libraries* nam))
+  (PCK 'LOOKUP nam)
+  ;; FIXME: Adjust location of %%selfboot-core-libs
+  (or (yuni/library-check-core-libs-itr %%selfboot-core-libs nam)
+      (yuni/library-lookup-itr *yuni/libraries* nam)))
 
 
 (define (yuni/library-scan-sequence-itr var* stx* libbody) ;; => (var* . stx*)
@@ -232,4 +242,3 @@
     4 
     (cons (cons varname sym) 
           (yuni/library-renamepair* *yuni/base-library*))))
-
