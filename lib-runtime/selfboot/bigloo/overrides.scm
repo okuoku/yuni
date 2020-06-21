@@ -88,3 +88,11 @@
 
 (yuni/base-library-add-var! 'write-string/yuni 'write-string)
 (yuni/base-library-add-var! 'port? 'binary-port?)
+
+(define (exit/yuni arg)
+  ;; Bigloo exit will success on (exit #f)
+  (if arg
+    (exit arg)
+    (exit 1)))
+
+(yuni/base-library-add-var! 'exit/yuni 'exit)
