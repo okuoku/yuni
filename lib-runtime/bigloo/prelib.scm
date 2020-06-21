@@ -2,6 +2,32 @@
 (define (inexact x) (exact->inexact x))
 (define (exact x) (inexact->exact x))
 
+(define (finite? x)
+  (or (exact? x)
+      (finitefl? x)))
+
+(define (floor-remainder x y)
+  ;; is, modulo
+  (- x (* (exact (floor (/ x y))) y)))
+
+(define (floor-quotient a b) 
+  (exact (floor (/ a b))))
+
+(define (floor/ a b)
+  (values (floor-quotient a b)
+          (floor-remainder a b)))
+
+(define (truncate-quotient x y)
+  (exact (truncate (/ x y))))
+
+(define (truncate-remainder x y)
+  ;; is, remainder
+  (- x (* (truncate-quotient x y) y)))
+
+(define (truncate/ x y)
+  (values (truncate-quotient x y)
+          (truncate-remainder x y)))
+
 ;; case-lambda (took from r7rs.scm)
 (define-macro (case-lambda . choices)
   `(lambda args

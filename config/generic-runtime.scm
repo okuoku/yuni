@@ -78,15 +78,15 @@
    boolean=?
    list-copy
    list-set!
-   quotient
-   modulo
-   remainder
-   floor-quotient
-   floor-remainder
-   floor/
-   truncate-quotient
-   truncate-remainder
-   truncate/
+   ;quotient
+   ;modulo
+   ;remainder
+   ;floor-quotient ;; R7RS extension
+   ;floor-remainder ;; Needs R7RS modulo
+   ;floor/
+   ;truncate-quotient
+   ;truncate-remainder
+   ;truncate/
    string-map
    string-for-each
    string->vector
