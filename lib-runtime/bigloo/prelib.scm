@@ -40,10 +40,21 @@
                     (apply (lambda ,(car choice) ,@(cdr choice)) args))))
               choices))))
 
+(define textual-port? port?)
+
+(define (close-port p)
+  (when (input-port? p)
+    (close-input-port p))
+  (when (output-port? p)
+    (close-output-port p)))
+
 (define open-output-bytevector open-output-string)
 (define get-output-bytevector get-output-string)
 
 (define open-input-bytevector open-input-string)
+
+(define open-binary-output-file open-output-file)
+(define open-binary-input-file open-input-file)
 
 (define (%write-bytevector/itr bv port start end)
   (unless (= start end)

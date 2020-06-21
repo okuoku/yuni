@@ -71,3 +71,20 @@
 
 (yuni/base-library-add-var! 'log+ 'log)
 
+(yuni/base-library-add-var! 'read-chars 'read-string)
+
+(define write-string/yuni
+  (case-lambda
+    ((string) (write-string/yuni string (current-output-port)
+                                 0 (string-length string)))
+    ((string port)
+     (write-string/yuni string port 0 (string-length string)))
+    ((string port start)
+     (write-string/yuni string port start (string-length string)))
+    ((string port start end)
+     (unless (= start end)
+       (write-char (string-ref string start) port)
+       (write-string/yuni string port (+ 1 start) end)) )))
+
+(yuni/base-library-add-var! 'write-string/yuni 'write-string)
+(yuni/base-library-add-var! 'port? 'binary-port?)
