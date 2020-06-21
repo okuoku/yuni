@@ -183,6 +183,7 @@
                                (scheme eval)
                                (scheme load)
                                (yuni scheme)
+                               (yuni hashtables)
                                ))
 
 (define (%%selfboot-error-hook c)

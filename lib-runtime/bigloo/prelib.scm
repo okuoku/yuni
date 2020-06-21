@@ -196,3 +196,79 @@
     ((b start end) (substring b start end))))
 
 (define string->utf8 utf8->string)
+
+;; (yuni hashtable) would conflict with Bigloo stdlib
+;; So it needs to be defined here...
+
+(define (make-integer-hashtable)
+  (make-hashtable
+    1024 ;; size
+    65535 ;; Large enough?
+    =
+    get-hashnumber
+    #f
+    #f))
+
+(define (make-string-hashtable)
+  (make-hashtable
+    1024 ;; size
+    65535 ;; Large enough?
+    string=?
+    string-hash
+    #f
+    #f))
+
+(define (make-symbol-hashtable)
+  (make-hashtable
+    1024 ;; size
+    65535 ;; Large enough?
+    eq?
+    get-hashnumber
+    #f
+    #f))
+
+(define (make-eq-hashtable)
+  (make-hashtable
+    1024 ;; size
+    65535 ;; Large enough?
+    eq?
+    get-hashnumber
+    #f
+    #f))
+
+(define (make-eqv-hashtable)
+  (make-hashtable
+    1024 ;; size
+    65535 ;; Large enough?
+    eqv?
+    get-hashnumber
+    #f
+    #f))
+
+(define (hashtable-ref ht x . def?)
+  (if (null? def?)
+    (begin
+      (unless (hashtable-contains? ht x)
+        (error 'hashtable-ref "Not found" x))
+      (hashtable-get ht x))
+    (or (hashtable-get ht x)
+        (car def?)) ))
+
+(define hashtable-set! hashtable-put!)
+
+(define (hashtable-fold) (error "UNIMPL"))
+
+(define (hashtable-keys ht)
+  (list->vector (hashtable-key-list ht)))
+
+(define (hashtable-entries ht)
+  (let* ((size (hashtable-size ht))
+         (k (make-vector size))
+         (v (make-vector size))
+         (cnt 0))
+    (hashtable-for-each ht
+                        (lambda (key value)
+                          (vector-set! k cnt key)
+                          (vector-set! v cnt value)
+                          (set! cnt (+ 1 cnt))) )
+    (values k v)))

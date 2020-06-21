@@ -70,3 +70,4 @@
     (/ (log x) (log (car y?)))))
 
 (yuni/base-library-add-var! 'log+ 'log)
+
