@@ -125,7 +125,7 @@ checkimpls(
     ironscheme    IRONSCHEME    IRON_SCHEME     ironscheme # FIXME:
     racket        racket        RACKET          racket
     ## Generic Scheme
-    #bigloo        bigloo        BIGLOO          bigloo
+    bigloo        bigloo        BIGLOO          bigloo
     biwascheme    biwasyuni     BIWASYUNI       biwascheme
     gambit        gsi           GSI             gambit
     mit-scheme    mit-scheme    MIT_SCHEME      mit-scheme

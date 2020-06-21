@@ -47,6 +47,9 @@ set(expected_failures
     # hashtable
     hashtables0-ICYC
 
+    # https://github.com/okuoku/yuni/issues/146
+    strings0-BIGLOO
+
     #############################################
     ## Known limitation / Resolved as spec
     #############################################
