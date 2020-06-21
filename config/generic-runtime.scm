@@ -90,7 +90,7 @@
    string-map
    string-for-each
    string->vector
-   string->list
+   ;string->list
    vector->string
    vector-map
    vector-for-each

@@ -49,6 +49,15 @@
 (yuni/base-library-add-var! 'assoc+ 'assoc)
 (yuni/base-library-add-var! 'member+ 'member)
 
+;; FIXME: Not effective..?
+(define string->list+
+  (case-lambda
+    ((x) (string->list x))
+    ((x start) (string->list (substring x start (string-length x))))
+    ((x start end) (string->list (substring x start end)))))
+
+(yuni/base-library-add-var! 'string->list+ 'string->list)
+
 (define (%%yunierror msg irr)
   (error #f msg irr))
 
