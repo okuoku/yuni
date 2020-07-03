@@ -21,10 +21,9 @@
               (else
                 (check-equal #t 'form))))))))
 
-;; MIT/GNU Scheme does not have NaN or Inf literal (!)
 (check-equal #t (nan? +nan.0))
 (check-equal #f (nan? +inf.0))
-;(check-equal #t (infinite? +inf.0)) ;; (yuni scheme) lacks inifinite?
+;(check-equal #t (infinite? +inf.0)) ;; (yuni scheme) lacks infinite?
 
 ;; 2 arg logs
 (check-eps 2 (log 100 10))
