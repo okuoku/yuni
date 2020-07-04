@@ -5,11 +5,11 @@
 ;;
 
 (define (read-source pth)
-  (with-input-from-file
+  (call-with-input-file
     pth        
-    (lambda () 
+    (lambda (p) 
       (define (itr cur)
-        (let ((r (read (current-input-port))))
+        (let ((r (read p)))
          (if (eof-object? r)
              (reverse cur)
              (itr (cons r cur)))))

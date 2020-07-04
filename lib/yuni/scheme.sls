@@ -8,17 +8,25 @@ _
 * + - ...  / < <= = => > >= abs and append apply assoc assq assv begin
 binary-port? boolean=? boolean? bytevector bytevector-append bytevector-copy
 bytevector-copy! bytevector-length bytevector-u8-ref bytevector-u8-set!
-bytevector? caar cadr call-with-current-continuation call-with-port
-call-with-values call/cc car case cdar cddr cdr ceiling char->integer
+bytevector? caar cadr 
+;call-with-current-continuation 
+call-with-port
+call-with-values 
+;call/cc 
+car case cdar cddr cdr ceiling char->integer
 ; char-ready?
 char<=?  char<? char=? char>=? char>? char? close-input-port
-close-output-port close-port complex? cond 
+close-output-port close-port 
+;complex? 
+cond 
 ; cond-expand
 cons current-error-port
 current-input-port current-output-port define define-record-type define-syntax
 define-values 
 ; denominator 
-do dynamic-wind else eof-object eof-object? eq?
+do 
+;dynamic-wind 
+else eof-object eof-object? eq?
 equal? eqv?  error error-object-irritants error-object-message error-object?
 even? exact exact-integer-sqrt exact-integer? exact? expt 
 ;features 
@@ -71,14 +79,16 @@ cdaaar cdaadr cdaar cdadar cdaddr cdadr cddaar cddadr cddar cdddar cddddr cdddr
 ;; from R7RS draft 4
 call-with-input-file call-with-output-file delete-file file-exists?
 open-binary-input-file open-binary-output-file open-input-file
-open-output-file with-input-from-file with-output-to-file
+open-output-file 
+;with-input-from-file with-output-to-file
 
 acos asin atan cos exp finite? log nan? sin sqrt tan
 
 ; delay force make-promise delay-force
 
 ;; from R7RS draft 4
-command-line exit get-environment-variable
+command-line exit 
+; get-environment-variable
 ; get-environment-variables
 read
 display write write-simple
