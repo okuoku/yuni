@@ -45,7 +45,7 @@ memq memv min modulo negative? newline not null? number->string number?
 odd? open-input-bytevector open-input-string open-output-bytevector
 open-output-string or output-port-open? output-port? pair? parameterize
 peek-char peek-u8 port? positive?  procedure? quasiquote quote quotient raise
-raise-continuable 
+; raise-continuable 
 ; rational? rationalize 
 read-bytevector read-bytevector!
 read-char read-error?  read-line read-string read-u8 real? remainder reverse
@@ -61,7 +61,8 @@ unless unquote
 unquote-splicing utf8->string values vector vector->list vector->string
 vector-append vector-copy vector-copy! vector-fill! vector-for-each
 vector-length vector-map vector-ref vector-set!  vector? when
-with-exception-handler write-bytevector write-char write-string write-u8 zero?
+;with-exception-handler 
+write-bytevector write-char write-string write-u8 zero?
 
 
 case-lambda
