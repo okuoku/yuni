@@ -148,6 +148,7 @@ negative_tests(
     ${tests}/err/fail5.sps
     ${tests}/err/fail6.sps
     ${tests}/err/fail7.sps
+    ${tests}/err/fail8.sps
     )
 
 runtest(${tests}/newboot/testarg0.sps ARGS SPLITHERE)
