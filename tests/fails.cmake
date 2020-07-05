@@ -12,6 +12,14 @@ set(expected_failures
     inexact1-STKLOS
     inexact1-SCM
 
+    # Exceptions https://github.com/okuoku/yuni/issues/152
+    exp0-BIGLOO
+    exp1-BIGLOO
+    exp2-BIGLOO
+    exp0-SCM
+    exp1-SCM
+    exp2-SCM
+
     # SIBR0012, not sure if it allowed
     sibr0012gen-STKLOS
 
@@ -49,6 +57,15 @@ set(expected_failures
 
     # https://github.com/okuoku/yuni/issues/146
     strings0-BIGLOO
+
+    # Exception incompatibilities https://github.com/okuoku/yuni/issues/151
+    exp0-ICYC
+    exp1-ICYC
+    exp2-ICYC
+
+    # Parameter incompatibilities https://github.com/okuoku/yuni/issues/153
+    exp2-MIT_SCHEME
+    exp2-GUILE # Is guile2
 
     #############################################
     ## Known limitation / Resolved as spec

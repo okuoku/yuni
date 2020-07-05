@@ -119,6 +119,9 @@ tests(
     ${tests}/scheme/qq0.sps
     ${tests}/scheme/qq1.sps
     ${tests}/scheme/stx0.sps
+    ${tests}/scheme/exp0.sps
+    ${tests}/scheme/exp1.sps
+    ${tests}/scheme/exp2.sps
     ${tests}/lib/minitest0.sps
     ${tests}/lib/lighteval0.sps
     ${tests}/lib/hashtables0.sps
