@@ -72,21 +72,58 @@
                      (set! old-values (cdr old-values))))
                 vars))))
 
-;; Errors (took from r7rs.scm)
-(define (with-exception-handler handler thunk) (catch #t thunk handler))
-(define raise error)
-(define raise-continuable error)
+;; Errors
+;;  NB: Are diverged from r7rs.scm; we need some protocols to implement
+;;      Yuni's own compatibility requirements for raise
+(define (raise obj) 
+  (if (pair? obj)
+    (apply throw obj)
+    (throw 'yuni/raise obj)))
+(define (error msg . irr) (apply throw 'yuni/error msg irr))
 
 (define-macro (guard results . body)
-  `(let ((,(car results) (catch #t (lambda () ,@body) (lambda args (car args)))))
-     (cond ,@(cdr results))))
+  (let ((condition (car results))
+        (clauses (cdr results))
+        (raw-condition (gensym "raw"))
+        (result (gensym "result"))
+        (here-result (gensym "here-result")))
 
-(define (read-error? obj) (eq? (car obj) 'read-error))
-(define (file-error? obj) (eq? (car obj) 'io-error))
+    `(catch ',here-result
+            (lambda ()
+              (let ((,raw-condition 
+                      (catch #t
+                             (lambda () 
+                               (let ((,result (let () ,@body)))
+                                ;(write (list 'RESULT: ,result)) (newline)
+                                (throw ',here-result ,result)))
+                             (lambda (typ args)
+                               ;(write (list 'DONE: typ args)) (newline)
+                               (if (eq? typ ',here-result)
+                                 (apply throw typ args)
+                                 (cons typ args))))))
+                ;; Unwrap raw-condition object before passing guard clauses
+                (let ((,condition (if (eq? 'yuni/raise (car ,raw-condition))
+                                    (cadr ,raw-condition)
+                                    ,raw-condition)))
+                  ;(write (list 'COND: ,condition)) (newline)
+                  ;(write (list 'COND-IN: ',clauses)) (newline)
+                  (cond
+                    ,@clauses
+                    ;; Rethrow if uncaught
+                    (else 
+                      ;(write (list 'RETHROW: ,raw-condition)) (newline)
+                      (apply throw ,raw-condition))))))
+            (lambda (type obj)
+              ;(write (list 'RESULT2: type obj))(newline)
+              (car obj)))))
+
+(define (read-error? obj) (and (pair? obj) (eq? (car obj) 'read-error)))
+(define (file-error? obj) (and (pair? obj) (eq? (car obj) 'io-error)))
 (define (error-object-message obj) (apply format #f (cadr obj)))
 (define error-object-irritants cdadr)
 
-(define (error-object? x) #t)
+(define (error-object? obj) 
+  (and (pair? obj) (symbol? (car obj))))
 
 ;; Lists/Pair
 (define list-copy copy)
@@ -269,11 +306,6 @@
     ($read-bytevector k (car port?))))
 
 (define write-simple write)
-
-;; SRFI-98
-(define (get-environment-variable x) #f)
-(define (get-environment-variables) '())
-
 
 ;; OVERRIDES
 
