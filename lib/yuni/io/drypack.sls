@@ -24,9 +24,9 @@
 (define (counter-enter! ctr obj) ;; => already-seen?
   ;; NB: Don't insert Zone0 objects
   ;;     (Can't distinguish with #f)
-  (let ((cnt (vector-ref ctr 0))
-        (ht1 (vector-ref ctr 1))
-        (ht2 (vector-ref ctr 2)))
+  (let* ((cnt (vector-ref ctr 0))
+         (ht1 (vector-ref ctr 1))
+         (ht2 (vector-ref ctr 2)))
     (let ((r (hashtable-ref ht1 obj #f)))
      (cond
        (r #t)
