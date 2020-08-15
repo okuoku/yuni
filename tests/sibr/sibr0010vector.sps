@@ -4,7 +4,7 @@
 
 (define (expected-result)
   (case (ident-impl)
-    ((digamma chez chibi-scheme)
+    ((digamma chez chibi-scheme racket)
      #t)
     (else
       #f)))

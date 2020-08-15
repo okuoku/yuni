@@ -1,8 +1,8 @@
 SIBR0010: Nil-like behavior with zero-length vector/string
 ==========================================================
 
-Nil-like(string): `Digamma` `Chez`
-Nil-like(vector): `Digamma` `Chez` `chibi-scheme`
+Nil-like(string): `Digamma` `Chez` `Racket` (> 7.8)
+Nil-like(vector): `Digamma` `Chez` `Racket` (> 7.8) `chibi-scheme`
 
 Some Scheme implementations would treat zero-length vector and string just like
 NIL; `eq?` is true between them.
@@ -22,6 +22,11 @@ For `nil-like` implemntations, `eq?` above returns `#t` just like `make-list` .
 
 (eq? a b) ;; => #t because these are nil
 ```
+
+Notes
+=====
+
+- Racket now follows Chez behaviour because it switched underlaying implementation to Chez scheme.
 
 Workaround
 ==========
