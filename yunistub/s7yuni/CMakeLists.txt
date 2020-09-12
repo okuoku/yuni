@@ -51,7 +51,6 @@ set(s7yuni_libs
 
 set(libs_src
     cload.scm
-    gtkex.scm
     json.scm
     libc.scm
     libdl.scm
