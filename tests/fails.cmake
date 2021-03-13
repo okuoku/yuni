@@ -27,6 +27,16 @@ set(expected_failures
     inexact2-ICYC
     inexact2-SCM
 
+    # 0.0 vs. -0.0
+    sibr0013-DIGAMMA
+    sibr0013-ICYC
+    sibr0013-GOSH
+    sibr0013-IRON_SCHEME # Reader
+    sibr0013-BIGLOO
+    sibr0013-S7
+    sibr0013-SCM # Reader
+    sibr0013-STKLOS
+
     #############################################
     ## Bugs
     #############################################
