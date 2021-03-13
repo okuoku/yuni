@@ -23,6 +23,10 @@ set(expected_failures
     # SIBR0012, not sure if it allowed
     sibr0012gen-STKLOS
 
+    # 2 arg atan
+    inexact2-ICYC
+    inexact2-SCM
+
     #############################################
     ## Bugs
     #############################################
