@@ -309,7 +309,7 @@
 
 ;; OVERRIDES
 
-(define string-copy
+(set! string-copy ;; s7 has string-copy primitive
   (case-lambda
     ((s) (string-copy s 0 (length s)))
     ((s start) (string-copy s start (length s)))
