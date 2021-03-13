@@ -300,10 +300,10 @@
    (read-bytevector! out port)
    out))
 
-(define (read-bytevector k . port?)
-  (if (null? port?)
+(define (read-bytevector k . port-?)
+  (if (null? port-?)
     ($read-bytevector k (current-input-port))
-    ($read-bytevector k (car port?))))
+    ($read-bytevector k (car port-?))))
 
 (define write-simple write)
 
