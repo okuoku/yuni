@@ -6,7 +6,6 @@ set(expected_failures
 
     # no 2 arg log
     inexact1-MIT_SCHEME
-    inexact1-STKLOS
     inexact1-SCM
 
     # Exceptions https://github.com/okuoku/yuni/issues/152
