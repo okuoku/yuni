@@ -4,9 +4,6 @@ set(expected_failures
     ## To Do
     #############################################
 
-    # R7RS list-copy
-    core2-MIT_SCHEME
-
     # no 2 arg log
     inexact1-MIT_SCHEME
     inexact1-STKLOS
