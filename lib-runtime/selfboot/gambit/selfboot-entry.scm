@@ -1,3 +1,4 @@
+#!dummy-shebang-for-srfi193!
 
 (define (%%extract-program-args args* entrypth)
   (if (string=? (car args*) entrypth)
