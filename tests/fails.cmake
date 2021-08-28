@@ -26,7 +26,6 @@ set(expected_failures
     # 0.0 vs. -0.0
     sibr0013-DIGAMMA
     sibr0013-ICYC
-    sibr0013-GOSH
     sibr0013-IRON_SCHEME # Reader
     sibr0013-BIGLOO
     sibr0013-S7
