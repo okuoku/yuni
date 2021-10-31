@@ -76,6 +76,9 @@ set(expected_failures
     exp2-MIT_SCHEME
     exp2-GUILE # Is guile2
 
+    # incompat native string-copy https://github.com/okuoku/yuni/issues/160
+    strings0-S7
+
     #############################################
     ## Known limitation / Resolved as spec
     #############################################
