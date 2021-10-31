@@ -90,4 +90,8 @@ set(expected_failures
     # Quasi-quote incompatibility
     # https://github.com/okuoku/yuni/issues/117
     qq1-S7
+
+    # zero values representation
+    # https://github.com/okuoku/yuni/issues/167
+    values2-S7
     )

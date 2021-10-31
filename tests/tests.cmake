@@ -123,6 +123,9 @@ tests(
     ${tests}/scheme/exp0.sps
     ${tests}/scheme/exp1.sps
     ${tests}/scheme/exp2.sps
+    ${tests}/scheme/values0.sps
+    ${tests}/scheme/values1.sps
+    ${tests}/scheme/values2.sps
     ${tests}/lib/minitest0.sps
     ${tests}/lib/lighteval0.sps
     ${tests}/lib/hashtables0.sps
