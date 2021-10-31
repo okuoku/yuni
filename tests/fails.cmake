@@ -20,7 +20,7 @@ set(expected_failures
     sibr0012gen-STKLOS
 
     # 2 arg atan
-    inexact2-ICYC
+    inexact2-ICYC # Still -0.0 issue
     inexact2-SCM
 
     # 0.0 vs. -0.0
@@ -59,7 +59,7 @@ set(expected_failures
     app-ICYC
 
     # https://github.com/justinethier/cyclone/issues/379
-    io0-ICYC
+    io0-ICYC # Wrong character at end of string
 
     # hashtable
     hashtables0-ICYC
