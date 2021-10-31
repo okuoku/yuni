@@ -4,7 +4,7 @@
 
 (define (expected-result)
   (case (ident-impl)
-    ((digamma chez racket)
+    ((digamma chez racket s7)
      #t)
     (else
       #f)))

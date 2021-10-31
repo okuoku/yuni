@@ -1,7 +1,7 @@
 SIBR0010: Nil-like behavior with zero-length vector/string
 ==========================================================
 
-Nil-like(string): `Digamma` `Chez` `Racket` (> 7.8)
+Nil-like(string): `Digamma` `Chez` `Racket` (> 7.8) `s7` (unknown revision)
 Nil-like(vector): `Digamma` `Chez` `Racket` (> 7.8) `chibi-scheme`
 
 Some Scheme implementations would treat zero-length vector and string just like
