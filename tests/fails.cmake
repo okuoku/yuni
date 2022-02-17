@@ -83,6 +83,13 @@ set(expected_failures
     miniread0-S7
     fecore0-S7
 
+    # https://github.com/okuoku/yuni/issues/168
+    synrule0-CHICKEN5_CSI
+    synrule0-FOMENT
+    synrule0-BIGLOO
+    synrule0-MIT_SCHEME
+    synrule1-BIGLOO
+
     #############################################
     ## Known limitation / Resolved as spec
     #############################################
