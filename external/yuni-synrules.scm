@@ -195,8 +195,6 @@
          ((vector? x) (lp (vector->list x) free))
          (else free))))
     (define (expand-template tmpl vars temps)
-      (define tempbinds (map (lambda (e) (cons e (list _quote (rename e)))) 
-                             temps))
       (let lp ((t tmpl) (dim 0))
        (cond
          ((identifier? t)
@@ -214,7 +212,7 @@
              (if (<= (cdr cell) dim)
                t
                (error "two few ...'s"))
-             (let ((vn (find (lambda (v) (eq? t (car v))) tempbinds)))
+             (let ((vn (find (lambda (v) (eq? t (car v))) temps)))
               (if vn
                 (cdr vn)
                 (list _baselib (list _quote t)))))))
@@ -266,10 +264,18 @@
                   (lambda (clause) 
                     (let* ((pat (car clause))
                            (tmpl (cadr clause))
-                           (potential-binds (yuni/synrule-prescan-template 
-                                              ellipsis-mark?
-                                              tmpl)))
-                      (expand-pattern pat tmpl potential-binds)))
+                           (potential-binds 
+                             (map (lambda (e)
+                                    (cons e (yuni/gensym e)))
+                                  (yuni/synrule-prescan-template 
+                                    ellipsis-mark?
+                                    tmpl))))
+                      `(,_let ,(map (lambda (p)
+                                      (let ((sym (cdr p)))
+                                        (list sym (list _rename 
+                                                        (list _quote sym)))))
+                                    potential-binds)
+                              ,(expand-pattern pat tmpl potential-binds))))
                   forms)
                 (list
                   (list _cons
