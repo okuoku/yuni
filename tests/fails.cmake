@@ -76,10 +76,6 @@ set(expected_failures
     # incompat native string-copy https://github.com/okuoku/yuni/issues/160
     strings0-S7
 
-    # Unknown https://github.com/okuoku/yuni/issues/166
-    miniread0-S7
-    fecore0-S7
-
     # https://github.com/okuoku/yuni/issues/168
     synrule0-CHICKEN5_CSI
     synrule0-FOMENT
