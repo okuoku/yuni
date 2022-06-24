@@ -1,3 +1,12 @@
+(define (exit . status)
+  (cond
+    ((null? status)
+     (exit 0))
+    ((number? (car status))
+     (emergency-exit (car status)))
+    ((car status)
+     (exit 0))
+    (else (exit 1))))
 (define (yuni/gensym sym) (gensym sym))
 (define (yuni/identifier? sym) (symbol? sym))
 
