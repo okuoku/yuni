@@ -5,7 +5,7 @@ Disallow: `STklos`
 
 Early-cut: `Cyclone`
 
-EOF: `Gambit`
+EOF: `Gambit` `Foment`
 
 Nil: (otherwise)
 
