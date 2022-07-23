@@ -32,6 +32,10 @@ set(expected_failures
     sibr0013-SCM # Reader
     sibr0013-STKLOS
 
+    # https://github.com/okuoku/yuni/issues/170
+    exp1-ICYC
+    miniread0-ICYC
+
     #############################################
     ## Bugs
     #############################################
@@ -94,4 +98,8 @@ set(expected_failures
     # zero values representation
     # https://github.com/okuoku/yuni/issues/167
     values2-S7
+
+    # Macro expansion on interactive-environment
+    # https://github.com/okuoku/yuni/issues/171
+    synrule0-ICYC
     )
