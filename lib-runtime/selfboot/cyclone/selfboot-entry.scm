@@ -12,7 +12,6 @@
         (scheme cyclone util)
         )
 
-(define (yuni/gensym sym) (gensym sym))
 
 (define (%%extract-program-args args* entrypth)
   (if (string=? (car args*) entrypth)
@@ -97,11 +96,37 @@
                                   %%selfboot-orig-command-line
                                   %%selfboot-mypath))
 
+;; Porting (Cyclone)
+(define (yuni/gensym sym) (gensym sym))
 (define myenv (interaction-environment))
+(define %selfboot-file-exists? file-exists?)
+(define %%selfboot-impl-type 'cyclone)
+(define %%selfboot-core-libs '((scheme base)
+                               (scheme case-lambda)
+                               (scheme cxr)
+                               (scheme file)
+                               (scheme inexact)
+                               (scheme process-context)
+                               (scheme read)
+                               (scheme write)
+                               (scheme eval)
+                               (srfi 69)
+                               (yuni scheme)
+                               ))
 
 (define (%%selfboot-loadlib pth libname imports exports)
   (write (list 'LOADLIB pth)) (newline)
   (load pth myenv))
+
+(define (%selfboot-file->sexp-list fn)
+  (call-with-input-file
+    fn
+    (lambda (p)
+      (let loop ((cur '()))
+       (let ((r (read p)))
+        (if (eof-object? r)
+          (reverse cur)
+          (loop (cons r cur))))))))
 
 (define (%%selfboot-load-program pth) 
   (define (readprog fn)
@@ -141,30 +166,18 @@
                     myenv))
             alias*))
 
-(define %%selfboot-impl-type 'cyclone)
-(define %%selfboot-core-libs '((scheme base)
-                               (scheme case-lambda)
-                               (scheme cxr)
-                               (scheme file)
-                               (scheme inexact)
-                               (scheme process-context)
-                               (scheme read)
-                               (scheme write)
-                               (scheme eval)
-                               (srfi 69)
-                               (yuni scheme)
-                               ))
+(define (%%selfboot-load-runtime path)
+  (let ((p (string-append %%selfboot-yuniroot path)))
+   (load p myenv)))
 
-
+;; Setup environment
 (when (string=? %%selfboot-yuniroot "")
   (set! %%selfboot-yuniroot "."))
 
-;; Setup environment
 (define (inject-var! sym obj)
   ((eval `(begin (define ,sym #f) (lambda (obj) (set! ,sym obj))) myenv)
    obj))
 
-;(set! %%selfboot-program-args (list "vectors0.sps")) ;; DEBUG DEBUG
 (inject-var! '%%selfboot-yuniroot %%selfboot-yuniroot)
 (inject-var! '%%selfboot-program-args %%selfboot-program-args)
 (inject-var! '%%selfboot-impl-type %%selfboot-impl-type)
@@ -175,25 +188,14 @@
 (inject-var! '%%myenv myenv)
 (inject-var! 'yuni/gensym yuni/gensym)
 
-(define (%selfboot-file->sexp-list fn)
-  (call-with-input-file
-    fn
-    (lambda (p)
-      (let loop ((cur '()))
-       (let ((r (read p)))
-        (if (eof-object? r)
-          (reverse cur)
-          (loop (cons r cur))))))))
 
-(define %selfboot-file-exists? file-exists?)
-
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm") myenv)
+(%%selfboot-load-runtime "/lib-runtime/selfboot/common/common.scm")
 
 ;; Load generic libmgr runtime
 
-(load (string-append %%selfboot-yuniroot "/lib-runtime/generic/verboselib.scm") myenv) 
-(load (string-append %%selfboot-yuniroot "/lib-runtime/generic/libmgr-file.scm") myenv) 
-(load (string-append %%selfboot-yuniroot "/lib-runtime/generic/libmgr-core.scm") myenv) 
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/cyclone/command-line-cyclone.scm") myenv)
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/cyclone/libmgr-macro-cyclone.scm") myenv)
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/run-program.scm") myenv) 
+(%%selfboot-load-runtime "/lib-runtime/generic/verboselib.scm")
+(%%selfboot-load-runtime "/lib-runtime/generic/libmgr-file.scm")
+(%%selfboot-load-runtime "/lib-runtime/generic/libmgr-core.scm")
+(%%selfboot-load-runtime "/lib-runtime/selfboot/cyclone/command-line-cyclone.scm")
+(%%selfboot-load-runtime "/lib-runtime/selfboot/cyclone/libmgr-macro-cyclone.scm")
+(%%selfboot-load-runtime "/lib-runtime/selfboot/common/run-program.scm")
