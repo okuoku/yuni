@@ -32,10 +32,6 @@ set(expected_failures
     sibr0013-SCM # Reader
     sibr0013-STKLOS
 
-    # https://github.com/okuoku/yuni/issues/170
-    exp1-ICYC
-    miniread0-ICYC
-
     #############################################
     ## Bugs
     #############################################
@@ -56,7 +52,6 @@ set(expected_failures
     fail2-RACKET
 
     # Syntax
-    miniread0-ICYC
     app-ICYC
 
     # https://github.com/justinethier/cyclone/issues/379
@@ -70,7 +65,6 @@ set(expected_failures
 
     # Exception incompatibilities https://github.com/okuoku/yuni/issues/151
     exp0-ICYC
-    exp1-ICYC
     exp2-ICYC
 
     # Parameter incompatibilities https://github.com/okuoku/yuni/issues/153
