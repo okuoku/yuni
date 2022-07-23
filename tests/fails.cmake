@@ -90,7 +90,7 @@ set(expected_failures
 
     # zero values representation
     # https://github.com/okuoku/yuni/issues/167
-    values2-S7
+    values2-S7 # SIBR0014
 
     # STKlos do not allow (read-string 0 <port>)
     sibr0012gen-STKLOS

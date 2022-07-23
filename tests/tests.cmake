@@ -131,6 +131,7 @@ tests(
     ${tests}/scheme/values0.sps
     ${tests}/scheme/values1.sps
     ${tests}/scheme/values2.sps
+    ${tests}/scheme/values3.sps
     ${tests}/scheme/synrule0.sps
     ${tests}/scheme/synrule1.sps
     ${tests}/lib/minitest0.sps
