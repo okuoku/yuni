@@ -175,8 +175,18 @@
 (inject-var! '%%myenv myenv)
 (inject-var! 'yuni/gensym yuni/gensym)
 
-;(load (string-append %%selfboot-yuniroot "/lib-runtime/r7rs/yuni-runtime/r7rs.sld"))
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/cyclone/selfboot-runtime.scm") myenv)
+(define (%selfboot-file->sexp-list fn)
+  (call-with-input-file
+    fn
+    (lambda (p)
+      (let loop ((cur '()))
+       (let ((r (read p)))
+        (if (eof-object? r)
+          (reverse cur)
+          (loop (cons r cur))))))))
+
+(define %selfboot-file-exists? file-exists?)
+
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm") myenv)
 
 ;; Load generic libmgr runtime
