@@ -144,6 +144,7 @@ tests(
     ${tests}/sibr/sibr0010string.sps
     ${tests}/sibr/sibr0011.sps
     ${tests}/sibr/sibr0012gen.sps
+    ${tests}/sibr/err-sibr0012string.sps
     ${tests}/sibr/sibr0013.sps
     )
 

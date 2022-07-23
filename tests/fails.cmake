@@ -16,9 +16,6 @@ set(expected_failures
     exp1-SCM
     exp2-SCM
 
-    # SIBR0012, not sure if it allowed
-    sibr0012gen-STKLOS
-
     # 2 arg atan
     inexact2-ICYC # Still -0.0 issue
     inexact2-SCM
@@ -94,5 +91,9 @@ set(expected_failures
     # zero values representation
     # https://github.com/okuoku/yuni/issues/167
     values2-S7
+
+    # STKlos do not allow (read-string 0 <port>)
+    sibr0012gen-STKLOS
+    err-sibr0012string-STKLOS
 
     )
