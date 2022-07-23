@@ -15,6 +15,11 @@ function(add_selfboot_test0 impl expect_error iotest script)
     else()
         set(arg_io)
     endif()
+    if(willfail_${testname})
+        set(arg_willfail -DWILL_FAIL=ON)
+    else()
+        set(arg_willfail)
+    endif()
     add_test(NAME ${testname}
         COMMAND ${CMAKE_COMMAND} -DIMPL=${impl}
         ${arg_io}
