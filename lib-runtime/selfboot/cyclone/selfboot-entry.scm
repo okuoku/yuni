@@ -490,7 +490,11 @@
    (set! code* (cons (cons 'begin 
                            ;; Strip (import ...)
                            (cdr (%selfboot-file->sexp-list prog))) code*))
-   (eval (cons 'begin (reverse code*)))))
+   ;; override command-line
+   (let ((command-line-code 
+           `(begin (define (command-line) (quote ,%%selfboot-program-args)))))
+     (eval (cons command-line-code
+                 (cons 'begin (reverse code*)))))))
 
 ;; Exit successfully if the program does not have exit call
 (exit 0)
