@@ -114,10 +114,6 @@
                                (yuni scheme)
                                ))
 
-(define (%%selfboot-loadlib pth libname imports exports)
-  (write (list 'LOADLIB pth)) (newline)
-  (load pth myenv))
-
 (define (%selfboot-file->sexp-list fn)
   (call-with-input-file
     fn
@@ -128,44 +124,6 @@
           (reverse cur)
           (loop (cons r cur))))))))
 
-(define (%%selfboot-load-program pth) 
-  (define (readprog fn)
-    (call-with-input-file
-      fn
-      (lambda (p)
-        (let loop ((cur '()))
-         (let ((r (read p)))
-          (if (eof-object? r)
-            (reverse cur)
-            (loop (cons r cur))))))))
-  (write (list 'LOADPROG pth)) (newline)
-  (let ((sexp (readprog pth)))
-   (unless (and (pair? sexp) (pair? (car sexp))
-                (eq? 'import (caar sexp)))
-     (error "Program must start with (import ...)"))
-
-   ;; Perform import
-   (let* ((im (car sexp))
-          (libs (cdr im)))
-     (write (list 'import: libs)) (newline)
-     (eval (cons 'import0 libs) myenv))
-
-   (for-each
-     (lambda (exp)
-       (write (list 'eval: exp)) (newline)
-       (eval exp myenv))
-     (cdr sexp))))
-
-
-(define (%%selfboot-load-aliaslib truename alias* export*)
-  (write (list 'alias: truename '=> alias*)) (newline)
-  (for-each (lambda (libname)
-              (eval `(library ,libname 
-                              (export ,@export*)
-                              (import ,truename))
-                    myenv))
-            alias*))
-
 (define (%%selfboot-load-runtime path)
   (let ((p (string-append %%selfboot-yuniroot path)))
    (load p myenv)))
@@ -174,28 +132,353 @@
 (when (string=? %%selfboot-yuniroot "")
   (set! %%selfboot-yuniroot "."))
 
-(define (inject-var! sym obj)
-  ((eval `(begin (define ,sym #f) (lambda (obj) (set! ,sym obj))) myenv)
-   obj))
+;:: common selfboot libraries
+;; selfboot/common/pathname.scm
 
-(inject-var! '%%selfboot-yuniroot %%selfboot-yuniroot)
-(inject-var! '%%selfboot-program-args %%selfboot-program-args)
-(inject-var! '%%selfboot-impl-type %%selfboot-impl-type)
-(inject-var! '%%selfboot-core-libs %%selfboot-core-libs)
-(inject-var! '%%selfboot-loadlib %%selfboot-loadlib)
-(inject-var! '%%selfboot-load-aliaslib %%selfboot-load-aliaslib)
-(inject-var! '%%selfboot-load-program %%selfboot-load-program)
-(inject-var! '%%myenv myenv)
-(inject-var! 'yuni/gensym yuni/gensym)
+(define (%selfboot-match-ext? ext fn)
+  (let ((len (string-length fn)))
+   (and (< 3 len)
+        (string=? ext (stubstring fn (- len 4) len)))))
+
+(define (%selfboot-is-sls? fn) (%selfboot-match-ext? ".sls" fn))
+
+;; selfboot/common/library-walk.scm
+
+(define (%selfboot-gen-loadorder libread libcheck initial-dep)
+  ;; => (path libname ...)
+  ;; (libread LIBNAME) => sexp
+  ;; (libcheck LIBNAME) => LIBNAME(can be aliased) / #f(ignore)
+  (define order '())
+  (define (libnamestrip libname)
+    (if (pair? libname)
+      (let ((sy (car libname)))
+       (case sy
+         ((rename except only for)
+          (libnamestrip (cadr libname)))
+         (else libname)))
+      libname))
+  (define (libname=? a b)
+    (cond
+      ((and (null? a) (null? b)) #t)
+      (else
+        (and (pair? a)
+             (pair? b)
+             (let ((aa (car a))
+                   (bb (car b)))
+               (and (eqv? aa bb)
+                    (libname=? (cdr a) (cdr b))))))))
+  (define (libname=?/list lis nam)
+    (and (pair? lis)
+         (let ((a (car lis)))
+          (or (libname=? a nam)
+              (libname=?/list (cdr lis) nam)))))
+  (define (is-loaded? lib)
+    (let loop ((q order))
+     (and (pair? q)
+          (let ((n (caar q))
+                (next (cdr q)))
+            (or (libname=?/list n lib)
+                (loop next))))))
+  (define (tryload! lib)
+    (let* ((usagename (libnamestrip lib))
+           (truename (libcheck usagename)))
+     (when (and truename (not (is-loaded? truename)))
+       (let* ((code (libread truename))
+              (deps (%selfboot-library-depends code))
+              (syms (%selfboot-library-exports code))
+              (names (if (not (libname=? truename usagename))
+                       (list truename usagename)
+                       (list usagename))))
+         (for-each tryload! deps)
+         (set! order (cons (cons names (cons deps syms)) order))))))
+
+  (for-each tryload! (map libnamestrip initial-dep))
+  (set! order (reverse order))
+  ;;(for-each (lambda (b) (write b) (newline)) order)
+  order)
+
+;; selfboot/common/library-parser.scm
+
+(define (%selfboot-library-name sexp)
+  (cadr sexp))
+
+(define (%selfboot-library-depends sexp)
+  (cdr (cadddr sexp)))
+
+(define (%selfboot-library-exports sexp)
+  (cdr (caddr sexp)))
+
+(define (%selfboot-program-depends sexp)
+  (cdr (car sexp)))
+
+;; selfboot/common/polyfills.scm
+
+(define (%%selfboot-yuniconfig-get-polyfill-path sym)
+  (let ((n (assoc sym yuni/polyfills)))
+   (cond
+     (n (cdr n))
+     (else
+       (write (list 'UNKNOWN: sym)) (newline)
+       (error "Unknown polyfill" sym)))))
+
+(define yuni/polyfills
+  '(
+    ;; Std, non-R5RS
+    (boolean=? . "lib-runtime/generic/std/boolean_eqp.scm")
+    (floor-quotient . "lib-runtime/generic/std/floor-quotient.scm")
+    (floor-remainder . "lib-runtime/generic/std/floor-remainder.scm")
+    (floor/ . "lib-runtime/generic/std/floor_div.scm")
+    (list-copy . "lib-runtime/generic/std/list-copy.scm")
+    (list-set! . "lib-runtime/generic/std/list-set_x.scm")
+    (make-list . "lib-runtime/generic/std/make-list.scm")
+    (modulo . "lib-runtime/generic/std/modulo.scm")
+    (quotient . "lib-runtime/generic/std/quotient.scm")
+    (remainder . "lib-runtime/generic/std/remainder.scm")
+    (string-copy . "lib-runtime/generic/std/string-copy.scm")
+    (string-for-each . "lib-runtime/generic/std/string-for-each.scm")
+    (string-map . "lib-runtime/generic/std/string-map.scm")
+    (string->list . "lib-runtime/generic/std/string_to_list.scm")
+    (string->vector . "lib-runtime/generic/std/string_to_vector.scm")
+    (truncate-quotient . "lib-runtime/generic/std/truncate-quotient.scm")
+    (truncate-remainder . "lib-runtime/generic/std/truncate-remainder.scm")
+    (truncate/ . "lib-runtime/generic/std/truncate_div.scm")
+    (vector-append . "lib-runtime/generic/std/vector-append.scm")
+    (vector-copy . "lib-runtime/generic/std/vector-copy.scm")
+    (vector-copy! . "lib-runtime/generic/std/vector-copy_x.scm")
+    (vector-fill! . "lib-runtime/generic/std/vector-fill_x.scm")
+    (vector-for-each . "lib-runtime/generic/std/vector-for-each.scm")
+    (vector-map . "lib-runtime/generic/std/vector-map.scm")
+    (vector->list . "lib-runtime/generic/std/vector_to_list.scm")
+    (vector->string . "lib-runtime/generic/std/vector_to_string.scm")
+    ))
+
+;; selfboot/common/yuniconfig.scm
+
+(define (%selfboot-yuniconfig-resolver-add-loadpath! p path)
+  (p (list path)))
+(define (%selfboot-yuniconfig-gen-resolver impl yuniroot)
+  (define cfgpath (string-append yuniroot "/config/config.scm"))
+  (let* ((cfg (%selfboot-file->sexp-list cfgpath))
+         (libdirs
+           (map (lambda (p) (string-append yuniroot "/" p))
+                (cdr (assoc '*library-directories* cfg))))
+         (libgrps (cdr (assoc '*library-groups* cfg)))
+         (g1 (cdr (assoc 'GenRacket cfg)))
+         (g2 (cdr (assoc 'GenR7RS cfg)))
+         (g3 (cdr (assoc 'GenR6RSCommon cfg)))
+         (implgroups (append g1 g2 g3)))
+    (let ((mygroups (cdr (assoc impl implgroups))))
+     (define prefixes '())
+     (define (add-prefix! e)
+       (cond
+         ((pair? e)
+          (unless (and (= (length e) 3) (eq? (cadr e) '=>))
+            (error "Unknown libent" e))
+          (let ((aliasname (car e))
+                (origname (caddr e)))
+            (let ((p (assoc origname prefixes)))
+             (cond
+               (p
+                 (let ((d (cdr p)))
+                  (set-cdr! p (cons aliasname d))))
+               (else
+                 (set! prefixes (cons (list origname aliasname) prefixes)))))))
+         (else
+           (unless (symbol? e)
+             (error "Unknown libent" e))
+           (let ((p (assoc e prefixes)))
+            (unless p
+              (set! prefixes (cons (list e e) prefixes)))))))
+
+     (for-each (lambda (group)
+                 (let ((prefix (assoc group libgrps)))
+                  (unless prefix
+                    (error "Prefix not found!" group))
+                  (let ((lis (cdr prefix)))
+                   (for-each add-prefix! lis))))
+               mygroups)
+
+     (lambda (arg)
+       (define (libname->path libname)
+         (let ((n (reverse libname)))
+          (let loop ((q (cdr n))
+                     (cur (symbol->string (car n))))
+            (if (null? q)
+              (string-append cur ".sls")
+              (loop (cdr q)
+                    (string-append (symbol->string (car q)) "/" cur))))))
+       (define (try-lib libname) ;; #f / (ORIGNAME ALIASNAME DIR PTH)
+         (let ((pth (libname->path libname)))
+          (let loop ((q libdirs))
+           (and (not (null? q))
+                (let ((prefix (car q))
+                      (next (cdr q)))
+                  ;(write (list 'TRYLIB: libname prefix pth)) (newline)
+                  (if (%selfboot-file-exists?
+                        (string-append prefix "/" pth))
+                    (list arg libname prefix pth)
+                    (loop next)))))))
+       (let ((a (car arg))
+             (d (cdr arg)))
+        (cond
+          ((string? a)
+           (set! libdirs (cons a libdirs)))
+          ((symbol? a)
+           (let ((aliases (or (assoc a prefixes) (list a))))
+            (let loop ((q aliases))
+             (cond
+               ((null? q) #f)
+               (else (let ((a (car q))
+                           (next (cdr q)))
+                       (let ((e (try-lib (cons a d))))
+                        (or e
+                            (loop next)))))))))))))))
+
+(define (%selfboot-yuniconfig-get-runtime-list impl yuniroot)
+  ;; => runtime file paths relative to yuniroot
+  (define cfgpath (string-append yuniroot "/config/generic-runtime.scm"))
+  (let ((cfg (%selfboot-file->sexp-list cfgpath)))
+   (let ((generic (assoc 'generic cfg))
+         (additional (assoc impl cfg)))
+     (if additional
+       (append
+         (cadr additional)
+         (cadr generic)
+         (caddr generic)
+         (caddr additional))
+       '()))))
+
+;; selfboot/common/genfilelist.scm
+(define (%%selfboot-gen-filelist loadpath* entrypoint*)
+  (define deps* '())
+  (define (ignore-lib? lib)
+    (define (itr rest)
+      (and (pair? rest)
+           (or (equal? (car rest) lib)
+               (itr (cdr rest)))))
+    (itr %%selfboot-core-libs))
+  (define resolver
+    (%selfboot-yuniconfig-gen-resolver
+      %%selfboot-impl-type
+      %%selfboot-yuniroot))
+
+  (define (libread libname)
+    ;(write (list 'libread: libname)) (newline)
+    (let ((r (resolver libname)))
+     (unless r
+       (error "cannot read" libname))
+     (let ((orig (car r))
+           (aliasname (cadr r))
+           (dir (caddr r))
+           (pth (cadddr r)))
+       (car (%selfboot-file->sexp-list (string-append dir "/" pth))))))
+
+  (define (libcheck0 libname)
+    (let ((r (resolver libname)))
+     (unless r
+       (error "Cannot read" libname))
+     (let ((orig (car r))
+           (aliasname (cadr r))
+           (dir (caddr r))
+           (pth (cadddr r)))
+       aliasname)))
+
+  (define (libcheck libname)
+    ;(write (list 'libcheck: libname)) (newline)
+    (cond
+      ((ignore-lib? libname) #f)
+      (else (libcheck0 libname))))
+
+  ;; Add loadpath
+  (for-each
+    (lambda (path)
+      (%selfboot-yuniconfig-resolver-add-loadpath!
+        resolver path))
+    loadpath*)
+
+  ;; Collect deps
+  (for-each
+    (lambda (path)
+      (let ((code (%selfboot-file->sexp-list path)))
+       (set! deps* (append (%selfboot-program-depends code) deps*))))
+    entrypoint*)
+
+  ;; Generate liborder
+  (let ((order (%selfboot-gen-loadorder libread libcheck deps*))
+        (runtimefiles (%selfboot-yuniconfig-get-runtime-list
+                        %%selfboot-impl-type
+                        %%selfboot-yuniroot)))
+    (append
+      (map (lambda (path)
+             (cond
+               ((symbol? path)
+                ;; Polyfill
+                (let ((actual-path (%%selfboot-yuniconfig-get-polyfill-path
+                                     path)))
+                  (list #f %%selfboot-yuniroot actual-path #f path)))
+               (else
+                 (list #f %%selfboot-yuniroot path #f (cons #f #f)))))
+           runtimefiles)
+      (map (lambda (libinfo)
+             (let ((names (car libinfo))
+                   (exports (cdr libinfo)))
+              (let* ((libname (car names))
+                     (r (resolver libname)))
+                (let ((dir (caddr r))
+                      (pth (cadddr r)))
+                  (if (pair? (cdr names))
+                    (list libname dir pth (cdr names) exports)
+                    (list libname dir pth #f exports))))))
+           order))))
 
 
-(%%selfboot-load-runtime "/lib-runtime/selfboot/common/common.scm")
+;;; Loader/Runner
 
-;; Load generic libmgr runtime
+;; (part from) selfboot/common/run-program.scm
+(define %%selfboot-current-command-line %%selfboot-program-args)
+(define %%selfboot-current-libpath (list %%selfboot-yuniroot))
+(define (yuni/command-line) %%selfboot-current-command-line)
 
-(%%selfboot-load-runtime "/lib-runtime/generic/verboselib.scm")
-(%%selfboot-load-runtime "/lib-runtime/generic/libmgr-file.scm")
-(%%selfboot-load-runtime "/lib-runtime/generic/libmgr-core.scm")
-(%%selfboot-load-runtime "/lib-runtime/selfboot/cyclone/command-line-cyclone.scm")
-(%%selfboot-load-runtime "/lib-runtime/selfboot/cyclone/libmgr-macro-cyclone.scm")
-(%%selfboot-load-runtime "/lib-runtime/selfboot/common/run-program.scm")
+;; Scan arguments
+(let loop ((q %%selfboot-current-command-line))
+ (if (pair? q)
+   (let ((a (car q))
+         (d (cdr q)))
+     (cond
+       ((string=? "-LIBPATH" a)
+        (let ((dir (car d)))
+         (set! %%selfboot-current-libpath
+           (cons dir
+                 %%selfboot-current-libpath))
+         (loop (cdr d))))
+       (else
+         (set! %%selfboot-current-command-line q))))
+   #t))
+
+;; Collect deps and load
+(let ((r (yuni/command-line)))
+ (let* ((prog (car r))
+        (codetab (%%selfboot-gen-filelist
+                   %%selfboot-current-libpath
+                   (list prog))))
+   (for-each (lambda (e)
+               (let ((dir (cadr e))
+                     (pth (caddr e))
+                     (truename (car e))
+                     (aliasnames (cadddr e))
+                     (libexports (car (cddddr e))))
+                 (cond
+                   ((pair? libexports)
+                    (let ((raw-imports (car libexports))
+                          (exports (cdr libexports))
+                          (filepth (string-append dir "/" pth)))
+                      (write (list 'LOAD: filepth)) (newline)))
+                   (else ;; Polyfill
+                     (error "We cannot load polyfill here")))))
+             codetab)
+   ;;
+   (write (list 'LOAD: prog)) (newline)))
+
+;; Exit successfully if the program does not have exit call
+(exit 0)
+
