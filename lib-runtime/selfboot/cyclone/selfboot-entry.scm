@@ -1,3 +1,6 @@
+;; FIXME: Library scoping is not implemented yet.
+;;        it's just a load-order generator
+
 (import ;(scheme base)
         (scheme process-context)
         (scheme read)
@@ -456,7 +459,8 @@
    #t))
 
 ;; Collect deps and load
-(let ((r (yuni/command-line)))
+(let ((r (yuni/command-line))
+      (code* '()))
  (let* ((prog (car r))
         (codetab (%%selfboot-gen-filelist
                    %%selfboot-current-libpath
@@ -472,12 +476,21 @@
                     (let ((raw-imports (car libexports))
                           (exports (cdr libexports))
                           (filepth (string-append dir "/" pth)))
-                      (write (list 'LOAD: filepth)) (newline)))
+                      (write (list 'LOAD: filepth)) (newline)
+                      (let* ((n (%selfboot-file->sexp-list filepth))
+                             (libcode* (cddr (cddr (car n)))))
+                       ;; Push program
+                       (set! code*
+                         (cons (cons 'begin libcode*) code*)))))
                    (else ;; Polyfill
                      (error "We cannot load polyfill here")))))
              codetab)
    ;;
-   (write (list 'LOAD: prog)) (newline)))
+   (write (list 'LOAD: prog)) (newline)
+   (set! code* (cons (cons 'begin 
+                           ;; Strip (import ...)
+                           (cdr (%selfboot-file->sexp-list prog))) code*))
+   (eval (cons 'begin (reverse code*)))))
 
 ;; Exit successfully if the program does not have exit call
 (exit 0)
