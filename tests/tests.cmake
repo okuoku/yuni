@@ -146,6 +146,8 @@ tests(
     ${tests}/sibr/sibr0012gen.sps
     ${tests}/sibr/err-sibr0012string.sps
     ${tests}/sibr/sibr0013.sps
+    ${tests}/sibr/err-sibr0014.sps
+    ${tests}/sibr/sibr0014.sps
     )
 
 io_tests( # Run on temporary/empty dir

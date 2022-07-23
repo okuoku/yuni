@@ -96,4 +96,7 @@ set(expected_failures
     sibr0012gen-STKLOS
     err-sibr0012string-STKLOS
 
+    # SIBR
+    err-sibr0014-S7
+
     )
