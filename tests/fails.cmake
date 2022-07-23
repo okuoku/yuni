@@ -57,7 +57,7 @@ set(expected_failures
     # https://github.com/justinethier/cyclone/issues/379
     io0-ICYC # Wrong character at end of string
 
-    # hashtable
+    # https://github.com/justinethier/cyclone/issues/490
     hashtables0-ICYC
 
     # https://github.com/okuoku/yuni/issues/146
@@ -74,12 +74,14 @@ set(expected_failures
     # incompat native string-copy https://github.com/okuoku/yuni/issues/160
     strings0-S7
 
+    # Macro expansion on interactive-environment
     # https://github.com/okuoku/yuni/issues/168
     synrule0-CHICKEN5_CSI
     synrule0-FOMENT
     synrule0-BIGLOO
     synrule0-MIT_SCHEME
     synrule1-BIGLOO
+    synrule0-ICYC
 
     #############################################
     ## Known limitation / Resolved as spec
@@ -93,7 +95,4 @@ set(expected_failures
     # https://github.com/okuoku/yuni/issues/167
     values2-S7
 
-    # Macro expansion on interactive-environment
-    # https://github.com/okuoku/yuni/issues/171
-    synrule0-ICYC
     )
