@@ -12,7 +12,7 @@ Nil: (otherwise)
 Some Scheme do not return "" (null-string) for zero-length `read-string` procedure.
 
 ```scheme
-(read-string 0 (open-input-string "")) ;; => "" / #!eof / ERROR
+(read-string 0 (open-input-string "xxxx")) ;; => "" / #!eof / ERROR
 ```
 
 On Gambit, it will always return `#!eof` thus a textual port can return
