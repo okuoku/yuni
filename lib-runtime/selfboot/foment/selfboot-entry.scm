@@ -149,6 +149,6 @@
 (inject-var! '%%myenv myenv)
 
 (load (string-append %%selfboot-yuniroot "/lib-runtime/r7rs/yuni-runtime/r7rs.sld"))
-(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/cyclone/selfboot-runtime.scm") myenv)
+(load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/foment/selfboot-runtime.scm") myenv)
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/common.scm") myenv)
 (load (string-append %%selfboot-yuniroot "/lib-runtime/selfboot/common/run-program.scm") myenv) 
