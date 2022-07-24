@@ -4,11 +4,12 @@ set(expected_failures
     ## To Do
     #############################################
 
-    # no 2 arg log
-    inexact1-MIT_SCHEME
+    # nan? implementation
+    # https://github.com/okuoku/yuni/issues/174
     inexact1-SCM
 
-    # Exceptions https://github.com/okuoku/yuni/issues/152
+    # Exceptions 
+    # https://github.com/okuoku/yuni/issues/152
     exp0-BIGLOO
     exp1-BIGLOO
     exp2-BIGLOO
@@ -25,21 +26,20 @@ set(expected_failures
     inexact3-STKLOS
 
     # SCM do not implement -0.0 printing(SIBR0013)
+    # https://github.com/okuoku/yuni/issues/173
     inexact3-SCM
 
     # IronScheme do not implement -0.0(SIBR0013)
+    # https://github.com/okuoku/yuni/issues/173
     inexact3-IRON_SCHEME
 
     #############################################
     ## Bugs
     #############################################
 
-    # https://github.com/okuoku/yuni/issues/129
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=40584
+    # https://github.com/okuoku/yuni/issues/129
     iter0-GUILE3
-
-    # Syntax
-    app-ICYC
 
     # https://github.com/justinethier/cyclone/issues/379
     io0-ICYC # Wrong character at end of string
@@ -50,17 +50,20 @@ set(expected_failures
     # https://github.com/okuoku/yuni/issues/146
     strings0-BIGLOO
 
-    # Parameter incompatibilities https://github.com/okuoku/yuni/issues/153
+    # Parameter incompatibilities 
+    # https://github.com/okuoku/yuni/issues/153
     exp2-MIT_SCHEME
     exp2-GUILE # Is guile2
     exp0-ICYC
     exp2-ICYC
 
-    # incompat native string-copy https://github.com/okuoku/yuni/issues/160
+    # incompat native string-copy 
+    # https://github.com/okuoku/yuni/issues/160
     strings0-S7
 
     # Macro expansion on interactive-environment
     # https://github.com/okuoku/yuni/issues/168
+    app-ICYC
     synrule0-CHICKEN5_CSI
     synrule0-FOMENT
     synrule0-BIGLOO
@@ -81,8 +84,8 @@ set(expected_failures
     fail2-RACKET
 
     # Racket: Broken bytevector I/O
-    # https://github.com/okuoku/yuni/issues/95
     # https://github.com/racket/r6rs/issues/3
+    # https://github.com/okuoku/yuni/issues/95
     io0-RACKET
 
     # Quasi-quote incompatibility
@@ -95,6 +98,7 @@ set(expected_failures
     err-sibr0014-S7
 
     # STKlos do not allow (read-string 0 <port>)
+    # https://github.com/okuoku/yuni/issues/132
     sibr0012gen-STKLOS
     err-sibr0012string-STKLOS
 
