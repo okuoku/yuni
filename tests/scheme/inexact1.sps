@@ -23,7 +23,9 @@
 
 (check-equal #t (nan? +nan.0))
 (check-equal #f (nan? +inf.0))
-;(check-equal #t (infinite? +inf.0)) ;; (yuni scheme) lacks infinite?
+(check-equal #f (nan? -inf.0))
+(check-equal #t (infinite? +inf.0))
+(check-equal #t (infinite? -inf.0))
 
 ;; 2 arg logs
 (check-eps 2 (log 100 10))
