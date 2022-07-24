@@ -137,6 +137,7 @@ tests(
     ${tests}/lib/minitest0.sps
     ${tests}/lib/lighteval0.sps
     ${tests}/lib/hashtables0.sps
+    ${tests}/lib/hashtables1.sps
     ${tests}/lib/miniread0.sps
     ${tests}/lib/yuniio0.sps
     ${tests}/lib/yuniio1.sps
