@@ -278,3 +278,8 @@
     (and (string<=?/r5rs x (car q))
          (apply string<=? q))
     #t))
+(define log/r5rs log)
+(define (log x . y?)
+  (if (null? y?)
+    (log/r5rs x)
+    (/ (log/r5rs x) (log/r5rs (car y?)))))
