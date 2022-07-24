@@ -21,7 +21,8 @@
               (else
                 (check-equal #t 'form))))))))
 
-(check-eps 3.14159265358979 (atan 0.0 -1.0)) ;; Cyclone (0.0 <=> -0.0)
-(check-eps -3.14159265358979 (atan -0.0 -1.0)) ;; SCM
+(unless (eqv? 0.0 -0.0)
+  (check-eps 3.14159265358979 (atan 0.0 -1.0))
+  (check-eps -3.14159265358979 (atan -0.0 -1.0)))
 
 (check-finish)
