@@ -16,9 +16,19 @@ set(expected_failures
     exp1-SCM
     exp2-SCM
 
-    # 2 arg atan
-    inexact2-ICYC # Still -0.0 issue
-    inexact2-SCM
+    # (abs -0.0) => -0.0
+    # https://github.com/okuoku/yuni/issues/173
+    inexact3-CHIBI_SCHEME
+    inexact3-DIGAMMA
+    inexact3-FOMENT
+    inexact3-KAWA
+    inexact3-STKLOS
+
+    # SCM do not implement -0.0 printing(SIBR0013)
+    inexact3-SCM
+
+    # IronScheme do not implement -0.0(SIBR0013)
+    inexact3-IRON_SCHEME
 
     #############################################
     ## Bugs
@@ -27,17 +37,6 @@ set(expected_failures
     # https://github.com/okuoku/yuni/issues/129
     # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=40584
     iter0-GUILE3
-
-    # Racket: Broken bytevector I/O
-    # https://github.com/okuoku/yuni/issues/95
-    # https://github.com/racket/r6rs/issues/3
-    io0-RACKET
-
-    # https://github.com/okuoku/yuni/issues/128
-    fecore0-KAWA
-
-    # https://github.com/okuoku/yuni/issues/118
-    fail2-RACKET
 
     # Syntax
     app-ICYC
@@ -51,13 +50,11 @@ set(expected_failures
     # https://github.com/okuoku/yuni/issues/146
     strings0-BIGLOO
 
-    # Exception incompatibilities https://github.com/okuoku/yuni/issues/151
-    exp0-ICYC
-    exp2-ICYC
-
     # Parameter incompatibilities https://github.com/okuoku/yuni/issues/153
     exp2-MIT_SCHEME
     exp2-GUILE # Is guile2
+    exp0-ICYC
+    exp2-ICYC
 
     # incompat native string-copy https://github.com/okuoku/yuni/issues/160
     strings0-S7
@@ -75,6 +72,19 @@ set(expected_failures
     ## Known limitation / Resolved as spec
     #############################################
 
+    # https://github.com/okuoku/yuni/issues/128
+    fecore0-KAWA
+
+    # Racket: (exit #f) is broken
+    # https://github.com/racket/r6rs/issues/9
+    # https://github.com/okuoku/yuni/issues/118
+    fail2-RACKET
+
+    # Racket: Broken bytevector I/O
+    # https://github.com/okuoku/yuni/issues/95
+    # https://github.com/racket/r6rs/issues/3
+    io0-RACKET
+
     # Quasi-quote incompatibility
     # https://github.com/okuoku/yuni/issues/117
     qq1-S7
@@ -82,12 +92,10 @@ set(expected_failures
     # zero values representation
     # https://github.com/okuoku/yuni/issues/167
     values2-S7 # SIBR0014
+    err-sibr0014-S7
 
     # STKlos do not allow (read-string 0 <port>)
     sibr0012gen-STKLOS
     err-sibr0012string-STKLOS
-
-    # SIBR
-    err-sibr0014-S7
 
     )

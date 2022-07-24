@@ -122,6 +122,7 @@ tests(
     ${tests}/scheme/inexact0.sps
     ${tests}/scheme/inexact1.sps
     ${tests}/scheme/inexact2.sps
+    ${tests}/scheme/inexact3.sps
     ${tests}/scheme/qq0.sps
     ${tests}/scheme/qq1.sps
     ${tests}/scheme/stx0.sps
