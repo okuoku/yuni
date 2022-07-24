@@ -5,7 +5,11 @@
 
 (define (command-line) (yuni/command-line))
 
-(define (nan? x) (not (= x x))) ;; FIXME:
+(define (nan? x)
+  (and (inexact? x) ;; Drop exact numbers
+       (not (finite? x)) ;; +inf.0 -inf.0 +nan.0
+       (= x (* -1.0 x))))
+
 (define (inexact x) (exact->inexact x))
 (define (exact x) (inexact->exact x))
 

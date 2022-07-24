@@ -4,10 +4,6 @@ set(expected_failures
     ## To Do
     #############################################
 
-    # nan? implementation
-    # https://github.com/okuoku/yuni/issues/174
-    inexact1-SCM
-
     # Exceptions 
     # https://github.com/okuoku/yuni/issues/152
     exp0-BIGLOO
