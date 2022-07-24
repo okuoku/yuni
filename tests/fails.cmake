@@ -53,10 +53,6 @@ set(expected_failures
     exp0-ICYC
     exp2-ICYC
 
-    # incompat native string-copy 
-    # https://github.com/okuoku/yuni/issues/160
-    strings0-S7
-
     # Macro expansion on interactive-environment
     # https://github.com/okuoku/yuni/issues/168
     app-ICYC

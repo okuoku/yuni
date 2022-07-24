@@ -309,13 +309,15 @@
 
 ;; OVERRIDES
 
-(set! string-copy ;; s7 has string-copy primitive
+(define string-copy+ ;; s7 has string-copy primitive
   (case-lambda
-    ((s) (string-copy s 0 (length s)))
-    ((s start) (string-copy s start (length s)))
+    ((s) (string-copy+ s 0 (length s)))
+    ((s start) (string-copy+ s start (length s)))
     ((s start end)
      (let ((dest (make-string (- end start))))
       (string-copy! dest 0 s start end)
       dest))))
+
+(set! string-copy string-copy+)
 
 (define list? proper-list?)
