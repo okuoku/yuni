@@ -6,6 +6,9 @@
   (or (exact? x)
       (finitefl? x)))
 
+(define (infinite? x)
+  (infinitefl? x))
+
 (define (floor-remainder x y)
   ;; is, modulo
   (- x (* (exact (floor (/ x y))) y)))
