@@ -14,7 +14,7 @@ s7 cannot consume zero return values due to its values handling.
 Workaround
 ==========
 
-Receive unexpected with N-ary lambda. Implementations other than s7
+Receive `#<unspecified>` with N-ary lambda. Implementations other than s7
 will receive nil.
 
 
