@@ -83,7 +83,7 @@ open-binary-input-file open-binary-output-file open-input-file
 open-output-file 
 ;with-input-from-file with-output-to-file
 
-acos asin atan cos exp finite? log nan? sin sqrt tan
+acos asin atan cos exp finite? infinite? log nan? sin sqrt tan
 
 ; delay force make-promise delay-force
 
