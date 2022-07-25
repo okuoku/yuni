@@ -94,7 +94,7 @@
    vector->string
    vector-map
    vector-for-each
-   string-copy
+   ;string-copy
    vector-copy
    vector->list
    vector-copy!

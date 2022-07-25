@@ -5,7 +5,7 @@
        (define (nam a b . args)
          (and (comp a b)
               (or (null? args)
-                  (apply nam a args))))
+                  (apply nam b args))))
        (yuni/base-library-add-var! 'nam 'comp)))))
 
 (%%yuni/define-compar char=? char=?+)
@@ -13,6 +13,11 @@
 (%%yuni/define-compar char>=? char>=?+)
 (%%yuni/define-compar char<? char<?+)
 (%%yuni/define-compar char>? char>?+)
+(%%yuni/define-compar string=? string=?+)
+(%%yuni/define-compar string<? string<?+)
+(%%yuni/define-compar string<=? string<=?+)
+(%%yuni/define-compar string>? string>?+)
+(%%yuni/define-compar string>=? string>=?+)
 
 (define (%%assoc/compare key alist compare)
   (cond
@@ -49,7 +54,6 @@
 (yuni/base-library-add-var! 'assoc+ 'assoc)
 (yuni/base-library-add-var! 'member+ 'member)
 
-;; FIXME: Not effective..?
 (define string->list+
   (case-lambda
     ((x) (string->list x))
@@ -57,6 +61,15 @@
     ((x start end) (string->list (substring x start end)))))
 
 (yuni/base-library-add-var! 'string->list+ 'string->list)
+
+;; FIXME: Copy/Pasted from polyfills
+(define string-copy+
+  (case-lambda
+    ((s) (string-copy s))
+    ((s start) (string-copy+ s start (string-length s)))
+    ((s start end) (list->string (string->list+ s start end)))))
+
+(yuni/base-library-add-var! 'string-copy+ 'string-copy)
 
 (define (%%yunierror msg irr)
   (error #f msg irr))

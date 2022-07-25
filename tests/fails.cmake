@@ -43,9 +43,6 @@ set(expected_failures
     # https://github.com/justinethier/cyclone/issues/490
     hashtables0-ICYC
 
-    # https://github.com/okuoku/yuni/issues/146
-    strings0-BIGLOO
-
     # Parameter incompatibilities 
     # https://github.com/okuoku/yuni/issues/153
     exp2-MIT_SCHEME
