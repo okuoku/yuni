@@ -254,11 +254,11 @@
     (string-append basename "." newext)))
 
 (define (file->list proc pth)
-  (with-input-from-file
+  (call-with-input-file
     pth
-    (lambda ()
+    (lambda (p)
       (define (itr cur)
-        (let ((r (proc (current-input-port))))
+        (let ((r (proc p)))
           (if (eof-object? r)
             (reverse cur)
             (itr (cons r cur)))))
@@ -280,12 +280,12 @@
 (define (string-list->file pth l)
   (when (file-exists? pth)
     (delete-file pth))
-  (with-output-to-file
+  (call-with-output-file
     pth
-    (lambda ()
+    (lambda (p)
       (for-each (lambda (e) 
-                  (put-string (current-output-port) e)
-                  (newline))
+                  (put-string p e)
+                  (newline p))
                 l))))
 
 
