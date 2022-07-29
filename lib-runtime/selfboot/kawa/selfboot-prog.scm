@@ -102,7 +102,7 @@
 
 (define (%%selfboot-loadlib pth libname imports exports)
   (let ((code (%selfboot-file->sexp-list pth)))
-   ;(write (list 'LAUNCH: pth)) (newline)
+   (write (list 'LAUNCH: pth)) (newline)
    (eval `(define-library ,libname
                           (export ,@exports)
                           (import (yuni-runtime r7rs) ,@imports)
@@ -129,6 +129,8 @@
                                (scheme write)
                                (scheme eval)
                                (rnrs hashtables)
+                               (kawa lib ports)
+                               (kawa lib files)
                                ))
 
 
