@@ -128,6 +128,9 @@
                                (scheme eval)
                                (srfi 69)
                                (chicken eval)
+                               (chicken file)
+                               (chicken file posix)
+                               (chicken process-context)
                                ))
 
 
