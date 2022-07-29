@@ -67,11 +67,6 @@ set(expected_failures
     # https://github.com/okuoku/yuni/issues/128
     fecore0-KAWA
 
-    # Racket: (exit #f) is broken
-    # https://github.com/racket/r6rs/issues/9
-    # https://github.com/okuoku/yuni/issues/118
-    fail2-RACKET
-
     # Racket: Broken bytevector I/O
     # https://github.com/racket/r6rs/issues/3
     # https://github.com/okuoku/yuni/issues/95
