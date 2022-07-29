@@ -115,6 +115,7 @@
                                (scheme write)
                                (scheme eval)
                                (gauche base)
+                               (file util)
                                ))
 
 
