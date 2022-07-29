@@ -10,6 +10,10 @@
            create-directory
            delete-directory)
          (import (yuni scheme)
+                 (only (core) 
+                       create-directory
+                       file-regular?
+                       file-directory?)
                  (core files))
 
 ;; Digamma uses remove(3) for `delete-file` which is also applicable on dirs
