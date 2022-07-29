@@ -287,3 +287,8 @@
   (if (null? y?)
     (log/r5rs x)
     (/ (log/r5rs x) (log/r5rs (car y?)))))
+
+;; FIXME: yunifake leftover
+(define-macro (define-primitive-names/yunifake . bogus)
+  `(begin))
+
