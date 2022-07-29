@@ -123,6 +123,7 @@
                                (scheme process-context)
                                (scheme read)
                                (scheme write)
+                               (sagittarius)
                                ))
 
 (when (string=? %%selfboot-yuniroot "")
