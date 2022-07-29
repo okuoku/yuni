@@ -128,6 +128,7 @@
                                (scheme write)
                                (scheme eval)
                                (srfi 69)
+                               (chibi filesystem)
                                ))
 
 
