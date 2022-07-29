@@ -10,8 +10,7 @@
            create-directory
            delete-directory
            )
-         (import (scheme base)
-                 (chibi filesystem))
+         (import (scheme base))
 
 
 ;; Cyclone uses remove(3) to delete-file
