@@ -12,7 +12,7 @@
            )
          (import (yuni scheme)
                  (rename
-                   (only (racket)
+                   (only (racket base)
                          directory-list
                          current-directory
                        
