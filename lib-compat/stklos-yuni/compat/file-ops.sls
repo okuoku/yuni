@@ -13,15 +13,11 @@
            )
          (import (yuni scheme))
 
-(define-primitive-names/yunifake
-  file-regular?
-  file-directory?
-  directory-list
-  current-directory
-
-  delete-directory
-  create-directory
-  )
-
+(define file-regular? "UNIMPL")
+(define file-directory? "UNIMPL")
+(define directory-list "UNIMPL")
+(define current-directory "UNIMPL")
+(define create-directory "UNIMPL")
+(define delete-directory "UNIMPL")
 
 )
