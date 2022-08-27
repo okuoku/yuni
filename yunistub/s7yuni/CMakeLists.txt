@@ -34,6 +34,11 @@ if(CYGWIN)
     set_target_properties(
         s7yuni
         PROPERTIES LINK_FLAGS -Wl,--export-all-symbols)
+elseif(APPLE)
+    # dyld
+    set_target_properties(
+        s7yuni
+        PROPERTIES LINK_FLAGS -rdynamic)
 elseif(UNIX)
     # Assume ELF platforms
     set_target_properties(
