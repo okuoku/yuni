@@ -4,7 +4,8 @@
            letrec-syntax
            define-record-type
            define-values
-           guard)
+           guard
+           parameterize)
          (import (yunivm-core-syntax))
 
          
@@ -25,6 +26,10 @@
     ((nam . bogus)
      (syntax-error "Not supported" nam))))
 (define-syntax guard
+  (syntax-rules ()
+    ((nam . bogus)
+     (syntax-error "Not supported" nam))))
+(define-syntax parameterize
   (syntax-rules ()
     ((nam . bogus)
      (syntax-error "Not supported" nam))))

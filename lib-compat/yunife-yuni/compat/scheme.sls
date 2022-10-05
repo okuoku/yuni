@@ -32,6 +32,7 @@
            let-syntax letrec-syntax
            define-record-type define-values
            guard 
+           parameterize
 
            ;; from R7RS draft 7
            * + - / < <= = > >= abs 
@@ -67,7 +68,7 @@
            number->string number? odd? open-input-bytevector 
            open-input-string open-output-bytevector
            open-output-string 
-           output-port-open? output-port? pair? parameterize
+           output-port-open? output-port? pair?
            peek-char peek-u8 port? positive?  procedure? 
            quotient raise raise-continuable
            read-bytevector read-bytevector!
