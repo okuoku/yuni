@@ -8,7 +8,8 @@
            yunife-load-sexp-list!
            yunife-get-libraries
            yunife-get-library-code
-           yunife-get-library-macro)
+           yunife-get-library-macro
+           yunife-add-primitives!)
          (import (yuni scheme)
                  (yunife libmgr)
                  (yuni lighteval)
@@ -250,12 +251,18 @@
     (hashtable-ref ht-libcodes (libname->symbol libname) #f))
   (define (get-library-macro libname)
     (hashtable-ref ht-libmacros (libname->symbol libname) #f))
+
+  (define (add-primitives! libname prims*)
+    (let ((sym (libname->symbol libname)))
+     (hashtable-set! ht-libcodes sym '())
+     (hashtable-set! ht-libmacros sym (make-primitive-macros prims*))))
   
   (define (action op . args)
     (case op
       ;; Actions
       ((load!) (apply do-load! args))
       ((load-sexp-list!) (apply do-load-sexp-list! args))
+      ((add-primitives!) (apply add-primitives! args))
       ((get-libraries) (apply get-libraries args))
       ((get-library-code) (apply get-library-code args))
       ((get-library-macro) (apply get-library-macro args))
@@ -279,31 +286,26 @@
   (lighteval-env-set! le 'yuni/make-synrule-baselib yuni/make-synrule-baselib)
   (lighteval-env-set! le 'yuni/synrule-compare yuni/synrule-compare)
   (lighteval-env-set! le 'yuni/cons-source yuni/cons-source)
-  ;; Inject dummy library
-  (let ((yunivm-core-syntax (libname->symbol '(yunivm-core-syntax))))
-   (hashtable-set! ht-libcodes yunivm-core-syntax '())
-   (hashtable-set! ht-libmacros yunivm-core-syntax
-                   (make-primitive-macros
-                     (list
-                       ;; Compiler primitives
-                       (cons 'begin #f)
-                       (cons 'if #f)
-                       (cons 'when #f)
-                       (cons 'lambda #f)
-                       (cons 'set! #f)
-                       (cons 'quote #f)
-                       (cons '$define/core #f)
-                       (cons 'letrec* #f)
-                       ;; Aux syntax
-                       (cons 'syntax-rules #f)
-                       (cons '... #f)
-                       (cons '=> #f)
-                       (cons '_ #f)
-                       (cons 'else #f)
-                       ;; (embedded) Macro
-                       (cons 'define-syntax (cons define-syntax/macro
-                                                  'DUMMY))))))
 
+  ;; Inject dummy library
+  (add-primitives! '(yunivm-core-syntax)
+                   ;; Compiler primitives
+                   `((begin        . #f)
+                     (if           . #f)
+                     (when         . #f)
+                     (lambda       . #f)
+                     (set!         . #f)
+                     (quote        . #f)
+                     ($define/core . #f)
+                     (letrec*      . #f)
+                     ;; Aux syntax
+                     (syntax-rules . #f)
+                     (...          . #f)
+                     (=>           . #f)
+                     (_            . #f)
+                     (else         . #f)
+                     ;; (embedded) Macro
+                     (define-syntax ,define-syntax/macro DUMMY)))
   ;;
   action)         
 
@@ -313,6 +315,7 @@
 (define (yunife-get-libraries fe) (fe 'get-libraries))
 (define (yunife-get-library-code fe libname) (fe 'get-library-code libname))
 (define (yunife-get-library-macro fe libname) (fe 'get-library-macro libname))
+(define (yunife-add-primitives! fe libname a*) (fe 'add-primitives! libname a*))
 ;; proxy
 (define (yunife-add-path! fe path) (fe 'add-path! path))
 (define (yunife-add-alias-map! fe from to) (fe 'add-alias-map! from to))
