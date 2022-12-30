@@ -40,9 +40,6 @@ set(expected_failures
     # https://github.com/justinethier/cyclone/issues/379
     io0-ICYC # Wrong character at end of string
 
-    # https://github.com/justinethier/cyclone/issues/490
-    hashtables0-ICYC
-
     # Parameter incompatibilities 
     # https://github.com/okuoku/yuni/issues/153
     exp2-MIT_SCHEME
