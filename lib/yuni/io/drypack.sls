@@ -153,10 +153,10 @@
   (counter-for-each
     numbers
     (lambda (n) (cond
-                  ((and (integer? n) (positive? n))
+                  ((and (exact? n) (integer? n) (positive? n))
                    (leb128-put port 1)
                    (leb128-put port n))
-                  ((and (integer? n) (negative? n))
+                  ((and (exact? n) (integer? n) (negative? n))
                    (leb128-put port 2)
                    (leb128-put port (- n)))
                   (else
