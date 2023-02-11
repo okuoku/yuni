@@ -203,12 +203,13 @@
             (libname-sym (or libname-sym/name (libname->symbol libname)))
             (env (make-env)))
         (process-import! env imports)
-        (let ((src (process-toplevel! env libname-sym prog*)))
-         ;; Register library
-         (hashtable-set! ht-libimports libname-sym imports)
-         (hashtable-set! ht-libexports libname-sym exports)
-         (hashtable-set! ht-libcodes libname-sym src)
-         (hashtable-set! ht-libmacros libname-sym env)))))
+        (let* ((src (process-toplevel! env libname-sym prog*))
+               (src+import (cons (cons 'import imports) src)))
+          ;; Register library
+          (hashtable-set! ht-libimports libname-sym imports)
+          (hashtable-set! ht-libexports libname-sym exports)
+          (hashtable-set! ht-libcodes libname-sym src+import)
+          (hashtable-set! ht-libmacros libname-sym env)))))
 
   (define (do-load-program! sexp)
     (let ((import? (car sexp))
