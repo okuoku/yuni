@@ -10,6 +10,7 @@
                  (r7c heap fixnum)
                  (r7c heap char)
                  (r7c heap string)
+                 (r7c heap symbol)
                  (r7c syntax or)
                  (r7c syntax and)
                  (r7c syntax let)
