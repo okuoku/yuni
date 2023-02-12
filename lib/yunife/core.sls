@@ -293,7 +293,7 @@
                    ;; Compiler primitives
                    `((begin        . #f)
                      (if           . #f)
-                     (when         . #f)
+                     ;(when         . #f)
                      (lambda       . #f)
                      (set!         . #f)
                      (quote        . #f)

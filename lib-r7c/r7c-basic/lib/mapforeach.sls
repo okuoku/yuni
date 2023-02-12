@@ -11,6 +11,7 @@
                  (r7c syntax if)
                  (r7c syntax or)
                  (r7c syntax let)
+                 (r7c syntax unless)
                  (r7c heap core)
                  (r7c heap vector)
                  (r7c heap fixnum)

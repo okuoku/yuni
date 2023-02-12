@@ -13,6 +13,8 @@
                  (r7c syntax and)
                  (r7c syntax let)
                  (r7c syntax case)
+                 (r7c syntax when)
+                 (r7c syntax unless)
                  (r7c-yunicore yuniport))
 
          

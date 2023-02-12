@@ -9,9 +9,11 @@
                  (r7c-system core)
                  (r7c heap fixnum)
                  (r7c heap char)
+                 (r7c heap string)
                  (r7c syntax or)
                  (r7c syntax and)
                  (r7c syntax let)
+                 (r7c syntax unless)
                  (r7c-io port defaults)
                  (r7c-io port objects))
 

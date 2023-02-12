@@ -15,6 +15,8 @@
                  (r7c syntax or)
                  (r7c syntax let)
                  (r7c syntax cond)
+                 (r7c syntax when)
+                 (r7c syntax unless)
                  (r7c heap core)
                  (r7c heap bytevector)
                  (r7c heap fixnum)

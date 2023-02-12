@@ -33,6 +33,7 @@
          (import (r7c-basic syntax define)
                  (r7c syntax and)
                  (r7c syntax cond)
+                 (r7c syntax unless)
                  (r7c-yunicore simple-struct)
                  (r7c-system core)
                  (r7c heap fixnum)

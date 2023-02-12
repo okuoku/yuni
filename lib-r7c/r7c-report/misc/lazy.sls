@@ -4,6 +4,7 @@
                  (r7c-system synrules)
                  (r7c syntax lambda)
                  (r7c syntax letcore)
+                 (r7c syntax unless)
                  (r7c heap pair)
                  (r7c heap list))
 

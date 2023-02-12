@@ -8,6 +8,7 @@
          (import (r7c-basic syntax define)
                  (r7c-ext simple-struct)
                  (r7c-system core)
+                 (r7c syntax unless)
                  (r7c heap fixnum)
                  (r7c heap pair))
 

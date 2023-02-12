@@ -8,6 +8,7 @@
                  (r7c heap fixnum)
                  (r7c heap bytevector)
                  (r7c heap core)
+                 (r7c heap string)
                  (r7c-basic lib strings)
                  )
 
