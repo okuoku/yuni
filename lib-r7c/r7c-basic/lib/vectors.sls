@@ -158,6 +158,7 @@
    (list->vector/itr! v 0 l)
    v))
 
+#|
 (define (vector->string/itr! vec str pos start end)
   (unless ($fx= start end)
     (string-set! str pos (vector-ref vec start))
@@ -176,6 +177,7 @@
       (if (null? d)
         (vector->string/pick vec start (vector-length vec))
         (vector->string/pick vec start (car d))))))
+|#
 
 (define (string->vector/itr! str v pos start end)
   (unless ($fx= start end)
