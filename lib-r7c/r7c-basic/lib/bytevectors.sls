@@ -31,6 +31,7 @@
       ($bytevector-fill! bv fill 0 len)
       bv)))
 
+#|
 (define (string->utf8/itr! str bv cur start end)
   ;; FIXME: Not quite utf8
   (unless ($fx= start end)
@@ -154,6 +155,7 @@
       (if (null? d)
         (utf8->string/pick bv start (bytevector-length bv))
         (utf8->string/pick bv start (car d))))))         
+|#
          
 (define (bytevector-append/itr! bv pos queue)
   (unless (null? queue)
