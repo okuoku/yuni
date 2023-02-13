@@ -107,7 +107,7 @@
                ;; Shortcut
                (expand-sequence! env libname-sym #t (cdr sexp) cb))
              (else 
-               (PCK 'Pass3: sexp)
+               ;(PCK 'Pass3: sexp)
                (pass))))
           ((quote) (cb sexp))
           ((define-macro)

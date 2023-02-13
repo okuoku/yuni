@@ -28,7 +28,7 @@
     (let ((f (car libname))
           (d (cdr libname)))
      (let loop ((a (reverse alias-map*)))
-      (PCK 'Loop: a)
+      ;(PCK 'Loop: a)
       (cond
         ((null? a) out)
         ((eq? (caar a) f)
@@ -43,7 +43,7 @@
         (string-append base ".sls")))
 
   (define (file-exists?0 pth)
-    (PCK 'Trying pth)
+    ;(PCK 'Trying pth)
     (file-exists? pth))
 
   (define (locate-one! libname) ;; => #f / libpath
@@ -54,7 +54,7 @@
               (loop (cdr m))))))
 
   (define (locate! libname)
-    (PCK 'Locate: libname)
+    ;(PCK 'Locate: libname)
     (let loop ((libnames (explode-libname libname)))
      (and (pair? libnames)
           (or (locate-one! (car libnames))
