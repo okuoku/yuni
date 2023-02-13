@@ -23,6 +23,7 @@
                  (r7c syntax let)
                  (r7c syntax cond)
                  (r7c syntax unless)
+                 (r7c heap listloop)
                  (r7c heap core)
                  (r7c heap eqv)
                  (r7c heap fixnum)
