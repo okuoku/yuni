@@ -81,9 +81,9 @@
         ((pair? sexp)
          (let ((a *unspecified*)
                (d *unspecified*))
-           (expand-form! env libname-sym top-level? (car sexp) 
+           (expand-form! env libname-sym #f (car sexp) 
                          (lambda (obj) (set! a obj)))
-           (expand-form! env libname-sym top-level? (cdr sexp) 
+           (expand-form! env libname-sym #f (cdr sexp) 
                          (lambda (obj) (set! d obj)))
            (cond
              ((and top-level? (eq? a *unspecified*))
