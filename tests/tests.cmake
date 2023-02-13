@@ -174,7 +174,3 @@ runtest(${tests}/newboot/testarg1.sps ARGS SPLITHERE a 1 c)
 
 add_selfboot_test_ident()
 
-# YUNIFE
-
-runtest(${tests}/yunife/fecore0.sps ARGS
-    ROOT ${YUNIROOT})

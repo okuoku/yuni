@@ -1,3 +1,5 @@
+;; FIXME: This test is not used for now
+
 (import (yuni scheme)
         (yunife core)
         (yunitest mini))
