@@ -53,6 +53,8 @@
 (define (counter-set-offset! ctr off)
   (vector-set! ctr 3 off))
 
+(define nan-ident (list 'nan-ident))
+
 (define (drypack-put port obj)
   (define chars (make-counter #f))
   (define numbers (make-counter #t))
@@ -78,7 +80,9 @@
       ((char? obj)
        (counter-ident chars obj))
       ((number? obj)
-       (counter-ident numbers obj))
+       (if (nan? obj)
+           (counter-ident numbers nan-ident) 
+           (counter-ident numbers obj) ))
       ((symbol? obj)
        (counter-ident symbols obj))
       ((string? obj)
@@ -103,7 +107,11 @@
       ((char? cur)
        (counter-enter! chars cur))
       ((number? cur)
-       (counter-enter! numbers cur))
+       ;; Since +nan.0 cannot be used for a key, use specific object as a
+       ;; proxy
+       (if (nan? cur)
+           (counter-enter! numbers nan-ident) 
+           (counter-enter! numbers cur)))
       ((symbol? cur)
        (counter-enter! symbols cur))
       ((string? cur)
@@ -160,7 +168,9 @@
                    (leb128-put port 2)
                    (leb128-put port (- n)))
                   (else
-                    (let* ((s (number->string n))
+                    (let* ((s (if (eq? n nan-ident)
+                                  "+nan.0"
+                                  (number->string n)))
                            (bv (string->utf8 s))
                            (len (bytevector-length bv)))
                       (leb128-put port 3)
