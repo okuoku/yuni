@@ -223,6 +223,7 @@
                 (string-for-each4 proc a b c d)
                 (error "Too many...")))))))))
 
+#|
 (define (string-map4/itr! s pos len proc a b c d)
   (unless ($fx= pos len)
     (string-set! s pos
@@ -293,6 +294,7 @@
               (if (null? dd)
                 (string-map4 proc a b c d)
                 (error "Too many...")))))))))
+|#
 
 (define (for-each4 proc a b c d)
   (unless (or (null? a) (null? b) (null? c) (null? d))

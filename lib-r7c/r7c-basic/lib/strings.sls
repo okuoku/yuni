@@ -158,6 +158,7 @@
         (string->list/itr str start (string-length str))
         (string->list/itr str start (car d))))))
 
+#|
 (define (list->string/itr! s cur l)
   (unless (null? l)
     (string-set! s cur (car l))
@@ -168,6 +169,7 @@
          (s ($make-string len)))
     (list->string/itr! s 0 l)
     s))
+|#
 
 (define (string-copy str . rest)
   (if (null? rest)
