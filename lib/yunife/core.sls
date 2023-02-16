@@ -6,9 +6,11 @@
            ;; Libname #t used for program
            yunife-load!
            yunife-load-sexp-list!
-           yunife-get-libraries
            yunife-get-library-code
            yunife-get-library-macro
+           yunife-get-library-imports
+           yunife-get-library-exports
+           yunife-get-libsym
            yunife-add-primitives!)
          (import (yuni scheme)
                  (yunife libmgr)
@@ -145,19 +147,35 @@
               sexp))
 
   ;; Library handlers
+  (define (csafe str) ;; => string
+    (define (safechar? c)
+      (let ((code (char->integer c)))
+        ;; Assumes ascii
+        (or (<= 48 code 57) ;; 0 .. 9
+            (<= 65 code 90) ;; A-Z and a-z
+            (<= 97 code 122))))
+    (let loop ((acc "")
+               (q (string->list str)))
+      (if (pair? q)
+          (loop (string-append acc (if (safechar? (car q))
+                                       (list->string (list (car q)))
+                                       (string-append 
+                                         "_"
+                                         (number->string
+                                           (char->integer (car q))))))
+                (cdr q))
+          acc)))
+
   (define (libname->symbol libname)
     (cond
       ((eq? #t libname) '**program**)
       (else
-        (let loop ((str (symbol->string (car libname)))
+        (let loop ((str (csafe (symbol->string (car libname))))
                    (rest (cdr libname)))
          (if (pair? rest)
-             (loop (string-append str "_" (symbol->string (car rest)))
+             (loop (string-append str "__" (symbol->string (car rest)))
                    (cdr rest))
              (string->symbol str))))))
-
-  (define (get-libraries)
-    libname*)
 
   (define (ensure-library-loaded! libname)
     (let ((sym (libname->symbol libname)))
@@ -203,12 +221,11 @@
             (libname-sym (or libname-sym/name (libname->symbol libname)))
             (env (make-env)))
         (process-import! env imports)
-        (let* ((src (process-toplevel! env libname-sym prog*))
-               (src+import (cons (cons 'import imports) src)))
+        (let* ((src (process-toplevel! env libname-sym prog*)))
           ;; Register library
           (hashtable-set! ht-libimports libname-sym imports)
           (hashtable-set! ht-libexports libname-sym exports)
-          (hashtable-set! ht-libcodes libname-sym src+import)
+          (hashtable-set! ht-libcodes libname-sym src)
           (hashtable-set! ht-libmacros libname-sym env)))))
 
   (define (do-load-program! sexp)
@@ -219,7 +236,7 @@
         (unless (eq? 'import (car import?))
           (error "Malformed program" sexp))
         (process-import! env (cdr import?))
-        (let ((src (process-toplevel! env libname-sym sexp)))
+        (let ((src (process-toplevel! env libname-sym seq)))
          ;; Register library
          (hashtable-set! ht-libimports libname-sym (cdr import?))
          (hashtable-set! ht-libexports libname-sym '())
@@ -248,10 +265,21 @@
     (let ((code (read-source pth)))
      (do-load-source! libname-sym code)))
 
-  (define (get-library-code libname)
-    (hashtable-ref ht-libcodes (libname->symbol libname) #f))
-  (define (get-library-macro libname)
-    (hashtable-ref ht-libmacros (libname->symbol libname) #f))
+  (define (macro-ht->alist ht)
+    ;; FIXME: Implement it
+    (let ((keys (hashtable-keys ht)))
+     (map (lambda (k)
+            (cons k (hashtable-ref ht k #f)))
+          (vector->list keys))))
+
+  (define (get-library-code libsym)
+    (hashtable-ref ht-libcodes libsym #f))
+  (define (get-library-macro libsym)
+    (macro-ht->alist (hashtable-ref ht-libmacros libsym #f)))
+  (define (get-library-imports libsym)
+    (hashtable-ref ht-libimports libsym #f))
+  (define (get-library-exports libsym)
+    (hashtable-ref ht-libexports libsym #f))
 
   (define (add-primitives! libname prims*)
     (let ((sym (libname->symbol libname)))
@@ -264,12 +292,15 @@
       ((load!) (apply do-load! args))
       ((load-sexp-list!) (apply do-load-sexp-list! args))
       ((add-primitives!) (apply add-primitives! args))
-      ((get-libraries) (apply get-libraries args))
-      ((get-library-code) (apply get-library-code args))
-      ((get-library-macro) (apply get-library-macro args))
       ;; Proxy
       ((add-path!) (apply libmgr-add-path! libmgr args))
       ((add-alias-map!) (apply libmgr-add-alias-map! libmgr args))
+      ;; query
+      ((get-libsym) (apply libname->symbol args))
+      ((get-library-code) (apply get-library-code args))
+      ((get-library-macro) (apply get-library-macro args))
+      ((get-library-imports) (apply get-library-imports args))
+      ((get-library-exports) (apply get-library-exports args))
       (else
         (error "Invalid op" op))))
 
@@ -313,12 +344,15 @@
 ;; actions
 (define (yunife-load! fe path) (fe 'load! path))
 (define (yunife-load-sexp-list! fe sexp) (fe 'load-sexp-list! sexp))
-(define (yunife-get-libraries fe) (fe 'get-libraries))
-(define (yunife-get-library-code fe libname) (fe 'get-library-code libname))
-(define (yunife-get-library-macro fe libname) (fe 'get-library-macro libname))
 (define (yunife-add-primitives! fe libname a*) (fe 'add-primitives! libname a*))
 ;; proxy
 (define (yunife-add-path! fe path) (fe 'add-path! path))
 (define (yunife-add-alias-map! fe from to) (fe 'add-alias-map! from to))
+;; query
+(define (yunife-get-libsym fe libname) (fe 'get-libsym libname))
+(define (yunife-get-library-code fe libsym) (fe 'get-library-code libsym))
+(define (yunife-get-library-macro fe libsym) (fe 'get-library-macro libsym))
+(define (yunife-get-library-imports fe libsym) (fe 'get-library-imports libsym))
+(define (yunife-get-library-exports fe libsym) (fe 'get-library-exports libsym))
          
 )
