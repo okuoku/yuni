@@ -31,6 +31,7 @@
            yuniport-write-bytevector
            )
          (import (r7c-basic syntax define)
+                 (r7c-basic lib lists)
                  (r7c syntax and)
                  (r7c syntax cond)
                  (r7c syntax unless)

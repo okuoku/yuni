@@ -16,6 +16,8 @@
                  (r7c syntax case)
                  (r7c syntax when)
                  (r7c syntax unless)
+                 (r7c-io port core) ;; yuniribbit-bug
+                 (r7c-io port control) ;; yuniribbit-bug
                  (r7c-yunicore yuniport))
 
          

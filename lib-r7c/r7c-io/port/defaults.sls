@@ -9,8 +9,7 @@
                  (r7c-system core)
                  (r7c heap fixnum)
                  (r7c syntax and)
-                 (r7c-io port files)
-                 (r7c-yunicore yuniport))
+                 (r7c-io port files))
 
 (define param-current-input-port (open-input-file 'stdin))
 (define param-current-output-port (open-output-file 'stdout))
