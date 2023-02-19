@@ -8,6 +8,7 @@
 
 ;; Took from 7.3 Derived expression types
 ;;    let => $let/core
+;;    Use __1 to denote gensym
 (define-syntax let-values
   (syntax-rules ()
     ((let-values (binding ...) body0 body1 ...)
@@ -28,15 +29,15 @@
              bindings tmps body))))
     ((let-values "mktmp" (a . b) e0 (arg ...)
          bindings (tmp ...) body)
-     (let-values "mktmp" b e0 (arg ... x)
-         bindings (tmp ... (a x)) body))
+     (let-values "mktmp" b e0 (arg ... __1)
+         bindings (tmp ... (a __1)) body))
     ((let-values "mktmp" a e0 (arg ...)
         bindings (tmp ...) body)
      (call-with-values
        (lambda () e0)
-       (lambda (arg ... . x)
+       (lambda (arg ... . __1)
          (let-values "bind"
-             bindings (tmp ... (a x)) body))))))
+             bindings (tmp ... (a __1)) body))))))
 
 (define-syntax let*-values
   (syntax-rules ()
