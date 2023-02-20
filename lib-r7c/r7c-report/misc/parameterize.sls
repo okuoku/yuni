@@ -45,10 +45,10 @@
            (lambda () (p <param-set!> old) ...)))))
     ((parameterize ("step")
                    args
-                   ((param value p old new) . rest)
+                   ((param value) . rest)
                    body)
      (parameterize ("step")
-                   ((param value p old new) . args)
+                   ((param value __1 __2 __3) . args)
                    rest
                    body))
     ((parameterize ((param value) ...) . body)
