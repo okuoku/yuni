@@ -29,6 +29,9 @@
            yuniport-write-u8
            yuniport-read-bytevector!
            yuniport-write-bytevector
+           ;; S-exp reader integration 
+           yuniport-reader-cache-set!
+           yuniport-reader-cache-ref
            )
          (import (r7c-basic syntax define)
                  (r7c-basic lib lists)
@@ -92,9 +95,15 @@
 (define (yuniport-write-bytevector p bv start end)
                                        ((%yuniport-method p 22) bv start end))
 
+;; S-exp reader integration
+(define (yuniport-reader-cache-set! p obj)
+  (simple-struct-set! p 23 obj))
+(define (yuniport-reader-cache-ref p)
+  (simple-struct-ref p 23))
+
 (define (make-yuniport query)
   (make-simple-struct yuniport-class
-                      23
+                      24
                       (list
                         (query 'textual-port?)      ;; 0
                         (query 'binary-port?)       ;; 1
@@ -119,6 +128,7 @@
                         (query 'read-bytevector!)   ;; 20
                         (query 'write-u8)           ;; 21
                         (query 'write-bytevector)   ;; 22
+                        #f ;; 23 (reader cache)
                         )))
          
 )
