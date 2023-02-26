@@ -12,6 +12,7 @@
            yunife-get-library-imports
            yunife-get-library-exports
            yunife-get-libsym
+           yunife-register-cache-loader!
            yunife-add-primitives!)
          (import (yuni scheme)
                  (yunife libmgr)
@@ -40,6 +41,8 @@
 
   (define libmgr (make-libmgr))
   (define le (make-lighteval-env))
+
+  (define cache-loader #f)
 
   ;; Macro-Environment
   ;;  (<LIBNAME-SYM> . #f) -- primitive
@@ -178,12 +181,43 @@
                    (cdr rest))
              (string->symbol str))))))
 
+  (define (ensure-library-loaded!/local libname sym)
+    (do-load/name! sym (libmgr-resolve libmgr libname)))
+
+  (define (cache-library! sym imports exports macro*)
+    (define libenv (make-env))
+    (hashtable-set! ht-libimports sym imports)
+    (hashtable-set! ht-libexports sym exports)
+    (hashtable-set! ht-libcodes sym #t) ;; cached
+
+    ;; Generate macro env
+    (for-each (lambda (p)
+                (let ((name (car p))
+                      (proc (cdr p)))
+                  (let ((obj (cons sym (cons proc #f))))
+                   (hashtable-set! libenv name obj))))
+              macro*)
+    
+    ;; Register macro table
+    (hashtable-set! ht-libmacros sym libenv))
+  
   (define (ensure-library-loaded! libname)
-    (let ((sym (libname->symbol libname)))
-     (let ((code (hashtable-ref ht-libcodes sym #f))
-           (macro (hashtable-ref ht-libcodes sym #f)))
-       (unless (or code macro)
-         (do-load/name! sym (libmgr-resolve libmgr libname))))))
+    (let* ((sym (libname->symbol libname))
+           (code (hashtable-ref ht-libcodes sym #f))
+           (macro (hashtable-ref ht-libmacros sym #f)))
+      (unless (or code macro)
+        ;(write (list 'ENSURE: libname cache-loader)) (newline)
+        (cond
+          (cache-loader
+            (cache-loader libname sym
+                          (lambda (result imports exports macro*)
+                            (cond
+                              (result 
+                                (for-each ensure-library-loaded! imports)
+                                (cache-library! sym imports exports macro*))
+                              (else
+                                (ensure-library-loaded!/local libname sym))))))
+          (else (ensure-library-loaded!/local libname sym))))))
 
   (define (process-import1! env clause)
     (unless (pair? clause)
@@ -290,6 +324,9 @@
     (let ((sym (libname->symbol libname)))
      (hashtable-set! ht-libcodes sym '())
      (hashtable-set! ht-libmacros sym (make-primitive-macros prims*))))
+
+  (define (register-cache-loader! loader)
+    (set! cache-loader loader))
   
   (define (action op . args)
     (case op
@@ -307,6 +344,7 @@
       ((get-library-macro) (apply get-library-macro args))
       ((get-library-imports) (apply get-library-imports args))
       ((get-library-exports) (apply get-library-exports args))
+      ((register-cache-loader!) (apply register-cache-loader! args))
       (else
         (error "Invalid op" op))))
 
@@ -343,7 +381,7 @@
                      (_            . #f)
                      (else         . #f)
                      ;; (embedded) Macro
-                     (define-syntax ,define-syntax/macro DUMMY)))
+                     (define-syntax ,define-syntax/macro . define-syntax/macro)))
   ;;
   action)         
 
@@ -361,5 +399,7 @@
 (define (yunife-get-library-macro fe libsym) (fe 'get-library-macro libsym))
 (define (yunife-get-library-imports fe libsym) (fe 'get-library-imports libsym))
 (define (yunife-get-library-exports fe libsym) (fe 'get-library-exports libsym))
+(define (yunife-register-cache-loader! fe loader) (fe 'register-cache-loader!
+                                                      loader))
          
 )
