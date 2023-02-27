@@ -184,11 +184,11 @@
   (define (ensure-library-loaded!/local libname sym)
     (do-load/name! sym (libmgr-resolve libmgr libname)))
 
-  (define (cache-library! sym imports exports macro*)
+  (define (cache-library! sym imports exports code macro*)
     (define libenv (make-env))
     (hashtable-set! ht-libimports sym imports)
     (hashtable-set! ht-libexports sym exports)
-    (hashtable-set! ht-libcodes sym #t) ;; cached
+    (hashtable-set! ht-libcodes sym code)
 
     ;; Generate macro env
     (for-each (lambda (p)
@@ -210,11 +210,11 @@
         (cond
           (cache-loader
             (cache-loader libname sym
-                          (lambda (result imports exports macro*)
+                          (lambda (result imports exports code macro*)
                             (cond
                               (result 
                                 (for-each ensure-library-loaded! imports)
-                                (cache-library! sym imports exports macro*))
+                                (cache-library! sym imports exports code macro*))
                               (else
                                 (ensure-library-loaded!/local libname sym))))))
           (else (ensure-library-loaded!/local libname sym))))))
