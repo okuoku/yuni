@@ -181,10 +181,12 @@
         (substring str start (car d))))))
 
 (define (string . c*) (list->string c*))
+
+#|
 (define (substring str start end)
   (let ((s ($make-string ($fx- end start))))
    ($string-copy! s 0 str start end)
-   s))
+   s) 
 
 (define (string-append/paste s cur queue)
   (unless (null? queue)
@@ -212,7 +214,6 @@
     (else
       (string-append/calctotal 0 queue queue))))
 
-#|
 (define (string-copy! to at from . rest)
   (cond
     ((null? rest)
