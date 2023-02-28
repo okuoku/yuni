@@ -1,5 +1,6 @@
 (library (r7c-io port files)
          (export
+           call-with-input-file
            open-input-file
            open-binary-input-file
            open-output-file
@@ -20,6 +21,16 @@
                  (r7c-io port control) ;; yuniribbit-bug
                  (r7c-yunicore yuniport))
 
+
+(define (call-with-port p proc)
+  (call-with-values (lambda () (proc p))
+                    (lambda x
+                      (close-port p)
+                      (apply values x))))
+
+(define (call-with-input-file fn proc)
+  (let ((p (open-input-file fn)))
+   (call-with-port p proc)))
          
 (define (open-input-file fn)
   (define eof? #f)
