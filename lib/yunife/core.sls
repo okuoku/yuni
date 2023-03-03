@@ -37,6 +37,7 @@
   (define ht-libcodes (make-symbol-hashtable))
   (define ht-libmacros (make-symbol-hashtable))
   (define ht-libimports (make-symbol-hashtable))
+  (define ht-libimports/sym (make-symbol-hashtable))
   (define ht-libexports (make-symbol-hashtable))
 
   (define libmgr (make-libmgr))
@@ -47,18 +48,21 @@
   ;; Macro-Environment
   ;;  (<LIBNAME-SYM> . #f) -- primitive
   ;;  (<LIBNAME-SYM> . (<CODE> . <SOURCE>))
+  (define (env-macroenv env) (car env))
   (define (env-lookup env sym)
-    (let ((c (hashtable-ref env sym #f)))
+    ;; car: shortcut for env-macroenv
+    (let ((c (hashtable-ref (car env) sym #f)))
      (and c (cdr c))))
 
   (define (env-extend! env libname-sym name obj)
-    (let ((p (hashtable-ref env name #f)))
+    ;; car: shortcut for env-macroenv
+    (let ((p (hashtable-ref (car env) name #f)))
      (cond
        (p (unless (eq? libname-sym (car p))
             (error "Macro dupe." p libname-sym)) )
        (else
          ;(PCK 'Register-Macro: name obj)
-         (hashtable-set! env name (cons libname-sym obj))))))
+         (hashtable-set! (car env) name (cons libname-sym obj))))))
 
   (define (env-import! env libname-sym)
     (let ((l (hashtable-ref ht-libmacros libname-sym #f)))
@@ -72,12 +76,20 @@
          (let ((v (hashtable-keys l)))
           (vector-for-each
             (lambda (nam) 
-              (let ((m (hashtable-ref l nam #f)))
-               (env-extend! env (car m) nam (cdr m))))
+              (unless (eqv? nam '%%yunife-visited%%)
+                (let ((m (hashtable-ref l nam #f)))
+                 (env-extend! env (car m) nam (cdr m)))))
             v))))))
 
+  (define (env-visit! env libname-sym)
+    (hashtable-set! (cdr env) libname-sym #t))
+
+  (define (env-visited? env libname-sym)
+    (hashtable-ref (cdr env) libname-sym #f))
+
   (define (make-env)
-    (make-symbol-hashtable))
+    (cons (make-symbol-hashtable)
+          (make-symbol-hashtable)))
 
   ;; Expander 
   (define *unspecified* (cons #f #f))
@@ -187,6 +199,7 @@
   (define (cache-library! sym imports exports code macro*)
     (define libenv (make-env))
     (hashtable-set! ht-libimports sym imports)
+    (hashtable-set! ht-libimports/sym sym (map libname->symbol imports))
     (hashtable-set! ht-libexports sym exports)
     (hashtable-set! ht-libcodes sym code)
 
@@ -195,11 +208,11 @@
                 (let ((name (car p))
                       (proc (cdr p)))
                   (let ((obj (cons sym (cons proc #f))))
-                   (hashtable-set! libenv name obj))))
+                   (hashtable-set! (env-macroenv libenv) name obj))))
               macro*)
     
     ;; Register macro table
-    (hashtable-set! ht-libmacros sym libenv))
+    (hashtable-set! ht-libmacros sym (env-macroenv libenv)))
   
   (define (ensure-library-loaded! libname)
     (let* ((sym (libname->symbol libname))
@@ -219,6 +232,14 @@
                                 (ensure-library-loaded!/local libname sym))))))
           (else (ensure-library-loaded!/local libname sym))))))
 
+  (define (process-env-import! env libsym)
+    (unless (env-visited? env libsym)
+      (env-visit! env libsym)
+      (env-import! env libsym)
+      (for-each 
+        (lambda (importsym) (process-env-import! env importsym))
+        (hashtable-ref ht-libimports/sym libsym '()))))
+
   (define (process-import1! env clause)
     (unless (pair? clause)
       (error "Malformed import clause" clause))
@@ -229,7 +250,7 @@
         (process-import1! env (cadr clause)))
        (else
          (ensure-library-loaded! clause)
-         (env-import! env (libname->symbol clause))))))
+         (process-env-import! env (libname->symbol clause))))))
 
   (define (process-import! env sexp)
     (for-each (lambda (c) (process-import1! env c))
@@ -259,9 +280,12 @@
         (let* ((src (process-toplevel! env libname-sym prog*)))
           ;; Register library
           (hashtable-set! ht-libimports libname-sym imports)
+          (hashtable-set! ht-libimports/sym libname-sym 
+                          (map libname->symbol imports))
           (hashtable-set! ht-libexports libname-sym exports)
           (hashtable-set! ht-libcodes libname-sym src)
-          (hashtable-set! ht-libmacros libname-sym env)))))
+          ;; FIXME: Prune external macros here
+          (hashtable-set! ht-libmacros libname-sym (env-macroenv env))))))
 
   (define (do-load-program! sexp)
     (let ((import? (car sexp))
@@ -274,9 +298,11 @@
         (let ((src (process-toplevel! env libname-sym seq)))
          ;; Register library
          (hashtable-set! ht-libimports libname-sym (cdr import?))
+         (hashtable-set! ht-libimports/sym libname-sym
+                         (map libname->symbol (cdr import?)))
          (hashtable-set! ht-libexports libname-sym '())
          (hashtable-set! ht-libcodes libname-sym src)
-         (hashtable-set! ht-libmacros libname-sym env)))))
+         (hashtable-set! ht-libmacros libname-sym (env-macroenv env))))))
 
   (define (do-load-source! libname-sym code)
     (cond
