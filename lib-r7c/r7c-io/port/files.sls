@@ -229,7 +229,7 @@
     (filehandle-flush fh))
 
   (define (write-char c)
-    (let ((bv (string->utf8 (make-string 1 c))))
+    (let ((bv (string->utf8 (list->string (list c)))))
      (filehandle-write fh bv 0 (bytevector-length bv))))
 
   (define (write-string str start end)
