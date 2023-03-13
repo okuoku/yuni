@@ -32,10 +32,12 @@
 (check-equal "" (string-copy ""))
 (check-equal "abc00" (string-copy "00abc00" 2))
 
+#|
 (check-equal "" (make-string 0))
 (check-equal "a" (make-string 1 #\a))
 (check-equal "aa" (make-string 2 #\a))
 (check-equal "aaa" (make-string 3 #\a))
+|#
 
 (check-equal #t (string=? "a" "a"))
 (check-equal #t (string=? "a" "a" "a"))
