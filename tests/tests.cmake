@@ -119,6 +119,7 @@ tests(
     ${tests}/scheme/strings0.sps
     ${tests}/scheme/vectors0.sps
     ${tests}/scheme/bytevectors0.sps
+    ${tests}/scheme/exact0.sps
     ${tests}/scheme/inexact0.sps
     ${tests}/scheme/inexact1.sps
     ${tests}/scheme/inexact2.sps
