@@ -131,7 +131,7 @@
      (set! buf "")
      r))
   (define (write-char c)
-    (set! buf (string-append buf (make-string 1 c))))
+    (set! buf (string-append buf (string c))))
   (define (write-string str start end)
     (set! buf (string-append buf (substring str start end))))
 
