@@ -290,7 +290,7 @@
          (values b bv c))))))
 
 (define (utf8-read bv) ;; => eof-object if comment-only
-  (define tkn (make-tkn 1))
+  (define tkn (make-tkn 128))
   (define cb (%utf8-in bv))
   (define mr (make-miniread))
   (define (capture tkn idx)
@@ -299,12 +299,16 @@
           (type (tkn-type tkn idx)))
       (vector type start-index end-index)))
   (define (itr cur)
-    (let ((r (miniread-main mr tkn 0 1 cb)))
+    (let ((r (miniread-main mr tkn 0 128 cb)))
      (cond
        ((eq? r #f)
         (%realize bv (reverse cur)))
-       ((and (number? r) (= r 0))
-        (itr (cons (capture tkn 0) cur)))
+       ((number? r)
+        (let loop ((i 0)
+                   (acc cur))
+          (if (> i r)
+              (itr acc)
+              (loop (+ 1 i) (cons (capture tkn i) acc)))))
        (else
          (error "something wrong" r)))))
   (itr '()))
