@@ -131,13 +131,23 @@
   (define (blockcomment-depth--) (%blockcomment-depth-add! -1))
 
   ;; Step dispatch
+  (define step-b #f)
+  (define step-next #f)
+  (define step-stream #f)
+  (define step-index #f)
+  (define (step type has-next?)
+    (let ((prev-type (mr-reg mr)))
+     (mr-reg! mr type)
+     (step-next step-b (state) prev-type type has-next? 
+                step-stream step-index)))
+  (define (dostep0 p) (call-with-values (lambda () (p step-b)) step))
+  (define (dostep p) (call-with-values (lambda () (p step-b (mr-reg mr))) step))
+
   (define (callstep next b stream index)
-    (define (step type has-next?)
-      (define prev-type (mr-reg mr))
-      (mr-reg! mr type)
-      (next b (state) prev-type type has-next? stream index))
-    (define (dostep0 p) (call-with-values (lambda () (p b)) step))
-    (define (dostep p) (call-with-values (lambda () (p b (mr-reg mr))) step))
+    (set! step-b b)
+    (set! step-stream stream)
+    (set! step-index index)
+    (set! step-next next)
 
     (case (state)
       ((CHARLIT) 
@@ -163,68 +173,77 @@
        (dostep ssplit-inblockcomment-parse-byte1))
       (else (error "unexpected state" (state)))))
 
+  ;; registers
+  (define cur-b #f)
+  (define cur-stream #f)
+  (define cur-index #f)
+
+  (define (whitespace?) (ssplit-byte-whitespace? cur-b))
+  (define (delimiter?) (ssplit-byte-delimiter? cur-b))
+  (define (paren-l?) (eq? 'PAREN_L (ssplit-byte-class cur-b)))
+  (define (hold) 
+    (mr-hold! mr cur-b)
+    (mr-hold-index! mr cur-index)
+    (mr-hold-stream! mr cur-stream))
+  (define (set-prev-here type)
+    (mr-prev-type! mr type)
+    (mr-prev-stream! mr cur-stream)
+    (mr-prev-index! mr cur-index)
+    (mr-prev-lineno! mr (mr-lineno mr))
+    (mr-prev-column! mr (mr-column mr)))
+
+  (define (begin-here next-state)
+    (let ((st (state)))
+      ;; Sanity check: Disposable states are #f / CHARLIT
+      (when (and st (not (eq? st 'CHARLIT)))
+        (error "Invalid state at begin-here" st)) )
+    (mr-state! mr next-state)
+    (mr-start-stream! mr cur-stream)
+    (mr-start-index! mr cur-index)
+    (mr-start-lineno! mr (mr-lineno mr))
+    (mr-start-column! mr (mr-column mr)))
+
+  (define (%tkn-set-start! tkn type) ;; for both here/prev
+    (tve-type! tkn type) 
+    (tve-start-stream! tkn (mr-start-stream mr))
+    (tve-start-index! tkn (mr-start-index mr))
+    (tve-start-lineno! tkn (mr-start-lineno mr))
+    (tve-start-column! tkn (mr-start-column mr)))
+
+  (define (%emit-tkn!)
+    ;; Reset state to #f
+    (mr-state! mr #f)
+    (set! retidx curidx)
+    (set! curidx (+ 1 curidx)))
+
+  (define (end-here tkn-type)
+    ;; Fill a token
+    (let ((tkn (vector-ref vec curidx)))
+      (%tkn-set-start! tkn tkn-type)
+      (tve-end-stream! tkn cur-stream)
+      (tve-end-index! tkn cur-index)
+      (tve-end-lineno! tkn (mr-lineno mr))
+      (tve-end-column! tkn (mr-column mr)))
+    (%emit-tkn!))
+
+  (define (end-prev)
+    (let ((tkn (vector-ref vec curidx)))
+      (%tkn-set-start! tkn (mr-prev-type mr))
+      (tve-end-stream! tkn (mr-prev-stream mr))
+      (tve-end-index! tkn (mr-prev-index mr))
+      (tve-end-lineno! tkn (mr-prev-lineno mr))
+      (tve-end-column! tkn (mr-prev-column mr)))
+    (%emit-tkn!))
+
+  (define (tkn-single tkn-type)
+    (begin-here #f)
+    (end-here tkn-type))
+
   ;; Events
   (define (char b st prev-type type has-next? stream index)
-    (define (whitespace?) (ssplit-byte-whitespace? b))
-    (define (delimiter?) (ssplit-byte-delimiter? b))
-    (define (paren-l?) (eq? 'PAREN_L (ssplit-byte-class b)))
-    (define (hold) 
-      (mr-hold! mr b)
-      (mr-hold-index! mr index)
-      (mr-hold-stream! mr stream))
-    (define (set-prev-here type)
-      (mr-prev-type! mr type)
-      (mr-prev-stream! mr stream)
-      (mr-prev-index! mr index)
-      (mr-prev-lineno! mr (mr-lineno mr))
-      (mr-prev-column! mr (mr-column mr)))
-
-    (define (begin-here next-state)
-      (let ((st (state)))
-       ;; Sanity check: Disposable states are #f / CHARLIT
-       (when (and st (not (eq? st 'CHARLIT)))
-         (error "Invalid state at begin-here" st)) )
-      (mr-state! mr next-state)
-      (mr-start-stream! mr stream)
-      (mr-start-index! mr index)
-      (mr-start-lineno! mr (mr-lineno mr))
-      (mr-start-column! mr (mr-column mr)))
-
-    (define (%tkn-set-start! tkn type) ;; for both here/prev
-       (tve-type! tkn type) 
-       (tve-start-stream! tkn (mr-start-stream mr))
-       (tve-start-index! tkn (mr-start-index mr))
-       (tve-start-lineno! tkn (mr-start-lineno mr))
-       (tve-start-column! tkn (mr-start-column mr)))
-
-    (define (%emit-tkn!)
-      ;; Reset state to #f
-      (mr-state! mr #f)
-      (set! retidx curidx)
-      (set! curidx (+ 1 curidx)))
-
-    (define (end-here tkn-type)
-      ;; Fill a token
-      (let ((tkn (vector-ref vec curidx)))
-       (%tkn-set-start! tkn tkn-type)
-       (tve-end-stream! tkn stream)
-       (tve-end-index! tkn index)
-       (tve-end-lineno! tkn (mr-lineno mr))
-       (tve-end-column! tkn (mr-column mr)))
-      (%emit-tkn!))
-
-    (define (end-prev)
-      (let ((tkn (vector-ref vec curidx)))
-       (%tkn-set-start! tkn (mr-prev-type mr))
-       (tve-end-stream! tkn (mr-prev-stream mr))
-       (tve-end-index! tkn (mr-prev-index mr))
-       (tve-end-lineno! tkn (mr-prev-lineno mr))
-       (tve-end-column! tkn (mr-prev-column mr)))
-      (%emit-tkn!))
-
-    (define (tkn-single tkn-type)
-      (begin-here #f)
-      (end-here tkn-type))
+    (set! cur-b b)
+    (set! cur-stream stream)
+    (set! cur-index index)
 
     ;(write (list 'CHAR: (integer->char b) st prev-type type has-next?))(newline)
 
