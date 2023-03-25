@@ -320,8 +320,7 @@
     (do-load-source! #f sexp))
 
   (define (do-loadlib! libname)
-    (let ((sym (libname->symbol libname)))
-     (do-load/name! sym (libmgr-resolve libmgr libname))))
+    (ensure-library-loaded! libname))
 
   (define (do-load! pth)
     (do-load/name! #f pth))
