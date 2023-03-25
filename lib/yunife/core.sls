@@ -189,7 +189,7 @@
         (let loop ((str (csafe (symbol->string (car libname))))
                    (rest (cdr libname)))
          (if (pair? rest)
-             (loop (string-append str "__" (symbol->string (car rest)))
+             (loop (string-append str "__" (csafe (symbol->string (car rest))))
                    (cdr rest))
              (string->symbol str))))))
 
