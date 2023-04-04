@@ -1,6 +1,12 @@
 (import (yuni scheme)
         (yunitest mini))
 
+;; Integer literals
+(check-equal 10 #xa)
+(check-equal 0 #x0)
+(check-equal 65535 #xffff)
+(check-equal 256 #x100)
+
 ;; boolean
 (check-equal #t (boolean=? #t #t))
 (check-equal #t (boolean=? #f #f))
