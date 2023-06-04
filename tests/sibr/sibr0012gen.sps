@@ -9,7 +9,7 @@
 
 (define (str-term) 
   (case (ident-impl)
-    ((gambit cyclone foment) #t)
+    ((gambit cyclone foment ribbon) #t)
     (else #f)))
 
 (define (checkans s)
