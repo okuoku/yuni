@@ -9,9 +9,8 @@
                  )
 
 
-;; FIXME: 
-(define <param-set!> (list '"unique"))
-(define <param-convert> (list '"unique"))
+;; <param-set!> = #t
+;; <param-convert> = #f
 
 ;; Took from 7.3 Derived expression types
 
@@ -23,12 +22,12 @@
           (cond
            ((null? args)
             value)
-           ((eq? (car args) <param-set!>)
+           ((eq? (car args) #t)
             (set! value (cadr args)))
-           ((eq? (car args) <param-convert>)
+           ((eq? (car args) #f)
             converter)
            (else
-            (error "bad parameter syntax"))))))
+            (error "bad parameter syntax" args))))))
 
 (define-syntax parameterize
   (syntax-rules ()
@@ -38,11 +37,11 @@
                    body)
      ($let/core ((p param) ...)
        ($let/core ((old (p)) ...
-                  (new ((p <param-convert>) value)) ...)
+                  (new ((p #f) value)) ...)
          (dynamic-wind
-           (lambda () (p <param-set!> new) ...)
+           (lambda () (p #t new) ...)
            (lambda () . body)
-           (lambda () (p <param-set!> old) ...)))))
+           (lambda () (p #t old) ...)))))
     ((parameterize ("step")
                    args
                    ((param value) . rest)
