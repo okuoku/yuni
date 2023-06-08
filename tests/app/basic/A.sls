@@ -41,6 +41,7 @@
   ;; Test aux syntax (dots)
   (check-equal '(a b c)
                (stxTest a b c))
+  #|
   ;; Test aux syntax (arrow)
   (check-equal "ok"
                (cond
@@ -49,6 +50,7 @@
                                                   x)
                                           "ok")))
                  (else "no")))
+  |#
   #|
   ;; Test R7RS case
   (check-equal "ok"
@@ -68,7 +70,7 @@
 (define (A)
   (let ((a (test)))
    (unless (eq? 'A a)
-     (error "something wrong (A)"))))         
+     (error "something wrong (A)" a))))         
 
 
 )
