@@ -194,7 +194,10 @@
              (string->symbol str))))))
 
   (define (ensure-library-loaded!/local libname sym)
-    (do-load/name! sym (libmgr-resolve libmgr libname)))
+    (let ((lib (libmgr-resolve libmgr libname)))
+     (unless lib
+       (error "Could not resolve library" libname))
+     (do-load/name! sym lib)))
 
   (define (cache-library! sym imports exports code macro*)
     (define libenv (make-env))
