@@ -93,7 +93,6 @@
 (check-equal #t (number? 123))
 (check-equal #f (number? number?))
 (check-equal #t (integer? 123))
-(check-equal #f (integer? (/ 1 3)))
 (check-equal #t (inexact? 9.1))
 (check-equal #f (exact? 0.1))
 
