@@ -153,4 +153,6 @@ file(APPEND ${VARFILE} ")\n")
 
 
 # Testing
-include(tests/tests.cmake)
+if(NOT YUNI_SKIP_TESTS)
+    include(tests/tests.cmake)
+endif()
