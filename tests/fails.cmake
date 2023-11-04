@@ -33,10 +33,6 @@ set(expected_failures
     ## Bugs
     #############################################
 
-    # https://debbugs.gnu.org/cgi/bugreport.cgi?bug=40584
-    # https://github.com/okuoku/yuni/issues/129
-    iter0-GUILE3
-
     # https://github.com/justinethier/cyclone/issues/379
     io0-ICYC # Wrong character at end of string
 
