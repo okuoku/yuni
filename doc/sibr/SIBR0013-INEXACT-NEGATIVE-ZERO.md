@@ -7,7 +7,7 @@ PositiveZero: `IronScheme`
 
 (`eqv?` behaviour)
 
-EquivalentPositiveZero: `Digamma` `Cyclone` `Bigloo` `s7` `STKlos`
+EquivalentPositiveZero: `Digamma` `Cyclone` `Bigloo` `s7`
 
 (Number writer behaviour)
 
@@ -70,3 +70,4 @@ History
 
 Gauche adopted R7RS behaviour https://github.com/shirok/Gauche/commit/ca136f159390556a2b34dabf279ced88ab6edc89
 
+STklos adopted R7RS behaviour https://github.com/egallesio/STklos/pull/585 (maybe)

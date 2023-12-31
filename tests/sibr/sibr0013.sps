@@ -35,7 +35,7 @@
 
 (define have-rnrs-zero-compare (equal? '(#f #f #f #f) map-eqvzero))
 (define printable-negative-zero (case (ident-impl)
-                                  ((digamma cyclone bigloo s7 stklos)
+                                  ((digamma cyclone bigloo s7)
                                    (not have-rnrs-zero-compare))
                                   (else have-rnrs-zero-compare)))
 (define expected-string
@@ -43,7 +43,7 @@
                  (if old-float-format "0." "0.0")))
 
 (check-equal (case (ident-impl)
-               ((digamma cyclone ironscheme bigloo s7 scm stklos)
+               ((digamma cyclone ironscheme bigloo s7 scm)
                 '(#t #t #t #t))
                (else '(#f #f #f #f))) 
              map-eqvzero)
