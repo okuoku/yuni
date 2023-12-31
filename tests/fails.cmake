@@ -53,6 +53,13 @@ set(expected_failures
     synrule1-BIGLOO
     synrule0-ICYC
 
+    # Cyclone crashes on miniread0 test
+    miniread0-ICYC
+
+    # Cyclone returns inexact result on `truncate-quotient`
+    # https://github.com/justinethier/cyclone/issues/519
+    inexact0-ICYC
+
     #############################################
     ## Known limitation / Resolved as spec
     #############################################
