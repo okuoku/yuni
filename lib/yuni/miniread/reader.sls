@@ -211,7 +211,7 @@
 
           (case type
             ;; Comment (skip)
-            ((COMMENT BLOCK_COMMENT)
+            ((COMMENT BLOCK_COMMENT) ;; FIXME: BLOCK_COMMENT ??
              (itr mode dump cur d))
             ;; Single
             ((TRUE) (single #t))

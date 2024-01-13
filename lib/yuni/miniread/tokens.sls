@@ -72,7 +72,7 @@
 
 (define (ssplit-parse-byte1 byte prev-sym)
   (%dispatch prev-sym byte 
-    (SHARP QUOTE => NEXT_SYNTAX_QUOTE)
+    (SHARP QUOTE => NEXT_SYNTAX_QUOTE) ;; FIXME: FQUOTE??
     (SHARP BQUOTE => NEXT_SYNTAX_QUASIQUOTE)
     (SHARP COMMA => NEXT_SYNTAX_UNQUOTE #t) ;; splicing
     (NEXT_UNQUOTE AT => NEXT_UNQUOTE_SPLICING)
