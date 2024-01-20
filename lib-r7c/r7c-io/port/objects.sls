@@ -51,10 +51,19 @@
     (yuniport-peek-u8 (car port?))))
 
 (define (read-bytevector k . port?)
+  ;; FIXME: Be more efficient...
   (let ((port (if (null? port?) (current-input-port) (car port?)))
         (buf (make-bytevector k)))
-    (read-bytevector! buf port)
-    buf))
+    (let ((x (read-bytevector! buf port)))
+     (cond
+       ((eof-object? x)
+        x)
+       ((= k x)
+        buf)
+       (else
+         (let ((r (make-bytevector x)))
+          (bytevector-copy! r 0 buf 0 x)
+          r))))))
 
 (define (read-bytevector! bv . args)
   (if (null? args)
