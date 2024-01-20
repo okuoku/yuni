@@ -142,6 +142,27 @@
                 (or (and (char=? #\+ h) 'NUMBER)
                     (and (char=? #\- h) 'NUMBER))))))))
 
+(define (%wrapobj mode obj)
+  (case mode
+    ((NEXT_QUOTE)
+     (list 'quote obj))
+    ((NEXT_QUASIQUOTE)
+     (list 'quasiquote obj))
+    ((NEXT_UNQUOTE)
+     (list 'unquote obj))
+    ((NEXT_UNQUOTE_SPLICING)
+     (list 'unquote-splicing obj))
+    ((NEXT_SYNTAX_QUOTE)
+     (list 'syntax obj))
+    ((NEXT_SYNTAX_UNQUOTE)
+     (list 'unsyntax obj))
+    ((NEXT_SYTNAX_UNQUOTE_SPLICING)
+     (list 'unsyntax-splicing obj))
+    ((NEXT_SYNTAX_QUASIQUOTE)
+     (list 'quasisyntax obj))
+    (else 
+      (error "Unknown mode???" mode))))
+
 (define (%realize bv lst) ;; => eof-object when comment only
   (define (elem-type e) (vector-ref e 0))
   (define (elem-start e) (vector-ref e 1))
@@ -159,8 +180,9 @@
                      (prev-cur (car x))
                      (prev-mode (cdr x))
                      (next-dump (cdr dump)))
-                (itr prev-mode next-dump 
-                     (if take?  (cons obj prev-cur) prev-cur) d)))
+                (if take?
+                    (go-next prev-mode obj prev-cur next-dump)
+                    (itr prev-mode next-dump prev-cur d))))
             (define (nextnext x)
               (itr mode dump (cons x cur) d))
             (define (nextnext/pop obj)
@@ -172,22 +194,11 @@
             ;(display (list 'PACK: obj now-mode))(newline)
             ;; Apply NEXT-filters on cur
             (case mode
-              ((NEXT_QUOTE)
-               (nextnext/pop (list 'quote obj)))
-              ((NEXT_QUASIQUOTE)
-               (nextnext/pop (list 'quasiquote obj)))
-              ((NEXT_UNQUOTE)
-               (nextnext/pop (list 'unquote obj)))
-              ((NEXT_UNQUOTE_SPLICING)
-               (nextnext/pop (list 'unquote-splicing obj)))
-              ((NEXT_SYNTAX_QUOTE)
-               (nextnext/pop (list 'syntax obj)))
-              ((NEXT_SYNTAX_UNQUOTE)
-               (nextnext/pop (list 'unsyntax obj)))
-              ((NEXT_SYTNAX_UNQUOTE_SPLICING)
-               (nextnext/pop (list 'unsyntax-splicing obj)))
-              ((NEXT_SYNTAX_QUASIQUOTE)
-               (nextnext/pop (list 'quasisyntax obj)))
+              ((NEXT_QUOTE NEXT_QUASIQUOTE NEXT_UNQUOTE
+                           NEXT_UNQUOTE_SPLICING
+                           NEXT_SYNTAX_QUOTE NEXT_SYNTAX_QUASIQUOTE 
+                           NEXT_SYNTAX_UNQUOTE_SPLICING)
+               (nextnext/pop (%wrapobj mode obj)))
               ((NEXT_DATUM_COMMENT)
                (nextdrop/pop))
               ((NEXT_CHAR_LITERAL)
@@ -260,7 +271,7 @@
                                  cur))))
                           ((VECTOR) (list->vector (reverse cur)))
                           ((BYTEVECTOR) (%u8-list->bytevector (reverse cur)))
-                          (else (error "unknown mode??" mode)))))
+                          (else (error "unknown mode??" mode cur)))))
                (single/pop obj)))
 
             ((NEXT_QUOTE NEXT_QUASIQUOTE NEXT_UNQUOTE
