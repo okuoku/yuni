@@ -29,7 +29,7 @@
     ;; Outputunquote
     ((_ (unquote x) depth)
      ;; Depth--
-     (cons 'unquote ($yunifake-qq (x) . depth)))
+     (cons 'unquote ($$yunifake-qq (x) . depth)))
     ;; Outputunquote-splicing
     ((_ (unquote-splicing x) depth)
      (cons 'unquote-splicing ($$yunifake-qq (x) . depth)))
