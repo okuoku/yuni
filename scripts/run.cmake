@@ -58,6 +58,11 @@ if(workdir)
     file(MAKE_DIRECTORY ${workdir})
 endif()
 
+set(modpaths)
+if(YUNI_INPLACE_NCCC_MODULES_PREFIX)
+    list(APPEND modpaths -MODPATH ${YUNI_INPLACE_NCCC_MODULES_PREFIX})
+endif()
+
 if(NOT selfboot_${IMPL})
     message(FATAL_ERROR "Impl ${IMPL} is not configured")
 endif()
@@ -69,6 +74,7 @@ execute_process(
     ${arg_runner}
     ${arg_post}
     -LIBPATH ${appdir}
+    ${modpaths}
     ${args}
     ${arg_runner2}
     RESULT_VARIABLE rr

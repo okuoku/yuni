@@ -440,6 +440,7 @@
 ;; (part from) selfboot/common/run-program.scm
 (define %%selfboot-current-command-line %%selfboot-program-args)
 (define %%selfboot-current-libpath (list %%selfboot-yuniroot))
+(define %%selfboot-current-modpath '())
 (define (yuni/command-line) %%selfboot-current-command-line)
 
 ;; Scan arguments
@@ -453,6 +454,12 @@
          (set! %%selfboot-current-libpath
            (cons dir
                  %%selfboot-current-libpath))
+         (loop (cdr d))))
+       ((string=? "-MODPATH" a)
+        (let ((dir (car d)))
+         (set! %%selfboot-current-modpath
+           (cons dir
+                 %%selfboot-current-modpath))
          (loop (cdr d))))
        (else
          (set! %%selfboot-current-command-line q))))
