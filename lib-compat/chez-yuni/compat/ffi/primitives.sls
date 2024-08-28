@@ -5,6 +5,7 @@
                  yuniffi-nccc-proc-release
                  yuniffi-module-load0
                  yuniffi-module-lookup
+                 yuniffi-module-lookup/dispatchN
                  yuniffi-callback-helper
  
                  ;; Memory OPs (pointers)
@@ -109,4 +110,17 @@
 
 (define (yuniffi-module-lookup handle str)
   (foreign-procedure str (uptr uptr) void))
+
+(define (yuniffi-module-lookup/dispatchN handle str N)
+  (case N
+    ((0) (foreign-procedure str (uptr uptr) void))
+    ((1) (foreign-procedure str (uptr uptr u8*) void))
+    ((2) (foreign-procedure str (uptr uptr u8* u8*) void))
+    ((3) (foreign-procedure str (uptr uptr u8* u8* u8*) void))
+    ((4) (foreign-procedure str (uptr uptr u8* u8* u8* u8*) void))
+    ((5) (foreign-procedure str (uptr uptr u8* u8* u8* u8* u8*) void))
+    ((6) (foreign-procedure str (uptr uptr u8* u8* u8* u8* u8* u8*) void))
+    ((7) (foreign-procedure str (uptr uptr u8* u8* u8* u8* u8* u8* u8*) void))
+    (else (error "Unrecognized dispatch variant" N))))
+
 )

@@ -1,7 +1,9 @@
 (library (yuni ffi nccc)
   (export make-nccc-call-ctx
-          nccc-set-modpath0!
-          nccc-loadlib)
+          nccc-set-modpath0! ;; Tentative
+          nccc-loadlib
+          ;; nccc_corelib support
+          nccc-loaddispatch)
   (import (yuni scheme)
           (yuni hashtables)
           (yuni compat ffi primitives)
@@ -11,7 +13,7 @@
 
   (define (nccc-set-modpath0! lis)
     (set! modpath0 lis))
-         
+
   (define (nccc-loadlib modname libname)
     (define ctx (make-nccc-call-ctx))
     (let ((modpath (string-append (car modpath0)
@@ -20,8 +22,42 @@
       (let* ((module (yuniffi-module-load0 modpath))
              (dispatch (and module
                             (yuniffi-module-lookup module dispatchname))))
-        (and module 
+        (and dispatch
              (make-nccc-library/dispatch ctx dispatch)))))
+
+  (define (nccc-loaddispatch) ;; => lambda
+    (define ctx (make-nccc-call-ctx))
+    (let ((modpath (string-append (car modpath0)
+                                  "/libnccc_" "nccc_corelib" ".so")))
+      (let ((module (yuniffi-module-load0 modpath))
+            (v (make-vector 8)))
+        (let loop ((idx 0))
+         (let ((dispatchname (string-append "nccc_dispatch_"
+                                            (number->string idx))))
+           (if (= idx 8)
+               (let ((d0 (vector-ref v 0))
+                     (d1 (vector-ref v 1))
+                     (d2 (vector-ref v 2))
+                     (d3 (vector-ref v 3))
+                     (d4 (vector-ref v 4))
+                     (d5 (vector-ref v 5))
+                     (d6 (vector-ref v 6))
+                     (d7 (vector-ref v 7)))
+                 (case-lambda
+                   ((in) (d0 in))
+                   ((in p0) (d1 in p0))
+                   ((in p0 p1) (d2 in p0 p1))
+                   ((in p0 p1 p2) (d3 in p0 p1 p2))
+                   ((in p0 p1 p2 p3) (d4 in p0 p1 p2 p3))
+                   ((in p0 p1 p2 p3 p4) (d5 in p0 p1 p2 p3 p4))
+                   ((in p0 p1 p2 p3 p4 p5) (d6 in p0 p1 p2 p3 p4 p5))
+                   ((in p0 p1 p2 p3 p4 p5 p6) 
+                    (d7 in p0 p1 p2 p3 p4 p5 p6))
+                   (_ (error "Invalid arg count"))))
+               (begin
+                 (vector-set! v idx (yuniffi-module-lookup/dispatchN 
+                                      module dispatchname idx))
+                 (loop (+ idx 1)))))))))
 
   (define (make-nccv64-unpacker lis)
     (define (tmpread ptr off)
@@ -182,7 +218,9 @@
            (call-with-values 
              (lambda () (library_arg_info ctx fnid))
              (lambda (in* out*)
-               (hashtable-set! ht nam (make-nccc-caller callable in* out*))
+               (hashtable-set! ht nam 
+                               (cons funcptr
+                                     (make-nccc-caller callable in* out*)))
                (write (list 'IN: in* 'OUT: out*)) (newline)))))))
 
     (call-with-values
